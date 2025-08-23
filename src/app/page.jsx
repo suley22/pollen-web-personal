@@ -2,24 +2,16 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Users,
-  Trophy,
-  Briefcase,
-  Code,
-  CheckCircle,
-  Target,
-  Heart,
-  Lightbulb,
-} from "lucide-react";
-import honeycombLogo from "@assets/honeycomb_1753116372462.png";
-import platformScreenshot from "@assets/image_1753357343185.png";
-import bbcLogo from "@assets/image_1753303879889.png";
-import timesLogo from "@assets/image_1753303894280.png";
-import fastCompanyLogo from "@assets/image_1753303914295.png";
-import businessInsiderLogo from "@assets/image_1753303943999.png";
-import stylistLogo from "@assets/image_1753303963933.png";
-import nyPostLogo from "@assets/image_1753303981878.png";
+import { Users, Trophy, Briefcase, Code } from "lucide-react";
+import honeycombLogo from "@/assets/honeycomb_1753116372462.png";
+import platformScreenshot from "@/assets/image_1753357343185.png";
+import bbcLogo from "@/assets/image_1753303879889.png";
+import timesLogo from "@/assets/image_1753303894280.png";
+import fastCompanyLogo from "@/assets/image_1753303914295.png";
+import businessInsiderLogo from "@/assets/image_1753303943999.png";
+import stylistLogo from "@/assets/image_1753303963933.png";
+import nyPostLogo from "@/assets/image_1753303981878.png";
+import Image from "next/image";
 
 export default function Home() {
   const handleExploreDemo = async () => {
@@ -49,11 +41,14 @@ export default function Home() {
       <nav className="bg-white border-b sticky top-0 z-50">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center p-1">
-              <img
+            <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center p-1 relative">
+              <Image
                 src={honeycombLogo}
                 alt="Pollen"
-                className="w-full h-full object-contain"
+                className="object-contain"
+                height={24}
+                width={24}
+                priority
               />
             </div>
             <span
@@ -159,7 +154,7 @@ export default function Home() {
                       className="bg-white rounded-b-md overflow-hidden shadow-inner"
                       style={{ aspectRatio: "16/10" }}
                     >
-                      <img
+                      <Image
                         src={platformScreenshot}
                         alt="Pollen Platform Demo"
                         className="w-full h-full object-cover object-top"
@@ -195,34 +190,46 @@ export default function Home() {
               As Featured In
             </p>
             <div className="flex flex-nowrap justify-center items-center gap-6 md:gap-8 opacity-100 overflow-x-auto">
-              <img
+              <Image
                 src={bbcLogo}
                 alt="BBC"
+                width={100}
                 className="h-8 object-contain flex-shrink-0"
               />
-              <img
+              <Image
                 src={timesLogo}
                 alt="The Times"
+                width={100}
                 className="h-20 object-contain flex-shrink-0"
               />
-              <img
+              <Image
+                src={honeycombLogo}
+                alt="Honeycomb"
+                width={100}
+                className="h-20 object-contain flex-shrink-0"
+              />
+              <Image
                 src={fastCompanyLogo}
                 alt="FastCompany"
+                width={100}
                 className="h-8 object-contain flex-shrink-0"
               />
-              <img
+              <Image
                 src={businessInsiderLogo}
                 alt="Business Insider"
+                width={100}
                 className="h-8 object-contain flex-shrink-0"
               />
-              <img
+              <Image
                 src={stylistLogo}
                 alt="Stylist"
+                width={100}
                 className="h-8 object-contain flex-shrink-0"
               />
-              <img
+              <Image
                 src={nyPostLogo}
                 alt="New York Post"
+                width={100}
                 className="h-8 object-contain flex-shrink-0"
               />
             </div>
@@ -519,9 +526,10 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-center md:relative">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
               <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center p-1">
-                <img
+                <Image
                   src={honeycombLogo}
                   alt="Pollen"
+                  width={100}
                   className="w-full h-full object-contain"
                 />
               </div>

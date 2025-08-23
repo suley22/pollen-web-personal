@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { createClient } from "@/utils/supabase/client";
 
 import {
   Users,
@@ -23,15 +24,68 @@ import {
 } from "lucide-react";
 
 export default function Home() {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress((prev) => (prev < 100 ? prev + 10 : 100));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Error al cerrar sesión:", error);
+      alert("Hubo un problema al cerrar sesión. Por favor intenta de nuevo.");
+      setIsLoggingOut(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white home-page">
+      {/* Navbar */}
+      <nav className="bg-white border-b shadow-sm">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
+                <span className="text-pink-600 font-bold">P</span>
+              </div>
+              <span className="ml-2 text-xl font-bold font-sora">Pollen</span>
+            </div>
+            <Button
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              variant="outline"
+              className="border-gray-300"
+            >
+              {isLoggingOut ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mr-2"></span>
+                  Cerrando sesión...
+                </>
+              ) : (
+                "Cerrar sesión"
+              )}
+            </Button>
+          </div>
+        </div>
+      </nav>
+
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-1 pb-3">
         {/* Welcome Section */}
-        <div className="mb-6 -mt-2">
+        <div className="mb-6 mt-10">
           <h1 className="text-7xl lg:text-8xl font-sora font-bold text-gray-900 mb-2">
             Welcome back, querido! 👋
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-sm font-sora text-gray-600">
             Let's find you a job you love.
           </p>
         </div>

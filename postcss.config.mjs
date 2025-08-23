@@ -1,9 +1,7 @@
 // Configuración para Tailwind CSS v3
-module.exports = {
+export default {
   plugins: {
     tailwindcss: {},
     autoprefixer: {},
   },
 };
-
-export default config;

@@ -12,28 +12,65 @@ import businessInsiderLogo from "@/assets/image_1753303943999.png";
 import stylistLogo from "@/assets/image_1753303963933.png";
 import nyPostLogo from "@/assets/image_1753303981878.png";
 import Image from "next/image";
+import { createClient } from "@/utils/supabase/client";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  const handleExploreDemo = async () => {
-    try {
-      // Call the demo login API endpoint for job seeker
-      const response = await fetch("/api/demo-login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ role: "job_seeker" }),
-      });
+  const [isLoading, setIsLoading] = useState(true);
 
-      if (response.ok) {
-        window.location.href = "/home";
+  // Verificar autenticación al cargar la página
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase.auth.getSession();
+
+        if (!error && data.session) {
+          // Si hay una sesión activa, redirigir al dashboard
+          window.location.href = "/dashboard";
+        }
+      } catch (error) {
+        console.error("Error al verificar autenticación:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  const handleLogin = async () => {
+    try {
+      // Crear cliente de Supabase para el navegador
+      const supabase = createClient();
+
+      // Verificar si hay una sesión activa
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error || !data.session) {
+        // Si no hay sesión o hay un error, redirigir a login
+        window.location.href = "/login";
       } else {
-        console.error("Demo login failed");
+        // Si hay una sesión activa, redirigir al dashboard
+        window.location.href = "/dashboard";
       }
     } catch (error) {
-      console.error("Error during demo login:", error);
+      console.error("Error al verificar la sesión:", error);
+      window.location.href = "/login";
     }
   };
+
+  // Muestra un estado de carga mientras verifica la autenticación
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-pink-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600 font-medium">Verificando sesión...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -66,11 +103,11 @@ export default function Home() {
               Employers? <span className="text-pink-600">Learn More →</span>
             </a>
             <Button
-              onClick={handleExploreDemo}
+              onClick={handleLogin}
               className="bg-pink-600 hover:bg-pink-700 text-white"
               style={{ fontFamily: "Sora" }}
             >
-              Explore Demo
+              Login
             </Button>
           </div>
         </div>
@@ -97,7 +134,7 @@ export default function Home() {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button
-              onClick={handleExploreDemo}
+              onClick={handleLogin}
               size="lg"
               className="bg-pink-600 hover:bg-pink-700 text-white px-12 py-4 text-lg"
               style={{ fontFamily: "Sora" }}
@@ -478,7 +515,7 @@ export default function Home() {
           </p>
 
           <Button
-            onClick={handleExploreDemo}
+            onClick={handleLogin}
             size="lg"
             className="bg-white text-pink-600 hover:bg-gray-100 px-12 py-4 text-lg"
             style={{ fontFamily: "Sora" }}

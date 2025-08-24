@@ -294,7 +294,10 @@ export default function CompaniesPage() {
         ))}
       </div>
       {/* Call to Action */}
-      <Card className="mt-16 border" style={{ backgroundColor: "#FFFCE5" }}>
+      <Card
+        className="mt-16 border mb-4"
+        style={{ backgroundColor: "#FFFCE5" }}
+      >
         <CardContent className="p-8 text-center">
           <h3
             className="text-2xl font-bold mb-4"

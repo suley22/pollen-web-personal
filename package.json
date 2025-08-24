@@ -6,7 +6,7 @@
     "dev": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint ./src"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.4",

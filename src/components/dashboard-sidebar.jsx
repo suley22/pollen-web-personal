@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function DashboardSidebar({ onLogout }) {
+export default function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);

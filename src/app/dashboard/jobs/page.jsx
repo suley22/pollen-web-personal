@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   ExternalLink,
   CheckCircle,
@@ -27,16 +27,16 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default function JobsPage() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [,setViewMode] = useState("all");
   const [industryFilter, setIndustryFilter] = useState(["all"]);
   const [locationFilter, setLocationFilter] = useState(["all"]);
   const [contractFilter, setContractFilter] = useState(["all"]);
   const [jobTypeFilter, setJobTypeFilter] = useState("all"); // all, pollen, external
-  const [viewMode, setViewMode] = useState("all");
   const [showAllInPersonalized, setShowAllInPersonalized] = useState(false);
-  const [selectedJob, setSelectedJob] = useState(null);
-  const [showJobDetails, setShowJobDetails] = useState(false);
 
-  const pathname = usePathname();
+  const [,setSelectedJob] = useState(null);
+  const [, setShowJobDetails] = useState(false);
+
   const router = useRouter();
 
   const getJobContractTypes = (job) => {
@@ -106,8 +106,6 @@ export default function JobsPage() {
     },
   ];
 
-  const loadingHidden = false;
-
   // Mock data for external jobs
   const externalJobs = [
     {
@@ -133,12 +131,9 @@ export default function JobsPage() {
   ];
 
   const allJobs = [...externalJobs, ...hiddenJobs];
-  const loadingExternal = false;
 
   // Mock data for saved jobs
   const savedJobs = [{ id: 1 }, { id: 3 }];
-
-  const isLoading = loadingHidden || loadingExternal;
 
   // Helper function for external company websites
   const getCompanyWebsiteUrl = (company) => {

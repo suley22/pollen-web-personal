@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 
 import Image from "next/image";
 
-export function LoginForm({ className, loginAction, signupAction, ...props }) {
+export function LoginForm({ className, loginAction, ...props }) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">

@@ -65,7 +65,7 @@ export default function Home() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-pink-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-pink-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-600 font-medium">Verificando sesión...</p>
         </div>
       </div>
@@ -160,7 +160,7 @@ export default function Home() {
           <div className="max-w-4xl mx-auto px-4 mb-8">
             <div className="relative perspective-1000">
               {/* Laptop Shadow */}
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/5 to-black/20 blur-2xl transform translate-y-8 scale-110"></div>
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/5 to-black/20 blur-2xl transform translate-y-8 scale-110" />
 
               {/* Main Laptop Container */}
               <div className="relative">
@@ -169,21 +169,21 @@ export default function Home() {
                   {/* Screen Bezel */}
                   <div className="bg-black rounded-lg p-4 relative overflow-hidden">
                     {/* Subtle Screen Reflection */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none" />
 
                     {/* Browser Chrome */}
                     <div className="flex items-center justify-between mb-3 bg-gray-100 rounded-t-md px-4 py-2">
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                        <div className="w-3 h-3 bg-red-500 rounded-full" />
+                        <div className="w-3 h-3 bg-yellow-500 rounded-full" />
+                        <div className="w-3 h-3 bg-green-500 rounded-full" />
                       </div>
                       <div className="flex-1 mx-4">
                         <div className="bg-white rounded-md px-3 py-1 text-xs text-gray-600 border border-gray-200">
                           pollen.careers
                         </div>
                       </div>
-                      <div className="w-16"></div>
+                      <div className="w-16" />
                     </div>
 
                     {/* Screen Content */}
@@ -203,17 +203,17 @@ export default function Home() {
                 {/* Laptop Base */}
                 <div className="bg-gradient-to-b from-gray-700 to-gray-800 h-6 rounded-b-2xl border-x border-b border-gray-600 relative">
                   {/* Keyboard Area */}
-                  <div className="absolute inset-x-2 top-1 bottom-2 bg-gray-800 rounded-lg"></div>
+                  <div className="absolute inset-x-2 top-1 bottom-2 bg-gray-800 rounded-lg" />
                   {/* Trackpad */}
-                  <div className="absolute left-1/2 top-2 transform -translate-x-1/2 w-16 h-3 bg-gray-700 rounded border border-gray-600"></div>
+                  <div className="absolute left-1/2 top-2 transform -translate-x-1/2 w-16 h-3 bg-gray-700 rounded border border-gray-600" />
                 </div>
 
                 {/* Laptop Stand/Hinge */}
-                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-20 h-3 bg-gradient-to-b from-gray-600 to-gray-700 rounded-full shadow-md"></div>
+                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-20 h-3 bg-gradient-to-b from-gray-600 to-gray-700 rounded-full shadow-md" />
               </div>
 
               {/* Desktop Surface Reflection */}
-              <div className="absolute inset-x-0 -bottom-8 h-32 bg-gradient-to-t from-gray-100/30 to-transparent blur-sm"></div>
+              <div className="absolute inset-x-0 -bottom-8 h-32 bg-gradient-to-t from-gray-100/30 to-transparent blur-sm" />
             </div>
           </div>
         </div>

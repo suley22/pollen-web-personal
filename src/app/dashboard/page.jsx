@@ -18,7 +18,7 @@ import {
 
 export default function Home() {
   const router = useRouter();
-  const [progress, setProgress] = useState(0);
+  const [, setProgress] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -65,7 +65,7 @@ export default function Home() {
             >
               {isLoggingOut ? (
                 <>
-                  <span className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mr-2"></span>
+                  <span className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mr-2" />
                   Cerrando sesión...
                 </>
               ) : (

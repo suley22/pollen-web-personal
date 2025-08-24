@@ -76,7 +76,7 @@ export default function PlatformFeedbackDialog({ open, onOpenChange }) {
   });
 
   const submitFeedbackMutation = useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async () => {
       return {};
     },
     onSuccess: () => {

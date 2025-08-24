@@ -13,37 +13,38 @@ import {
   User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useLocation } from "wouter";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function DashboardSidebar({ onLogout }) {
-  const [location, setLocation] = useLocation();
+  const pathname = usePathname();
+  const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const navigationItems = [
     {
       icon: Home,
       label: "Home",
-      path: "/home",
-      isActive: location === "/home" || location === "/",
+      path: "/dashboard",
+      isActive: pathname === "/dashboard",
     },
     {
       icon: Briefcase,
       label: "Jobs",
-      path: "/jobs",
-      isActive: location === "/jobs",
+      path: "/dashboard/jobs",
+      isActive: pathname === "/dashboard/jobs",
     },
     {
       icon: Building2,
       label: "Companies",
-      path: "/companies",
-      isActive: location === "/companies",
+      path: "/dashboard/companies",
+      isActive: pathname === "/dashboard/companies",
     },
     {
       icon: Users,
       label: "Community",
-      path: "/community",
-      isActive: location === "/community",
+      path: "/dashboard/community",
+      isActive: pathname === "/dashboard/community",
     },
   ];
 
@@ -100,7 +101,7 @@ export default function DashboardSidebar({ onLogout }) {
                       ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
                       : "text-gray-700 hover:bg-gray-100"
                   }`}
-                  onClick={() => setLocation(item.path)}
+                  onClick={() => router.push(item.path)}
                   title={isCollapsed ? item.label : undefined}
                 >
                   <Icon className="w-5 h-5" />
@@ -129,52 +130,60 @@ export default function DashboardSidebar({ onLogout }) {
           )}
           <div className="space-y-1">
             <Button
-              variant={location === "/profile" ? "default" : "ghost"}
+              variant={pathname === "/dashboard/profile" ? "default" : "ghost"}
               className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
-                location === "/profile"
+                pathname === "/dashboard/profile"
                   ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
-              onClick={() => setLocation("/profile")}
+              onClick={() => router.push("/dashboard/profile")}
               title={isCollapsed ? "My Profile" : undefined}
             >
               <User className="w-5 h-5" />
               {!isCollapsed && <span>My Profile</span>}
             </Button>
             <Button
-              variant={location === "/saved-items" ? "default" : "ghost"}
+              variant={
+                pathname === "/dashboard/saved-items" ? "default" : "ghost"
+              }
               className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
-                location === "/saved-items"
+                pathname === "/dashboard/saved-items"
                   ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
-              onClick={() => setLocation("/saved-items")}
+              onClick={() => router.push("/dashboard/saved-items")}
               title={isCollapsed ? "Saved Items" : undefined}
             >
               <Heart className="w-5 h-5" />
               {!isCollapsed && <span>Saved Items</span>}
             </Button>
             <Button
-              variant={location === "/applications" ? "default" : "ghost"}
+              variant={
+                pathname === "/dashboard/applications" ? "default" : "ghost"
+              }
               className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
-                location === "/applications"
+                pathname === "/dashboard/applications"
                   ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
-              onClick={() => setLocation("/applications")}
+              onClick={() => router.push("/dashboard/applications")}
               title={isCollapsed ? "My Applications" : undefined}
             >
               <FileText className="w-5 h-5" />
               {!isCollapsed && <span>My Applications</span>}
             </Button>
             <Button
-              variant={location === "/interview-schedule" ? "default" : "ghost"}
+              variant={
+                pathname === "/dashboard/interview-schedule"
+                  ? "default"
+                  : "ghost"
+              }
               className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
-                location === "/interview-schedule"
+                pathname === "/dashboard/interview-schedule"
                   ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
-              onClick={() => setLocation("/interview-schedule")}
+              onClick={() => router.push("/dashboard/interview-schedule")}
               title={isCollapsed ? "Interview Schedule" : undefined}
             >
               <Calendar className="w-5 h-5" />

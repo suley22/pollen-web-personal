@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import CircularProgress from "@/components/ui/circular-progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,6 +24,7 @@ import {
 } from "lucide-react";
 
 export default function Home() {
+  const router = useRouter();
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -39,7 +41,8 @@ export default function Home() {
       setIsLoggingOut(true);
       const supabase = createClient();
       await supabase.auth.signOut();
-      window.location.href = "/login";
+      // Use router navigation instead of direct window.location
+      router.push("/login");
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
       alert("Hubo un problema al cerrar sesión. Por favor intenta de nuevo.");

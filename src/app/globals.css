@@ -1,10 +1,9 @@
+/* Importamos archivos CSS adicionales después de Tailwind */
+@import "../styles/pollen-style.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Importamos archivos CSS adicionales después de Tailwind */
-@import "../styles/print.css";
-@import "../styles/pollen-style.css";
 
 /* Enhanced 3D perspective utilities for laptop mockup */
 .perspective-1000 {
@@ -823,21 +822,6 @@ h3 {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--muted-foreground) / 0.5);
-}
-
-/* PDF Mode styling - hide sidebar and UI elements for clean PDF screenshots */
-body.pdf-mode .hidden.lg\\:flex.flex-col.bg-white.border-r,
-body.pdf-mode .fixed.inset-y-0.left-0.z-30,
-body.pdf-mode .fixed.inset-y-0.left-0.z-50,
-body.pdf-mode .fixed.top-4.left-4.z-50 {
-  display: none !important;
-  visibility: hidden !important;
-}
-
-/* Force main content to full width in PDF mode only */
-body.pdf-mode main.lg\\:pl-64 {
-  padding-left: 0 !important;
-  margin-left: 0 !important;
 }
 
 /* Print-specific optimizations */

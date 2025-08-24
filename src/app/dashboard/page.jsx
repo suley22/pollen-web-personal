@@ -12,14 +12,7 @@ import {
   Calendar,
   Star,
   Clock,
-  MapPin,
-  Briefcase,
   ChevronRight,
-  Bell,
-  Heart,
-  ExternalLink,
-  Building2,
-  Banknote,
   Trophy,
 } from "lucide-react";
 
@@ -60,9 +53,26 @@ export default function Home() {
           <h1 className="text-7xl lg:text-8xl font-sora font-bold text-gray-900 mb-2">
             Welcome back, querido! 👋
           </h1>
-          <p className="text-sm font-sora text-gray-600">
-            Let's find you a job you love.
-          </p>
+          <div className="flex flex-row justify-between ">
+            <p className="text-sm font-sora text-gray-600 inline-block align-middle">
+              Let's find you a job you love.
+            </p>
+            <Button
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              variant="outline"
+              className="border-gray-300"
+            >
+              {isLoggingOut ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mr-2"></span>
+                  Cerrando sesión...
+                </>
+              ) : (
+                "Cerrar sesión"
+              )}
+            </Button>
+          </div>
         </div>
 
         {/* How to Use Pollen Video Section */}

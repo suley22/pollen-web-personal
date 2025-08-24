@@ -1,6 +1,41 @@
-import { ExternalLink, CheckCircle, Shield } from "lucide-react";
+"use client";
+
+import { ExternalLink, CheckCircle, Shield, Search } from "lucide-react";
+
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function JobsPage() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [industryFilter, setIndustryFilter] = useState(["all"]);
+  const [locationFilter, setLocationFilter] = useState(["all"]);
+  const [contractFilter, setContractFilter] = useState(["all"]);
+  const [jobTypeFilter, setJobTypeFilter] = useState("all"); // all, pollen, external
+
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const hiddenJobs = [];
+  const loadingHidden = false;
+  const externalJobs = [];
+  const loadingExternal = false;
+
+  const allJobs = [...hiddenJobs, ...externalJobs];
+
+  const isLoading = loadingHidden || loadingExternal;
+
+  const industries = [];
+  const locations = [];
+  const contractTypes = [];
+
   return (
     <div>
       <div className="container mx-auto p-4 space-y-4 jobs-page">
@@ -66,6 +101,228 @@ export default function JobsPage() {
                   we don't endorse the companies or positions listed, so please
                   make sure to research each opportunity before applying.
                 </p>
+              </div>
+            </div>
+
+            {/* Search and Filters */}
+          </div>
+          <div className="bg-white p-4 rounded-lg shadow-sm border space-y-3">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search jobs, companies, or industries..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <div className="flex gap-4">
+                <Select value={jobTypeFilter} onValueChange={setJobTypeFilter}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Job Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Jobs</SelectItem>
+                    <SelectItem value="pollen">Pollen Approved</SelectItem>
+                    <SelectItem value="external">External</SelectItem>
+                  </SelectContent>
+                </Select>
+                <div className="w-[180px]">
+                  <Select
+                    value={
+                      industryFilter.includes("all")
+                        ? "all"
+                        : industryFilter.length === 1
+                          ? industryFilter[0]
+                          : "multiple"
+                    }
+                    onValueChange={(value) => {
+                      if (value === "all") {
+                        setIndustryFilter(["all"]);
+                      } else {
+                        if (industryFilter.includes("all")) {
+                          setIndustryFilter([value]);
+                        } else {
+                          if (industryFilter.includes(value)) {
+                            const newFilter = industryFilter.filter(
+                              (i) => i !== value,
+                            );
+                            setIndustryFilter(
+                              newFilter.length === 0 ? ["all"] : newFilter,
+                            );
+                          } else {
+                            setIndustryFilter([
+                              ...industryFilter.filter((i) => i !== "all"),
+                              value,
+                            ]);
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue>
+                        {industryFilter.includes("all")
+                          ? "All Industries"
+                          : industryFilter.length === 1
+                            ? industryFilter[0]
+                            : `${industryFilter.length} selected`}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Industries</SelectItem>
+                      {industries
+                        .filter((industry) => industry && industry.trim())
+                        .map((industry) => (
+                          <SelectItem key={industry} value={industry}>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="checkbox"
+                                checked={
+                                  industryFilter.includes(industry) &&
+                                  !industryFilter.includes("all")
+                                }
+                                readOnly
+                                className="w-3 h-3"
+                              />
+                              {industry}
+                            </div>
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="w-[180px]">
+                  <Select
+                    value={
+                      locationFilter.includes("all")
+                        ? "all"
+                        : locationFilter.length === 1
+                          ? locationFilter[0]
+                          : "multiple"
+                    }
+                    onValueChange={(value) => {
+                      if (value === "all") {
+                        setLocationFilter(["all"]);
+                      } else {
+                        if (locationFilter.includes("all")) {
+                          setLocationFilter([value]);
+                        } else {
+                          if (locationFilter.includes(value)) {
+                            const newFilter = locationFilter.filter(
+                              (l) => l !== value,
+                            );
+                            setLocationFilter(
+                              newFilter.length === 0 ? ["all"] : newFilter,
+                            );
+                          } else {
+                            setLocationFilter([
+                              ...locationFilter.filter((l) => l !== "all"),
+                              value,
+                            ]);
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue>
+                        {locationFilter.includes("all")
+                          ? "All Locations"
+                          : locationFilter.length === 1
+                            ? locationFilter[0]
+                            : `${locationFilter.length} selected`}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Locations</SelectItem>
+                      {locations
+                        .filter((location) => location && location.trim())
+                        .map((location) => (
+                          <SelectItem key={location} value={location}>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="checkbox"
+                                checked={
+                                  locationFilter.includes(location) &&
+                                  !locationFilter.includes("all")
+                                }
+                                readOnly
+                                className="w-3 h-3"
+                              />
+                              {location}
+                            </div>
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="w-[180px]">
+                  <Select
+                    value={
+                      contractFilter.includes("all")
+                        ? "all"
+                        : contractFilter.length === 1
+                          ? contractFilter[0]
+                          : "multiple"
+                    }
+                    onValueChange={(value) => {
+                      if (value === "all") {
+                        setContractFilter(["all"]);
+                      } else {
+                        if (contractFilter.includes("all")) {
+                          setContractFilter([value]);
+                        } else {
+                          if (contractFilter.includes(value)) {
+                            const newFilter = contractFilter.filter(
+                              (t) => t !== value,
+                            );
+                            setContractFilter(
+                              newFilter.length === 0 ? ["all"] : newFilter,
+                            );
+                          } else {
+                            setContractFilter([
+                              ...contractFilter.filter((t) => t !== "all"),
+                              value,
+                            ]);
+                          }
+                        }
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue>
+                        {contractFilter.includes("all")
+                          ? "All Types"
+                          : contractFilter.length === 1
+                            ? contractFilter[0]
+                            : `${contractFilter.length} selected`}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Types</SelectItem>
+                      {contractTypes
+                        .filter((type) => type && type.trim())
+                        .map((type) => (
+                          <SelectItem key={type} value={type}>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="checkbox"
+                                checked={
+                                  contractFilter.includes(type) &&
+                                  !contractFilter.includes("all")
+                                }
+                                readOnly
+                                className="w-3 h-3"
+                              />
+                              {type}
+                            </div>
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
           </div>

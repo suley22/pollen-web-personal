@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import CircularProgress from "@/components/ui/circular-progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/utils/supabase/client";
 
@@ -127,12 +127,9 @@ export default function Home() {
 
         {/* Complete Profile Banner */}
         <Card className="mb-8" style={{ backgroundColor: "#fff9e6" }}>
-          <CardContent className="p-8">
+          <CardContent className="p-3 px-8">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Star className="w-6 h-6 text-gray-700" />
-                </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900 mb-1">
                     Complete Your Profile to Unlock Personalised Recommendations
@@ -141,7 +138,7 @@ export default function Home() {
                     Once complete, you'll be able to apply for Pollen approved,
                     CV-less jobs, where you receive guaranteed feedback
                   </p>
-                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
                     <span className="flex items-center gap-1">
                       <Clock className="w-4 h-4" />
                       Takes 10-15 minutes
@@ -151,24 +148,34 @@ export default function Home() {
                       Required for job applications
                     </span>
                   </div>
+
+                  <Button
+                    onClick={() =>
+                      (window.location.href = "/profile-checkpoints")
+                    }
+                    variant="pollen"
+                    size="sm"
+                    className="w-full sm:w-auto whitespace-nowrap font-sora"
+                  >
+                    Complete Profile
+                    <ChevronRight className="w-4 h-4 ml-2" />
+                  </Button>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-700">42%</div>
-                  <div className="text-xs text-gray-600">Complete</div>
+              <div className="flex flex-col items-end gap-4">
+                <div className="h-full aspect-square w-20 sm:w-24 lg:w-28">
+                  {" "}
+                  {/* altura del contenedor */}
+                  <CircularProgress
+                    value={20}
+                    fluid // <= clave
+                    size={96} // fallback por si el padre no tuviera alto
+                    strokeWidth={10}
+                    progressClassName="text-[#E2007A]"
+                    trackClassName="text-pink-100"
+                    textClassName="text-gray-800"
+                  />
                 </div>
-                <Button
-                  onClick={() =>
-                    (window.location.href = "/profile-checkpoints")
-                  }
-                  variant="pollen"
-                  size="sm"
-                  className="whitespace-nowrap"
-                >
-                  Complete Profile
-                  <ChevronRight className="w-4 h-4 ml-2" />
-                </Button>
               </div>
             </div>
           </CardContent>

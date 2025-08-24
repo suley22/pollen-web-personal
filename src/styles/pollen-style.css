@@ -56,7 +56,7 @@ h5 {
 .btn-primary {
   background-color: var(--pollen-yellow);
   color: var(--pollen-pink);
-  font-family: var(--font-sora), sans-serif;
+  font-family: "Sora", sans-serif;
   font-weight: 600;
   border: none;
   padding: 12px 24px;

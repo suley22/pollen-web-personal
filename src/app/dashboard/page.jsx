@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import CircularProgress from "@/components/ui/circular-progress";
@@ -127,7 +126,7 @@ export default function Home() {
 
         {/* Complete Profile Banner */}
         <Card className="mb-8" style={{ backgroundColor: "#fff9e6" }}>
-          <CardContent className="p-1 px-8">
+          <CardContent className="py-6 px-8">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-start gap-4">
                 <div className="flex-1">
@@ -184,7 +183,7 @@ export default function Home() {
         {/* Featured Jobs - Full Width */}
         <Card className="mb-4">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 font-sora text-lg">
+            <CardTitle className="flex items-center gap-2 font-sora text-lg p-3">
               <Star className="h-5 w-5 text-gray-700" />
               This Week's Featured Jobs
             </CardTitle>
@@ -193,13 +192,13 @@ export default function Home() {
 
         {/* Weekly Community Drop-in - Full Width Banner */}
         <Card style={{ backgroundColor: "#fff9e6" }} className="mb-4">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 font-sora text-lg">
+          <CardHeader className="">
+            <CardTitle className="flex items-center font-sora text-lg p-3">
               <Users className="h-5 w-5 text-gray-700" />
               Weekly Community Drop-in
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-0">
+          <CardContent className="p-3">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex-1">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-sm text-gray-700 mb-3">

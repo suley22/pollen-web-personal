@@ -6,22 +6,22 @@ export default [
   js.configs.recommended,
   {
     files: ["**/*.{js,mjs,cjs,jsx}"],
-    plugins: { 
-      react: pluginReact 
+    plugins: {
+      react: pluginReact,
     },
-    languageOptions: { 
-      globals: { 
-        ...globals.browser, 
+    languageOptions: {
+      globals: {
+        ...globals.browser,
         ...globals.node,
-        React: "readonly"
+        React: "readonly",
       },
       parserOptions: {
         ecmaVersion: "latest",
         sourceType: "module",
         ecmaFeatures: {
-          jsx: true
-        }
-      }
+          jsx: true,
+        },
+      },
     },
     rules: {
       // Configuración de React
@@ -31,7 +31,7 @@ export default [
       "react/no-unescaped-entities": "off", // Permite apóstrofes y comillas
       "react/jsx-uses-react": "off", // No necesario en React 17+
       "react/jsx-uses-vars": "error",
-      
+
       // Reglas recomendadas de React (equivalente a plugin:react/recommended)
       "react/jsx-key": "error",
       "react/jsx-no-duplicate-props": "error",
@@ -46,7 +46,6 @@ export default [
       "react/no-is-mounted": "error",
       "react/no-render-return-value": "error",
       "react/no-string-refs": "error",
-      "react/no-unescaped-entities": "off",
       "react/no-unknown-property": "error",
       "react/no-unsafe": "warn",
       "react/require-render-return": "error",
@@ -54,12 +53,12 @@ export default [
       "react/sort-comp": "off",
       "react/sort-prop-types": "off",
       "react/style-prop-object": "error",
-      "react/void-dom-elements-no-children": "error"
+      "react/void-dom-elements-no-children": "error",
     },
     settings: {
       react: {
-        version: "detect"
-      }
-    }
-  }
+        version: "detect",
+      },
+    },
+  },
 ];

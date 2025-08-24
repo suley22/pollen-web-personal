@@ -79,7 +79,6 @@ export default function Home() {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center p-1 relative">
-              
               <Image
                 src={honeycombLogo}
                 alt="Pollen"

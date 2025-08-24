@@ -50,33 +50,6 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white home-page">
       {/* Navbar */}
-      <nav className="bg-white border-b shadow-sm">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center">
-                <span className="text-pink-600 font-bold">P</span>
-              </div>
-              <span className="ml-2 text-xl font-bold font-sora">Pollen</span>
-            </div>
-            <Button
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              variant="outline"
-              className="border-gray-300"
-            >
-              {isLoggingOut ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mr-2"></span>
-                  Cerrando sesión...
-                </>
-              ) : (
-                "Cerrar sesión"
-              )}
-            </Button>
-          </div>
-        </div>
-      </nav>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-1 pb-3">
         {/* Welcome Section */}

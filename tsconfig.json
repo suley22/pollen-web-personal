@@ -28,7 +28,8 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    "src/app/landing.jsx"
+    "src/app/landing.jsx",
+    "src/components/job-seeker-sidebar.jsx"
   ],
   "exclude": ["node_modules"]
 }

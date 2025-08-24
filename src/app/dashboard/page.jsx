@@ -127,7 +127,7 @@ export default function Home() {
 
         {/* Complete Profile Banner */}
         <Card className="mb-8" style={{ backgroundColor: "#fff9e6" }}>
-          <CardContent className="p-3 px-8">
+          <CardContent className="p-1 px-8">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-start gap-4">
                 <div className="flex-1">

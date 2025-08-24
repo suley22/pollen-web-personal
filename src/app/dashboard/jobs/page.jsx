@@ -1,10 +1,21 @@
 "use client";
 
-import { ExternalLink, CheckCircle, Shield, Search } from "lucide-react";
-
-import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  ExternalLink,
+  CheckCircle,
+  Shield,
+  Search,
+  Star,
+  List,
+  MapPin,
+  Heart,
+  Eye,
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -19,22 +30,148 @@ export default function JobsPage() {
   const [locationFilter, setLocationFilter] = useState(["all"]);
   const [contractFilter, setContractFilter] = useState(["all"]);
   const [jobTypeFilter, setJobTypeFilter] = useState("all"); // all, pollen, external
+  const [viewMode, setViewMode] = useState("all");
+  const [showAllInPersonalized, setShowAllInPersonalized] = useState(false);
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [showJobDetails, setShowJobDetails] = useState(false);
 
   const pathname = usePathname();
   const router = useRouter();
 
-  const hiddenJobs = [];
+  // Mock data for industries
+  const industries = [
+    "Technology",
+    "Healthcare",
+    "Finance",
+    "Education",
+    "Marketing",
+    "Sales",
+    "Design",
+    "Engineering",
+  ];
+
+  // Mock data for locations
+  const locations = [
+    "London",
+    "Manchester",
+    "Birmingham",
+    "Edinburgh",
+    "Remote",
+    "Hybrid",
+    "Glasgow",
+    "Bristol",
+  ];
+
+  // Mock data for contract types
+  const contractTypes = [
+    "Full-time",
+    "Part-time",
+    "Contract",
+    "Temporary",
+    "Internship",
+    "Freelance",
+  ];
+
+  // Mock data for hidden (Pollen) jobs
+  const hiddenJobs = [
+    {
+      id: 1,
+      role: "Junior Software Developer",
+      company: "Tech Solutions Ltd",
+      location: "London",
+      contractType: "Full-time",
+      salary: "£35,000",
+      pollenApproved: true,
+      rating: 4.5,
+    },
+    {
+      id: 2,
+      role: "Marketing Assistant",
+      company: "Digital Growth",
+      location: "Manchester",
+      contractType: "Full-time",
+      salary: "£28,000",
+      pollenApproved: true,
+      rating: 4.2,
+    },
+  ];
+
   const loadingHidden = false;
-  const externalJobs = [];
+
+  // Mock data for external jobs
+  const externalJobs = [
+    {
+      id: 3,
+      role: "Junior Web Designer",
+      company: "Creative Agency",
+      location: "Remote",
+      contractType: "Contract",
+      salary: "£25,000",
+      pollenApproved: false,
+    },
+    {
+      id: 4,
+      role: "Data Analyst Intern",
+      company: "Data Insights Co",
+      location: "Birmingham",
+      contractType: "Internship",
+      salary: "£20,000",
+      pollenApproved: false,
+    },
+  ];
+
+  const allJobs = [...externalJobs, ...hiddenJobs];
   const loadingExternal = false;
 
-  const allJobs = [...hiddenJobs, ...externalJobs];
+  // Mock data for saved jobs
+  const savedJobs = [{ id: 1 }, { id: 3 }];
 
   const isLoading = loadingHidden || loadingExternal;
 
-  const industries = [];
-  const locations = [];
-  const contractTypes = [];
+  // Helper function for external company websites
+  const getCompanyWebsiteUrl = (company) => {
+    return `https://www.${company.toLowerCase().replace(/\s+/g, "")}.com`;
+  };
+
+  // Sort jobs based on filters
+  const sortedJobs = [...hiddenJobs, ...externalJobs].filter((job) => {
+    const matchesSearch =
+      job.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.company.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesJobType =
+      jobTypeFilter === "all" ||
+      (jobTypeFilter === "pollen" && job.pollenApproved) ||
+      (jobTypeFilter === "external" && !job.pollenApproved);
+    const matchesIndustry = industryFilter.includes("all");
+    const matchesLocation =
+      locationFilter.includes("all") || locationFilter.includes(job.location);
+    const matchesContract =
+      contractFilter.includes("all") ||
+      contractFilter.includes(job.contractType);
+
+    return (
+      matchesSearch &&
+      matchesJobType &&
+      matchesIndustry &&
+      matchesLocation &&
+      matchesContract
+    );
+  });
+
+  // Mock mutations
+  const saveJobMutation = {
+    mutate: (id) => console.log(`Saving job ${id}`),
+    isPending: false,
+  };
+
+  // Función para manejar la acción del botón de aplicar
+  const handleJobAction = (job) => {
+    if (job.pollenApproved) {
+      router.push(`/jobs/${job.id}`);
+    } else {
+      window.open(getCompanyWebsiteUrl(job.company), "_blank");
+    }
+  };
 
   return (
     <div>
@@ -103,9 +240,8 @@ export default function JobsPage() {
                 </p>
               </div>
             </div>
-
-            {/* Search and Filters */}
           </div>
+          {/* Search and Filters */}
           <div className="bg-white p-4 rounded-lg shadow-sm border space-y-3">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
@@ -325,6 +461,194 @@ export default function JobsPage() {
                 </div>
               </div>
             </div>
+          </div>
+          {/* Results Summary and View Toggle */}
+          <div className="flex items-center justify-between py-4 px-2">
+            <p className="text-sm text-gray-600">
+              Showing {sortedJobs.length} of {allJobs.length} jobs
+            </p>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 text-xs text-gray-500">
+                <div className="flex items-center gap-1">
+                  <Shield className="w-3 h-3 text-[#E2007A]" />
+                  <span>Pollen Approved</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <ExternalLink className="w-3 h-3 text-gray-400" />
+                  <span>External Application</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 border rounded-md">
+                <Button
+                  variant={"default"}
+                  size="sm"
+                  onClick={() => {
+                    setViewMode("personalised");
+                    setShowAllInPersonalized(false);
+                  }}
+                  className="h-8 px-3 text-xs"
+                >
+                  <Star className="w-4 h-4 mr-1" />
+                  For You
+                </Button>
+                <Button
+                  variant={"ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("all")}
+                  className="h-8 px-3 text-xs"
+                >
+                  <List className="w-4 h-4 mr-1" />
+                  All Jobs
+                </Button>
+              </div>
+            </div>
+          </div>
+          {/* Jobs Display */}
+
+          <div className="bg-white rounded-lg border overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="text-left p-4 font-medium text-gray-900 w-[280px]">
+                    Role
+                  </th>
+                  <th className="text-left p-4 font-medium text-gray-900 w-[180px]">
+                    Company
+                  </th>
+                  <th className="text-left p-4 font-medium text-gray-900 w-[140px]">
+                    Location
+                  </th>
+                  <th className="text-left p-4 font-medium text-gray-900 w-[100px]">
+                    Type
+                  </th>
+                  <th className="text-left p-4 font-medium text-gray-900 w-[120px]">
+                    Salary
+                  </th>
+                  <th className="text-left p-4 font-medium text-gray-900 w-[200px]">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedJobs.map((job) => {
+                  const isJobSaved =
+                    Array.isArray(savedJobs) &&
+                    savedJobs.some(
+                      (saved) => String(saved.id) === String(job.id),
+                    );
+                  return (
+                    <tr key={job.id} className="border-b hover:bg-gray-50">
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          {job.pollenApproved ? (
+                            <Shield className="w-4 h-4 text-[#E2007A] flex-shrink-0" />
+                          ) : (
+                            <ExternalLink className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                          )}
+                          <div>
+                            <h3 className="font-medium text-gray-900">
+                              {job.role}
+                            </h3>
+                            {job.pollenApproved && job.rating && (
+                              <div
+                                className="flex items-center gap-1 mt-1"
+                                title="Average applicant rating from candidates who've completed assessments"
+                              >
+                                <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                                <span className="text-xs text-gray-600">
+                                  {job.rating} applicant rating
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <div className="text-left">
+                          {job.pollenApproved ? (
+                            <a
+                              href={`/company/${job.company.toLowerCase().replace(/\s+/g, "-")}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-gray-900 font-medium hover:text-[#E2007A] hover:underline cursor-pointer text-left"
+                            >
+                              {job.company}
+                            </a>
+                          ) : (
+                            <a
+                              href={getCompanyWebsiteUrl(job.company)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-gray-900 font-medium hover:text-blue-600 hover:underline cursor-pointer text-left"
+                            >
+                              {job.company}
+                            </a>
+                          )}
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center gap-1 text-gray-600">
+                          <MapPin className="w-3 h-3" />
+                          <span className="text-sm">{job.location}</span>
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <Badge variant="outline" className="text-xs">
+                          {Array.isArray(job.contractType)
+                            ? job.contractType[0]
+                            : job.contractType}
+                        </Badge>
+                      </td>
+                      <td className="p-4">
+                        <span className="text-sm text-gray-900">
+                          {job.salary?.startsWith("£")
+                            ? job.salary
+                            : job.salary
+                              ? `£${job.salary}`
+                              : "Competitive"}
+                        </span>
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => saveJobMutation.mutate(job.id)}
+                            className={
+                              isJobSaved ? "text-pink-600" : "text-gray-400"
+                            }
+                            disabled={saveJobMutation.isPending}
+                          >
+                            <Heart
+                              className={`w-4 h-4 ${isJobSaved ? "fill-current" : ""}`}
+                            />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedJob(job);
+                              setShowJobDetails(true);
+                            }}
+                            className="text-gray-600 hover:text-[#E2007A] border-gray-300"
+                          >
+                            <Eye className="w-4 h-4 mr-1" />
+                            Details
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => handleJobAction(job)}
+                            className="bg-[#E2007A] hover:bg-[#E2007A]/90 text-white"
+                          >
+                            {job.pollenApproved ? "View & Apply" : "Apply"} →
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

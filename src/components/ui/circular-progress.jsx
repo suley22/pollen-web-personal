@@ -1,7 +1,7 @@
 
 export default function CircularProgress({
   value,
-  size = 120, // tamaño de referencia (y fallback)
+  size = 120, // diámetro mínimo de referencia
   strokeWidth = 12,
   label,
   showLabel = true,
@@ -10,25 +10,38 @@ export default function CircularProgress({
   textClassName = "text-gray-800",
   roundedCaps = true,
   ariaLabel = "Progreso",
-  fluid = false, // <= NUEVO: si true, llena el alto del contenedor
+  fluid = false, // llena el contenedor padre (si define alto/ancho)
+  autoFit = true, // ⬅ NUEVO: ajusta el diámetro al contenido
+  contentGap = 0, // separación entre número y caption
+  contentPadding = 8, // margen interno extra alrededor del texto
 }) {
   const pct = Number.isFinite(value) ? Math.min(100, Math.max(0, value)) : 0;
-  const radius = (size - strokeWidth) / 2;
+
+  // Tamaños tipográficos solicitados
+  const numberPx = 32;
+  const captionPx = 16;
+
+  // Diámetro mínimo necesario para que entren número + caption verticalmente
+  // InnerDiameter ≈ finalSize - strokeWidth (aprox, por el stroke centrado)
+  const minInnerByContent =
+    numberPx + captionPx + contentGap + contentPadding * 2;
+  const finalSize = Math.max(size, minInnerByContent + strokeWidth);
+
+  const radius = (finalSize - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const dashOffset = circumference * (1 - pct / 100);
 
-  // Estilos según modo
-  const boxClasses = fluid
+  const wrapperClass = fluid
     ? "relative grid place-items-center aspect-square w-full h-full"
     : "relative grid place-items-center";
-  const boxStyle = fluid
-    ? { minWidth: size, minHeight: size } // por si el padre no tiene alto aún
-    : { width: size, height: size };
+  const wrapperStyle = fluid
+    ? undefined
+    : { width: autoFit ? finalSize : size, height: autoFit ? finalSize : size };
 
   return (
     <div
-      className={boxClasses}
-      style={boxStyle}
+      className={wrapperClass}
+      style={wrapperStyle}
       role="progressbar"
       aria-label={ariaLabel}
       aria-valuemin={0}
@@ -40,14 +53,14 @@ export default function CircularProgress({
         className="-rotate-90"
         width="100%"
         height="100%"
-        viewBox={`0 0 ${size} ${size}`}
+        viewBox={`0 0 ${finalSize} ${finalSize}`}
         preserveAspectRatio="xMidYMid meet"
       >
         {/* Track */}
         <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={(size - strokeWidth) / 2}
+          cx={finalSize / 2}
+          cy={finalSize / 2}
+          r={radius}
           stroke="currentColor"
           strokeWidth={strokeWidth}
           className={trackClassName}
@@ -55,9 +68,9 @@ export default function CircularProgress({
         />
         {/* Progreso */}
         <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={(size - strokeWidth) / 2}
+          cx={finalSize / 2}
+          cy={finalSize / 2}
+          r={radius}
           stroke="currentColor"
           strokeWidth={strokeWidth}
           className={progressClassName}
@@ -70,12 +83,26 @@ export default function CircularProgress({
       </svg>
 
       {showLabel && (
-        <span
-          className={`absolute inset-0 grid place-items-center font-semibold ${textClassName}`}
-          style={{ fontSize: Math.max(12, size * 0.18) }}
+        <div
+          className={`absolute inset-0 flex flex-col items-center justify-center ${textClassName}`}
+          style={{ padding: contentPadding }}
         >
-          {label ?? `${Math.round(pct)}%`}
-        </span>
+          <span
+            className="leading-none font-semibold"
+            style={{ fontWeight: 700, fontSize: numberPx }}
+          >
+            {label ?? `${Math.round(pct)}%`}
+          </span>
+          <span
+            className="leading-none font-normal font-sans"
+            style={{
+              fontSize: captionPx,
+              marginTop: contentGap,
+            }}
+          >
+            Complete
+          </span>
+        </div>
       )}
     </div>
   );

@@ -113,7 +113,7 @@ export default function Home() {
         {/* Complete Profile Banner */}
         <Card className="mb-8" style={{ backgroundColor: "#fff9e6" }}>
           <CardContent className="py-6 px-8">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-4">
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-gray-900 mb-1">
@@ -123,7 +123,7 @@ export default function Home() {
                     Once complete, you'll be able to apply for Pollen approved,
                     CV-less jobs, where you receive guaranteed feedback
                   </p>
-                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
                     <span className="flex items-center gap-1">
                       <Clock className="w-4 h-4" />
                       Takes 10-15 minutes
@@ -147,7 +147,7 @@ export default function Home() {
                   </Button>
                 </div>
               </div>
-              <div className="flex flex-col items-end gap-4">
+              <div className="flex flex-col items-end">
                 <div className="h-full aspect-square w-20 sm:w-24 lg:w-28">
                   {" "}
                   {/* altura del contenedor */}
@@ -169,7 +169,7 @@ export default function Home() {
         {/* Featured Jobs - Full Width */}
         <Card className="mb-4">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 font-sora text-lg p-3">
+            <CardTitle className="flex items-center font-sora text-lg p-3">
               <Star className="h-5 w-5 text-gray-700" />
               This Week's Featured Jobs
             </CardTitle>

@@ -102,7 +102,7 @@ export default function Home() {
       setIsLoggingOut(true);
       const supabase = createClient();
       await supabase.auth.signOut();
-      router.push("/login");
+      router.push("/");
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
       alert("Hubo un problema al cerrar sesión. Por favor intenta de nuevo.");

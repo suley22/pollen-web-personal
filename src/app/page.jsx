@@ -13,32 +13,9 @@ import stylistLogo from "@/assets/image_1753303963933.png";
 import nyPostLogo from "@/assets/image_1753303981878.png";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
-import { useEffect, useState } from "react";
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Verificar autenticación al cargar la página
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const supabase = createClient();
-        const { data, error } = await supabase.auth.getSession();
-
-        if (!error && data.session) {
-          // Si hay una sesión activa, redirigir al dashboard
-          window.location.href = "/dashboard";
-        }
-      } catch (error) {
-        console.error("Error al verificar autenticación:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
+  
   const handleLogin = async () => {
     try {
       // Crear cliente de Supabase para el navegador
@@ -59,18 +36,6 @@ export default function Home() {
       window.location.href = "/login";
     }
   };
-
-  // Muestra un estado de carga mientras verifica la autenticación
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-pink-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 font-medium">Verificando sesión...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-white">

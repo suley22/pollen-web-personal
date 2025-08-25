@@ -6,19 +6,26 @@ import { Button } from "@/components/ui/button";
 import CircularProgress from "@/components/ui/circular-progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/utils/supabase/client";
+import { Badge } from "@/components/ui/badge";
 
 import {
+  Heart,
+  Building,
   Users,
   Calendar,
   Star,
   Clock,
   ChevronRight,
   Trophy,
+  MapPin, // <= añadido
 } from "lucide-react";
 
 export default function Home() {
   const router = useRouter();
   const [, setProgress] = useState(0);
+
+  // estado para guardados (JS puro)
+  const [savedJobs, setSavedJobs] = useState(new Set());
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -27,6 +34,68 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  // Function to handle job saving/unsaving (JSX: sin tipos)
+  const handleSaveJob = (jobId) => {
+    setSavedJobs((prev) => {
+      const newSavedJobs = new Set(prev);
+      if (newSavedJobs.has(jobId)) {
+        newSavedJobs.delete(jobId);
+      } else {
+        newSavedJobs.add(jobId);
+      }
+      return newSavedJobs;
+    });
+  };
+
+  // Top job recommendations for home page
+  const topJobRecommendations = [
+    {
+      id: "job-001",
+      title: "Media Planning Assistant",
+      company: {
+        id: "5",
+        name: "CreativeMinds Agency",
+        logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=50&h=50&fit=crop&crop=center",
+        applicationDeadline: new Date(),
+      },
+      location: "London, UK",
+      salary: { min: 26000, max: 32000 },
+      matchScore: 92,
+      matchReason: "",
+      applicationDeadline: new Date(),
+    },
+    {
+      id: "job-002",
+      title: "Client Relationship Coordinator",
+      company: {
+        id: "2",
+        name: "Adaptive Solutions Ltd",
+        logo: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=50&h=50&fit=crop&crop=center",
+        applicationDeadline: new Date(),
+      },
+      location: "Manchester, UK",
+      salary: { min: 24000, max: 28000 },
+      matchScore: 85,
+      matchReason: "",
+      applicationDeadline: new Date(),
+    },
+    {
+      id: "job-003",
+      title: "Marketing Assistant",
+      company: {
+        id: "3",
+        name: "Growth Partners",
+        logo: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=50&h=50&fit=crop&crop=center",
+        applicationDeadline: new Date(),
+      },
+      location: "Birmingham, UK",
+      salary: { min: 25000, max: 30000 },
+      matchScore: 81,
+      matchReason: "",
+      applicationDeadline: new Date(),
+    },
+  ];
+
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleLogout = async () => {
@@ -34,7 +103,6 @@ export default function Home() {
       setIsLoggingOut(true);
       const supabase = createClient();
       await supabase.auth.signOut();
-      // Use router navigation instead of direct window.location
       router.push("/login");
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
@@ -149,12 +217,11 @@ export default function Home() {
               </div>
               <div className="flex flex-col items-end">
                 <div className="h-full aspect-square w-20 sm:w-24 lg:w-28">
-                  {" "}
                   {/* altura del contenedor */}
                   <CircularProgress
                     value={20}
-                    fluid // <= clave
-                    size={96} // fallback por si el padre no tuviera alto
+                    fluid
+                    size={96}
                     strokeWidth={10}
                     progressClassName="text-[#E2007A]"
                     trackClassName="text-pink-100"
@@ -173,6 +240,99 @@ export default function Home() {
               <Star className="h-5 w-5 text-gray-700" />
               This Week's Featured Jobs
             </CardTitle>
+            <CardContent>
+              <div className="space-y-4">
+                {topJobRecommendations.map((job) => (
+                  <div
+                    key={job.id}
+                    className="flex items-start justify-between mb-2 border rounded-lg p-3 sm:p-4 hover:bg-gray-50"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
+                      <div className="flex items-start gap-3 flex-1">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-gray-900 text-base">
+                            {job.title}
+                          </h3>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-sm text-gray-500">
+                            <span className="flex items-center gap-1">
+                              <Building className="w-3 h-3" />
+                              <Button
+                                onClick={() =>
+                                  (window.location.href =
+                                    "/profile-checkpoints")
+                                }
+                                variant="link"
+                                size="sm"
+                                className="w-full sm:w-auto text-gray-600 hover:text-blue-600"
+                                style={{ fontWeight: "300" }}
+                              >
+                                {job.company.name}
+                              </Button>
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <MapPin className="w-3 h-3" />
+                              {job.location}
+                            </span>
+                            <span>
+                              £{job.salary.min.toLocaleString()} - £
+                              {job.salary.max.toLocaleString()}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-600">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit, sed do eiusmod tempor incididunt ut labore et
+                            dolore magna aliqua. Ut enim ad minim veniam
+                          </p>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-xs text-gray-600 mt-2">
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              Apply by{" "}
+                              {new Date(
+                                job.applicationDeadline,
+                              ).toLocaleDateString("en-GB", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between sm:justify-end">
+                      <div className="flex gap-2 w-full sm:w-auto">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => handleSaveJob(job.id)}
+                          className={`flex-1 sm:flex-none ${
+                            savedJobs.has(job.id) ? "text-pink-600" : ""
+                          }`}
+                        >
+                          <Heart
+                            className={`w-3 h-3 ${
+                              savedJobs.has(job.id)
+                                ? "fill-pink-600 text-pink-600"
+                                : ""
+                            }`}
+                          />
+                        </Button>
+
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            window.location.href = `/jobs/${job.id}/apply`;
+                          }}
+                          className="bg-pink-600 hover:bg-pink-700 text-white flex-1 sm:flex-none font-sora"
+                        >
+                          View and Apply
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
           </CardHeader>
         </Card>
 

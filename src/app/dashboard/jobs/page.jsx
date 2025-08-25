@@ -27,14 +27,14 @@ import { Card, CardContent } from "@/components/ui/card";
 
 export default function JobsPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [,setViewMode] = useState("all");
+  const [, setViewMode] = useState("all");
   const [industryFilter, setIndustryFilter] = useState(["all"]);
   const [locationFilter, setLocationFilter] = useState(["all"]);
   const [contractFilter, setContractFilter] = useState(["all"]);
   const [jobTypeFilter, setJobTypeFilter] = useState("all"); // all, pollen, external
   const [showAllInPersonalized, setShowAllInPersonalized] = useState(false);
 
-  const [,setSelectedJob] = useState(null);
+  const [, setSelectedJob] = useState(null);
   const [, setShowJobDetails] = useState(false);
 
   const router = useRouter();

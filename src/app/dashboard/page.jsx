@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import CircularProgress from "@/components/ui/circular-progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/utils/supabase/client";
-import { Badge } from "@/components/ui/badge";
 
 import {
   Heart,
@@ -221,7 +220,7 @@ export default function Home() {
                   <CircularProgress
                     value={20}
                     fluid
-                    size={96}
+                    size={80}
                     strokeWidth={10}
                     progressClassName="text-[#E2007A]"
                     trackClassName="text-pink-100"
@@ -241,7 +240,7 @@ export default function Home() {
               This Week's Featured Jobs
             </CardTitle>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-4 pb-4">
                 {topJobRecommendations.map((job) => (
                   <div
                     key={job.id}

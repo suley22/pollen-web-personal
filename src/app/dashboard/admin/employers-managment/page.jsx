@@ -31,7 +31,14 @@ export default function AdminEmployersManagment() {
 
   const { data: applications = [] } = useQuery({
     queryKey: ["/api/admin/employer-applications"],
-    initialData: [
+    queryFn: async () => {
+      try {
+        // Aquí iría la llamada real a la API cuando esté implementada
+        // const response = await fetch('/api/admin/employer-applications');
+        // return response.json();
+        
+        // Por ahora retornamos datos mock
+        const mockData = [
       {
         id: "1",
         companyName: "TechFlow Solutions",
@@ -89,7 +96,13 @@ export default function AdminEmployersManagment() {
         reviewDate: "2024-01-14",
         reviewNotes: "Excellent application with clear company information. Strong alignment with skills-first approach and good hiring volume potential. Approved for platform access."
       }
-    ]
+    ];
+        return mockData;
+      } catch (error) {
+        console.error('Error fetching applications:', error);
+        throw error;
+      }
+    }
   });
 
   // Filter applications
@@ -188,7 +201,7 @@ export default function AdminEmployersManagment() {
                             <Button
                               size="sm"
                               className="bg-blue-600 hover:bg-blue-700 text-white"
-                              onClick={() => router.push(`/admin/employer-review/${application.id}`)}
+                              onClick={() => router.push(`/dashboard/admin/employers-managment/review/`)}
                               >
                               <Eye className="h-4 w-4 mr-1" />
                               Review Application
@@ -199,7 +212,7 @@ export default function AdminEmployersManagment() {
                             <Button
                             size="sm"
                             className="bg-green-600 hover:bg-green-700 text-white"
-                            onClick={() => router.push(`/admin/employer-review/${application.id}`)}
+                            onClick={() => router.push(`/dashboard/admin/employers-managment/review/${application.id}`)}
                             >
                             <CheckCircle className="h-4 w-4 mr-1" />
                             View Approved
@@ -209,7 +222,7 @@ export default function AdminEmployersManagment() {
                             <Button
                             size="sm"
                             variant="destructive"
-                            onClick={() => router.push(`/admin/employer-review/${application.id}`)}
+                            onClick={() => router.push(`/dashboard/admin/employers-managment/review/${application.id}`)}
                             >
                             <XCircle className="h-4 w-4 mr-1" />
                             View Rejected

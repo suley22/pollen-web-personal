@@ -192,8 +192,6 @@ export default function DashboardSidebar() {
             </Button>
           </div>
         </div>
-
-        {/* Admin Navigation */}
         <div>
           {!isCollapsed && (
             <h3 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2 px-3">
@@ -202,19 +200,23 @@ export default function DashboardSidebar() {
           )}
           <div className="space-y-1">
             <Button
-              variant={pathname === "/dashboard/profile" ? "default" : "ghost"}
+              variant={
+                pathname === "/dashboard/employer/profile" ? "default" : "ghost"
+              }
               className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
-                pathname === "/dashboard/profile"
+                pathname === "/dashboard/admin/employers-managment"
                   ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
-              onClick={() => router.push("/admin/all-job-seekers")}
+              onClick={() =>
+                router.push("/dashboard/admin/employers-managment")
+              }
               title={isCollapsed ? "My Profile" : undefined}
             >
-              <LayoutDashboard className="w-5 h-5" />
-              {!isCollapsed && <span>Dashboard</span>}
+              <User className="w-5 h-5" />
+              {!isCollapsed && <span>Employers Managment</span>}
             </Button>
-          </div>
+          </div>{" "}
         </div>
       </nav>
     </div>

@@ -1,5 +1,7 @@
 import { Sora, Poppins } from "next/font/google";
 import "./globals.css";
+import { Providers } from "./providers";
+import { Toaster } from "sonner";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -25,7 +27,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${sora.variable} ${poppins.variable} antialiased`}>
-        {children}
+        <Providers>{children}</Providers>
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );

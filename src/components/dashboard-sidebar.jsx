@@ -11,6 +11,7 @@ import {
   Menu,
   ChevronLeft,
   User,
+  LayoutDashboard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePathname, useRouter } from "next/navigation";
@@ -25,8 +26,8 @@ export default function DashboardSidebar() {
     {
       icon: Home,
       label: "Home",
-      path: "/dashboard",
-      isActive: pathname === "/dashboard",
+      path: "/dashboard/home",
+      isActive: pathname === "/dashboard/home",
     },
     {
       icon: Briefcase,
@@ -199,19 +200,24 @@ export default function DashboardSidebar() {
           )}
           <div className="space-y-1">
             <Button
-              variant={pathname === "/dashboard/employer/profile" ? "default" : "ghost"}
+              variant={
+                pathname === "/dashboard/employer/profile" ? "default" : "ghost"
+              }
               className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
                 pathname === "/dashboard/admin/employers-managment"
                   ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
-              onClick={() => router.push("/dashboard/admin/employers-managment")}
+              onClick={() =>
+                router.push("/dashboard/admin/employers-managment")
+              }
               title={isCollapsed ? "My Profile" : undefined}
             >
               <User className="w-5 h-5" />
               {!isCollapsed && <span>Employers Managment</span>}
             </Button>
-        </div> </div>
+          </div>{" "}
+        </div>
       </nav>
     </div>
   );

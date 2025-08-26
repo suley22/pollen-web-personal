@@ -253,6 +253,19 @@ export default function Home() {
                           <h3 className="font-semibold text-gray-900 text-base">
                             {job.title}
                           </h3>
+                          {job.pollenApproved && (
+                            <Badge
+                              variant="default"
+                              className="bg-green-100 text-green-800 text-xs"
+                            >
+                              Pollen Approved
+                            </Badge>
+                          )}
+                          {job.type === "external" && (
+                            <Badge variant="outline" className="text-xs">
+                              External
+                            </Badge>
+                          )}
                           <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-sm text-gray-500">
                             <span className="flex items-center gap-1">
                               <Building className="w-3 h-3" />

@@ -139,9 +139,9 @@ export default function CompaniesPage() {
           </div>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-2 sm:py-3 lg:py-4" />
-      <div className="mb-4 sm:mb-6">
-        <div className="bg-gradient-to-r from-blue-50 to-pink-50 rounded-xl p-2 sm:p-3 lg:p-4 mb-3 sm:mb-4 lg:mb-5 mx-2 sm:mx-4 lg:mx-0">
+      
+      <div className="my-4">
+        <div className="bg-gradient-to-r from-blue-50 to-pink-50 rounded-xl mb-3 mx-2 p-4">
           <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
             <div className="bg-pink-100 p-1 sm:p-2 rounded-lg">
               <Target className="w-4 h-4 sm:w-5 sm:h-5 text-pink-600" />
@@ -221,13 +221,15 @@ export default function CompaniesPage() {
           </div>
         </div>
       </div>
-      <h2
+      
+      <div className="m-8">
+        <h2
         className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 lg:mb-6 px-2 sm:px-4 lg:px-0"
         style={{ fontFamily: "Sora" }}
       >
         All Companies
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 px-2 sm:px-4 lg:px-0">
+      <div className="grid grid-cols-3 gap-y-3 gap-x-4 px-2">
         {allCompanies.map((company) => (
           <Card key={company.id} className="hover:shadow-lg transition-shadow">
             <CardHeader className="pb-3 sm:pb-4 p-3 sm:p-6">
@@ -327,6 +329,7 @@ export default function CompaniesPage() {
           </Button>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

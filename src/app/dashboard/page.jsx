@@ -242,8 +242,6 @@ export default function Home() {
             </CardTitle>
             <CardContent style={{ padding: "0.75rem" }}>
               <div className="space-y-4">
-            <CardContent>
-              <div className="space-y-4 pb-4">
                 {topJobRecommendations.map((job) => (
                   <div
                     key={job.id}

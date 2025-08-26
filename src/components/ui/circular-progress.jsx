@@ -1,4 +1,3 @@
-
 export default function CircularProgress({
   value,
   size = 120, // diámetro mínimo de referencia
@@ -18,8 +17,8 @@ export default function CircularProgress({
   const pct = Number.isFinite(value) ? Math.min(100, Math.max(0, value)) : 0;
 
   // Tamaños tipográficos solicitados
-  const numberPx = 32;
-  const captionPx = 16;
+  const numberPx = 28;
+  const captionPx = 12;
 
   // Diámetro mínimo necesario para que entren número + caption verticalmente
   // InnerDiameter ≈ finalSize - strokeWidth (aprox, por el stroke centrado)

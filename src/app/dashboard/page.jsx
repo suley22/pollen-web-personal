@@ -17,7 +17,8 @@ import {
   Clock,
   ChevronRight,
   Trophy,
-  MapPin, // <= añadido
+  MapPin,
+  TypeOutline, // <= añadido
 } from "lucide-react";
 
 export default function Home() {
@@ -240,7 +241,7 @@ export default function Home() {
               <Star className="h-5 w-5 text-gray-700" />
               This Week's Featured Jobs
             </CardTitle>
-            <CardContent>
+            <CardContent style={{ padding: "0.75rem" }}>
               <div className="space-y-4">
                 {topJobRecommendations.map((job) => (
                   <div
@@ -331,6 +332,17 @@ export default function Home() {
                     </div>
                   </div>
                 ))}
+              </div>
+              <div className="text-center font-sora pt-4 mt-4">
+                <Button
+                  variant="ghost"
+                  onClick={() => (window.location.href = "/jobs")}
+                  size="sm"
+                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"
+                >
+                  <span className="hidden sm:inline">View All Jobs</span>
+                  <ChevronRight className="w-3 h- ml-2" />
+                </Button>
               </div>
             </CardContent>
           </CardHeader>

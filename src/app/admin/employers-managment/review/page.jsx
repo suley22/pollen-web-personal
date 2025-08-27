@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-export default function ReviewPage() {
-    return (
-        <div>
-            <h1>Review</h1>
-        </div>
-    );
-}
-=======
 "use client"
 
 import { Button } from "@/components/ui/button";
@@ -279,7 +270,7 @@ return (
                 {/* Industry Tags - Colorful and integrated */}
                 {employerProfile?.industries && employerProfile.industries.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-3">
-                    {employerProfile.industries.map((industry, index) => {
+                    {employerProfile.industries.map((industry) => {
                       // Define colorful industry tag styles
                       const getIndustryStyle = (industry ) => {
                         const styles = {
@@ -301,7 +292,7 @@ return (
                       
                       return (
                         <Badge 
-                          key={index} 
+                          key={industry.companyName} 
                           variant="outline" 
                           className={`${getIndustryStyle(industry)} font-medium px-3 py-1 text-xs border hover:shadow-sm transition-all`}
                         >
@@ -739,8 +730,8 @@ return (
                       ) : (
                         <>
                           <div className="flex flex-wrap gap-2">
-                            {employerProfile.values.map((value, index) => (
-                              <Badge key={index} variant="secondary" className="bg-yellow-100 text-yellow-800">
+                            {employerProfile.values.map((value) => (
+                              <Badge key={value} variant="secondary" className="bg-yellow-100 text-yellow-800">
                                 {value}
                               </Badge>
                             ))}
@@ -842,4 +833,3 @@ return (
                 </div>
 )}
                       
->>>>>>> 35e2bf7d81309a08ac7761b9ee75f559bb23883b

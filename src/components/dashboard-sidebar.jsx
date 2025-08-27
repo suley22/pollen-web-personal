@@ -5,12 +5,10 @@ import {
   Users,
   Briefcase,
   Building2,
-  Heart,
-  FileText,
-  Calendar,
   Menu,
   ChevronLeft,
   User,
+  LayoutDashboard,
   
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,8 +19,6 @@ export default function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
-
-  var section = "";
 
   const navigationItems = [
     {

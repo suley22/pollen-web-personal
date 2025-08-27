@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import CircularProgress from "@/components/ui/circular-progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createClient } from "@/utils/supabase/client";
+import { Badge } from "@/components/ui/badge";
 
 import {
   Heart,
@@ -17,7 +18,7 @@ import {
   ChevronRight,
   Trophy,
   MapPin,
-  TypeOutline, // <= añadido
+
 } from "lucide-react";
 
 export default function Home() {

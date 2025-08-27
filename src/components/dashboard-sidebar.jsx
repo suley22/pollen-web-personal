@@ -11,7 +11,7 @@ import {
   Menu,
   ChevronLeft,
   User,
-  LayoutDashboard,
+  
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePathname, useRouter } from "next/navigation";
@@ -274,7 +274,7 @@ export default function DashboardSidebar() {
                   : "text-gray-700 hover:bg-gray-100"
               }`}
               onClick={() =>
-                router.push("/dashboard/admin/employers-managment")
+                router.push("/admin/employers-managment")
               }
               title={isCollapsed ? "My Profile" : undefined}
             >

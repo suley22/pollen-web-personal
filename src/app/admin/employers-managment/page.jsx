@@ -201,7 +201,7 @@ export default function AdminEmployersManagment() {
                             <Button
                               size="sm"
                               className="bg-blue-600 hover:bg-blue-700 text-white"
-                              onClick={() => router.push(`/dashboard/admin/employers-managment/review/`)}
+                              onClick={() => router.push(`/admin/employers-managment/review/`)}
                               >
                               <Eye className="h-4 w-4 mr-1" />
                               Review Application
@@ -212,7 +212,7 @@ export default function AdminEmployersManagment() {
                             <Button
                             size="sm"
                             className="bg-green-600 hover:bg-green-700 text-white"
-                            onClick={() => router.push(`/dashboard/admin/employers-managment/review/${application.id}`)}
+                            onClick={() => router.push(`/dashboard/admin/employers-managment/review/}`)}
                             >
                             <CheckCircle className="h-4 w-4 mr-1" />
                             View Approved
@@ -222,7 +222,7 @@ export default function AdminEmployersManagment() {
                             <Button
                             size="sm"
                             variant="destructive"
-                            onClick={() => router.push(`/dashboard/admin/employers-managment/review/${application.id}`)}
+                            onClick={() => router.push(`/dashboard/admin/employers-managment/review/`)}
                             >
                             <XCircle className="h-4 w-4 mr-1" />
                             View Rejected

@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import {
   Home,
   Users,
@@ -22,30 +22,50 @@ export default function DashboardSidebar() {
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  var section = "";
+
   const navigationItems = [
     {
       icon: Home,
       label: "Home",
       path: "/dashboard/home",
       isActive: pathname === "/dashboard/home",
+      section: "main",
     },
     {
       icon: Briefcase,
       label: "Jobs",
       path: "/dashboard/jobs",
       isActive: pathname === "/dashboard/jobs",
+      section: "main",
     },
     {
       icon: Building2,
       label: "Companies",
       path: "/dashboard/companies",
       isActive: pathname === "/dashboard/companies",
+      section: "main",
     },
     {
       icon: Users,
       label: "Community",
       path: "/dashboard/community",
       isActive: pathname === "/dashboard/community",
+      section: "main",
+    },
+    {
+      icon: LayoutDashboard,
+      label: "Admin Dashboard",
+      path: "/admin",
+      isActive: pathname === "/admin",
+      section: "Admin",
+    },
+    {
+      icon: User,
+      label: "Admin Dashboard",
+      path: "/admin/employers-managment",
+      isActive: pathname === "/admin/employers-managment",
+      section: "Admin",
     },
   ];
 
@@ -84,7 +104,7 @@ export default function DashboardSidebar() {
       {/* Navigation Items */}
       <nav className="p-3 space-y-4">
         {/* Main Navigation */}
-        <div>
+        {/* <div>
           {!isCollapsed && (
             <h3 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2 px-3">
               Main
@@ -120,10 +140,55 @@ export default function DashboardSidebar() {
               );
             })}
           </div>
+        </div> */}
+
+        {/* Main Navigation */}
+        <div>
+          <div className="space-y-1">
+            {navigationItems.map((item, idx) => {
+              const Icon = item.icon;
+              const prev = navigationItems[idx - 1];
+              const showHeader =
+                !isCollapsed && (idx === 0 || prev.section !== item.section);
+
+              return (
+                <React.Fragment key={item.path}>
+                  {showHeader && (
+                    <h3 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2 px-3">
+                      {item.section}
+                    </h3>
+                  )}
+
+                  <Button
+                    variant={item.isActive ? "default" : "ghost"}
+                    className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
+                      item.isActive
+                        ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                    onClick={() => router.push(item.path)}
+                    title={isCollapsed ? item.label : undefined}
+                  >
+                    <Icon className="w-5 h-5" />
+                    {!isCollapsed && (
+                      <>
+                        <span>{item.label}</span>
+                        {item.badge && (
+                          <span className="ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                            {item.badge > 9 ? "9+" : item.badge}
+                          </span>
+                        )}
+                      </>
+                    )}
+                  </Button>
+                </React.Fragment>
+              );
+            })}
+          </div>
         </div>
 
         {/* Secondary Navigation */}
-        <div>
+        {/* <div>
           {!isCollapsed && (
             <h3 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2 px-3">
               My Activity
@@ -217,7 +282,7 @@ export default function DashboardSidebar() {
               {!isCollapsed && <span>Employers Managment</span>}
             </Button>
           </div>{" "}
-        </div>
+        </div> */}
       </nav>
     </div>
   );

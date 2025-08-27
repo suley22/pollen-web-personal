@@ -15,7 +15,6 @@ import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 
 export default function Home() {
-  
   const handleLogin = async () => {
     try {
       // Crear cliente de Supabase para el navegador
@@ -29,7 +28,7 @@ export default function Home() {
         window.location.href = "/login";
       } else {
         // Si hay una sesión activa, redirigir al dashboard
-        window.location.href = "/dashboard";
+        window.location.href = "/dashboard/home";
       }
     } catch (error) {
       console.error("Error al verificar la sesión:", error);

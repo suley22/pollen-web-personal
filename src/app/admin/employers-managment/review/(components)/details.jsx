@@ -1,16 +1,47 @@
+"use client";
+
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Camera, Edit, MapPin, Users, Calendar, Star, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 export default function Details({ employerProfile, setExpandedSection, setSelectedReview, setShowReviewModal }) {
+    const [url, setUrl] = useState();
+
+    const handleFileChange = async (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const selectedFile = e.target.files[0];
+
+            const supabase = createClient();
+
+            // Subir directamente el archivo seleccionado sin esperar el estado
+            const fileName = `${Date.now()}-${selectedFile.name}`;
+            const { data, error } = await supabase.storage
+                .from("images")
+                .upload(fileName, selectedFile);
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            const { data: publicUrl } = supabase.storage
+                .from("images")
+                .getPublicUrl(fileName);
+
+            setUrl(publicUrl.publicUrl);
+        }
+    };
+
     return (
         <Card className="overflow-hidden mb-4">
             <div className="relative mb-0 rounded-t-xl overflow-hidden">
                 <img
-                    src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80"
+                    src={url}
                     alt="CreativeMinds Agency office"
-                    className="w-full h-64 object-cover"
+                    className="w-full h-64"
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/70 flex items-end">
                     <div className="p-6 text-white">
@@ -28,15 +59,25 @@ export default function Details({ employerProfile, setExpandedSection, setSelect
                         </h1>
                     </div>
                 </div>
-                <Button
-                    variant="secondary"
-                    size="sm"
-                    className="absolute top-4 right-4 bg-white/90 hover:bg-white"
-                    onClick={() => setExpandedSection("cover-photo")}
-                >
-                    <Camera className="w-4 h-4 mr-2" />
-                    Edit Cover
-                </Button>
+                <label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleFileChange}
+                    />
+                    <Button
+                        variant="secondary"
+                        size="sm"
+                        className="absolute top-4 right-4 bg-white/90 hover:bg-white cursor-pointer"
+                        asChild
+                    >
+                        <span>
+                            <Camera className="w-4 h-4 mr-2" />
+                            Edit Cover
+                        </span>
+                    </Button>
+                </label>
             </div>
 
             {/* Company details section below cover photo */}

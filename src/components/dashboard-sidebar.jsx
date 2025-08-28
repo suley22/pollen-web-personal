@@ -8,7 +8,6 @@ import {
   Menu,
   ChevronLeft,
   User,
-  LayoutDashboard,
   
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,41 +23,34 @@ export default function DashboardSidebar() {
     {
       icon: Home,
       label: "Home",
-      path: "/dashboard/home",
-      isActive: pathname === "/dashboard/home",
+      path: "/main/home",
+      isActive: pathname === "/main/home",
       section: "main",
     },
     {
       icon: Briefcase,
       label: "Jobs",
-      path: "/dashboard/jobs",
-      isActive: pathname === "/dashboard/jobs",
+      path: "/main/jobs",
+      isActive: pathname === "/main/jobs",
       section: "main",
     },
     {
       icon: Building2,
       label: "Companies",
-      path: "/dashboard/companies",
-      isActive: pathname === "/dashboard/companies",
+      path: "/main/companies",
+      isActive: pathname === "/main/companies",
       section: "main",
     },
     {
       icon: Users,
       label: "Community",
-      path: "/dashboard/community",
-      isActive: pathname === "/dashboard/community",
+      path: "/main/community",
+      isActive: pathname === "/main/community",
       section: "main",
     },
     {
-      icon: LayoutDashboard,
-      label: "Admin Dashboard",
-      path: "/admin",
-      isActive: pathname === "/admin",
-      section: "Admin",
-    },
-    {
       icon: User,
-      label: "Admin Dashboard",
+      label: "Employers Managment",
       path: "/admin/employers-managment",
       isActive: pathname === "/admin/employers-managment",
       section: "Admin",
@@ -192,13 +184,13 @@ export default function DashboardSidebar() {
           )}
           <div className="space-y-1">
             <Button
-              variant={pathname === "/dashboard/profile" ? "default" : "ghost"}
+              variant={pathname === "/main/profile" ? "default" : "ghost"}
               className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
-                pathname === "/dashboard/profile"
+                pathname === "/main/profile"
                   ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
-              onClick={() => router.push("/dashboard/profile")}
+              onClick={() => router.push("/main/profile")}
               title={isCollapsed ? "My Profile" : undefined}
             >
               <User className="w-5 h-5" />
@@ -206,14 +198,14 @@ export default function DashboardSidebar() {
             </Button>
             <Button
               variant={
-                pathname === "/dashboard/saved-items" ? "default" : "ghost"
+                pathname === "/main/saved-items" ? "default" : "ghost"
               }
               className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
-                pathname === "/dashboard/saved-items"
+                pathname === "/main/saved-items"
                   ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
-              onClick={() => router.push("/dashboard/saved-items")}
+              onClick={() => router.push("/main/saved-items")}
               title={isCollapsed ? "Saved Items" : undefined}
             >
               <Heart className="w-5 h-5" />
@@ -221,14 +213,14 @@ export default function DashboardSidebar() {
             </Button>
             <Button
               variant={
-                pathname === "/dashboard/applications" ? "default" : "ghost"
+                pathname === "/main/applications" ? "default" : "ghost"
               }
               className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
-                pathname === "/dashboard/applications"
+                pathname === "/main/applications"
                   ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
-              onClick={() => router.push("/dashboard/applications")}
+              onClick={() => router.push("/main/applications")}
               title={isCollapsed ? "My Applications" : undefined}
             >
               <FileText className="w-5 h-5" />
@@ -236,16 +228,16 @@ export default function DashboardSidebar() {
             </Button>
             <Button
               variant={
-                pathname === "/dashboard/interview-schedule"
+                pathname === "/main/interview-schedule"
                   ? "default"
                   : "ghost"
               }
               className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
-                pathname === "/dashboard/interview-schedule"
+                pathname === "/main/interview-schedule"
                   ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
-              onClick={() => router.push("/dashboard/interview-schedule")}
+              onClick={() => router.push("/main/interview-schedule")}
               title={isCollapsed ? "Interview Schedule" : undefined}
             >
               <Calendar className="w-5 h-5" />
@@ -262,10 +254,10 @@ export default function DashboardSidebar() {
           <div className="space-y-1">
             <Button
               variant={
-                pathname === "/dashboard/employer/profile" ? "default" : "ghost"
+                pathname === "/main/employer/profile" ? "default" : "ghost"
               }
               className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
-                pathname === "/dashboard/admin/employers-managment"
+                pathname === "/main/admin/employers-managment"
                   ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
                   : "text-gray-700 hover:bg-gray-100"
               }`}

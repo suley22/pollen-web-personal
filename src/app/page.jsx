@@ -28,7 +28,7 @@ export default function Home() {
         window.location.href = "/login";
       } else {
         // Si hay una sesión activa, redirigir al dashboard
-        window.location.href = "/dashboard/home";
+        window.location.href = "/main/home";
       }
     } catch (error) {
       console.error("Error al verificar la sesión:", error);

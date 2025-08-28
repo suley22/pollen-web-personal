@@ -9,7 +9,7 @@ export default function Description({ employerProfile }) {
     const [isEditing, setIsEditing] = useState(false);
 
     const [editValue, setEditValue] = useState(
-        employerProfile?.description || ""
+        employerProfile?.diversity || ""
     );
 
     function _buildEditButton() {
@@ -77,21 +77,26 @@ export default function Description({ employerProfile }) {
         );
     }
 
-    return (
+    return(
         <Card className="p-6">
-            <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="font-bold font-sora text-2xl">
-                    About {employerProfile.companyName}
-                </CardTitle>
+                      <CardHeader className="flex flex-row items-center justify-between">
+                        <CardTitle className="font-bold font-sora text-2xl">
+                          Diversity & Inclusion
+                        </CardTitle>
 
-                {!isEditing && _buildEditButton()}
-            </CardHeader>
+                        {!isEditing && _buildEditButton()}
+                      </CardHeader>
 
-            <CardContent className="mt-4">
-                {isEditing ?
+                      <CardContent>
+                        {isEditing ?
                     _buildEditForm(editValue, setEditValue)
                     : _buildStaticContent(employerProfile)}
-            </CardContent>
-        </Card>
-    );
+           
+                        
+                      </CardContent>
+                    </Card>
+
+        
+    )
+
 }

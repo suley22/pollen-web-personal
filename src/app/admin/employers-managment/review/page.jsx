@@ -1,53 +1,49 @@
 "use client";
-
-import { Button } from "@/components/ui/button";
-import {
-  Eye,
-  Camera,
-  Edit,
-  MapPin,
-  Users,
-  Calendar,
-  Star,
-  ExternalLink,
-  Clock,
-  AlertCircle,
-  CheckCircle,
-} from "lucide-react";
+import { Clock, AlertCircle, CheckCircle } from "lucide-react";
 import { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { StatusInfo } from "./(components)/status-info";
 import { Header } from "./(components)/header";
 import Details from "./(components)/details";
 import Description from "./(components)/description";
 import Mission from "./(components)/mission";
+import Culture from "./(components)/culture";
+import Diversity from "./(components)/diversity";
+import Values from "./(components)/values";
+import Benefits from "./(components)/benefits";
+import Contact from "./(components)/contact";
 
 const employerProfile = {
   id: 0,
   userId: 0,
   companyName: "CreativeMinds Agency",
   industry: "",
-  industries: [],
   location: "London, UK",
   companySize: "20-50 employees",
   foundedYear: 2010,
   workingModel: "Hybrid",
   workingModelTag: "Hybrid",
-  description: "We are a creative agency that specializes in branding and design. We are a team of 20 people that are passionate about creating beautiful and functional websites.",
-  values: [],
+  description:
+    "We are a creative agency that specializes in branding and design. We are a team of 20 people that are passionate about creating beautiful and functional websites.",
+  values: [
+    "Integridad, ",
+    "Respeto, ",
+    "Empatía, ",
+    "Colaboració, ",
+    "Transparencia ",
+  ],
   benefits: [],
   perks: [],
   workOptions: [],
   workEnvironment: "",
-  logoUrl: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80",
+  logoUrl:
+    "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80",
   coverImageUrl: "",
   completionPercentage: 0,
-  website: "",
+  website: "https://www.pollencareers.co.uk/",
   contactEmail: "",
   contactPhone: "",
-  linkedinPage: "",
+  linkedinPage: "https://uk.linkedin.com/company/pollencareersuk",
   glassdoorUrl: "",
   careersPage: "",
   approvalStatus: "pending",
@@ -59,14 +55,16 @@ const employerProfile = {
   programmes: [],
   gallery: [],
   companyStatement: "",
-  industries: ["Marketing & Advertising", "Creative Services", "Digital Media"]
+  industries: ["Marketing & Advertising", "Creative Services", "Digital Media"],
+  mission: "Lorem ipsum dolor sit amet, c",
+  culture:
+    "Eget egestas purus viverra accumsan in nisl nisi scelerisque eu. Aliquam vestibulum morbi blandit cursus risus at ultrices mi. ",
+  diversity: "Si somos re diversos balblbalblabla...",
 };
 
 export default function EmployerProfileConsolidated() {
-  const [setExpandedSection] = useState(null);
-  const [setShowReviewModal] = useState(false);
   /** @type {{author:string, position:string, rating:number, date:string, feedbackQuality?:number, communicationSpeed?:number, interviewExperience?:number, processTransparency?:number} | null} */
-  const [setSelectedReview] = useState(null);
+
   const [activeTab, setActiveTab] = useState("overview");
   const [editingSection, setEditingSection] = useState(null);
   const [editedValues, setEditedValues] = useState({});
@@ -158,7 +156,10 @@ export default function EmployerProfileConsolidated() {
       <div className="flex justify-center">
         <div className="max-w-screen-xl">
           {/* Dynamic Profile Status Banner */}
-          <StatusInfo statusInfo={statusInfo} employerProfile={employerProfile} />
+          <StatusInfo
+            statusInfo={statusInfo}
+            employerProfile={employerProfile}
+          />
 
           <Details employerProfile={employerProfile} />
 
@@ -220,393 +221,90 @@ export default function EmployerProfileConsolidated() {
                 <div className="grid grid-cols-3 gap-6">
                   {/* Left Column - Main Content */}
                   <div className="lg:col-span-2 space-y-6">
-
                     {/* Company Description */}
-                    <Description employerProfile={employerProfile} editedValues={editedValues} setEditedValues={setEditedValues} setPendingApproval={setPendingApproval} setShowApprovalNotification={setShowApprovalNotification} />
+                    <Description
+                      employerProfile={employerProfile}
+                      editedValues={editedValues}
+                      setEditedValues={setEditedValues}
+                      setPendingApproval={setPendingApproval}
+                      setShowApprovalNotification={setShowApprovalNotification}
+                    />
 
                     {/* Mission Statement */}
-                    <Mission employerProfile={employerProfile} editingSection={editingSection} setEditingSection={setEditingSection} editedValues={editedValues} setEditedValues={setEditedValues} setPendingApproval={setPendingApproval} setShowApprovalNotification={setShowApprovalNotification} />
+                    <Mission
+                      employerProfile={employerProfile}
+                      editingSection={editingSection}
+                      setEditingSection={setEditingSection}
+                      editedValues={editedValues}
+                      setEditedValues={setEditedValues}
+                      setPendingApproval={setPendingApproval}
+                      setShowApprovalNotification={setShowApprovalNotification}
+                    />
 
                     {/* Our Culture - Moved below Mission */}
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle style={{ fontFamily: "Sora" }}>
-                          Our Culture
-                        </CardTitle>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setEditingSection("culture");
-                            setEditedValues({
-                              culture: employerProfile?.workEnvironment || "",
-                            });
-                          }}
-                          className="hover:bg-gray-100"
-                        >
-                          <Edit className="w-4 h-4" />
-                          <span className="ml-1 text-sm">Edit</span>
-                        </Button>
-                      </CardHeader>
-                      <CardContent>
-                        {editingSection === "culture" ? (
-                          <div className="space-y-4">
-                            <textarea
-                              value={editedValues.culture || ""}
-                              onChange={(e) =>
-                                setEditedValues({
-                                  ...editedValues,
-                                  culture: e.target.value,
-                                })
-                              }
-                              className="w-full p-3 border rounded-lg resize-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-                              rows={4}
-                              placeholder="Describe your company culture..."
-                              style={{ fontFamily: "Poppins" }}
-                            />
-                            <div className="flex gap-2">
-                              <Button
-                                onClick={() => {
-                                  setPendingApproval(true);
-                                  setEditingSection(null);
-                                  setShowApprovalNotification(true);
-                                  setTimeout(
-                                    () => setShowApprovalNotification(false),
-                                    5000
-                                  );
-                                }}
-                                className="bg-pink-600 hover:bg-pink-700 text-white"
-                                style={{ fontFamily: "Sora" }}
-                              >
-                                Submit for Approval
-                              </Button>
-                              <Button
-                                variant="outline"
-                                onClick={() => setEditingSection(null)}
-                                style={{ fontFamily: "Sora" }}
-                              >
-                                Cancel
-                              </Button>
-                            </div>
-                          </div>
-                        ) : (
-                          <>
-                            <p
-                              className="text-gray-700 leading-relaxed"
-                              style={{ fontFamily: "Poppins" }}
-                            >
-                              {employerProfile.workEnvironment ||
-                                "We foster a collaborative, creative environment where every team member can thrive and grow their skills."}
-                            </p>
-                            {statusInfo?.type === "live" && (
-                              <p
-                                className="text-xs text-gray-500 mt-2 italic"
-                                style={{ fontFamily: "Poppins" }}
-                              >
-                                Changes will require approval before going
-                                live
-                              </p>
-                            )}
-                          </>
-                        )}
-                      </CardContent>
-                    </Card>
+                    <Culture
+                      employerProfile={employerProfile}
+                      editingSection={editingSection}
+                      setEditingSection={setEditingSection}
+                      editedValues={editedValues}
+                      setEditedValues={setEditedValues}
+                      setPendingApproval={setPendingApproval}
+                      setShowApprovalNotification={setShowApprovalNotification}
+                    />
 
                     {/* Diversity & Inclusion */}
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle style={{ fontFamily: "Sora" }}>
-                          Diversity & Inclusion
-                        </CardTitle>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setEditingSection("diversity");
-                            setEditedValues({
-                              diversity: employerProfile?.description || "",
-                            });
-                          }}
-                          className="hover:bg-gray-100"
-                        >
-                          <Edit className="w-4 h-4" />
-                          <span className="ml-1 text-sm">Edit</span>
-                        </Button>
-                      </CardHeader>
-                      <CardContent>
-                        {editingSection === "diversity" ? (
-                          <div className="space-y-4">
-                            <textarea
-                              value={
-                                editedValues.diversity ||
-                                "We're committed to building a diverse team that reflects the communities we serve. We actively encourage applications from underrepresented groups and provide equal opportunities for career growth."
-                              }
-                              onChange={(e) =>
-                                setEditedValues({
-                                  ...editedValues,
-                                  diversity: e.target.value,
-                                })
-                              }
-                              className="w-full p-3 border rounded-lg resize-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-                              rows={4}
-                              placeholder="Describe your diversity & inclusion commitment..."
-                              style={{ fontFamily: "Poppins" }}
-                            />
-                            <div className="flex gap-2">
-                              <Button
-                                onClick={() => {
-                                  setPendingApproval(true);
-                                  setEditingSection(null);
-                                  setShowApprovalNotification(true);
-                                  setTimeout(
-                                    () => setShowApprovalNotification(false),
-                                    5000
-                                  );
-                                }}
-                                className="bg-pink-600 hover:bg-pink-700 text-white"
-                                style={{ fontFamily: "Sora" }}
-                              >
-                                Submit for Approval
-                              </Button>
-                              <Button
-                                variant="outline"
-                                onClick={() => setEditingSection(null)}
-                                style={{ fontFamily: "Sora" }}
-                              >
-                                Cancel
-                              </Button>
-                            </div>
-                          </div>
-                        ) : (
-                          <>
-                            <p
-                              className="text-gray-700 leading-relaxed"
-                              style={{ fontFamily: "Poppins" }}
-                            >
-                              We're committed to building a diverse team that
-                              reflects the communities we serve. We actively
-                              encourage applications from underrepresented
-                              groups and provide equal opportunities for
-                              career growth.
-                            </p>
-                            {statusInfo?.type === "live" && (
-                              <p
-                                className="text-xs text-gray-500 mt-2 italic"
-                                style={{ fontFamily: "Poppins" }}
-                              >
-                                Changes will require approval before going
-                                live
-                              </p>
-                            )}
-                          </>
-                        )}
-                      </CardContent>
-                    </Card>
+                    <Diversity
+                      employerProfile={employerProfile}
+                      editingSection={editingSection}
+                      setEditingSection={setEditingSection}
+                      editedValues={editedValues}
+                      setEditedValues={setEditedValues}
+                      setPendingApproval={setPendingApproval}
+                      setShowApprovalNotification={setShowApprovalNotification}
+                    />
 
                     {/* Company Values */}
                     {employerProfile.values &&
                       employerProfile.values.length > 0 && (
-                        <Card>
-                          <CardHeader className="flex flex-row items-center justify-between">
-                            <CardTitle style={{ fontFamily: "Sora" }}>
-                              Our Values
-                            </CardTitle>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                setEditingSection("values");
-                                setEditedValues({
-                                  values:
-                                    employerProfile?.values?.join(", ") || "",
-                                });
-                              }}
-                              className="hover:bg-gray-100"
-                            >
-                              <Edit className="w-4 h-4" />
-                              <span className="ml-1 text-sm">Edit</span>
-                            </Button>
-                          </CardHeader>
-                          <CardContent>
-                            {editingSection === "values" ? (
-                              <div className="space-y-4">
-                                <input
-                                  type="text"
-                                  value={editedValues.values || ""}
-                                  onChange={(e) =>
-                                    setEditedValues({
-                                      ...editedValues,
-                                      values: e.target.value,
-                                    })
-                                  }
-                                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-                                  placeholder="Enter values separated by commas (e.g. Innovation, Collaboration, Excellence)"
-                                  style={{ fontFamily: "Poppins" }}
-                                />
-                                <div className="flex gap-2">
-                                  <Button
-                                    onClick={() => {
-                                      setPendingApproval(true);
-                                      setEditingSection(null);
-                                      setShowApprovalNotification(true);
-                                      setTimeout(
-                                        () =>
-                                          setShowApprovalNotification(false),
-                                        5000
-                                      );
-                                    }}
-                                    className="bg-pink-600 hover:bg-pink-700 text-white"
-                                    style={{ fontFamily: "Sora" }}
-                                  >
-                                    Submit for Approval
-                                  </Button>
-                                  <Button
-                                    variant="outline"
-                                    onClick={() => setEditingSection(null)}
-                                    style={{ fontFamily: "Sora" }}
-                                  >
-                                    Cancel
-                                  </Button>
-                                </div>
-                              </div>
-                            ) : (
-                              <>
-                                <div className="flex flex-wrap gap-2">
-                                  {employerProfile.values.map((value) => (
-                                    <Badge
-                                      key={value}
-                                      variant="secondary"
-                                      className="bg-yellow-100 text-yellow-800"
-                                    >
-                                      {value}
-                                    </Badge>
-                                  ))}
-                                </div>
-                                {statusInfo?.type === "live" && (
-                                  <p
-                                    className="text-xs text-gray-500 mt-2 italic"
-                                    style={{ fontFamily: "Poppins" }}
-                                  >
-                                    Changes will require approval before going
-                                    live
-                                  </p>
-                                )}
-                              </>
-                            )}
-                          </CardContent>
-                        </Card>
+                        <Values
+                          employerProfile={employerProfile}
+                          editingSection={editingSection}
+                          setEditingSection={setEditingSection}
+                          editedValues={editedValues}
+                          setEditedValues={setEditedValues}
+                          setPendingApproval={setPendingApproval}
+                          setShowApprovalNotification={
+                            setShowApprovalNotification
+                          }
+                        />
                       )}
 
                     {/* Benefits & Perks */}
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle style={{ fontFamily: "Sora" }}>
-                          What We Offer
-                        </CardTitle>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            setEditingSection("benefits");
-                            setEditedValues({
-                              benefits:
-                                employerProfile?.benefits?.join("\n") ||
-                                "Comprehensive health insurance\nFlexible working arrangements\nProfessional development budget (£2,000 annually)\n25 days annual leave plus bank holidays\nPension scheme with company contribution\nWellness programme including mental health support\nHome office setup allowance\nSeason ticket loan",
-                              perks:
-                                employerProfile?.perks?.join("\n") ||
-                                "Wellness programme including mental health support\nHome office setup allowance\nSeason ticket loan\nFree snacks and drinks",
-                            });
-                          }}
-                          className="hover:bg-gray-100"
-                        >
-                          <Edit className="w-4 h-4" />
-                          <span className="ml-1 text-sm">Edit</span>
-                        </Button>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        {editingSection === "benefits" ? (
-                          <div className="space-y-4">
-                            <div className="space-y-4">
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                  Benefits
-                                </label>
-                                <textarea
-                                  value={
-                                    editedValues.benefits ||
-                                    "Comprehensive health insurance\nFlexible working arrangements\nProfessional development budget (£2,000 annually)\n25 days annual leave plus bank holidays"
-                                  }
-                                  onChange={(e) =>
-                                    setEditedValues({
-                                      ...editedValues,
-                                      benefits: e.target.value,
-                                    })
-                                  }
-                                  className="w-full p-3 border rounded-lg resize-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-                                  rows={4}
-                                  placeholder="List your benefits, one per line..."
-                                  style={{ fontFamily: "Poppins" }}
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                  Perks
-                                </label>
-                                <textarea
-                                  value={
-                                    editedValues.perks ||
-                                    "Wellness programme including mental health support\nHome office setup allowance\nSeason ticket loan\nFree snacks and drinks"
-                                  }
-                                  onChange={(e) =>
-                                    setEditedValues({
-                                      ...editedValues,
-                                      perks: e.target.value,
-                                    })
-                                  }
-                                  className="w-full p-3 border rounded-lg resize-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
-                                  rows={4}
-                                  placeholder="List your perks, one per line..."
-                                  style={{ fontFamily: "Poppins" }}
-                                />
-                              </div>
-                            </div>
-                            <div className="flex gap-2">
-                              <Button
-                                onClick={() => {
-                                  setPendingApproval(true);
-                                  setEditingSection(null);
-                                  setShowApprovalNotification(true);
-                                  setTimeout(
-                                    () => setShowApprovalNotification(false),
-                                    5000
-                                  );
-                                }}
-                                className="bg-pink-600 hover:bg-pink-700 text-white"
-                                style={{ fontFamily: "Sora" }}
-                              >
-                                Submit for Approval
-                              </Button>
-                              <Button
-                                variant="outline"
-                                onClick={() => setEditingSection(null)}
-                                style={{ fontFamily: "Sora" }}
-                              >
-                                Cancel
-                              </Button>
-                            </div>
-                          </div>
-                        ) : null}
-                      </CardContent>
-                    </Card>
+                    <Benefits
+                      employerProfile={employerProfile}
+                      editingSection={editingSection}
+                      setEditingSection={setEditingSection}
+                      editedValues={editedValues}
+                      setEditedValues={setEditedValues}
+                      setPendingApproval={setPendingApproval}
+                      setShowApprovalNotification={setShowApprovalNotification}
+                    />
+                  </div>
+
+                  {/* Right Column - Contact & Details */}
+                  <div className="space-y-6">
+                    {/* Contact Information */}
+                    <Contact employerProfile={employerProfile} />
+
+                    {/* Working Model */}
+                    
                   </div>
                 </div>
               </TabsContent>
             </div>
           </Tabs>
         </div>
-
-
-      </div >
+      </div>
     </>
   );
 }

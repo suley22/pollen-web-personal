@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
 import { useState } from "react";
 
-export default function Description({ employerProfile }) {
+export default function Values({ employerProfile }) {
     const [isEditing, setIsEditing] = useState(false);
 
     const [editValue, setEditValue] = useState(
-        employerProfile?.description || ""
+        employerProfile?.values || ""
     );
 
     function _buildEditButton() {
@@ -66,7 +67,7 @@ export default function Description({ employerProfile }) {
                         variant="outline"
                         onClick={() => {
                             setIsEditing(false);
-                            setEditValue(employerProfile?.description || "");
+                            setEditValue(employerProfile?.values || "");
                         }}
                         style={{ fontFamily: "Sora" }}
                     >
@@ -81,7 +82,7 @@ export default function Description({ employerProfile }) {
         <Card className="p-6">
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="font-bold font-sora text-2xl">
-                    About {employerProfile.companyName}
+                    Our Values 
                 </CardTitle>
 
                 {!isEditing && _buildEditButton()}

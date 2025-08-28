@@ -5,8 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
 
 import { useRouter } from "next/navigation";
-import { Globe, Linkedin,
-UserCheck} from "lucide-react";
+import {
+  Globe,
+  Linkedin,
+  UserCheck,
+
+
+
+
+} from "lucide-react";
 
 export default function Contact({ employerProfile }) {
   const router = useRouter();
@@ -57,7 +64,14 @@ export default function Contact({ employerProfile }) {
             </a>
           </div>
         )}
-        
+
+
+
+
+
+
+
+
         <button
           onClick={() => window.open("/company-profile/2", "_blank")}
           className="flex items-center gap-2 text-sm text-pink-600 hover:underline"

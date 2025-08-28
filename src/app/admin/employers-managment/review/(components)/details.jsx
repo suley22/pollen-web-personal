@@ -9,6 +9,9 @@ import { createClient } from "@/utils/supabase/client";
 
 export default function Details({ employerProfile, setExpandedSection, setSelectedReview, setShowReviewModal }) {
     const [url, setUrl] = useState();
+    const [editValue, setEditValue] = useState(
+        employerProfile.logoUrl || ""
+    );
 
     const handleFileChange = async (e) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -31,7 +34,8 @@ export default function Details({ employerProfile, setExpandedSection, setSelect
                 .from("images")
                 .getPublicUrl(fileName);
 
-            setUrl(publicUrl.publicUrl);
+            //setUrl(publicUrl.publicUrl);
+            setEditValue(publicUrl.publicUrl);
         }
     };
 
@@ -39,7 +43,7 @@ export default function Details({ employerProfile, setExpandedSection, setSelect
         <Card className="overflow-hidden mb-4">
             <div className="relative mb-0 rounded-t-xl overflow-hidden">
                 <img
-                    src={url}
+                    src={editValue}
                     alt="CreativeMinds Agency office"
                     className="w-full h-64"
                 />

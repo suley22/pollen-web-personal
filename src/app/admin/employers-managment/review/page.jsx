@@ -41,7 +41,7 @@ const employerProfile = {
   perks: [],
   workOptions: [],
   workEnvironment: "",
-  logoUrl: "",
+  logoUrl: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80",
   coverImageUrl: "",
   completionPercentage: 0,
   website: "",

@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import {
   Home,
@@ -8,7 +9,7 @@ import {
   Menu,
   ChevronLeft,
   User,
-  
+
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePathname, useRouter } from "next/navigation";
@@ -110,11 +111,10 @@ export default function DashboardSidebar() {
 
                   <Button
                     variant={item.isActive ? "default" : "ghost"}
-                    className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
-                      item.isActive
+                    className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${item.isActive
                         ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
                         : "text-gray-700 hover:bg-gray-100"
-                    }`}
+                      }`}
                     onClick={() => router.push(item.path)}
                     title={isCollapsed ? item.label : undefined}
                   >

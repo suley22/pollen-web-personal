@@ -1,0 +1,66 @@
+export const applicationMocks = [
+  {
+    id: "1",
+    companyName: "TechFlow Solutions",
+    companySize: "50-200",
+    industries: ["Technology & Software"],
+    location: "London, UK",
+    website: "https://techflow.com",
+    contactEmail: "hr@techflow.com",
+    contactName: "Sarah Johnson",
+    contactRole: "HR Manager",
+    contactPhone: "+44 20 7123 4567",
+    companyDescription:
+      "TechFlow Solutions is a fast-growing technology company specialising in enterprise software solutions. We help businesses streamline their operations through innovative SaaS platforms and custom development services.",
+    whyPollen:
+      "We believe in skills-based hiring and want to tap into entry-level talent with strong potential. Traditional recruiting hasn't been giving us the diverse, capable candidates we need for our growing team.",
+    hiringVolume: "15-50",
+    howDidYouHear: "linkedin",
+    submittedDate: "2024-01-15",
+    status: "pending",
+  },
+  {
+    id: "2",
+    companyName: "Creative Studios",
+    companySize: "10-50",
+    industries: ["Marketing & Advertising", "Media & Creative"],
+    location: "Manchester, UK",
+    website: "https://creativestudios.co.uk",
+    contactEmail: "talent@creativestudios.co.uk",
+    contactName: "James Thompson",
+    contactRole: "Creative Director",
+    contactPhone: "+44 161 234 5678",
+    companyDescription:
+      "Creative Studios is a boutique creative agency specialising in brand development, digital marketing, and content creation. We work with ambitious brands to create meaningful connections through compelling storytelling.",
+    whyPollen:
+      "Traditional portfolios don't show creative thinking ability. We want to see how candidates actually approach problems and develop solutions through practical challenges.",
+    hiringVolume: "5-15",
+    howDidYouHear: "word-of-mouth",
+    submittedDate: "2024-01-14",
+    status: "pending",
+  },
+  {
+    id: "3",
+    companyName: "DataTech Solutions",
+    companySize: "200-1000",
+    industries: ["Technology & Software", "Finance & Banking"],
+    location: "Birmingham, UK",
+    website: "https://datatech.io",
+    contactEmail: "jobs@datatech.io",
+    contactName: "Michael Chen",
+    contactRole: "Head of People",
+    contactPhone: "+44 121 345 6789",
+    companyDescription:
+      "DataTech Solutions provides advanced data analytics and business intelligence solutions to enterprise clients. We help organisations make data-driven decisions through cutting-edge analytics platforms.",
+    whyPollen:
+      "We need analytical minds who can think differently about data problems. Academic credentials don't always translate to practical problem-solving skills that we value.",
+    hiringVolume: "15-50",
+    howDidYouHear: "search-engine",
+    submittedDate: "2024-01-13",
+    status: "approved",
+    reviewedBy: "Holly (Admin)",
+    reviewDate: "2024-01-14",
+    reviewNotes:
+      "Excellent application with clear company information. Strong alignment with skills-first approach and good hiring volume potential. Approved for platform access.",
+  },
+];

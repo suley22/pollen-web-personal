@@ -4,7 +4,9 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useQuery } from "@tanstack/react-query";
+import { applicationMocks } from "./(mocks)/application-mocks"
+
+
 import {
   Building2,
   Eye,
@@ -15,8 +17,9 @@ import {
   MapPin,
   Mail,
   Phone,
-  Users,
+  Users
 } from "lucide-react";
+import { PrimaryButton } from "@/components/ui/buttons/primary-button";
 
 // Función para obtener el badge según el status
 const getStatusBadge = (status) => {
@@ -49,88 +52,7 @@ export default function AdminEmployersManagment() {
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
 
-  const { data: applications = [] } = useQuery({
-    queryKey: ["/api/admin/employer-applications"],
-    queryFn: async () => {
-      try {
-        // Aquí iría la llamada real a la API cuando esté implementada
-        // const response = await fetch('/api/admin/employer-applications');
-        // return response.json();
-
-        // Por ahora retornamos datos mock
-        const mockData = [
-          {
-            id: "1",
-            companyName: "TechFlow Solutions",
-            companySize: "50-200",
-            industries: ["Technology & Software"],
-            location: "London, UK",
-            website: "https://techflow.com",
-            contactEmail: "hr@techflow.com",
-            contactName: "Sarah Johnson",
-            contactRole: "HR Manager",
-            contactPhone: "+44 20 7123 4567",
-            companyDescription:
-              "TechFlow Solutions is a fast-growing technology company specialising in enterprise software solutions. We help businesses streamline their operations through innovative SaaS platforms and custom development services.",
-            whyPollen:
-              "We believe in skills-based hiring and want to tap into entry-level talent with strong potential. Traditional recruiting hasn't been giving us the diverse, capable candidates we need for our growing team.",
-            hiringVolume: "15-50",
-            howDidYouHear: "linkedin",
-            submittedDate: "2024-01-15",
-            status: "pending",
-          },
-          {
-            id: "2",
-            companyName: "Creative Studios",
-            companySize: "10-50",
-            industries: ["Marketing & Advertising", "Media & Creative"],
-            location: "Manchester, UK",
-            website: "https://creativestudios.co.uk",
-            contactEmail: "talent@creativestudios.co.uk",
-            contactName: "James Thompson",
-            contactRole: "Creative Director",
-            contactPhone: "+44 161 234 5678",
-            companyDescription:
-              "Creative Studios is a boutique creative agency specialising in brand development, digital marketing, and content creation. We work with ambitious brands to create meaningful connections through compelling storytelling.",
-            whyPollen:
-              "Traditional portfolios don't show creative thinking ability. We want to see how candidates actually approach problems and develop solutions through practical challenges.",
-            hiringVolume: "5-15",
-            howDidYouHear: "word-of-mouth",
-            submittedDate: "2024-01-14",
-            status: "pending",
-          },
-          {
-            id: "3",
-            companyName: "DataTech Solutions",
-            companySize: "200-1000",
-            industries: ["Technology & Software", "Finance & Banking"],
-            location: "Birmingham, UK",
-            website: "https://datatech.io",
-            contactEmail: "jobs@datatech.io",
-            contactName: "Michael Chen",
-            contactRole: "Head of People",
-            contactPhone: "+44 121 345 6789",
-            companyDescription:
-              "DataTech Solutions provides advanced data analytics and business intelligence solutions to enterprise clients. We help organisations make data-driven decisions through cutting-edge analytics platforms.",
-            whyPollen:
-              "We need analytical minds who can think differently about data problems. Academic credentials don't always translate to practical problem-solving skills that we value.",
-            hiringVolume: "15-50",
-            howDidYouHear: "search-engine",
-            submittedDate: "2024-01-13",
-            status: "approved",
-            reviewedBy: "Holly (Admin)",
-            reviewDate: "2024-01-14",
-            reviewNotes:
-              "Excellent application with clear company information. Strong alignment with skills-first approach and good hiring volume potential. Approved for platform access.",
-          },
-        ];
-        return mockData;
-      } catch (error) {
-        console.error("Error fetching applications:", error);
-        throw error;
-      }
-    },
-  });
+  const applications = applicationMocks;
 
   // Filter applications
   const filteredApplications = applications.filter((app) => {
@@ -144,20 +66,31 @@ export default function AdminEmployersManagment() {
     return matchesSearch && matchesStatus;
   });
 
+  const addButtonOnClick = () => {
+    console.log("Funciona");
+  }
+
+
   return (
     <div className="">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">        
+      <div className="bg-white border-b border-gray-200">
         <h1 className="text-2xl font-bold text-gray-900 mx-auto px-4 py-4">
-            Employers Management
-        </h1>                  
+          Employers Management
+        </h1>
       </div>
 
+
+
       <div className="p-4">
+
         {/* Search Bar */}
         <div className="flex items-center space-x-4 mb-6">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <div className="flex-grow relative bg-white">
+            <Search className="absolute left-3 top-1/2 
+            transform -translate-y-1/2 
+            h-4 w-4 
+            text-gray-400" />
             <Input
               placeholder="Search companies or industries..."
               value={searchTerm}
@@ -165,16 +98,25 @@ export default function AdminEmployersManagment() {
               className="pl-10"
             />
           </div>
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
-          >
-            <option value="all">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
-          </select>
+
+          <div className="flex flex-grow">
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+            >
+              <option value="all">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+
+          <div className="flex flex-grow justify-end items-center">
+            <PrimaryButton text="Add +" onClick={addButtonOnClick} className="" />
+
+            {/* <div className="h-4 w-4 bg-black">Algo</div> */}
+          </div>
         </div>
         {/* Applications List */}
         <div className="space-y-4">

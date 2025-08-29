@@ -1,7 +1,12 @@
+"use client";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { MessageCircle, MessageSquare } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function StatusInfo({ statusInfo, employerProfile }) {
+    const router = useRouter();
+
     return (
         statusInfo && (
             <Card className={`mb-6 border-l-4 ${statusInfo.borderColor} ${statusInfo.bgColor}`}>
@@ -22,7 +27,7 @@ export function StatusInfo({ statusInfo, employerProfile }) {
                                         Feedback from Pollen Team
                                     </h4>
                                     <button
-                                        onClick={() => setLocation('/employer-messages?conversation=pollen-team&feedback=profile-review')}
+                                        onClick={() => router.push('/employer-messages?conversation=pollen-team&feedback=profile-review')}
                                         className="text-pink-600 hover:text-pink-700 text-sm underline flex items-center gap-2"
                                         style={{ fontFamily: 'Poppins' }}
                                     >

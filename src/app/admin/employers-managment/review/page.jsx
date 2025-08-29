@@ -1,6 +1,7 @@
 "use client";
+
 import { Clock, AlertCircle, CheckCircle } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { StatusInfo } from "./(components)/status-info";
 import { Header } from "./(components)/header";
@@ -12,55 +13,8 @@ import Diversity from "./(components)/diversity";
 import Values from "./(components)/values";
 import Benefits from "./(components)/benefits";
 import Contact from "./(components)/contact";
-
-const employerProfile = {
-  id: 0,
-  userId: 0,
-  companyName: "CreativeMinds Agency",
-  industry: "",
-  location: "London, UK",
-  companySize: "20-50 employees",
-  foundedYear: 2010,
-  workingModel: "Hybrid",
-  workingModelTag: "Hybrid",
-  description:
-    "We are a creative agency that specializes in branding and design. We are a team of 20 people that are passionate about creating beautiful and functional websites.",
-  values: [
-    "Integridad, ",
-    "Respeto, ",
-    "Empatía, ",
-    "Colaboració, ",
-    "Transparencia ",
-  ],
-  benefits: [],
-  perks: [],
-  workOptions: [],
-  workEnvironment: "",
-  logoUrl:
-    "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=80",
-  coverImageUrl: "",
-  completionPercentage: 0,
-  website: "https://www.pollencareers.co.uk/",
-  contactEmail: "",
-  contactPhone: "",
-  linkedinPage: "https://uk.linkedin.com/company/pollencareersuk",
-  glassdoorUrl: "",
-  careersPage: "",
-  approvalStatus: "pending",
-  isComplete: true,
-  hasUnapprovedChanges: true,
-  lastUpdated: "",
-  testimonials: [],
-  awards: [],
-  programmes: [],
-  gallery: [],
-  companyStatement: "",
-  industries: ["Marketing & Advertising", "Creative Services", "Digital Media"],
-  mission: "Lorem ipsum dolor sit amet, c",
-  culture:
-    "Eget egestas purus viverra accumsan in nisl nisi scelerisque eu. Aliquam vestibulum morbi blandit cursus risus at ultrices mi. ",
-  diversity: "Si somos re diversos balblbalblabla...",
-};
+import { fetchEmployerProfile } from "./actions";
+import { employerProfile } from "./(mocks)/employer-profile-mock";
 
 export default function EmployerProfileConsolidated() {
   /** @type {{author:string, position:string, rating:number, date:string, feedbackQuality?:number, communicationSpeed?:number, interviewExperience?:number, processTransparency?:number} | null} */
@@ -70,6 +24,21 @@ export default function EmployerProfileConsolidated() {
   const [editedValues, setEditedValues] = useState({});
   const [setPendingApproval] = useState(false);
   const [setShowApprovalNotification] = useState(false);
+  const [employerProfileState] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { error, data } = await fetchEmployerProfile(employerProfile.id);
+
+      if (error) {
+        console.error(error);
+      } else {
+        console.log(data);
+      }
+    };
+
+    fetchData();
+  }, employerProfileState);
 
   const getStatusInfo = () => {
     if (!employerProfile) return null;
@@ -297,7 +266,7 @@ export default function EmployerProfileConsolidated() {
                     <Contact employerProfile={employerProfile} />
 
                     {/* Working Model */}
-                    
+
                   </div>
                 </div>
               </TabsContent>

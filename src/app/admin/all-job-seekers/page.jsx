@@ -27,8 +27,8 @@ import {
 export default function JobsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [applicationFilter] = useState("all");
-  const [profileFilter] = useState("all");
+  const [applicationFilter, setApplicationFilter] = useState("all");
+  const [profileFilter, setProfileFilter] = useState("all");
 
   // Fetch all job seekers
   const jobSeekers = [
@@ -208,66 +208,37 @@ const getStatusBadge = (status) => {
   };
 
   const router = useRouter();
+  
+  const toLabel = (s) =>
+  String(s)
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
 
-  // helper: cuenta valores únicos de una key en jobSeekers
-function summarizeFilters(arr, keys) {
-  const result = {};
+// valores únicos por facet (derivados del dataset)
+const facets = {
+  status: [...new Set(jobSeekers.map((j) => j.status))],
+  application: [
+    ...new Set(jobSeekers.map((j) => (j.totalApplications > 0 ? "has_applied" : "not_applied"))),
+  ],
+  profile: [
+    ...new Set(jobSeekers.map((j) => (j.profileComplete ? "complete" : "incomplete"))),
+  ],
+};
 
-  keys.forEach(key => {
-    let values = [...new Set(arr.map(j => j[key]))];
+// binding de cada facet con su estado correspondiente
+const facetMeta = [
+  { key: "status", value: statusFilter, onChange: setStatusFilter },
+  { key: "application", value: applicationFilter, onChange: setApplicationFilter },
+  { key: "profile", value: profileFilter, onChange: setProfileFilter },
+];
 
-    // Ordenar según tipo
-    if (typeof values[0] === "string") {
-      values.sort((a, b) => a.localeCompare(b)); // alfabético
-    } else if (typeof values[0] === "boolean") {
-      values.sort((a, b) => Number(a) - Number(b)); // false primero
-    }
-
-    // Transformar para SelectItem
-    const options = values.map(v => ({
-      value: String(v),
-      label:
-        typeof v === "string"
-          ? v.charAt(0).toUpperCase() + v.slice(1) // Capitalize strings
-          : v === true
-          ? "True"
-          : "False"
-    }));
-
-    result[key] = {
-      count: values.length,
-      values,
-      options // 👈 listo para el UI
-    };
-  });
-
-  return result;
-}
-
-// Uso con tu jobSeekers
-const summary = summarizeFilters(jobSeekers, [
-  "status",
-  "profileComplete",
-  "visaStatus",
-  "experienceLevel"
-]);
-  const [filters, setFilters] = useState(
-    Object.fromEntries(Object.keys(summary).map(k => [k, "all"]))
-  );
-
-  // handler genérico
-  const handleChange = (key, value) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-  };
-
-
-
+  
   return (
     <div>
-      <div className="container mx-auto p-4 space-y-4 jobs-page">
+      <div className="mx-auto p-4 space-y-4">
         <div className="text-left mb-6">
           {/* Search and Filters */}
-          <div className="bg-white p-4 rounded-lg shadow-sm border space-y-3">
+          <div className="bg-white p-4 rounded-lg shadow-sm border space-y-3 mb-3">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
@@ -278,262 +249,27 @@ const summary = summarizeFilters(jobSeekers, [
                   className="pl-10"
                 />
               </div>
+
               <div className="flex gap-4">
-              {Object.entries(summary).map(([key, data]) => (
-                <Select
-                  key={key}
-                  value={filters[key]}
-                  onValueChange={val => handleChange(key, val)}
-                >
-                  <SelectTrigger className="w-[200px] capitalize">
-                    <SelectValue placeholder={key} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {data.options.map(opt => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              ))}
-              
-                <Select>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {summary.status.options.map(opt => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value= "all">All Statuses</SelectItem>
-                    <SelectItem value="active">Pollen Approved</SelectItem>
-                    <SelectItem value="inactive">External</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Job Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{statusFilter === "all" ? "All Jobs" : statusFilter}</SelectItem>
-                    <SelectItem value="pollen">Pollen Approved</SelectItem>
-                    <SelectItem value="external">External</SelectItem>
-                  </SelectContent>
-                </Select>
-               
-               
-               {/* selection components for future use */}
-                {/* <div className="w-[180px]">
-                  <Select
-                    value={
-                      industryFilter.includes("all")
-                        ? "all"
-                        : industryFilter.length === 1
-                          ? industryFilter[0]
-                          : "multiple"
-                    }
-                    onValueChange={(value) => {
-                      if (value === "all") {
-                        setIndustryFilter(["all"]);
-                      } else {
-                        if (industryFilter.includes("all")) {
-                          setIndustryFilter([value]);
-                        } else {
-                          if (industryFilter.includes(value)) {
-                            const newFilter = industryFilter.filter(
-                              (i) => i !== value,
-                            );
-                            setIndustryFilter(
-                              newFilter.length === 0 ? ["all"] : newFilter,
-                            );
-                          } else {
-                            setIndustryFilter([
-                              ...industryFilter.filter((i) => i !== "all"),
-                              value,
-                            ]);
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue>
-                        {industryFilter.includes("all")
-                          ? "All Industries"
-                          : industryFilter.length === 1
-                            ? industryFilter[0]
-                            : `${industryFilter.length} selected`}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Industries</SelectItem>
-                      {industries
-                        .filter((industry) => industry && industry.trim())
-                        .map((industry) => (
-                          <SelectItem key={industry} value={industry}>
-                            <div className="flex items-center gap-2">
-                              <input
-                                type="checkbox"
-                                checked={
-                                  industryFilter.includes(industry) &&
-                                  !industryFilter.includes("all")
-                                }
-                                readOnly
-                                className="w-3 h-3"
-                              />
-                              {industry}
-                            </div>
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="w-[180px]">
-                  <Select
-                    value={
-                      locationFilter.includes("all")
-                        ? "all"
-                        : locationFilter.length === 1
-                          ? locationFilter[0]
-                          : "multiple"
-                    }
-                    onValueChange={(value) => {
-                      if (value === "all") {
-                        setLocationFilter(["all"]);
-                      } else {
-                        if (locationFilter.includes("all")) {
-                          setLocationFilter([value]);
-                        } else {
-                          if (locationFilter.includes(value)) {
-                            const newFilter = locationFilter.filter(
-                              (l) => l !== value,
-                            );
-                            setLocationFilter(
-                              newFilter.length === 0 ? ["all"] : newFilter,
-                            );
-                          } else {
-                            setLocationFilter([
-                              ...locationFilter.filter((l) => l !== "all"),
-                              value,
-                            ]);
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue>
-                        {locationFilter.includes("all")
-                          ? "All Locations"
-                          : locationFilter.length === 1
-                            ? locationFilter[0]
-                            : `${locationFilter.length} selected`}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Locations</SelectItem>
-                      {locations
-                        .filter((location) => location && location.trim())
-                        .map((location) => (
-                          <SelectItem key={location} value={location}>
-                            <div className="flex items-center gap-2">
-                              <input
-                                type="checkbox"
-                                checked={
-                                  locationFilter.includes(location) &&
-                                  !locationFilter.includes("all")
-                                }
-                                readOnly
-                                className="w-3 h-3"
-                              />
-                              {location}
-                            </div>
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="w-[180px]"> 
-                  <Select
-                    value={
-                      contractFilter.includes("all")
-                        ? "all"
-                        : contractFilter.length === 1
-                          ? contractFilter[0]
-                          : "multiple"
-                    }
-                    onValueChange={(value) => {
-                      if (value === "all") {
-                        setContractFilter(["all"]);
-                      } else {
-                        if (contractFilter.includes("all")) {
-                          setContractFilter([value]);
-                        } else {
-                          if (contractFilter.includes(value)) {
-                            const newFilter = contractFilter.filter(
-                              (t) => t !== value,
-                            );
-                            setContractFilter(
-                              newFilter.length === 0 ? ["all"] : newFilter,
-                            );
-                          } else {
-                            setContractFilter([
-                              ...contractFilter.filter((t) => t !== "all"),
-                              value,
-                            ]);
-                          }
-                        }
-                      }
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue>
-                        {contractFilter.includes("all")
-                          ? "All Types"
-                          : contractFilter.length === 1
-                            ? contractFilter[0]
-                            : `${contractFilter.length} selected`}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Types</SelectItem>
-                      {contractTypes
-                        .filter((type) => type && type.trim())
-                        .map((type) => (
-                          <SelectItem key={type} value={type}>
-                            <div className="flex items-center gap-2">
-                              <input
-                                type="checkbox"
-                                checked={
-                                  contractFilter.includes(type) &&
-                                  !contractFilter.includes("all")
-                                }
-                                readOnly
-                                className="w-3 h-3"
-                              />
-                              {type}
-                            </div>
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                </div>*/}
-              </div>
+  {facetMeta.map(({ key, value, onChange }) => (
+    <Select key={key} value={value} onValueChange={onChange}>
+      <SelectTrigger className="w-[200px]">
+        <SelectValue placeholder={`All ${toLabel(key)}`} />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">{`All ${toLabel(key)}`}</SelectItem>
+        {facets[key].map((v) => (
+          <SelectItem key={String(v)} value={String(v)}>
+            {toLabel(v)}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  ))}
+  </div>
             </div>
           </div>
-         
+
           {/* Jobs Display */}
           <div className="bg-white rounded-lg border overflow-hidden">
             <table className="w-full">

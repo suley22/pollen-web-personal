@@ -8,11 +8,11 @@ import { createClient } from "@/utils/supabase/server";
 export async function login(formData) {
   const supabase = await createClient();
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
+
+
   const data = {
-    email: formData.get("email"),
-    password: formData.get("password"),
+    email: formData.get('email'),
+    password: formData.get('password'),
   };
 
   const { error } = await supabase.auth.signInWithPassword(data);
@@ -28,11 +28,14 @@ export async function login(formData) {
 export async function signup(formData) {
   const supabase = await createClient();
 
+  // Convert FormData to object to avoid Next.js 15 server component issues
+  const formDataObj = Object.fromEntries(formData.entries());
+
   // type-casting here for convenience
   // in practice, you should validate your inputs
   const data = {
-    email: formData.get("email"),
-    password: formData.get("password"),
+    email: formDataObj.email,
+    password: formDataObj.password,
   };
 
   const { error } = await supabase.auth.signUp(data);

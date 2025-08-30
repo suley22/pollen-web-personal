@@ -68,7 +68,8 @@ export default function Home() {
             </a>
             <Button
               onClick={handleLogin}
-              className="bg-pink-600 hover:bg-pink-700 text-white font-sora"
+              className="bg-pink-600 hover:bg-pink-700 text-white"
+              style={{ fontFamily: "Sora" }}
             >
               Login
             </Button>

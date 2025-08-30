@@ -8,8 +8,8 @@ import {
   Building2,
   Menu,
   ChevronLeft,
-  Settings,
-  UserCheck,
+  User,
+  LayoutDashboard,
 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -51,17 +51,17 @@ export default function DashboardSidebar() {
       section: "main",
     },
     {
-      icon: UserCheck,
+      icon: User,
       label: "Employers Managment",
       path: "/admin/employers-managment",
       isActive: pathname === "/admin/employers-managment",
       section: "Admin",
     },
     {
-      icon: Settings,
-      label: "Account Settings",
-      path: "/admin/account-settings",
-      isActive: pathname === "/admin/account-settings",
+      icon: LayoutDashboard,
+      label: "Job Seekers",
+      path: "/admin/all-job-seekers",
+      isActive: pathname === "/admin/all-job-seekers",
       section: "Admin",
     },
   ];
@@ -100,45 +100,6 @@ export default function DashboardSidebar() {
 
       {/* Navigation Items */}
       <nav className="p-3 space-y-4">
-        {/* Main Navigation */}
-        {/* <div>
-          {!isCollapsed && (
-            <h3 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2 px-3">
-              Main
-            </h3>
-          )}
-          <div className="space-y-1">
-            {navigationItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Button
-                  key={item.path}
-                  variant={item.isActive ? "default" : "ghost"}
-                  className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
-                    item.isActive
-                      ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
-                      : "text-gray-700 hover:bg-gray-100"
-                  }`}
-                  onClick={() => router.push(item.path)}
-                  title={isCollapsed ? item.label : undefined}
-                >
-                  <Icon className="w-5 h-5" />
-                  {!isCollapsed && (
-                    <>
-                      <span>{item.label}</span>
-                      {item.badge && (
-                        <span className="ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                          {item.badge > 9 ? "9+" : item.badge}
-                        </span>
-                      )}
-                    </>
-                  )}
-                </Button>
-              );
-            })}
-          </div>
-        </div> */}
-
         {/* Main Navigation */}
         <div>
           <div className="space-y-1">
@@ -182,103 +143,6 @@ export default function DashboardSidebar() {
             })}
           </div>
         </div>
-
-        {/* Secondary Navigation */}
-        {/* <div>
-          {!isCollapsed && (
-            <h3 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2 px-3">
-              My Activity
-            </h3>
-          )}
-          <div className="space-y-1">
-            <Button
-              variant={pathname === "/main/profile" ? "default" : "ghost"}
-              className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
-                pathname === "/main/profile"
-                  ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-              onClick={() => router.push("/main/profile")}
-              title={isCollapsed ? "My Profile" : undefined}
-            >
-              <User className="w-5 h-5" />
-              {!isCollapsed && <span>My Profile</span>}
-            </Button>
-            <Button
-              variant={
-                pathname === "/main/saved-items" ? "default" : "ghost"
-              }
-              className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
-                pathname === "/main/saved-items"
-                  ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-              onClick={() => router.push("/main/saved-items")}
-              title={isCollapsed ? "Saved Items" : undefined}
-            >
-              <Heart className="w-5 h-5" />
-              {!isCollapsed && <span>Saved Items</span>}
-            </Button>
-            <Button
-              variant={
-                pathname === "/main/applications" ? "default" : "ghost"
-              }
-              className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
-                pathname === "/main/applications"
-                  ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-              onClick={() => router.push("/main/applications")}
-              title={isCollapsed ? "My Applications" : undefined}
-            >
-              <FileText className="w-5 h-5" />
-              {!isCollapsed && <span>My Applications</span>}
-            </Button>
-            <Button
-              variant={
-                pathname === "/main/interview-schedule"
-                  ? "default"
-                  : "ghost"
-              }
-              className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
-                pathname === "/main/interview-schedule"
-                  ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-              onClick={() => router.push("/main/interview-schedule")}
-              title={isCollapsed ? "Interview Schedule" : undefined}
-            >
-              <Calendar className="w-5 h-5" />
-              {!isCollapsed && <span>Interview Schedule</span>}
-            </Button>
-          </div>
-        </div>
-        <div>
-          {!isCollapsed && (
-            <h3 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2 px-3">
-              Admin
-            </h3>
-          )}
-          <div className="space-y-1">
-            <Button
-              variant={
-                pathname === "/main/employer/profile" ? "default" : "ghost"
-              }
-              className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
-                pathname === "/main/admin/employers-managment"
-                  ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-              onClick={() =>
-                router.push("/admin/employers-managment")
-              }
-              title={isCollapsed ? "My Profile" : undefined}
-            >
-              <User className="w-5 h-5" />
-              {!isCollapsed && <span>Employers Managment</span>}
-            </Button>
-          </div>{" "}
-        </div> */}
       </nav>
     </div>
   );

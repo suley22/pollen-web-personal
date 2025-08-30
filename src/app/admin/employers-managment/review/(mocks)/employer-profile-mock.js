@@ -17,16 +17,8 @@ export const employerProfile = {
     "Colaboració, ",
     "Transparencia ",
   ],
-  benefits: [
-    "Seguro médico privado",
-    "Vacaciones pagadas (25 días)",
-    "Horario flexible",
-  ],
-  perks: [
-    "Snacks y café ilimitados",
-    "Equipo de última generación",
-    "Eventos y afterworks de equipo",
-  ],
+  benefits: [],
+  perks: [],
   workOptions: [],
   workEnvironment: "",
   logoUrl:

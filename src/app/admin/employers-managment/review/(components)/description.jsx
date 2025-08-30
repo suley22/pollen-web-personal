@@ -9,7 +9,7 @@ export default function Description({ employerProfile }) {
     const [isEditing, setIsEditing] = useState(false);
 
     const [editValue, setEditValue] = useState(
-        employerProfile?.about || ""
+        employerProfile?.description || ""
     );
 
     function _buildEditButton() {
@@ -81,7 +81,7 @@ export default function Description({ employerProfile }) {
         <Card className="p-6">
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="font-bold font-sora text-2xl">
-                    About {employerProfile.company_name}
+                    About {employerProfile.companyName}
                 </CardTitle>
 
                 {!isEditing && _buildEditButton()}

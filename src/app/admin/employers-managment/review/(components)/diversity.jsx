@@ -9,7 +9,7 @@ export default function Description({ employerProfile }) {
     const [isEditing, setIsEditing] = useState(false);
 
     const [editValue, setEditValue] = useState(
-        employerProfile?.diversity_commitment || ""
+        employerProfile?.diversity || ""
     );
 
     function _buildEditButton() {
@@ -91,12 +91,12 @@ export default function Description({ employerProfile }) {
                         {isEditing ?
                     _buildEditForm(editValue, setEditValue)
                     : _buildStaticContent(employerProfile)}
-
-
+           
+                        
                       </CardContent>
                     </Card>
 
-
+        
     )
 
 }

@@ -27,7 +27,7 @@ export default function Contact({ employerProfile }) {
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => router.push(`/admin/account-settings`)}
+          onClick={() => router.push(`/account/settings`)}
           className="hover:bg-gray-100"
         >
           <Edit className="w-4 h-4" />

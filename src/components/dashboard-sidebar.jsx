@@ -9,6 +9,7 @@ import {
   Menu,
   ChevronLeft,
   User,
+  LayoutDashboard,
 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -54,6 +55,13 @@ export default function DashboardSidebar() {
       label: "Employers Managment",
       path: "/admin/employers-managment",
       isActive: pathname === "/admin/employers-managment",
+      section: "Admin",
+    },
+    {
+      icon: LayoutDashboard,
+      label: "Job Seekers",
+      path: "/admin/all-job-seekers",
+      isActive: pathname === "/admin/all-job-seekers",
       section: "Admin",
     },
   ];

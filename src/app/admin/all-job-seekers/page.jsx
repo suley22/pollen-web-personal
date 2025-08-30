@@ -249,24 +249,23 @@ const facetMeta = [
                   className="pl-10"
                 />
               </div>
-
               <div className="flex gap-4">
-  {facetMeta.map(({ key, value, onChange }) => (
-    <Select key={key} value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-[200px]">
-        <SelectValue placeholder={`All ${toLabel(key)}`} />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="all">{`All ${toLabel(key)}`}</SelectItem>
-        {facets[key].map((v) => (
-          <SelectItem key={String(v)} value={String(v)}>
-            {toLabel(v)}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
-  ))}
-  </div>
+                {facetMeta.map(({ key, value, onChange }) => (
+                  <Select key={key} value={value} onValueChange={onChange}>
+                    <SelectTrigger className="w-[200px]">
+                      <SelectValue placeholder={`All ${toLabel(key)}`} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">{`All ${toLabel(key)}`}</SelectItem>
+                      {facets[key].map((v) => (
+                        <SelectItem key={String(v)} value={String(v)}>
+                          {toLabel(v)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ))}   
+              </div>
             </div>
           </div>
 

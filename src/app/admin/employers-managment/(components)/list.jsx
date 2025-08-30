@@ -16,7 +16,7 @@ import {
   Users,
 } from "lucide-react";
 
-function List({ employerList }) {
+export function List({ employerList }) {
   const getStatusBadge = (status) => {
     switch (status) {
       case "pending":
@@ -133,5 +133,3 @@ function List({ employerList }) {
     </div>
   );
 }
-
-export { List };

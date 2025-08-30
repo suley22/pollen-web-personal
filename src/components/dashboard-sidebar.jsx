@@ -8,7 +8,8 @@ import {
   Building2,
   Menu,
   ChevronLeft,
-  User,
+  Settings,
+  UserCheck,
 
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -50,10 +51,17 @@ export default function DashboardSidebar() {
       section: "main",
     },
     {
-      icon: User,
+      icon: UserCheck,
       label: "Employers Managment",
       path: "/admin/employers-managment",
       isActive: pathname === "/admin/employers-managment",
+      section: "Admin",
+    },
+    {
+      icon: Settings,
+      label: "Account Settings",
+      path: "/admin/account-settings",
+      isActive: pathname === "/admin/account-settings",
       section: "Admin",
     },
   ];

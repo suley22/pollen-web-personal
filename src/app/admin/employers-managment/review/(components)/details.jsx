@@ -21,7 +21,7 @@ export default function Details({
   setSelectedReview,
   setShowReviewModal,
 }) {
-  const [editValue, setEditValue] = useState(employerProfile.logoUrl || "");
+  const [editValue, setEditValue] = useState(employerProfile.logo_url || "");
 
   const handleFileChange = async (e) => {
     if (e.target.files && e.target.files.length > 0) {

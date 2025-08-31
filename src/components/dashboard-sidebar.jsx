@@ -99,7 +99,7 @@ export default function DashboardSidebar() {
       </div>
 
       {/* Navigation Items */}
-      <nav className="p-3 space-y-4">
+      <nav className="p-3 ">
         {/* Main Navigation */}
         <div>
           <div className="space-y-1">
@@ -112,7 +112,9 @@ export default function DashboardSidebar() {
               return (
                 <React.Fragment key={item.path}>
                   {showHeader && (
-                    <h3 className="text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2 px-3">
+                    <h3 className={`text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2 px-3
+                      ${idx !== 0 ? "pt-4" : ""}`}
+                    >
                       {item.section}
                     </h3>
                   )}

@@ -13,8 +13,11 @@ import stylistLogo from "@/assets/image_1753303963933.png";
 import nyPostLogo from "@/assets/image_1753303981878.png";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
   const handleLogin = async () => {
     try {
       const supabase = createClient();
@@ -22,13 +25,13 @@ export default function Home() {
       const { data, error } = await supabase.auth.getSession();
 
       if (error || !data.session) {
-        window.location.href = "/login";
+        router.push("/login");
       } else {
-        window.location.href = "/main/home";
+        router.push("/main/home");
       }
     } catch (error) {
       console.error("Error al verificar la sesión:", error);
-      window.location.href = "/login";
+      router.push("/login");
     }
   };
 

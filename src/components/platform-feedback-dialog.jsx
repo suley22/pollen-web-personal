@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+
 import {
   Dialog,
   DialogContent,
@@ -75,27 +75,12 @@ export default function PlatformFeedbackDialog({ open, onOpenChange }) {
     additionalComments: "",
   });
 
-  const submitFeedbackMutation = useMutation({
-    mutationFn: async () => {
-      return {};
-    },
-    onSuccess: () => {
-      toast({
-        title: "Thank You!",
-        description: "Your feedback helps us improve Pollen for everyone.",
-      });
-      // Mark feedback as submitted in localStorage to prevent showing again
-      localStorage.setItem("pollen_feedback_submitted", "true");
-      onOpenChange(false);
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to submit feedback. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
+  const submitFeedbackMutation = () => {
+    toast({
+      title: "Thank You!",
+      description: "Your feedback helps us improve Pollen for everyone.",
+    });
+  };
 
   const updateFormData = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

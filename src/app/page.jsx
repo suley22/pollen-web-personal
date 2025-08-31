@@ -17,17 +17,13 @@ import { createClient } from "@/utils/supabase/client";
 export default function Home() {
   const handleLogin = async () => {
     try {
-      // Crear cliente de Supabase para el navegador
       const supabase = createClient();
 
-      // Verificar si hay una sesión activa
       const { data, error } = await supabase.auth.getSession();
 
       if (error || !data.session) {
-        // Si no hay sesión o hay un error, redirigir a login
         window.location.href = "/login";
       } else {
-        // Si hay una sesión activa, redirigir al dashboard
         window.location.href = "/main/home";
       }
     } catch (error) {

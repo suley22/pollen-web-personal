@@ -9,6 +9,7 @@ export default [
     plugins: {
       react: pluginReact,
     },
+    ignores: ["**/*.css"],
     languageOptions: {
       globals: {
         ...globals.browser,

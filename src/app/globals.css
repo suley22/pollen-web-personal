@@ -1,6 +1,7 @@
-/* Importamos archivos CSS adicionales después de Tailwind */
+/* Importamos archivos CSS adicionales primero */
 @import "../styles/pollen-style.css";
 
+/* Tailwind CSS directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

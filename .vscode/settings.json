@@ -1,17 +1,8 @@
 {
-  "css.validate": false,
-  "less.validate": false,
-  "scss.validate": false,
-  "stylelint.validate": ["css", "scss"],
-  "css.lint.unknownAtRules": "ignore",
-  "files.associations": {
-    "**/*.css": "css"
-  },
-  "emmet.includeLanguages": {
-    "css": "css"
-  },
-  "css.suggest.completePropertyWithSemicolon": true,
-  "css.suggest.triggerPropertyValueCompletion": true,
-  "workbench.colorTheme": "Default Dark+",
-  "editor.semanticHighlighting.enabled": true
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    ".env": ".env, .env.*",
+    "jsconfig.json": ".gitignore,.stylelintrc.json, components.json, jsconfig.json, eslint.config.mjs, package-lock.json, yarn.lock, pnpm-lock.yaml, bun.lockb, .npmrc, .nvmrc, .node-version, tsconfig.json, tsconfig.*.json, next-env.d.ts, next.config.*, postcss.config.*, tailwind.config.*, .eslintrc, .eslintrc.*, .eslintignore, .prettierrc, .prettierrc.*, .prettierignore, babel.config.*, .babelrc, .babelrc.*, jest.config.*, jest.setup.*, cypress.config.*, playwright.config.*, lint-staged.config.*, commitlint.config.*, vercel.json, vercel.*, sentry.properties, wrangler.toml, Dockerfile, Dockerfile.*, .dockerignore, docker-compose.yml, docker-compose.*.yml"
+  }
 }

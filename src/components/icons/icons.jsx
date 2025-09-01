@@ -45,3 +45,70 @@ export function GoogleIcon() {
     </svg>
   );
 }
+
+// 4 hex pointy-top, layout: medio-izq — medio-der (comparten arista),
+// abajo-centro (entre ambos), y arriba-derecha (conectado a la arista
+// sup.-der del medio-derecha). Sin fondo, color = currentColor.
+export function Logo(props) {
+  const S = 8; // tamaño (radio centro->vértice). Subí/bajá para más grosor/escala.
+  const SQRT3 = 1.7320508075688772;
+
+  // Axial (q,r) -> píxeles para hex "pointy-top"
+  const toPx = (q, r) => [
+    S * SQRT3 * (q + r / 2),
+    S * 1.5 * r,
+  ];
+
+  // Puntos del hex pointy-top (vértice arriba)
+  const hexPoints = (cx, cy, s = S) => {
+    const w2 = (SQRT3 * s) / 2; // medio ancho
+    return [
+      [cx, cy - s],         // top
+      [cx + w2, cy - s / 2],
+      [cx + w2, cy + s / 2],
+      [cx, cy + s],         // bottom
+      [cx - w2, cy + s / 2],
+      [cx - w2, cy - s / 2],
+    ]
+      .map(([x, y]) => `${x},${y}`)
+      .join(" ");
+  };
+
+  // Coordenadas axiales seguras para el patrón pedido:
+  // L (medio-izq), R (medio-der, comparte arista), B (abajo-centro),
+  // T (arriba-derecha del medio-der)
+  const axial = [
+    [0, 0],   // L
+    [1, 0],   // R
+    [0, 1],   // B  (SE de L y SW de R)
+    [2, -1],  // T  (NE de R)
+  ];
+
+  const centers = axial.map(([q, r]) => toPx(q, r));
+
+  // viewBox ajustado
+  const xs = centers.map(([x]) => x);
+  const ys = centers.map(([, y]) => y);
+  const pad = S + 3; // pequeño margen
+  const minX = Math.min(...xs) - (SQRT3 * S) / 2 - pad;
+  const maxX = Math.max(...xs) + (SQRT3 * S) / 2 + pad;
+  const minY = Math.min(...ys) - S - pad;
+  const maxY = Math.max(...ys) + S + pad;
+
+  return (
+    <svg
+      viewBox={`${minX} ${minY} ${maxX - minX} ${maxY - minY}`}
+      width="24"
+      height="24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <g stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+        {centers.map(([cx, cy], i) => (
+          <polygon key={i} points={hexPoints(cx, cy)} />
+        ))}
+      </g>
+    </svg>
+  );
+}

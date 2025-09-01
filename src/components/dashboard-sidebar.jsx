@@ -6,8 +6,6 @@ import {
   Users,
   Briefcase,
   Building2,
-  Menu,
-  ChevronLeft,
   User,
   LayoutDashboard,
 
@@ -19,7 +17,7 @@ import { useState } from "react";
 export default function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const navigationItems = [
     {
@@ -68,36 +66,10 @@ export default function DashboardSidebar() {
 
   return (
     <div
+      onMouseEnter={() => setIsCollapsed(false)}
+      onMouseLeave={() => setIsCollapsed(true)}
       className={`${isCollapsed ? "w-16" : "w-64"} bg-white border-r border-gray-200 flex flex-col h-screen transition-all duration-300`}
     >
-      {/* Logo/Header */}
-      <div className="p-4 border-b border-gray-200">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#E2007A] rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">P</span>
-            </div>
-            {!isCollapsed && (
-              <div>
-                <h1 className="font-bold text-xl text-gray-900">Pollen</h1>
-              </div>
-            )}
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-1 h-8 w-8 hover:bg-gray-100"
-          >
-            {isCollapsed ? (
-              <Menu className="w-4 h-4" />
-            ) : (
-              <ChevronLeft className="w-4 h-4" />
-            )}
-          </Button>
-        </div>
-      </div>
-
       {/* Navigation Items */}
       <nav className="p-3 ">
         {/* Main Navigation */}
@@ -108,7 +80,6 @@ export default function DashboardSidebar() {
               const prev = navigationItems[idx - 1];
               const showHeader =
                 !isCollapsed && (idx === 0 || prev.section !== item.section);
-
               return (
                 <React.Fragment key={item.path}>
                   {showHeader && (

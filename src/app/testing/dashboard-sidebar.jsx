@@ -8,7 +8,6 @@ import {
   Building2,
   User,
   LayoutDashboard,
-
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePathname, useRouter } from "next/navigation";
@@ -18,6 +17,7 @@ export default function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const [keepExpanded, setKeepExpanded] = useState(false);
 
   const navigationItems = [
     {
@@ -68,7 +68,9 @@ export default function DashboardSidebar() {
     <div
       onMouseEnter={() => setIsCollapsed(false)}
       onMouseLeave={() => setIsCollapsed(true)}
-      className={`${isCollapsed ? "w-16" : "w-64"} bg-white border-r border-gray-200 flex flex-col h-screen transition-all duration-300`}
+      className={`${isCollapsed ? "w-16" : "w-64"} ${
+        keepExpanded ? "overflow-auto fixed" : "overflow-hidden"
+      } z-40 bg-white border-r border-gray-200 flex flex-col h-screen transition-all duration-300`}
     >
       {/* Navigation Items */}
       <nav className="p-3">
@@ -83,7 +85,8 @@ export default function DashboardSidebar() {
               return (
                 <React.Fragment key={item.path}>
                   {showHeader && (
-                    <h3 className={`text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2 px-3
+                    <h3
+                      className={`text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2 px-3
                       ${idx !== 0 ? "pt-4" : ""}`}
                     >
                       {item.section}
@@ -92,10 +95,13 @@ export default function DashboardSidebar() {
 
                   <Button
                     variant={item.isActive ? "default" : "ghost"}
-                    className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${item.isActive
+                    className={`w-full ${
+                      isCollapsed ? "justify-start px-2" : "justify-start gap-3"
+                    } h-9 text-sm ${
+                      item.isActive
                         ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
                         : "text-gray-700 hover:bg-gray-100"
-                      }`}
+                    }`}
                     onClick={() => router.push(item.path)}
                     title={isCollapsed ? item.label : undefined}
                   >
@@ -115,6 +121,17 @@ export default function DashboardSidebar() {
               );
             })}
           </div>
+        </div>
+
+        {/* Collapse Button */}
+        <div className="item-end">
+          <Button
+            variant="ghost"
+            className="w-full justify-start gap-3 h-9 text-sm text-gray-700 hover:bg-gray-100"
+            onClick={() => setKeepExpanded(!keepExpanded)}
+          >
+            {keepExpanded ? "Collapse" : "Expand"}
+          </Button>
         </div>
       </nav>
     </div>

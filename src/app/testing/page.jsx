@@ -18,7 +18,6 @@ import {
   ChevronRight,
   Trophy,
   MapPin,
-
 } from "lucide-react";
 
 export default function Home() {

@@ -70,7 +70,7 @@ export default function DashboardSidebar() {
       onMouseLeave={() => setIsCollapsed(true)}
       className={`${isCollapsed ? "w-16" : "w-64"} ${
         keepExpanded ? "overflow-auto fixed" : "overflow-hidden"
-      } z-40 bg-white border-r border-gray-200 flex flex-col h-screen transition-all duration-300`}
+      } z-40 bg-white border-r border-gray-200 flex flex-col transition-all duration-300`}
     >
       {/* Navigation Items */}
       <nav className="p-3">

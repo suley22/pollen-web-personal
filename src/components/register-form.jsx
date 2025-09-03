@@ -6,19 +6,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/icons/icons";
 
-export function LoginForm({ className, login, onChangeLogin, ...props }) {
+export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Login to your account</h1>
+        <h1 className="text-2xl font-bold">Create a new account</h1>
         <p className="text-muted-foreground text-sm text-balance">
-          Enter your email below to login to your account
+          Enter your email below to create an account
         </p>
       </div>
       <div className="grid gap-6">
         <Button variant="outline" className="w-full">
           <GoogleIcon className="mr-2 h-4 w-4" />
-          Login with Google
+          Sign up with Google
         </Button>
         <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
           <span className="bg-background text-muted-foreground relative z-10 px-2">
@@ -33,24 +33,18 @@ export function LoginForm({ className, login, onChangeLogin, ...props }) {
           <div className="grid gap-3">
             <div className="flex items-center">
               <Label htmlFor="password">Password</Label>
-              <a
-                href="#"
-                className="ml-auto text-sm underline-offset-4 underline"
-              >
-                Forgot your password?
-              </a>
             </div>
             <Input id="password" name="password" type="password" required />
           </div>
-          <Button type="submit" className="w-full" formAction={login}>
-            Login
+          <Button type="submit" className="w-full" formAction={signup}>
+            Sign up
           </Button>
         </form>
       </div >
-       <div className="text-center text-sm">
-        Don&apos;t have an account?{" "}
-        <a href="#" onClick={() => onChangeLogin(false)} className="text-pink-600 underline underline-offset-4">
-          Sign up
+      <div className="text-center text-sm">
+        Already have an account?{" "}
+        <a href="#" onClick={() => onChangeLogin(true)} className="text-pink-600 underline underline-offset-4">
+          Sign in
         </a>
       </div>
     </div >

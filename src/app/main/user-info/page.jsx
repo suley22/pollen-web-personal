@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { updateUserAction } from "./actions"; // 👈 la server action
+import { PrimaryButton } from "@/components/ui/buttons/primary-button";
 
 export default function Page() {
   const [form, setForm] = useState({
     nombre: "Juan",
     apellido: "Pérez",
-    otherData: "Algo más",
+    pronouns: "He/Him",
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -33,73 +34,57 @@ export default function Page() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10">
+    <div className="max-w-xl mx-auto mt-10">
       <div className="bg-white shadow-lg rounded-2xl p-6">
-        <h2 className="text-xl font-semibold mb-4">User Info</h2>
+        <div className="mb-4">
+          <h2 className="text-xl font-semibold !mb-0">¡Ya casi!</h2>
+          <p>Completa la información para continuar</p>
+        </div>
 
-        {isEditing ? (
-          <div className="space-y-3">
-            <input
-              type="text"
-              name="nombre"
-              value={form.nombre}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-              placeholder="Nombre"
-            />
-            <input
-              type="text"
-              name="apellido"
-              value={form.apellido}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-              placeholder="Apellido"
-            />
-            <input
-              type="text"
-              name="otherData"
-              value={form.otherData}
-              onChange={handleChange}
-              className="w-full border p-2 rounded"
-              placeholder="Other Data"
-            />
-
+       <div className="space-y-3">
+           <div className="flex gap-2">
+            <div className="flex-1">
+              <p className="mb-1 font-semibold">Nombre</p>
+              <input
+                type="text"
+                name="nombre"
+                value={form.nombre}
+                onChange={handleChange}
+                className="w-full border p-2 rounded"
+                placeholder="Nombre"
+              />
+            </div>
+            <div className="flex-1">
+              <p className="mb-1 font-semibold">Apellido</p>
+              <input
+                type="text"
+                name="apellido"
+                value={form.apellido}
+                onChange={handleChange}
+                className="w-full border p-2 rounded"
+                placeholder="Apellido"
+              />
+            </div>
+            </div>
+            <div>
+              <p className="mb-1 font-semibold">Pronouns</p>
+              <select
+                placeholder="Select pronouns"
+                name="pronouns"
+                value={form.pronouns}
+                onChange={handleChange}
+                className="w-full border p-2 rounded bg-white"
+              >
+                <option value="He/Him">He/Him</option>
+                <option value="She/Her">She/Her</option>
+                <option value="They/Them">They/Them</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
             <div className="flex gap-2 mt-4">
-              <button
-                onClick={handleSave}
-                disabled={pending}
-                className="bg-green-500 text-white px-4 py-2 rounded"
-              >
-                {pending ? "Saving..." : "Save"}
-              </button>
-              <button
-                onClick={() => setIsEditing(false)}
-                className="bg-gray-300 px-4 py-2 rounded"
-              >
-                Cancel
-              </button>
+              <PrimaryButton text="Save changes" onClick={handleSave} className="" />
             </div>
           </div>
-        ) : (
-          <div className="space-y-2">
-            <p>
-              <strong>Nombre:</strong> {form.nombre}
-            </p>
-            <p>
-              <strong>Apellido:</strong> {form.apellido}
-            </p>
-            <p>
-              <strong>Other Data:</strong> {form.otherData}
-            </p>
-
-            <button
-              onClick={() => setIsEditing(true)}
-              className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
-            >
-              Edit
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

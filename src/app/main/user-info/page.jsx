@@ -14,7 +14,10 @@ export default function Page() {
   const [pending, setPending] = useState(false);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const propertyName = [e.target.name];
+    const propertyValue = [e.target.value];
+
+    setForm({ ...form, [propertyName]: propertyValue });
   };
 
   const handleSave = async () => {
@@ -79,9 +82,15 @@ export default function Page() {
           </div>
         ) : (
           <div className="space-y-2">
-            <p><strong>Nombre:</strong> {form.nombre}</p>
-            <p><strong>Apellido:</strong> {form.apellido}</p>
-            <p><strong>Other Data:</strong> {form.otherData}</p>
+            <p>
+              <strong>Nombre:</strong> {form.nombre}
+            </p>
+            <p>
+              <strong>Apellido:</strong> {form.apellido}
+            </p>
+            <p>
+              <strong>Other Data:</strong> {form.otherData}
+            </p>
 
             <button
               onClick={() => setIsEditing(true)}

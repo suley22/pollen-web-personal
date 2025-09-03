@@ -1,10 +1,16 @@
+"use client"
 import { GalleryVerticalEnd } from "lucide-react";
+import { useState } from "react";
 
 import { LoginForm } from "@/components/login-form";
+import { RegisterForm } from "@/components/register-form";
+
 import { TestimonialSlider } from "./(components)/testimonial-slider";
 import { login as loginAction } from "./actions";
+import { signup as signupAction } from "./actions";
 
 export default function LoginPage() {
+  const [isLogging, setIsLogging] = useState(true); 
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -18,7 +24,7 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <LoginForm login={loginAction} />
+            ${isLogging ? <LoginForm login={loginAction} onChangeLogin={setIsLogging} /> : <RegisterForm signup={signupAction} onChangeLogin={setIsLogging} />}
           </div>
         </div>
       </div>

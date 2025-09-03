@@ -3,22 +3,34 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "./registerSchema";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/icons/icons";
 
+function getPasswordChecks(password) {
+  return [
+    { label: "Mínimo 8 caracteres", valid: password.length >= 8 },
+    { label: "Al menos una mayúscula", valid: /[A-Z]/.test(password) },
+    { label: "Al menos un número", valid: /[0-9]/.test(password) },
+    { label: "Al menos un símbolo", valid: /[^a-zA-Z0-9]/.test(password) },
+  ];
+}
+
 export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isValid },
   } = useForm({
     resolver: zodResolver(registerSchema),
     mode: "onChange",
   });
+
+  const passwordValue = watch("password") || "";
+  const passwordChecks = getPasswordChecks(passwordValue);
 
   const onSubmit = async (data) => {
     await signup(data);
@@ -62,17 +74,26 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
           <div className="grid gap-3">
             <Label htmlFor="password">Password</Label>
             <Input id="password" type="password" {...register("password")} />
-            {errors.password && (
-              <p className="text-red-500 text-sm">{errors.password.message}</p>
-            )}
+
+            {/* Lista de requisitos */}
+            <ul className="mt-2 text-sm space-y-1">
+              {passwordChecks.map((check, idx) => (
+                <li
+                  key={idx}
+                  className={`flex items-center gap-2 ${
+                    check.valid ? "text-green-600" : "text-red-500"
+                  }`}
+                >
+                  {check.valid ? "✔" : "✖"} {check.label}
+                </li>
+              ))}
+            </ul>
+
+
           </div>
 
           {/* Botón Sign up */}
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={!isValid}
-          >
+          <Button type="submit" className="w-full" disabled={!isValid}>
             Sign up
           </Button>
         </form>

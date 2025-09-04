@@ -17,7 +17,7 @@ export async function updateUserAction(data) {
     throw new Error("No user authenticated");
   }
 
-  const { error } = await supabase.from("profile").upsert(
+  const { errorProfileUpdate } = await supabase.from("profile").upsert(
     {
       id: user.id, // 👈 clave primaria o unique constraint
       first_name: data.nombre,
@@ -27,8 +27,19 @@ export async function updateUserAction(data) {
     { onConflict: "id" }, // 👈 le indicas con qué campo detectar duplicados
   );
 
-  if (error) {
-    return { error: error.message, data: null };
+  const { dataUpdateUser, errorUpdateUser } = await supabase.auth.updateUser({
+    data: { register_profile_completed: true },
+  });
+
+  if (errorUpdateUser) {
+    console.error("Error actualizando metadata:", error.message);
+  } else {
+    console.log("User actualizado:", dataUpdateUser);
+  }
+
+  if (errorProfileUpdate) {
+    console.error("Error actualizando profile:", errorProfileUpdate.message);
+    return { error: errorProfileUpdate.message, data: null };
   } else {
     redirect("/main/home");
     return { error: null, data };

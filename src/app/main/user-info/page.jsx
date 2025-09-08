@@ -12,7 +12,7 @@ export default function Page() {
   });
 
   const [, setIsEditing] = useState(false);
-  const [, setPending] = useState(false);
+  const [, isLoading] = useState(false);
 
   const handleChange = (e) => {
     const propertyName = [e.target.name];
@@ -22,14 +22,14 @@ export default function Page() {
   };
 
   const handleSave = async () => {
-    setPending(true);
+    isLoading(true);
     try {
       await updateUserAction(form); // 👈 aquí pasas el id del usuario
       setIsEditing(false);
     } catch (err) {
       console.error(err);
     } finally {
-      setPending(false);
+      isLoading(false);
     }
   };
 

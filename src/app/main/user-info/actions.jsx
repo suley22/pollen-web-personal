@@ -3,7 +3,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
-
 export async function updateUserAction(data) {
   const supabase = await createClient();
 
@@ -32,7 +31,7 @@ export async function updateUserAction(data) {
   });
 
   if (errorUpdateUser) {
-    console.error("Error actualizando metadata:", error.message);
+    console.error("Error actualizando metadata:", errorUpdateUser.message);
   } else {
     console.log("User actualizado:", dataUpdateUser);
   }

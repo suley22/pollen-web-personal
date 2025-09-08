@@ -1,36 +1,72 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema } from "./registerSchema";
+import { useState } from "react";
+
+import {
+  UserInfoModel,
+  passwordErrorMessages,
+  emailErrorMessages,
+} from "@/app/login/registerSchema";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/icons/icons";
 
-function getPasswordChecks(password) {
-  return [
-    { label: "Mínimo 8 caracteres", valid: password.length >= 8 },
-    { label: "Al menos una mayúscula", valid: /[A-Z]/.test(password) },
-    { label: "Al menos un número", valid: /[0-9]/.test(password) },
-    { label: "Al menos un símbolo", valid: /[^a-zA-Z0-9]/.test(password) },
-  ];
-}
-
 export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors, isValid },
-  } = useForm({
-    resolver: zodResolver(registerSchema),
-    mode: "onChange",
-  });
+  const passwordFieldId = "password";
+  const emailId = "email";
 
-  const passwordValue = watch("password") || "";
-  const passwordChecks = getPasswordChecks(passwordValue);
+  const [passwordChecks, setPasswordChecks] = useState([]);
+  const [emailChecks, setEmailChecks] = useState([]);
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  function validateFormChecks(name, errorList = []) {
+    let errorMessageList = errorList.map((issue) => issue.message);
+
+    switch (name) {
+      case emailId: {
+        const emailChecks = getErrorMessages(
+          emailErrorMessages,
+          errorMessageList,
+        );
+        setEmailChecks(emailChecks);
+        setIsFormValid(emailChecks.every((check) => check.valid));
+        break;
+      }
+      case passwordFieldId: {
+        const passwordChecks = getErrorMessages(
+          passwordErrorMessages,
+          errorMessageList,
+        );
+
+        setPasswordChecks(passwordChecks);
+        setIsFormValid(passwordChecks.every((check) => check.valid));
+        break;
+      }
+    }
+  }
+
+  function getErrorMessages(messages, errorList) {
+    return Object.entries(messages).map(([, message]) => ({
+      label: message,
+      valid: !errorList.includes(message),
+    }));
+  }
+
+  const handleOnChange = (name, value) => {
+    try {
+      UserInfoModel.parse({ [name]: value });
+      setPasswordChecks([]);
+      setEmailChecks([]);
+    } catch (error) {
+      if (error) {
+        console.log("error", error);
+        validateFormChecks(name, error.issues ?? []);
+      }
+    }
+  };
 
   const onSubmit = async (data) => {
     await signup(data);
@@ -55,25 +91,38 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
           </span>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+        <form onSubmit={onSubmit} className="flex flex-col gap-6">
           {/* Email */}
           <div className="grid gap-3">
             <Label htmlFor="email">Email</Label>
             <Input
-              id="email"
+              id={emailId}
               type="email"
               placeholder="m@example.com"
-              {...register("email")}
+              onChange={(e) => handleOnChange(emailId, e.target.value)}
             />
-            {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email.message}</p>
-            )}
+            <ul className="mt-2 text-sm space-y-1">
+              {emailChecks.map((check, idx) => (
+                <li
+                  key={idx}
+                  className={`flex items-center gap-2 ${
+                    check.valid ? "text-green-600" : "text-red-500"
+                  }`}
+                >
+                  {check.valid ? "✔" : "✖"} {check.label}
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* Password */}
           <div className="grid gap-3">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" {...register("password")} />
+            <Input
+              id={passwordFieldId}
+              type="password"
+              onChange={(e) => handleOnChange(passwordFieldId, e.target.value)}
+            />
 
             {/* Lista de requisitos */}
             <ul className="mt-2 text-sm space-y-1">
@@ -88,12 +137,10 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
                 </li>
               ))}
             </ul>
-
-
           </div>
 
           {/* Botón Sign up */}
-          <Button type="submit" className="w-full" disabled={!isValid}>
+          <Button type="submit" className="w-full" disabled={!isFormValid}>
             Sign up
           </Button>
         </form>

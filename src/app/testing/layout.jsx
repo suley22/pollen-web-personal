@@ -4,13 +4,13 @@ import { Header } from "@/components/header";
 export default function DashboardLayout({ children }) {
   return (
     <>
-      <div className="min-h-screen bg-gray-50 flex flex-col">
+      <div className="min-h-screen max-h-screen bg-gray-50 flex flex-col">
         <Header />
         <div className="flex-1 flex-row flex">
           <DashboardSidebar />
-          <div className="flex-1 flex flex-col">
+          <div className="flex-1 flex flex-col overflow-scroll">
             {/* <JobSeekrHeader onLogout={handleLogout} /> */}
-            <main className="flex-1 overflow-auto">{children}</main>
+            {children}
           </div>
         </div>
       </div>

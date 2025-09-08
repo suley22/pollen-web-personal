@@ -11,8 +11,8 @@ export default function Page() {
     pronouns: "He/Him",
   });
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [pending, setPending] = useState(false);
+  const [, setIsEditing] = useState(false);
+  const [, setPending] = useState(false);
 
   const handleChange = (e) => {
     const propertyName = [e.target.name];
@@ -41,8 +41,8 @@ export default function Page() {
           <p>Completa la información para continuar</p>
         </div>
 
-       <div className="space-y-3">
-           <div className="flex gap-2">
+        <div className="space-y-3">
+          <div className="flex gap-2">
             <div className="flex-1">
               <p className="mb-1 font-semibold">Nombre</p>
               <input
@@ -65,26 +65,30 @@ export default function Page() {
                 placeholder="Apellido"
               />
             </div>
-            </div>
-            <div>
-              <p className="mb-1 font-semibold">Pronouns</p>
-              <select
-                placeholder="Select pronouns"
-                name="pronouns"
-                value={form.pronouns}
-                onChange={handleChange}
-                className="w-full border p-2 rounded bg-white"
-              >
-                <option value="He/Him">He/Him</option>
-                <option value="She/Her">She/Her</option>
-                <option value="They/Them">They/Them</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div className="flex gap-2 mt-4">
-              <PrimaryButton text="Save changes" onClick={handleSave} className="" />
-            </div>
           </div>
+          <div>
+            <p className="mb-1 font-semibold">Pronouns</p>
+            <select
+              placeholder="Select pronouns"
+              name="pronouns"
+              value={form.pronouns}
+              onChange={handleChange}
+              className="w-full border p-2 rounded bg-white"
+            >
+              <option value="He/Him">He/Him</option>
+              <option value="She/Her">She/Her</option>
+              <option value="They/Them">They/Them</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div className="flex gap-2 mt-4">
+            <PrimaryButton
+              text="Save changes"
+              onClick={handleSave}
+              className=""
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

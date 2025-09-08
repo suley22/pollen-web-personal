@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/icons/icons";
 
-export function LoginForm({ className, login, ...props }) {
+export function LoginForm({ className, login, onChangeLogin, ...props }) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
@@ -47,9 +47,9 @@ export function LoginForm({ className, login, ...props }) {
           </Button>
         </form>
       </div >
-      <div className="text-center text-sm">
+       <div className="text-center text-sm">
         Don&apos;t have an account?{" "}
-        <a href="#" className="underline underline-offset-4">
+        <a href="#" onClick={() => onChangeLogin(false)} className="text-pink-600 underline underline-offset-4">
           Sign up
         </a>
       </div>

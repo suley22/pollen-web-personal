@@ -1,7 +1,7 @@
 /* Importamos archivos CSS adicionales primero */
 @import "../styles/pollen-style.css";
 
-/* Tailwind CSS directives */
+/* Tailwind layers: required for @layer usage below */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,6 +9,35 @@
 /* Enhanced 3D perspective utilities for laptop mockup */
 .perspective-1000 {
   perspective: 1000px;
+}
+
+/* Sidebar Section Labels */
+.sidebar-section-label {
+  font-size: 11px !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280; /* muted gray */
+  margin-bottom: 4px;
+  display: block;
+}
+
+/* Normal font size for employer names in messages */
+.employer-name-small {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+}
+
+/* Normal font size for leaderboard usernames */
+.leaderboard-username-small {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+}
+
+.leaderboard-username-small.current-user {
+  font-weight: 600 !important;
 }
 
 .preserve-3d {
@@ -65,34 +94,25 @@
   --disc-green: #52c41a;
   --disc-blue: #1890ff;
 
-  /* Sidebar Section Labels */
-  .sidebar-section-label {
-    font-size: 11px !important;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: #6b7280; /* muted gray */
-    margin-bottom: 4px;
-    display: block;
-  }
+  /* Moved utility class rules out of :root (CSS nesting is invalid here) */
 
-  /* Normal font size for employer names in messages */
-  .employer-name-small {
-    font-size: 16px !important;
-    font-weight: 600 !important;
-    line-height: 1.2 !important;
-  }
+  /* Sidebar aliases to global theme tokens for consistency */
+  --sidebar: var(--background);
+  --sidebar-background: var(--background);
 
-  /* Normal font size for leaderboard usernames */
-  .leaderboard-username-small {
-    font-size: 16px !important;
-    font-weight: 500 !important;
-    line-height: 1.2 !important;
-  }
+  --sidebar-foreground: var(--foreground);
 
-  .leaderboard-username-small.current-user {
-    font-weight: 600 !important;
-  }
+  --sidebar-primary: var(--primary);
+
+  --sidebar-primary-foreground: var(--primary-foreground);
+
+  --sidebar-accent: var(--muted);
+
+  --sidebar-accent-foreground: var(--muted-foreground);
+
+  --sidebar-border: var(--border);
+
+  --sidebar-ring: var(--ring)
 }
 
 /* Brand Cleanup CSS */
@@ -576,6 +596,14 @@ h3 {
   --destructive: hsl(0, 62.8%, 30.6%);
   --destructive-foreground: hsl(0, 0%, 98%);
   --ring: hsl(240, 4.9%, 83.9%);
+  --sidebar: hsl(240 5.9% 10%);
+  --sidebar-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-primary: hsl(224.3 76.3% 48%);
+  --sidebar-primary-foreground: hsl(0 0% 100%);
+  --sidebar-accent: hsl(240 3.7% 15.9%);
+  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
+  --sidebar-border: hsl(240 3.7% 15.9%);
+  --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
 /* Mobile-first responsive design base */
@@ -653,129 +681,74 @@ h3 {
 }
 
 @layer base {
-  * {
-    @apply border-border;
+  *, *::before, *::after {
+    border-color: var(--border);
+    /* Do not force borders globally */
+  }
+
+  html, body {
+    min-height: 100%;
   }
 
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Sora', 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--background);
+    color: var(--foreground);
   }
+}
 
-  /* Custom utility classes for Pollen brand colors */
-  .text-primary-50 {
-    color: var(--primary-50);
-  }
-  .text-primary-100 {
-    color: var(--primary-100);
-  }
-  .text-primary-500 {
-    color: var(--primary-500);
-  }
-  .text-primary-600 {
-    color: var(--primary-600);
-  }
-  .text-primary-700 {
-    color: var(--primary-700);
-  }
+/* Custom utility classes for Pollen brand colors */
+@layer utilities {
+  .text-primary-50 { color: var(--primary-50); }
+  .text-primary-100 { color: var(--primary-100); }
+  .text-primary-500 { color: var(--primary-500); }
+  .text-primary-600 { color: var(--primary-600); }
+  .text-primary-700 { color: var(--primary-700); }
 
-  .bg-primary-50 {
-    background-color: var(--primary-50);
-  }
-  .bg-primary-100 {
-    background-color: var(--primary-100);
-  }
-  .bg-primary-500 {
-    background-color: var(--primary-500);
-  }
-  .bg-primary-600 {
-    background-color: var(--primary-600);
-  }
-  .bg-primary-700 {
-    background-color: var(--primary-700);
-  }
+  .bg-primary-50 { background-color: var(--primary-50); }
+  .bg-primary-100 { background-color: var(--primary-100); }
+  .bg-primary-500 { background-color: var(--primary-500); }
+  .bg-primary-600 { background-color: var(--primary-600); }
+  .bg-primary-700 { background-color: var(--primary-700); }
 
-  .text-success-50 {
-    color: var(--success-50);
-  }
-  .text-success-100 {
-    color: var(--success-100);
-  }
-  .text-success-500 {
-    color: var(--success-500);
-  }
-  .text-success-600 {
-    color: var(--success-600);
-  }
+  .text-success-50 { color: var(--success-50); }
+  .text-success-100 { color: var(--success-100); }
+  .text-success-500 { color: var(--success-500); }
+  .text-success-600 { color: var(--success-600); }
 
-  .bg-success-50 {
-    background-color: var(--success-50);
-  }
-  .bg-success-100 {
-    background-color: var(--success-100);
-  }
-  .bg-success-500 {
-    background-color: var(--success-500);
-  }
-  .bg-success-600 {
-    background-color: var(--success-600);
-  }
+  .bg-success-50 { background-color: var(--success-50); }
+  .bg-success-100 { background-color: var(--success-100); }
+  .bg-success-500 { background-color: var(--success-500); }
+  .bg-success-600 { background-color: var(--success-600); }
 
-  .text-accent-50 {
-    color: var(--accent-50);
-  }
-  .text-accent-100 {
-    color: var(--accent-100);
-  }
-  .text-accent-500 {
-    color: var(--accent-500);
-  }
-  .text-accent-600 {
-    color: var(--accent-600);
-  }
+  .text-accent-50 { color: var(--accent-50); }
+  .text-accent-100 { color: var(--accent-100); }
+  .text-accent-500 { color: var(--accent-500); }
+  .text-accent-600 { color: var(--accent-600); }
 
-  .bg-accent-50 {
-    background-color: var(--accent-50);
-  }
-  .bg-accent-100 {
-    background-color: var(--accent-100);
-  }
-  .bg-accent-500 {
-    background-color: var(--accent-500);
-  }
-  .bg-accent-600 {
-    background-color: var(--accent-600);
-  }
+  .bg-accent-50 { background-color: var(--accent-50); }
+  .bg-accent-100 { background-color: var(--accent-100); }
+  .bg-accent-500 { background-color: var(--accent-500); }
+  .bg-accent-600 { background-color: var(--accent-600); }
 
   /* Replaced purple variables with Pollen brand colors */
-  .text-pink-50 {
-    color: #fdf2f8;
-  }
-  .text-pink-100 {
-    color: #fce7f3;
-  }
-  .text-pink-500 {
-    color: var(--pollen-pink);
-  }
-  .text-pink-600 {
-    color: #db2777;
-  }
+  .text-pink-50 { color: #fdf2f8; }
+  .text-pink-100 { color: #fce7f3; }
+  .text-pink-500 { color: var(--pollen-pink); }
+  .text-pink-600 { color: #db2777; }
 
-  .bg-pink-50 {
-    background-color: #fdf2f8;
-  }
-  .bg-pink-100 {
-    background-color: #fce7f3;
-  }
-  .bg-pink-500 {
-    background-color: var(--pollen-pink);
-  }
-  .bg-pink-600 {
-    background-color: #db2777;
-  }
+  .bg-pink-50 { background-color: #fdf2f8; }
+  .bg-pink-100 { background-color: #fce7f3; }
+  .bg-pink-500 { background-color: var(--pollen-pink); }
+  .bg-pink-600 { background-color: #db2777; }
 
   /* Enhanced focus styles for accessibility */
   .focus-visible:focus-visible {
-    @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
+    outline: 2px solid var(--primary, #e2007a);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px var(--primary, #e2007a), 0 0 0 4px var(--background, #fff);
   }
 
   /* Smooth transitions for interactive elements */
@@ -802,6 +775,93 @@ h3 {
     box-shadow:
       0 10px 15px -3px rgba(0, 0, 0, 0.1),
       0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+}
+
+/* Testing-only sidebar fixes: ensure sidebar pushes content on md+ */
+@layer utilities {
+  .testing-sidebar-layout [data-slot="sidebar-gap"] {
+    width: var(--sidebar-width) !important;
+  }
+  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-gap"] {
+    width: var(--sidebar-width-icon) !important;
+  }
+  .testing-sidebar-layout [data-slot="sidebar-container"] {
+    width: var(--sidebar-width) !important;
+  }
+  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-container"] {
+    width: var(--sidebar-width-icon) !important;
+  }
+  /* Hide label/chevron in TeamSwitcher only (header) when collapsed */
+  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-header"] [data-slot="sidebar-menu-button"] .grid { display: none !important; }
+  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-header"] [data-slot="sidebar-menu-button"] .ml-auto { display: none !important; }
+
+  /* Header pill: set button to 3rem and center content when collapsed */
+  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-header"] [data-slot="sidebar-menu-button"] {
+    width: 3rem !important;     /* 48px column */
+    height: 3rem !important;
+    padding: 0 !important;      /* remove inner padding to avoid clipping */
+    justify-content: center !important;
+  }
+  /* Remove SidebarHeader padding in collapsed mode so 48px fits fully */
+  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-header"] {
+    padding: 0 !important;
+  }
+  /* Let header logo size be controlled by component classes in collapsed mode */
+  /* Tweak transition to be smoother */
+  .testing-sidebar-layout [data-slot="sidebar-container"],
+  .testing-sidebar-layout [data-slot="sidebar-gap"] {
+    transition-duration: 200ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  /* Remove any shadows that can appear visually as borders/shadows */
+  .testing-sidebar-layout [data-slot="sidebar-container"],
+  .testing-sidebar-layout [data-slot="sidebar-inner"] {
+    box-shadow: none !important;
+  }
+  /* Keep rail visible in collapsed mode but remove its internal line */
+  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-rail"] {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-rail"]::after {
+    content: none !important; /* prevent double line from rail */
+  }
+  /* Provide a single divider line via the gap instead */
+  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-gap"] {
+    border-right: 1px solid var(--sidebar-border) !important;
+  }
+
+  /* Match dashboard-sidebar button colors and interactions */
+  /* Default state: gray text, transparent bg */
+  .testing-sidebar-layout [data-slot="sidebar-menu-button"] {
+    color: #374151 !important;            /* text-gray-700 */
+    background-color: transparent !important;
+  }
+  /* Hover state: gray background (match dashboard-sidebar) */
+  .testing-sidebar-layout [data-slot="sidebar-menu-button"]:hover {
+    background-color: #f3f4f6 !important; /* bg-gray-100 */
+    color: var(--accent-foreground) !important; /* Pollen accent fg */
+  }
+  /* Active state: brand pink background, white text */
+  .testing-sidebar-layout [data-slot="sidebar-menu-button"][data-active="true"] {
+    background-color: #E2007A !important;
+    color: #ffffff !important;
+  }
+  .testing-sidebar-layout [data-slot="sidebar-menu-button"][data-active="true"]:hover {
+    background-color: rgba(226, 0, 122, 0.9) !important; /* #E2007A/90 */
+    color: #ffffff !important;
+  }
+  /* Ensure icons inherit currentColor in both states */
+  .testing-sidebar-layout [data-slot="sidebar-menu-button"] svg {
+    color: currentColor !important;
+    stroke: currentColor !important;
+    fill: none !important;
+  }
+  /* Collapsed header link hover */
+  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-header"] a[data-slot="sidebar-menu-button"]:hover {
+    background-color: #f3f4f6 !important; /* bg-gray-100 */
+    color: var(--accent-foreground) !important;
   }
 }
 
@@ -882,7 +942,6 @@ h3 {
   /* Enhanced print rendering for colors and fonts */
   * {
     -webkit-print-color-adjust: exact !important;
-    color-adjust: exact !important;
     print-color-adjust: exact !important;
     font-synthesis: none !important;
     text-rendering: optimizeLegibility !important;

@@ -5,10 +5,16 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type");
-  const next = searchParams.get("next") ?? "/home";
+  let next = searchParams.get("next") ?? "/main/user-info";
 
   if (token_hash && type) {
     const supabase = await createClient();
+
+    const user = supabase.auth.getUser();
+
+    if(!user.user_metadata.register_profile_completed){
+      next = "/main/user-info";
+    }
 
     const { error } = await supabase.auth.verifyOtp({
       type,

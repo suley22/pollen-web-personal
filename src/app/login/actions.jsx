@@ -6,21 +6,26 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 
 export async function login(formData) {
+  let redirectUrl = "/main/home";
   const supabase = await createClient();
 
-  const data = {
+  const formUserData = {
     email: formData.get("email"),
     password: formData.get("password"),
   };
 
-  const { error } = await supabase.auth.signInWithPassword(data);
+  const { data, error } = await supabase.auth.signInWithPassword(formUserData);
+
+  if(!data.user.user_metadata.register_profile_completed){
+    redirectUrl = "/main/user-info";
+  }
 
   if (error) {
     redirect("/error");
   }
 
   revalidatePath("/", "layout");
-  redirect("/main/home");
+  redirect(redirectUrl);
 }
 
 export async function signup(formData) {

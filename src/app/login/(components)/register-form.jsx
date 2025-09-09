@@ -32,7 +32,7 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
           errorMessageList,
         );
         setEmailChecks(emailChecks);
-        setIsFormValid(emailChecks.every((check) => check.valid));
+        setIsFormValid(emailChecks.every((check) => check.valid) && passwordChecks.every((check) => check.valid) && passwordChecks.length > 0);
         break;
       }
       case passwordFieldId: {
@@ -42,7 +42,7 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
         );
 
         setPasswordChecks(passwordChecks);
-        setIsFormValid(passwordChecks.every((check) => check.valid));
+        setIsFormValid(passwordChecks.every((check) => check.valid) && emailChecks.every((check) => check.valid) && emailChecks.length > 0);
         break;
       }
     }

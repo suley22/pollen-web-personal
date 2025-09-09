@@ -68,7 +68,12 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
     }
   };
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+
     await signup(data);
   };
 
@@ -98,6 +103,7 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
             <Input
               id={emailId}
               type="email"
+              name="email"
               placeholder="m@example.com"
               onChange={(e) => handleOnChange(emailId, e.target.value)}
             />
@@ -121,6 +127,7 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
             <Input
               id={passwordFieldId}
               type="password"
+              name="password"
               onChange={(e) => handleOnChange(passwordFieldId, e.target.value)}
             />
 

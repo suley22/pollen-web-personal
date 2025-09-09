@@ -12,7 +12,7 @@ export async function GET(request) {
 
     const user = supabase.auth.getUser();
 
-    if(!user.user_metadata.register_profile_completed){
+    if(!user.user_metadata?.register_profile_completed){
       next = "/main/user-info";
     }
 

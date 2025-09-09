@@ -10,7 +10,14 @@ import { useRegister } from "./register-hook";
 export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
   const { form } = useRegister();
 
-  const onSubmit = async (data) => await signup(data);
+  const onSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
+
+    await signup(data);
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -38,6 +45,7 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
             <Input
               id={form.fields.emailId}
               type="email"
+              name="email"
               placeholder="m@example.com"
               onChange={(e) =>
                 form.handleOnChange(form.fields.emailId, e.target.value)

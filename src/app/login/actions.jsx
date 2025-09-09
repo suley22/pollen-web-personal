@@ -31,14 +31,11 @@ export async function login(formData) {
 export async function signup(formData) {
   const supabase = await createClient();
 
-  // Convert FormData to object to avoid Next.js 15 server component issues
-  const formDataObj = Object.fromEntries(formData.entries());
-
   // type-casting here for convenience
   // in practice, you should validate your inputs
   const data = {
-    email: formDataObj.email,
-    password: formDataObj.password,
+    email: formData.email,
+    password: formData.password,
   };
 
   const { error } = await supabase.auth.signUp(data);

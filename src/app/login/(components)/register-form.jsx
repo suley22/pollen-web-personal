@@ -1,76 +1,16 @@
 "use client";
 
-import { useState } from "react";
-
-import {
-  UserInfoModel,
-  passwordErrorMessages,
-  emailErrorMessages,
-} from "@/app/login/registerSchema";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/icons/icons";
+import { useRegister } from "./register-hook";
 
 export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
-  const passwordFieldId = "password";
-  const emailId = "email";
+  const { form } = useRegister();
 
-  const [passwordChecks, setPasswordChecks] = useState([]);
-  const [emailChecks, setEmailChecks] = useState([]);
-  const [isFormValid, setIsFormValid] = useState(false);
-
-  function validateFormChecks(name, errorList = []) {
-    let errorMessageList = errorList.map((issue) => issue.message);
-
-    switch (name) {
-      case emailId: {
-        const emailChecks = getErrorMessages(
-          emailErrorMessages,
-          errorMessageList,
-        );
-        setEmailChecks(emailChecks);
-        setIsFormValid(emailChecks.every((check) => check.valid) && passwordChecks.every((check) => check.valid) && passwordChecks.length > 0);
-        break;
-      }
-      case passwordFieldId: {
-        const passwordChecks = getErrorMessages(
-          passwordErrorMessages,
-          errorMessageList,
-        );
-
-        setPasswordChecks(passwordChecks);
-        setIsFormValid(passwordChecks.every((check) => check.valid) && emailChecks.every((check) => check.valid) && emailChecks.length > 0);
-        break;
-      }
-    }
-  }
-
-  function getErrorMessages(messages, errorList) {
-    return Object.entries(messages).map(([, message]) => ({
-      label: message,
-      valid: !errorList.includes(message),
-    }));
-  }
-
-  const handleOnChange = (name, value) => {
-    try {
-      UserInfoModel.parse({ [name]: value });
-      setPasswordChecks([]);
-      setEmailChecks([]);
-    } catch (error) {
-      if (error) {
-        console.log("error", error);
-        validateFormChecks(name, error.issues ?? []);
-      }
-    }
-  };
-
-  const onSubmit = async (data) => {
-    await signup(data);
-  };
+  const onSubmit = async (data) => await signup(data);
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -96,15 +36,17 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
           <div className="grid gap-3">
             <Label htmlFor="email">Email</Label>
             <Input
-              id={emailId}
+              id={form.fields.emailId}
               type="email"
               placeholder="m@example.com"
-              onChange={(e) => handleOnChange(emailId, e.target.value)}
+              onChange={(e) =>
+                form.handleOnChange(form.fields.emailId, e.target.value)
+              }
             />
             <ul className="mt-2 text-sm space-y-1">
-              {emailChecks.map((check, idx) => (
+              {form.checks.email.map((check) => (
                 <li
-                  key={idx}
+                  key={check.label}
                   className={`flex items-center gap-2 ${
                     check.valid ? "text-green-600" : "text-red-500"
                   }`}
@@ -119,16 +61,18 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
           <div className="grid gap-3">
             <Label htmlFor="password">Password</Label>
             <Input
-              id={passwordFieldId}
+              id={form.fields.passwordFieldId}
               type="password"
-              onChange={(e) => handleOnChange(passwordFieldId, e.target.value)}
+              onChange={(e) =>
+                form.handleOnChange(form.fields.passwordFieldId, e.target.value)
+              }
             />
 
             {/* Lista de requisitos */}
             <ul className="mt-2 text-sm space-y-1">
-              {passwordChecks.map((check, idx) => (
+              {form.checks.password.map((check) => (
                 <li
-                  key={idx}
+                  key={check.label}
                   className={`flex items-center gap-2 ${
                     check.valid ? "text-green-600" : "text-red-500"
                   }`}
@@ -140,7 +84,7 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
           </div>
 
           {/* Botón Sign up */}
-          <Button type="submit" className="w-full" disabled={!isFormValid}>
+          <Button type="submit" className="w-full" disabled={!form.valid}>
             Sign up
           </Button>
         </form>

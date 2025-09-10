@@ -9,12 +9,18 @@ export function useRegister() {
   const [isFormValid, setIsFormValid] = useState(false);
   const [emailChecks, setEmailChecks] = useState([]);
   const [passwordChecks, setPasswordChecks] = useState([]);
-  
+
   useEffect(() => {
-  const emailIsValid = emailChecks.every((c) => c.valid);
-  const passwordIsValid = passwordChecks.every((c) => c.valid);
-  setIsFormValid(emailIsValid && passwordIsValid && emailChecks.length > 0 && passwordChecks.length > 0);
-}, [emailChecks, passwordChecks]);
+    const emailIsValid = emailChecks.every((c) => c.valid);
+    const passwordIsValid = passwordChecks.every((c) => c.valid);
+
+    setIsFormValid(
+      emailIsValid &&
+        passwordIsValid &&
+        emailChecks.length > 0 &&
+        passwordChecks.length > 0,
+    );
+  }, [emailChecks, passwordChecks]);
 
   const emailId = "email";
   const passwordFieldId = "password";
@@ -25,6 +31,7 @@ export function useRegister() {
       valid: !errorList.includes(message),
     }));
   }
+
   function validateFormChecks(name, errorList = []) {
     let errorMessageList = errorList
       .filter((issue) => issue.path.toString() == name)

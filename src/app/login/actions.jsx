@@ -2,10 +2,17 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { UserInfoModel } from "./registerSchema";
 
 import { createClient } from "@/utils/supabase/server";
 
-export async function login(formData) {
+// TODO: Agregar validaciones de servidor.
+
+export async function login(_, formData) {
+  if (!formData) {
+    return { error: "Form data is required" };
+  }
+
   let redirectUrl = "/main/home";
   const supabase = await createClient();
 
@@ -14,18 +21,26 @@ export async function login(formData) {
     password: formData.get("password"),
   };
 
-  const { error } = await supabase.auth.signInWithPassword(formUserData);
+  const { error: loginError } =
+    await supabase.auth.signInWithPassword(formUserData);
 
-  if (error) {
-    redirect("/error");
+  if (loginError) {
+    return { error: "Error al iniciar sesión" };
   }
 
   revalidatePath("/", "layout");
   redirect(redirectUrl);
 }
 
+// TOOD: Agregar validación sobre campos utilizando el schema de Zod
 export async function signup(formData) {
   const supabase = await createClient();
+
+  let errors = UserInfoModel.safeParse(formData);
+
+  if (!errors.success) {
+    return { email: errors.error.issues[0].message };
+  }
 
   // type-casting here for convenience
   // in practice, you should validate your inputs

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UserInfoModel } from "@/app/login/registerSchema";
 import {
   emailErrorMessages,
@@ -9,6 +9,12 @@ export function useRegister() {
   const [isFormValid, setIsFormValid] = useState(false);
   const [emailChecks, setEmailChecks] = useState([]);
   const [passwordChecks, setPasswordChecks] = useState([]);
+  
+  useEffect(() => {
+  const emailIsValid = emailChecks.every((c) => c.valid);
+  const passwordIsValid = passwordChecks.every((c) => c.valid);
+  setIsFormValid(emailIsValid && passwordIsValid && emailChecks.length > 0 && passwordChecks.length > 0);
+}, [emailChecks, passwordChecks]);
 
   const emailId = "email";
   const passwordFieldId = "password";
@@ -19,8 +25,7 @@ export function useRegister() {
       valid: !errorList.includes(message),
     }));
   }
-
-  async function validateFormChecks(name, errorList = []) {
+  function validateFormChecks(name, errorList = []) {
     let errorMessageList = errorList
       .filter((issue) => issue.path.toString() == name)
       .map((issue) => issue.message);
@@ -30,8 +35,6 @@ export function useRegister() {
         const checks = getErrorMessages(emailErrorMessages, errorMessageList);
 
         setEmailChecks(checks);
-        setIsFormValid(checks.every((check) => check.valid) && passwordChecks.every((check) => check.valid) && passwordChecks.length > 0);
-
         break;
       }
       case passwordFieldId: {
@@ -40,8 +43,7 @@ export function useRegister() {
           errorMessageList,
         );
 
-        await setPasswordChecks(checks);
-        await setIsFormValid(emailChecks.every((check) => check.valid) && checks.every((check) => check.valid) && emailChecks.length > 0);
+        setPasswordChecks(checks);
         break;
       }
     }

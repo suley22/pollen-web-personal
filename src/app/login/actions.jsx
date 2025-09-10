@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { UserInfoModel } from "./registerSchema";
-
 import { createClient } from "@/utils/supabase/server";
 
 // TODO: Agregar validaciones de servidor.
@@ -13,6 +12,14 @@ export async function login(_, formData) {
     return { error: "Form data is required" };
   }
 
+  const data = Object.fromEntries(formData.entries());
+  let errors = UserInfoModel.safeParse(data);
+
+  if (!errors.success) {
+    return { error: "Invalid credentials" };
+  }
+
+  
   let redirectUrl = "/main/home";
   const supabase = await createClient();
 

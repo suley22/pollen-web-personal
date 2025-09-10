@@ -54,13 +54,10 @@ export function LoginForm({ className, loginAction, onChangeLogin, ...props }) {
             </div>
             <Input id="password" name="password" type="password" required />
           </div>
-          <Button type="submit" className="w-full">
-            Login
+          <Button disabled={isLoading} type="submit" className="w-full">
+            {isLoading ? "Loading..." : "Login"}
           </Button>
           <p className="text-red-500">{state?.error}</p>
-          <p className="text-green-500">
-            {isLoading ? "Loading..." : "Not loading"}
-          </p>
         </form>
       </div>
       <div className="text-center text-sm">

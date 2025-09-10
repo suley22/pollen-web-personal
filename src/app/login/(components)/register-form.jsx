@@ -69,6 +69,7 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
           <div className="grid gap-3">
             <Label htmlFor="password">Password</Label>
             <Input
+              name="password"
               id={form.fields.passwordFieldId}
               type="password"
               onChange={(e) =>

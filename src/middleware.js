@@ -17,6 +17,16 @@ export async function middleware(request) {
     return NextResponse.redirect(url);
   }
 
+  if (
+    user &&
+    !user.user_metadata.register_profile_completed) {
+    if (request.nextUrl.pathname !== "/login/user-info") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login/user-info";
+      return NextResponse.redirect(url);
+    } 
+  }
+
   return response;
 }
 

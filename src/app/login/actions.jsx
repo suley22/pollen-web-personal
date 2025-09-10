@@ -14,11 +14,7 @@ export async function login(formData) {
     password: formData.get("password"),
   };
 
-  const { data, error } = await supabase.auth.signInWithPassword(formUserData);
-
-  if(!data.user.user_metadata.register_profile_completed){
-    redirectUrl = "/main/user-info";
-  }
+  const { error } = await supabase.auth.signInWithPassword(formUserData);
 
   if (error) {
     redirect("/error");

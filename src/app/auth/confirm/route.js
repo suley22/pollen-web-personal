@@ -10,11 +10,7 @@ export async function GET(request) {
   if (token_hash && type) {
     const supabase = await createClient();
 
-    const user = supabase.auth.getUser();
 
-    if(!user?.user_metadata?.register_profile_completed){
-      next = "/main/user-info";
-    }
 
     const { error } = await supabase.auth.verifyOtp({
       type,

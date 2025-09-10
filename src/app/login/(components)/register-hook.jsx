@@ -20,7 +20,7 @@ export function useRegister() {
     }));
   }
 
-  function validateFormChecks(name, errorList = []) {
+  async function validateFormChecks(name, errorList = []) {
     let errorMessageList = errorList
       .filter((issue) => issue.path.toString() == name)
       .map((issue) => issue.message);
@@ -30,7 +30,7 @@ export function useRegister() {
         const checks = getErrorMessages(emailErrorMessages, errorMessageList);
 
         setEmailChecks(checks);
-        setIsFormValid(isValidForm() && passwordChecks.length > 0);
+        setIsFormValid(checks.every((check) => check.valid) && passwordChecks.every((check) => check.valid) && passwordChecks.length > 0);
 
         break;
       }
@@ -40,18 +40,11 @@ export function useRegister() {
           errorMessageList,
         );
 
-        setPasswordChecks(checks);
-        setIsFormValid(isValidForm() && emailChecks.length > 0);
+        await setPasswordChecks(checks);
+        await setIsFormValid(emailChecks.every((check) => check.valid) && checks.every((check) => check.valid) && emailChecks.length > 0);
         break;
       }
     }
-  }
-
-  function isValidForm() {
-    const emailIsValid = emailChecks.every((check) => check.valid);
-    const passwordIsValid = passwordChecks.every((check) => check.valid);
-
-    return emailIsValid && passwordIsValid;
   }
 
   function handleOnChange(name, value) {

@@ -12,26 +12,25 @@ export async function login(_, formData) {
     return { error: "Form data is required" };
   }
 
-  const data = Object.fromEntries(formData.entries());
-  let errors = UserInfoModel.safeParse(data);
+  let email = formData.get("email");
+  let password = formData.get("password");
 
-  if (!errors.success) {
-    return { error: "Invalid credentials" };
+  if (!email || !password || password.length < 8) {
+    return { error: "Please check your credentials" };
   }
 
-  
   let redirectUrl = "/main/home";
   const supabase = await createClient();
 
-  const formUserData = {
-    email: formData.get("email"),
-    password: formData.get("password"),
+  const credentials = {
+    email: email,
+    password: password,
   };
 
-  const { error: loginError } =
-    await supabase.auth.signInWithPassword(formUserData);
+  const { error: authError } =
+    await supabase.auth.signInWithPassword(credentials);
 
-  if (loginError) {
+  if (authError) {
     return { error: "Error al iniciar sesión" };
   }
 
@@ -40,7 +39,7 @@ export async function login(_, formData) {
 }
 
 // TOOD: Agregar validación sobre campos utilizando el schema de Zod
-export async function signup(_,formData) {
+export async function signup(_, formData) {
   const supabase = await createClient();
 
   const data = Object.fromEntries(formData.entries());
@@ -60,8 +59,16 @@ export async function signup(_,formData) {
   const { error } = await supabase.auth.signUp(formUserData);
 
   if (error) {
-    return { message: "Error al crear cuenta", description: "Revise sus credenciales e intentelo nuevamente", success: false };
+    return {
+      message: "Error al crear cuenta",
+      description: "Revise sus credenciales e intentelo nuevamente",
+      success: false,
+    };
   }
 
-  return { message: "Cuenta creada con éxito", description: "Revise su correo electrónico para activar su cuenta", success: true };
+  return {
+    message: "Cuenta creada con éxito",
+    description: "Revise su correo electrónico para activar su cuenta",
+    success: true,
+  };
 }

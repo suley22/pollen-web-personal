@@ -60,8 +60,8 @@ export async function signup(_,formData) {
   const { error } = await supabase.auth.signUp(formUserData);
 
   if (error) {
-    return { message: "Error al crear cuenta", success: false };
+    return { message: "Error al crear cuenta", description: "Revise sus credenciales e intentelo nuevamente", success: false };
   }
 
-  return { message: "Cuenta creada con éxito", success: true };
+  return { message: "Cuenta creada con éxito", description: "Revise su correo electrónico para activar su cuenta", success: true };
 }

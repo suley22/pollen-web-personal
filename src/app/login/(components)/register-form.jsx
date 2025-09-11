@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/icons/icons";
 import { useRegister } from "./register-hook";
 import { useActionState } from "react";
+import { Alert } from "@/components/ui/alert";
 
 export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
   const { form } = useRegister();
@@ -32,9 +33,9 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
         </div>
 
         <form action={formAction} className="flex flex-col gap-6">
-          {state && 
-          (state.success ? <p className="text-green-500 text-sm">{state?.message}</p> 
-          : <p className="text-red-500 text-sm">{state?.message}</p>)}
+          {state &&
+          (state.success ? <Alert title={state?.message} description={state?.description} type="success" />
+          : <Alert title={state?.message} description={state?.description} type="error" />)}
 
           {/* Email */}
           <div className="grid gap-3">

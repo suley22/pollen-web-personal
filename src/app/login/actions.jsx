@@ -40,28 +40,28 @@ export async function login(_, formData) {
 }
 
 // TOOD: Agregar validación sobre campos utilizando el schema de Zod
-export async function signup(formData) {
+export async function signup(_,formData) {
   const supabase = await createClient();
 
-  let errors = UserInfoModel.safeParse(formData);
+  const data = Object.fromEntries(formData.entries());
+  let errors = UserInfoModel.safeParse(data);
 
   if (!errors.success) {
-    return { email: errors.error.issues[0].message };
+    return { message: errors.error.issues[0].message, success: false };
   }
 
   // type-casting here for convenience
   // in practice, you should validate your inputs
-  const data = {
-    email: formData.email,
-    password: formData.password,
+  const formUserData = {
+    email: formData.get("email"),
+    password: formData.get("password"),
   };
 
-  const { error } = await supabase.auth.signUp(data);
+  const { error } = await supabase.auth.signUp(formUserData);
 
   if (error) {
-    redirect("/error");
+    return { message: "Error al crear cuenta", success: false };
   }
 
-  revalidatePath("/", "layout");
-  redirect("/");
+  return { message: "Cuenta creada con éxito", success: true };
 }

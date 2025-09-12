@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, MapPin, Users, Star, Target } from "lucide-react";
 
@@ -139,7 +139,7 @@ export default function CompaniesPage() {
           </div>
         </div>
       </div>
-      
+
       <div className="my-4">
         <div className="bg-gradient-to-r from-blue-50 to-pink-50 rounded-xl mb-3 mx-2 p-4">
           <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
@@ -221,114 +221,117 @@ export default function CompaniesPage() {
           </div>
         </div>
       </div>
-      
+
       <div className="m-8">
         <h2
-        className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 lg:mb-6 px-2 sm:px-4 lg:px-0"
-        style={{ fontFamily: "Sora" }}
-      >
-        All Companies
-      </h2>
-      <div className="grid grid-cols-3 gap-y-3 gap-x-4 px-2">
-        {allCompanies.map((company) => (
-          <Card key={company.id} className="hover:shadow-lg transition-shadow">
-            <CardHeader className="pb-3 sm:pb-4 p-3 sm:p-6">
-              <div className="flex items-start gap-2 sm:gap-3">
-                <div className="text-xl sm:text-2xl">{company.logo}</div>
-                <div className="flex-1 min-w-0">
-                  <CardTitle
-                    className="text-base sm:text-lg font-bold"
-                    style={{ fontFamily: "Sora" }}
-                  >
-                    {company.name}
-                  </CardTitle>
-                  <p
-                    className="text-xs sm:text-sm text-gray-600"
+          className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 lg:mb-6 px-2 sm:px-4 lg:px-0"
+          style={{ fontFamily: "Sora" }}
+        >
+          All Companies
+        </h2>
+        <div className="grid grid-cols-3 gap-y-3 gap-x-4 px-2">
+          {allCompanies.map((company) => (
+            <Card
+              key={company.id}
+              className="hover:shadow-lg transition-shadow"
+            >
+              <CardHeader className="pb-3 sm:pb-4 p-3 sm:p-6">
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <div className="text-xl sm:text-2xl">{company.logo}</div>
+                  <div className="flex-1 min-w-0">
+                    <CardTitle
+                      className="text-base sm:text-lg font-bold"
+                      style={{ fontFamily: "Sora" }}
+                    >
+                      {company.name}
+                    </CardTitle>
+                    <p
+                      className="text-xs sm:text-sm text-gray-600"
+                      style={{ fontFamily: "Poppins" }}
+                    >
+                      {company.industry}
+                    </p>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-3 sm:p-6">
+                <div className="space-y-2 mb-3 sm:mb-4">
+                  <div
+                    className="flex items-center gap-2 text-xs sm:text-sm text-gray-600"
                     style={{ fontFamily: "Poppins" }}
                   >
-                    {company.industry}
-                  </p>
+                    <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span>{company.location}</span>
+                  </div>
+                  <div
+                    className="flex items-center gap-2 text-xs sm:text-sm text-gray-600"
+                    style={{ fontFamily: "Poppins" }}
+                  >
+                    <Users className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span>{company.size}</span>
+                  </div>
+                  <div
+                    className="flex items-center gap-2 text-xs sm:text-sm text-gray-600"
+                    style={{ fontFamily: "Poppins" }}
+                  >
+                    <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500 fill-current" />
+                    <span>
+                      {company.rating}★ candidate rating • {company.openRoles}{" "}
+                      open roles
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent className="p-3 sm:p-6">
-              <div className="space-y-2 mb-3 sm:mb-4">
-                <div
-                  className="flex items-center gap-2 text-xs sm:text-sm text-gray-600"
-                  style={{ fontFamily: "Poppins" }}
-                >
-                  <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span>{company.location}</span>
-                </div>
-                <div
-                  className="flex items-center gap-2 text-xs sm:text-sm text-gray-600"
-                  style={{ fontFamily: "Poppins" }}
-                >
-                  <Users className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span>{company.size}</span>
-                </div>
-                <div
-                  className="flex items-center gap-2 text-xs sm:text-sm text-gray-600"
-                  style={{ fontFamily: "Poppins" }}
-                >
-                  <Star className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500 fill-current" />
-                  <span>
-                    {company.rating}★ candidate rating • {company.openRoles}{" "}
-                    open roles
-                  </span>
-                </div>
-              </div>
 
-              <div className="flex gap-2">
-                <Button
-                  className="flex-1 text-xs sm:text-sm"
-                  variant="outline"
-                  style={{ fontFamily: "Sora" }}
-                  onClick={() =>
-                    (window.location.href = `/company-profile/${company.id}`)
-                  }
-                >
-                  View Company
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-      {/* Call to Action */}
-      <Card
-        className="mt-16 border mb-4"
-        style={{ backgroundColor: "#FFFCE5" }}
-      >
-        <CardContent className="p-8 text-center">
-          <h3
-            className="text-2xl font-bold mb-4"
-            style={{ fontFamily: "Sora", color: "#272727" }}
-          >
-            Ready to find your next opportunity?
-          </h3>
-          <p
-            className="text-gray-600 mb-6 max-w-2xl mx-auto"
-            style={{ fontFamily: "Poppins" }}
-          >
-            Browse job opportunities from our partner companies and take the
-            next step in your career journey.
-          </p>
-          <Button
-            size="lg"
-            className="hover:opacity-90"
-            style={{
-              backgroundColor: "#E2007A",
-              color: "white",
-              fontFamily: "Sora",
-            }}
-            onClick={() => (window.location.href = "/jobs")}
-          >
-            <Building2 className="w-5 h-5 mr-2" />
-            View All Jobs
-          </Button>
-        </CardContent>
-      </Card>
+                <div className="flex gap-2">
+                  <Button
+                    className="flex-1 text-xs sm:text-sm"
+                    variant="outline"
+                    style={{ fontFamily: "Sora" }}
+                    onClick={() =>
+                      (window.location.href = `/company-profile/${company.id}`)
+                    }
+                  >
+                    View Company
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        {/* Call to Action */}
+        <Card
+          className="mt-16 border mb-4"
+          style={{ backgroundColor: "#FFFCE5" }}
+        >
+          <CardContent className="p-8 text-center">
+            <h3
+              className="text-2xl font-bold mb-4"
+              style={{ fontFamily: "Sora", color: "#272727" }}
+            >
+              Ready to find your next opportunity?
+            </h3>
+            <p
+              className="text-gray-600 mb-6 max-w-2xl mx-auto"
+              style={{ fontFamily: "Poppins" }}
+            >
+              Browse job opportunities from our partner companies and take the
+              next step in your career journey.
+            </p>
+            <Button
+              size="lg"
+              className="hover:opacity-90"
+              style={{
+                backgroundColor: "#E2007A",
+                color: "white",
+                fontFamily: "Sora",
+              }}
+              onClick={() => (window.location.href = "/jobs")}
+            >
+              <Building2 className="w-5 h-5 mr-2" />
+              View All Jobs
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

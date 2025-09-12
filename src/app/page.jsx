@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, Trophy, Briefcase, Code } from "lucide-react";
 import honeycombLogo from "@/assets/honeycomb_1753116372462.png";

@@ -1,3 +1,5 @@
+"use client";
+
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -13,19 +15,28 @@ import {
   PromptInputTools,
 } from "@/components/ai-elements/prompt-input";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
-export default function ConversationInput({ className }) {
+export default function ConversationInput({ className, sendAction }) {
+  const [message, setMessage] = useState("");
+
+  const handleSubmit = (messageData) => {
+    // messageData es un objeto con { text, files }
+    sendAction(messageData.text);
+    setMessage("");
+  };
+
   return (
-    <PromptInput onSubmit={() => {}} className={cn("relative", className)}>
+    <PromptInput onSubmit={handleSubmit} className={cn("relative", className)}>
       <PromptInputBody>
         <PromptInputAttachments>
           {(attachment) => <PromptInputAttachment data={attachment} />}
         </PromptInputAttachments>
         <PromptInputTextarea
           onChange={(e) => {
-            console.log(e);
+            setMessage(e.target.value);
           }}
-          value={""}
+          value={message}
         />
       </PromptInputBody>
       <PromptInputToolbar>
@@ -37,7 +48,7 @@ export default function ConversationInput({ className }) {
             </PromptInputActionMenuContent>
           </PromptInputActionMenu>
         </PromptInputTools>
-        <PromptInputSubmit disabled={false} status={"ready"} />
+        <PromptInputSubmit disabled={message.length === 0} status="ready" />
       </PromptInputToolbar>
     </PromptInput>
   );

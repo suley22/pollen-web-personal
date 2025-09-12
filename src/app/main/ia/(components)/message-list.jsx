@@ -1,3 +1,5 @@
+"use client";
+
 import { Message, MessageContent } from "@/components/ai-elements/message";
 
 export default function MessageList({ messages }) {
@@ -5,7 +7,11 @@ export default function MessageList({ messages }) {
     <div>
       {messages.map((message) => (
         <Message from={message.from} key={message.id}>
-          <MessageContent>{message.content}</MessageContent>
+          <MessageContent>
+            {typeof message.content === "string"
+              ? message.content
+              : message.content?.text || JSON.stringify(message.content)}
+          </MessageContent>
         </Message>
       ))}
     </div>

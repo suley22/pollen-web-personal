@@ -5,38 +5,36 @@ import {
   ConversationContent,
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
-import { useState } from "react";
+import { Message, MessageContent } from "@/components/ai-elements/message";
+
+import { useEffect, useState } from "react";
 
 import EmptyState from "./(components)/empty-state";
-import MessageList from "./(components)/message-list";
 import ConversationInput from "./(components)/conversation-input";
-
-const initialMessages = [
-  {
-    id: "1",
-    from: "user",
-    content: "Hello, how are you?",
-  },
-  {
-    id: "2",
-    from: "user2",
-    content: "I am good, thank you!",
-  },
-];
+import { sendMessage } from "./action";
 
 export default function IA() {
-  const [messages, setMessages] = useState(initialMessages);
+  const [messages, setMessages] = useState([]);
 
-  const sendAction = (message) => {
-    console.log("Sending message:", message);
+  useEffect(() => {
+    console.log("messages", messages);
+  }, [messages]);
+
+  const handleSubmit = async (message) => {
+    const hasText = Boolean(message);
+
+    if (!hasText) {
+      return;
+    }
+
     setMessages([
       ...messages,
-      { id: `${messages.length + 1}`, from: "user", content: message },
-      {
-        id: `${messages.length + 2}`,
-        from: "assistant",
-        content: "Hola ! ¿Cómo te puedo ayudar?",
-      },
+      { id: Date.now(), role: "user", content: message },
+    ]);
+    const response = await sendMessage(message);
+    setMessages([
+      ...messages,
+      { id: Date.now(), role: "assistant", content: response },
     ]);
   };
 
@@ -48,13 +46,21 @@ export default function IA() {
             {messages.length === 0 ? (
               <EmptyState />
             ) : (
-              <MessageList messages={messages} />
+              messages.map((message) => (
+                <Message from={message.role} key={message.id}>
+                  <MessageContent>{message.content}</MessageContent>
+                </Message>
+              ))
             )}
           </ConversationContent>
           <ConversationScrollButton />
 
           <div className="p-4">
-            <ConversationInput sendAction={sendAction} />
+            <ConversationInput
+              sendAction={handleSubmit}
+              disabled={false}
+              status="ready"
+            />
           </div>
         </div>
       </Conversation>

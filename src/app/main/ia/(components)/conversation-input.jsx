@@ -17,7 +17,12 @@ import {
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
-export default function ConversationInput({ className, sendAction }) {
+export default function ConversationInput({
+  className,
+  sendAction,
+  disabled,
+  status = "ready",
+}) {
   const [message, setMessage] = useState("");
 
   const handleSubmit = (messageData) => {
@@ -48,7 +53,10 @@ export default function ConversationInput({ className, sendAction }) {
             </PromptInputActionMenuContent>
           </PromptInputActionMenu>
         </PromptInputTools>
-        <PromptInputSubmit disabled={message.length === 0} status="ready" />
+        <PromptInputSubmit
+          disabled={message.length === 0 || disabled}
+          status={status}
+        />
       </PromptInputToolbar>
     </PromptInput>
   );

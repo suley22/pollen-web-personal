@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/buttons/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/icons/icons";
-import { useRegister } from "./register-hook";
+import { useRegister } from "./useRegister";
 import { useActionState } from "react";
 import { Alert } from "@/components/ui/alert";
 

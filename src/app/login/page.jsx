@@ -3,10 +3,10 @@
 import { GalleryVerticalEnd } from "lucide-react";
 import { useState } from "react";
 
-import { LoginForm } from "@/app/login/(components)/login-form";
-import { RegisterForm } from "@/app/login/(components)/register-form";
+import { LoginForm } from "@/app/login/(components)/loginForm";
+import { RegisterForm } from "@/app/login/(components)/registerForm";
 
-import { TestimonialSlider } from "./(components)/testimonial-slider";
+import { TestimonialSlider } from "./(components)/testimonialSlider";
 import { login as loginAction } from "./actions";
 import { signup as signupAction } from "./actions";
 

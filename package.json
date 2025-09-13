@@ -41,7 +41,7 @@
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
     "@types/uuid": "^10.0.0",
-    "ai": "^5.0.41",
+    "ai": "^5.0.43",
     "and": "^0.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

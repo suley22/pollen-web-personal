@@ -14,6 +14,9 @@ import Values from "./(components)/values";
 import Benefits from "./(components)/benefits";
 import Contact from "./(components)/contact";
 import { TestimonialTab } from "./(components)/testimonial-tab";
+import RecognitionTab from "./(components)/recognition-tab";
+import InitiativesTab from "./(components)/initiatives-tab";
+import GalleryTab from "./(components)/gallery-tab";
 
 export default function EmployerProfileConsolidated({ employerProfile }) {
   /** @type {{author:string, position:string, rating:number, date:string, feedbackQuality?:number, communicationSpeed?:number, interviewExperience?:number, processTransparency?:number} | null} */
@@ -254,13 +257,27 @@ export default function EmployerProfileConsolidated({ employerProfile }) {
                 </div>
               </TabsContent>
 
-
               {/* Testimonials Tab */}
               <TabsContent value="testimonials">
                 <TestimonialTab employerProfile={employerProfile} />
               </TabsContent>
 
-              
+              {/* Recognition Tab */}
+              <TabsContent value="recognition">
+                <RecognitionTab />
+              </TabsContent>
+
+              {/* Initiatives Tab */}
+              <TabsContent value="programmes">
+                <InitiativesTab />
+              </TabsContent>
+
+              {/* Gallery Tab */}
+              <TabsContent value="gallery">
+                <GalleryTab />
+              </TabsContent>
+
+
             </div>
           </Tabs>
         </div>

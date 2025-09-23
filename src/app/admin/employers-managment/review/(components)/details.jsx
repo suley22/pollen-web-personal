@@ -21,7 +21,6 @@ export default function Details({
   setSelectedReview,
   setShowReviewModal,
 }) {
-  const [url, setUrl] = useState();
   const [editValue, setEditValue] = useState(employerProfile.logoUrl || "");
 
   const handleFileChange = async (e) => {
@@ -32,7 +31,7 @@ export default function Details({
 
       // Subir directamente el archivo seleccionado sin esperar el estado
       const fileName = `${Date.now()}-${selectedFile.name}`;
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from("images")
         .upload(fileName, selectedFile);
 
@@ -53,11 +52,17 @@ export default function Details({
   return (
     <Card className="overflow-hidden mb-4">
       <div className="relative mb-0 rounded-t-xl overflow-hidden">
-        <img
-          src={editValue}
-          alt="CreativeMinds Agency office"
-          className="w-full h-64"
-        />
+        {editValue ? (
+          <img
+            src={editValue}
+            alt="CreativeMinds Agency office"
+            className="w-full h-64"
+          />
+        ) : (
+          <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
+            <Camera className="w-8 h-8 text-gray-400" />
+          </div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-black/70 flex items-end">
           <div className="p-6 text-white">
             <h1

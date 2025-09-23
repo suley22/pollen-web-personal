@@ -37,9 +37,9 @@ export function LoginForm({ className, loginAction, onChangeLogin, ...props }) {
         </p>
       </div>
       <div className="grid gap-6">
-        <Button 
-          variant="outline" 
-          className="w-full" 
+        <Button
+          variant="outline"
+          className="w-full"
           onClick={handleGoogleSignIn}
           disabled={googleLoading}
         >

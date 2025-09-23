@@ -119,26 +119,14 @@ export default function CompaniesPage() {
   const allCompanies = companies;
 
   return (
-    <div className="min-h-screen bg-gray-50 companies-page">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-2 sm:py-3 lg:py-4">
-          <div>
-            <h1
-              className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900"
-              style={{ fontFamily: "Sora" }}
-            >
-              Companies
-            </h1>
-            <p
-              className="text-sm sm:text-base lg:text-lg text-gray-600 mt-1"
-              style={{ fontFamily: "Poppins" }}
-            >
-              Discover amazing companies and career opportunities
-            </p>
-          </div>
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Companies</h1>
+          <p className="text-gray-600 text-lg">
+            Discover amazing companies and career opportunities
+          </p>
         </div>
-      </div>
 
       <div className="my-4">
         <div className="bg-gradient-to-r from-blue-50 to-pink-50 rounded-xl mb-3 mx-2 p-4">

@@ -71,13 +71,11 @@ export default function AdminEmployersManagment() {
   };
 
   return (
-    <div className="">
+   <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <h1 className="text-2xl font-bold text-gray-900 mx-auto px-4 py-4">
-          Employers Management
-        </h1>
-      </div>
+        <div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Employers Management</h1>
+        </div>
 
       <div className="p-4">
         {/* Search Bar */}

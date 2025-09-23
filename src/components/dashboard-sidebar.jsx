@@ -64,10 +64,11 @@ export default function DashboardSidebar() {
   ];
 
   return (
-    <div
+    <div className="w-16 z-50">
+      <div
       onMouseEnter={() => setIsCollapsed(false)}
       onMouseLeave={() => setIsCollapsed(true)}
-      className={`${isCollapsed ? "w-16" : "w-64"} bg-white border-r border-gray-200 flex flex-col h-screen transition-all duration-300`}
+      className={`${isCollapsed ? "w-16" : "w-64"} overflow-visible bg-white border-r border-gray-200 flex flex-col h-screen transition-all duration-300`}
     >
       {/* Navigation Items */}
       <nav className="p-3">
@@ -92,7 +93,7 @@ export default function DashboardSidebar() {
 
                   <Button
                     variant={item.isActive ? "default" : "ghost"}
-                    className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
+                    className={`w-full ${isCollapsed ? "justify-start px-2" : "justify-start gap-3"} h-9 text-sm ${
                       item.isActive
                         ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
                         : "text-gray-700 hover:bg-gray-100"
@@ -119,5 +120,7 @@ export default function DashboardSidebar() {
         </div>
       </nav>
     </div>
-  );
+
+  </div>
+);
 }

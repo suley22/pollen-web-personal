@@ -1,19 +1,19 @@
-"use client";
-
-import DashboardSidebar from "@/components/dashboard-sidebar";
 import { Header } from "@/components/header";
+import DashboardSidebar from "@/components/dashboard-sidebar";
 
 export default function DashboardLayout({ children }) {
   return (
-    <>
-      <Header/>
-      <div className="min-h-screen bg-gray-50 flex">
+    <div className="flex min-h-screen max-h-screen min-w-screen max-w-screen">
+      <div className="flex bg-gray-50 w-full">
         <DashboardSidebar />
-        <div className="min-h-screen max-h-screen flex-1 flex flex-col">
+        <div className="flex flex-col w-full">
           {/* <JobSeekrHeader onLogout={handleLogout} /> */}
-          <main className="flex-1 overflow-auto">{children}</main>
+          <Header />
+          <main className="flex flex-col flex-1 items-center overflow-auto">
+            {children}
+          </main>
         </div>
       </div>
-    </>
+    </div>
   );
 }

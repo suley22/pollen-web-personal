@@ -68,59 +68,61 @@ export default function DashboardSidebar() {
       <div
       onMouseEnter={() => setIsCollapsed(false)}
       onMouseLeave={() => setIsCollapsed(true)}
-      className={`${isCollapsed ? "w-16" : "w-64"} overflow-visible bg-white border-r border-gray-200 flex flex-col h-screen transition-all duration-300`}
-    >
-      {/* Navigation Items */}
-      <nav className="p-3">
-        {/* Main Navigation */}
-        <div>
-          <div className="space-y-1">
-            {navigationItems.map((item, idx) => {
-              const Icon = item.icon;
-              const prev = navigationItems[idx - 1];
-              const showHeader =
-                !isCollapsed && (idx === 0 || prev.section !== item.section);
-              return (
-                <React.Fragment key={item.path}>
-                  {showHeader && (
-                    <h3
-                      className={`text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2 px-3
-                      ${idx !== 0 ? "pt-4" : ""}`}
-                    >
-                      {item.section}
-                    </h3>
-                  )}
-
-                  <Button
-                    variant={item.isActive ? "default" : "ghost"}
-                    className={`w-full ${isCollapsed ? "justify-start px-2" : "justify-start gap-3"} h-9 text-sm ${
-                      item.isActive
-                        ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
-                        : "text-gray-700 hover:bg-gray-100"
-                    }`}
-                    onClick={() => router.push(item.path)}
-                    title={isCollapsed ? item.label : undefined}
-                  >
-                    <Icon className="w-5 h-5" />
-                    {!isCollapsed && (
-                      <>
-                        <span>{item.label}</span>
-                        {item.badge && (
-                          <span className="ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                            {item.badge > 9 ? "9+" : item.badge}
-                          </span>
-                        )}
-                      </>
+      className={`${isCollapsed ? "w-16" : "w-64"} justify-between overflow-visible bg-white border-r border-gray-200 flex flex-col h-screen transition-all duration-300`}
+      >
+        {/* Navigation Items */}
+        <nav className="p-3">
+          {/* Main Navigation */}
+          <div>
+            <div className="space-y-1">
+              {navigationItems.map((item, idx) => {
+                const Icon = item.icon;
+                const prev = navigationItems[idx - 1];
+                const showHeader =
+                  !isCollapsed && (idx === 0 || prev.section !== item.section);
+                return (
+                  <React.Fragment key={item.path}>
+                    {showHeader && (
+                      <h3
+                        className={`text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2 px-3
+                        ${idx !== 0 ? "pt-4" : ""}`}
+                      >
+                        {item.section}
+                      </h3>
                     )}
-                  </Button>
-                </React.Fragment>
-              );
-            })}
-          </div>
-        </div>
-      </nav>
-    </div>
 
-  </div>
+                    <Button
+                      variant={item.isActive ? "default" : "ghost"}
+                      className={`w-full ${isCollapsed ? "justify-start px-2" : "justify-start gap-3"} h-9 text-sm ${
+                        item.isActive
+                          ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
+                          : "text-gray-700 hover:bg-gray-100"
+                      }`}
+                      onClick={() => router.push(item.path)}
+                      title={isCollapsed ? item.label : undefined}
+                    >
+                      <Icon className="w-5 h-5" />
+                      {!isCollapsed && (
+                        <>
+                          <span>{item.label}</span>
+                          {item.badge && (
+                            <span className="ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                              {item.badge > 9 ? "9+" : item.badge}
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </Button>
+                  </React.Fragment>
+                );
+              })}
+            </div>
+          </div>
+        </nav>
+        <div className="p-3">
+          Sample Footer
+        </div>
+      </div>     
+    </div>
 );
 }

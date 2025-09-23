@@ -74,7 +74,7 @@ export default function AdminEmployersManagment() {
    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
         <div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Employers Management</h1>
+          <h1 className="text-4xl px-4 font-bold text-gray-900">Employers Management</h1>
         </div>
 
       <div className="p-4">

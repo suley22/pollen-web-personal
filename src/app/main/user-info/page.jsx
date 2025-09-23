@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { updateUserAction } from "./actions"; // 👈 la server action
 import { PrimaryButton } from "@/components/ui/buttons/primary-button";
+import { Card } from "@/components/ui/card";
 
 export default function Page() {
   const [form, setForm] = useState({
@@ -34,16 +35,19 @@ export default function Page() {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-10">
-      <div className="bg-white shadow-lg rounded-2xl p-6">
-        <div className="mb-4">
+    <div className="bg-gray-50 flex justify-center">
+      <Card className="shadow-lg p-6 space-y-6 mt-10 w-full max-w-3xl">
+        {/* Text */}
+        <div className="flex flex-col">
           <h2 className="text-xl font-semibold !mb-0">¡Ya casi!</h2>
           <p>Completa la información para continuar</p>
         </div>
-
-        <div className="space-y-3">
+        {/* Forms */}
+        <div className="space-y-2">
+          {/* Names */}
           <div className="flex gap-2">
-            <div className="flex-1">
+            {/* Nombre */}
+            <div className="flex flex-col">
               <p className="mb-1 font-semibold">Nombre</p>
               <input
                 type="text"
@@ -53,8 +57,9 @@ export default function Page() {
                 className="w-full border p-2 rounded"
                 placeholder="Nombre"
               />
-            </div>
-            <div className="flex-1">
+            </div>            
+            {/* Apellido */}
+            <div className="flex flex-col">
               <p className="mb-1 font-semibold">Apellido</p>
               <input
                 type="text"
@@ -66,7 +71,8 @@ export default function Page() {
               />
             </div>
           </div>
-          <div>
+          {/* Pronouns */}
+          <div className="flex flex-col">
             <p className="mb-1 font-semibold">Pronouns</p>
             <select
               placeholder="Select pronouns"
@@ -81,15 +87,16 @@ export default function Page() {
               <option value="Other">Other</option>
             </select>
           </div>
-          <div className="flex gap-2 mt-4">
+        </div>
+        {/* Button */}
+          <div className="flex flex-row">
             <PrimaryButton
+              size="lg"
               text="Save changes"
               onClick={handleSave}
-              className=""
             />
           </div>
-        </div>
-      </div>
+      </Card>
     </div>
   );
 }

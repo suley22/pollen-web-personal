@@ -4,12 +4,12 @@ import { Card } from "@/components/ui/card";
 
 export default function Page() {
   return (
-    <div className="bg-gray-50 max-w-xl mx-auto">
+    <div className="bg-gray-50 max-w-2xl mx-auto">
         <Card className="shadow-lg p-6 space-y-6 mt-10">
             {/* Text */}
             <div className="flex flex-col">
-            <h2 className="text-xl font-semibold !mb-0">¡Ya casi!</h2>
-            <p>Completa la información para continuar</p>
+                <h2 className="text-xl font-semibold !mb-0">¡Ya casi!</h2>
+                <p>Completa la información para continuar</p>
             </div>
             {/* Forms */}
             <div className="space-y-2">

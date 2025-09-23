@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/buttons/button";
 import { Input } from "@/components/ui/input";
-import { applicationMocks } from "./(mocks)/application-mocks"
-
+import { applicationMocks } from "./(mocks)/application-mocks";
 
 import {
   Building2,
@@ -18,7 +17,7 @@ import {
   MapPin,
   Mail,
   Phone,
-  Users
+  Users,
 } from "lucide-react";
 import { PrimaryButton } from "@/components/ui/buttons/primary-button";
 
@@ -60,7 +59,7 @@ export default function AdminEmployersManagment() {
     const matchesSearch =
       app.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       app.industries.some((industry) =>
-        industry.toLowerCase().includes(searchTerm.toLowerCase())
+        industry.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     const matchesStatus =
       selectedStatus === "all" || app.status === selectedStatus;
@@ -69,7 +68,7 @@ export default function AdminEmployersManagment() {
 
   const addButtonOnClick = () => {
     console.log("Funciona");
-  }
+  };
 
   return (
     <div className="">
@@ -80,17 +79,16 @@ export default function AdminEmployersManagment() {
         </h1>
       </div>
 
-
-
       <div className="p-4">
-
         {/* Search Bar */}
         <div className="flex items-center space-x-4 mb-6">
           <div className="flex-grow relative bg-white">
-            <Search className="absolute left-3 top-1/2 
+            <Search
+              className="absolute left-3 top-1/2 
             transform -translate-y-1/2 
             h-4 w-4 
-            text-gray-400" />
+            text-gray-400"
+            />
             <Input
               placeholder="Search companies or industries..."
               value={searchTerm}
@@ -113,7 +111,11 @@ export default function AdminEmployersManagment() {
           </div>
 
           <div className="flex flex-grow justify-end items-center">
-            <PrimaryButton text="Add +" onClick={addButtonOnClick} className="" />
+            <PrimaryButton
+              text="Add +"
+              onClick={addButtonOnClick}
+              className=""
+            />
 
             {/* <div className="h-4 w-4 bg-black">Algo</div> */}
           </div>
@@ -158,7 +160,7 @@ export default function AdminEmployersManagment() {
                       <div className="flex items-center">
                         <Calendar className="h-4 w-4 mr-2" />
                         {new Date(
-                          application.submittedDate
+                          application.submittedDate,
                         ).toLocaleDateString()}
                       </div>
                     </div>
@@ -185,7 +187,7 @@ export default function AdminEmployersManagment() {
                         className="bg-green-600 hover:bg-green-700 text-white"
                         onClick={() =>
                           router.push(
-                            `/main/admin/employers-managment/review/}`
+                            `/main/admin/employers-managment/review/}`,
                           )
                         }
                       >

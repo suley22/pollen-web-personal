@@ -9,7 +9,7 @@ import {
   User,
   LayoutDashboard,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/buttons/button";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 

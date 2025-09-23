@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
 import { updateSession } from "@/utils/supabase/middleware";
 
-const publicRoutes = ["/auth/confirm","/login", "/auth", "/error", "/"];
+const publicRoutes = ["/auth/confirm", "/login", "/auth", "/error", "/"];
 
 export async function middleware(request) {
+  if (publicRoutes.includes(request.nextUrl.pathname)) {
+    return NextResponse.next();
+  }
+
   const { response, user } = await updateSession(request, true);
 
-  if (
-    !user &&
-    !publicRoutes.includes(request.nextUrl.pathname)
-  ) {
+  if (!user && !publicRoutes.includes(request.nextUrl.pathname)) {
     // TODO: Agregar el redirect url
     const url = request.nextUrl.clone();
     url.pathname = "/";
@@ -17,14 +18,12 @@ export async function middleware(request) {
     return NextResponse.redirect(url);
   }
 
-  if (
-    user &&
-    !user.user_metadata.register_profile_completed) {
+  if (user && !user.user_metadata.register_profile_completed) {
     if (request.nextUrl.pathname !== "/login/user-info") {
       const url = request.nextUrl.clone();
       url.pathname = "/login/user-info";
       return NextResponse.redirect(url);
-    } 
+    }
   }
 
   return response;

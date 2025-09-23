@@ -8,9 +8,8 @@ import {
   Building2,
   User,
   LayoutDashboard,
-
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/buttons/button";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -83,7 +82,8 @@ export default function DashboardSidebar() {
               return (
                 <React.Fragment key={item.path}>
                   {showHeader && (
-                    <h3 className={`text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2 px-3
+                    <h3
+                      className={`text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-2 px-3
                       ${idx !== 0 ? "pt-4" : ""}`}
                     >
                       {item.section}
@@ -92,10 +92,11 @@ export default function DashboardSidebar() {
 
                   <Button
                     variant={item.isActive ? "default" : "ghost"}
-                    className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${item.isActive
+                    className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start gap-3"} h-9 text-sm ${
+                      item.isActive
                         ? "bg-[#E2007A] text-white hover:bg-[#E2007A]/90"
                         : "text-gray-700 hover:bg-gray-100"
-                      }`}
+                    }`}
                     onClick={() => router.push(item.path)}
                     title={isCollapsed ? item.label : undefined}
                   >

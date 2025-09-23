@@ -1,19 +1,11 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/buttons/button";
 import { Edit } from "lucide-react";
 
 import { useRouter } from "next/navigation";
-import {
-  Globe,
-  Linkedin,
-  UserCheck,
-
-
-
-
-} from "lucide-react";
+import { Globe, Linkedin, UserCheck } from "lucide-react";
 
 export default function Contact({ employerProfile }) {
   const router = useRouter();
@@ -34,7 +26,6 @@ export default function Contact({ employerProfile }) {
           <span className="ml-1 text-sm">Edit</span>
         </Button>
       </CardHeader>
-
 
       <CardContent className="space-y-3">
         {employerProfile.website && (
@@ -64,13 +55,6 @@ export default function Contact({ employerProfile }) {
             </a>
           </div>
         )}
-
-
-
-
-
-
-
 
         <button
           onClick={() => window.open("/company-profile/2", "_blank")}

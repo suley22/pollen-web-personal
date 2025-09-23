@@ -1,23 +1,17 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/buttons/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/icons/icons";
-import { useRegister } from "./register-hook";
+import { useRegister } from "./useRegister";
+import { useActionState } from "react";
+import { Alert } from "@/components/ui/alert";
 
 export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
   const { form } = useRegister();
-
-  const onSubmit = async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.target);
-    const data = Object.fromEntries(formData.entries());
-
-    await signup(data);
-  };
+  const [state, formAction, isLoading] = useActionState(signup);
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -38,7 +32,22 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
           </span>
         </div>
 
-        <form onSubmit={onSubmit} className="flex flex-col gap-6">
+        <form action={formAction} className="flex flex-col gap-6">
+          {state &&
+            (state.success ? (
+              <Alert
+                title={state?.message}
+                description={state?.description}
+                type="success"
+              />
+            ) : (
+              <Alert
+                title={state?.message}
+                description={state?.description}
+                type="error"
+              />
+            ))}
+
           {/* Email */}
           <div className="grid gap-3">
             <Label htmlFor="email">Email</Label>
@@ -59,7 +68,9 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
                     check.valid ? "text-green-600" : "text-red-500"
                   }`}
                 >
-                  {check.valid ? "✔" : "✖"} {check.label}
+                  {check.valid
+                    ? "✔ El mail es válido"
+                    : "✖ El mail no es válido"}
                 </li>
               ))}
             </ul>
@@ -93,8 +104,12 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
           </div>
 
           {/* Botón Sign up */}
-          <Button type="submit" className="w-full" disabled={!form.valid}>
-            Sign up
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading || !form.valid}
+          >
+            {isLoading ? "Loading..." : "Sign up"}
           </Button>
         </form>
       </div>

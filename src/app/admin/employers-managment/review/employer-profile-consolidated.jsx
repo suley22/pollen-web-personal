@@ -13,8 +13,9 @@ import Diversity from "./(components)/diversity";
 import Values from "./(components)/values";
 import Benefits from "./(components)/benefits";
 import Contact from "./(components)/contact";
+import { TestimonialTab } from "./(components)/testimonial-tab";
 
-export default function EmployerProfileConsolidated(employerProfile) {
+export default function EmployerProfileConsolidated({ employerProfile }) {
   /** @type {{author:string, position:string, rating:number, date:string, feedbackQuality?:number, communicationSpeed?:number, interviewExperience?:number, processTransparency?:number} | null} */
 
   const [activeTab, setActiveTab] = useState("overview");
@@ -100,7 +101,6 @@ export default function EmployerProfileConsolidated(employerProfile) {
   const statusInfo = getStatusInfo();
 
   return (
-
     <>
       {/* Header */}
       <Header employerProfile={employerProfile} />
@@ -250,10 +250,17 @@ export default function EmployerProfileConsolidated(employerProfile) {
                     <Contact employerProfile={employerProfile} />
 
                     {/* Working Model */}
-
                   </div>
                 </div>
               </TabsContent>
+
+
+              {/* Testimonials Tab */}
+              <TabsContent value="testimonials">
+                <TestimonialTab employerProfile={employerProfile} />
+              </TabsContent>
+
+              
             </div>
           </Tabs>
         </div>

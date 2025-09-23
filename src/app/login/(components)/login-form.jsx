@@ -6,10 +6,27 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/icons/icons";
 import { useActionState, useState } from "react";
+import { signInWithGoogle } from "@/utils/auth/google-auth";
 
 export function LoginForm({ className, loginAction, onChangeLogin, ...props }) {
   const [email, setEmail] = useState("");
   const [state, formAction, isLoading] = useActionState(loginAction);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    try {
+      const { error } = await signInWithGoogle();
+      if (error) {
+        console.error('Google sign in error:', error);
+        // Aquí podrías mostrar el error al usuario si quieres
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error);
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -20,9 +37,14 @@ export function LoginForm({ className, loginAction, onChangeLogin, ...props }) {
         </p>
       </div>
       <div className="grid gap-6">
-        <Button variant="outline" className="w-full">
+        <Button 
+          variant="outline" 
+          className="w-full" 
+          onClick={handleGoogleSignIn}
+          disabled={googleLoading}
+        >
           <GoogleIcon className="mr-2 h-4 w-4" />
-          Login with Google
+          {googleLoading ? "Connecting to Google..." : "Login with Google"}
         </Button>
         <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
           <span className="bg-background text-muted-foreground relative z-10 px-2">

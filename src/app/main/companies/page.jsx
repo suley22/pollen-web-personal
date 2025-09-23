@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, MapPin, Users, Star, Target } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function CompaniesPage() {
   const companies = [
@@ -117,6 +118,7 @@ export default function CompaniesPage() {
 
   const recommendedCompanies = companies.slice(0, 2); // Show first 2 as recommended
   const allCompanies = companies;
+  const router = useRouter();
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -197,7 +199,7 @@ export default function CompaniesPage() {
                       size="sm"
                       style={{ fontFamily: "Sora" }}
                       onClick={() =>
-                        (window.location.href = `/company-profile/${company.id}`)
+                        router.push(`/companies/review/`)
                       }
                     >
                       View Details

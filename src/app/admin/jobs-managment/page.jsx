@@ -601,7 +601,9 @@ export default function JobsManagmentPage() {
                             size="sm"
                             variant="outline"
                             // TODO: habilitar navegación a candidatos del trabajo
-                            //  onClick={(e) => {
+                            onClick={() => {
+                              router.push(`/admin/jobs-managment/job-applicants`);
+                            }}
                             //    e.stopPropagation();
                             //    setLocation(`/admin/job-applicants-grid/${job.id}`);
                             //  }}

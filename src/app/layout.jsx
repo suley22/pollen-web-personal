@@ -2,6 +2,7 @@ import { Sora, Poppins } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Toaster } from "sonner";
+import { createClient } from "@/utils/supabase/server";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -24,10 +25,16 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <html lang="en">
       <body className={`${sora.variable} ${poppins.variable} antialiased`}>
-        <Providers>{children}</Providers>
+        <Providers user={{ user }}>{children}</Providers>
         <Toaster richColors position="top-right" />
       </body>
     </html>

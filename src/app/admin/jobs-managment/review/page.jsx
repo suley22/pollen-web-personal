@@ -24,6 +24,7 @@ import {
   MapPin,
   Clock,
   Users,
+  ArrowLeft
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
@@ -398,6 +399,8 @@ Please provide your analysis with specific recommendations and reasoning.`,
   };
 
   const handleEditClick = () => {
+    setEditedJob({ ...job });
+    setEditedAssessment({ ...assessmentData });
     setIsEditing(true);
   };
 
@@ -480,6 +483,14 @@ Please provide your analysis with specific recommendations and reasoning.`,
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.back()}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
               <div>
                 <h1 className="text-xl font-semibold text-gray-900">
                   {job.jobTitle} at {job.companyName}
@@ -1456,7 +1467,9 @@ Please provide your analysis with specific recommendations and reasoning.`,
                       <Button
                         variant="outline"
                         // TODO: colocar función del click
-                        // onClick={() =>
+                        onClick={() => {
+                          router.push(`/admin/jobs-managment/persona-results`)
+                        }}
                         //   setLocation(
                         //     "/admin/persona-results?job=" +
                         //       encodeURIComponent(job.jobTitle) +
@@ -1505,10 +1518,14 @@ Please provide your analysis with specific recommendations and reasoning.`,
                       {isEditing ? (
                         <div className="space-y-4">
                           <textarea
-                            value={editedAssessment.generatedContent}
+                            value={
+                              editedAssessment?.generatedContent ??
+                              assessmentData.generatedContent ??
+                              ""
+                            }
                             onChange={(e) =>
                               setEditedAssessment((prev) => ({
-                                ...prev,
+                                ...(prev ?? {}),
                                 generatedContent: e.target.value,
                               }))
                             }

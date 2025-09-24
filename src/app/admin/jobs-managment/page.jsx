@@ -15,8 +15,10 @@ import {
   UserCircle,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
 
 export default function JobsManagmentPage() {
+  const router = useRouter();
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedAssignment, setSelectedAssignment] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -470,8 +472,13 @@ export default function JobsManagmentPage() {
               key={job.id}
               className="cursor-pointer hover:shadow-lg transition-shadow border border-gray-200 bg-white hover:bg-gray-50"
 
-              //TODO: habilitar navegación a detalles del trabajo
-              // onClick={() => {
+              //TODO: habilitar navegación a detalles del trabajo real
+              onClick={() => {
+                router.push(`/admin/jobs-managment/review`);
+              }}
+
+
+
               //   sessionStorage.setItem('previousPage', '/admin/assigned-jobs');
               //   if (job.status === 'draft') {
               //     setLocation(`/admin/job-review/${job.id}?source=assigned-jobs`);

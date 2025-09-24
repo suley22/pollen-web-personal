@@ -15,10 +15,16 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
+<<<<<<< HEAD:src/components/nav-user.jsx
+} from "@/components/ui/sidebar";
+import { useUser } from "@/app/providers";
+=======
 } from "@/components/sidebar/sidebar";
+>>>>>>> a2c4449c20433df4c708481ff1d4cd17bf987454:src/components/sidebar/nav-user.jsx
 
-export function NavUser({ user, onLogout }) {
+export function NavUser({ onLogout }) {
   const { isMobile } = useSidebar();
+  const user = useUser();
 
   return (
     <SidebarMenu>

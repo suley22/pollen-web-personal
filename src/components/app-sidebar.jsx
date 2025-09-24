@@ -55,7 +55,7 @@ export function AppSidebar({ user, ...props }) {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <NavigationItems/>
+          <NavigationItems isActive/>
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>

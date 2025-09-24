@@ -16,10 +16,12 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 export function NavigationItems() {
   const pathname = usePathname();
+  const {isCollapsedActive } = useSidebar();
 
   const items = [
     {
@@ -64,9 +66,10 @@ export function NavigationItems() {
       {items.map((item, idx) => {
         const prev = items[idx - 1];
         const sectionLabel = idx === 0 || prev.section !== item.section;
+        const isCollapsed = sectionLabel && isCollapsedActive;
         return (
           <React.Fragment key={item.path}>
-            {sectionLabel && (
+            {isCollapsed && (
               <SidebarGroupLabel className="">{item.section}</SidebarGroupLabel>
             )}
             <SidebarGroupContent className="">

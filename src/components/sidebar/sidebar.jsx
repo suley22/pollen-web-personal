@@ -24,8 +24,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-const SIDEBAR_COOKIE_NAME = "sidebar_state";
-const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = "16rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
@@ -44,7 +42,6 @@ function useSidebar() {
 }
 
 function SidebarProvider({
-  defaultOpen = true,
   open: openProp,
   onOpenChange: setOpenProp,
   className,
@@ -54,10 +51,15 @@ function SidebarProvider({
 }) {
   const isMobile = useIsMobile();
   const [openMobile, setOpenMobile] = React.useState(false);
+  const [_open, _setOpen] = React.useState(null);
+  const [hydrated, setHydrated] = React.useState(false);
 
-  // This is the internal state of the sidebar.
-  // We use openProp and setOpenProp for control from outside the component.
-  const [_open, _setOpen] = React.useState(defaultOpen);
+  React.useEffect(() => {
+    const stored = localStorage.getItem('sidebar_state');
+    _setOpen(stored === 'true');
+    setHydrated(true);
+  }, []);
+
   const open = openProp ?? _open;
   const setOpen = React.useCallback(
     (value) => {
@@ -68,8 +70,8 @@ function SidebarProvider({
         _setOpen(openState);
       }
 
-      // This sets the cookie to keep the sidebar state.
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+      // Save to localStorage
+      localStorage.setItem('sidebar_state', openState.toString());
     },
     [setOpenProp, open],
   );
@@ -115,6 +117,11 @@ function SidebarProvider({
     [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
   );
 
+  // No renderizar hasta que esté hidratado
+  if (!hydrated) {
+    return null;
+  }
+
   return (
     <SidebarContext.Provider value={contextValue}>
       <TooltipProvider delayDuration={0}>
@@ -129,6 +136,7 @@ function SidebarProvider({
             "group/sidebar-wrapper has-data-[variant=inset]:bg-sidebar flex min-h-svh w-full",
             className,
           )}
+          suppressHydrationWarning
           {...props}
         >
           {children}

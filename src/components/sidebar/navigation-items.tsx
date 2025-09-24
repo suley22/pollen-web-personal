@@ -60,7 +60,7 @@ export function NavigationItems() {
       section: "Admin",
     },
     {
-      icon: LayoutDashboard,
+      icon: Briefcase,
       label: "Jobs Managment",
       path: "/admin/jobs-managment",
       isActive: pathname === "/admin/jobs-managment",

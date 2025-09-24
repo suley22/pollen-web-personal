@@ -23,7 +23,7 @@ export const metadata = {
     "Discover your strengths and connect with inclusive employers who look beyond the CV.",
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${sora.variable} ${poppins.variable} antialiased`}>

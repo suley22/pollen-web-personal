@@ -27,8 +27,11 @@ import {
 import { useSidebar } from "@/components/ui/sidebar";
 import { Logo } from "./icons/icons";
 import { usePathname } from "next/navigation";
+import { useLogout } from "@/app/hooks/useLogout";
 
 export function AppSidebar({ user, ...props }) {
+  const { onLogout, isLogoutInProgress } = useLogout();
+
   const { state } = useSidebar();
   const pathname = usePathname();
   const navigationItems = [
@@ -135,7 +138,11 @@ export function AppSidebar({ user, ...props }) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} onLogout={() => {}} />
+        <NavUser
+          user={user}
+          onLogout={onLogout}
+          isLogoutInProgress={isLogoutInProgress}
+        />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

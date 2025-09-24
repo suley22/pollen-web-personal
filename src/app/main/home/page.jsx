@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/buttons/button";
 import CircularProgress from "@/components/ui/circular-progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { createClient } from "@/utils/supabase/client";
+
 import { Badge } from "@/components/ui/badge";
 
 import {
@@ -21,7 +20,6 @@ import {
 } from "lucide-react";
 
 export default function Home() {
-  const router = useRouter();
   const [, setProgress] = useState(0);
 
   // estado para guardados (JS puro)
@@ -96,21 +94,6 @@ export default function Home() {
     },
   ];
 
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-  const handleLogout = async () => {
-    try {
-      setIsLoggingOut(true);
-      const supabase = createClient();
-      await supabase.auth.signOut();
-      router.push("/");
-    } catch (error) {
-      console.error("Error al cerrar sesión:", error);
-      alert("Hubo un problema al cerrar sesión. Por favor intenta de nuevo.");
-      setIsLoggingOut(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-white home-page">
       {/* Navbar */}
@@ -125,21 +108,6 @@ export default function Home() {
             <p className="text-sm font-sora text-gray-600 inline-block align-middle">
               Let's find you a job you love.
             </p>
-            <Button
-              onClick={handleLogout}
-              disabled={isLoggingOut}
-              variant="outline"
-              className="border-gray-300"
-            >
-              {isLoggingOut ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin mr-2" />
-                  Cerrando sesión...
-                </>
-              ) : (
-                "Cerrar sesión"
-              )}
-            </Button>
           </div>
         </div>
 

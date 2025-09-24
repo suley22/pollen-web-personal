@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, CheckCircle, Brain, Target } from "lucide-react";
+import { ArrowLeft, CheckCircle, Brain, Target, Download } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 
@@ -175,6 +175,85 @@ export default function PersonaResultsPage() {
                 )}
               </div>
             </Card>
+          </div>
+
+          {/* Detailed DISC Explanations */}
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Brain className="h-5 w-5" />
+              Understanding Each Behavioral Style
+            </h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="border-l-4 border-red-500 pl-4">
+                  <h4 className="font-semibold text-red-700 mb-2">
+                    Decisive (Red)
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    Direct, results-focused, and competitive. Thrives on
+                    challenges, makes quick decisions, and drives for immediate
+                    results. Natural leaders who take charge and push for
+                    efficiency.
+                  </p>
+                </div>
+                <div className="border-l-4 border-yellow-400 pl-4">
+                  <h4 className="font-semibold text-yellow-700 mb-2">
+                    Interactive (Yellow)
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    Enthusiastic, persuasive, and optimistic. Excels at building
+                    relationships, inspiring others, and bringing energy to
+                    teams. Natural communicators who thrive in social
+                    environments.
+                  </p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="border-l-4 border-green-500 pl-4">
+                  <h4 className="font-semibold text-green-700 mb-2">
+                    Steady (Green)
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    Patient, reliable, and supportive. Values stability,
+                    teamwork, and consistent processes. Natural team players who
+                    provide dependable support and maintain harmony.
+                  </p>
+                </div>
+                <div className="border-l-4 border-blue-500 pl-4">
+                  <h4 className="font-semibold text-blue-700 mb-2">
+                    Conscientious (Blue)
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    Precise, analytical, and systematic. Focuses on accuracy,
+                    quality, and thorough planning. Natural problem-solvers who
+                    ensure standards are met and details are covered.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-green-900 mb-2">
+              Next Steps
+            </h3>
+            <p className="text-green-800 text-sm">
+              Our team will review your persona profile and create a tailored
+              job posting and assessment for your {jobTitle} role. We'll be in
+              touch within 2 business days with your customised hiring
+              materials.
+            </p>
+          </div>
+
+          <div className="flex gap-4 justify-center">
+            
+            <Button
+              className="flex items-center gap-2"
+              onClick={() => window.print()}
+            >
+              <Download className="h-4 w-4" />
+              Download Summary
+            </Button>
           </div>
 
 

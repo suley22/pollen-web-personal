@@ -4,7 +4,27 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Target, FileText, Badge, Lightbulb, Award, Pause, UserCheck, Briefcase, Brain, Building2, CheckCircle, Copy, Edit, Eye, Play, X, MapPin, Clock, Users } from "lucide-react";
+import {
+  Target,
+  FileText,
+  Badge,
+  Lightbulb,
+  Award,
+  Pause,
+  UserCheck,
+  Briefcase,
+  Brain,
+  Building2,
+  CheckCircle,
+  Copy,
+  Edit,
+  Eye,
+  Play,
+  X,
+  MapPin,
+  Clock,
+  Users,
+} from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -16,7 +36,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-
 
 export default function JobsManagmentReviewPage() {
   const [copySuccess, setCopySuccess] = useState(false);
@@ -30,10 +49,8 @@ export default function JobsManagmentReviewPage() {
   const jobId = window.location.pathname.split("/").pop();
   const [currentJobStatus, setCurrentJobStatus] = useState(null);
   const router = useRouter();
-const [candidateCompletionData, setCandidateCompletionData] =
-    useState(null);
-    const [activeTab, setActiveTab] = useState("description");
-
+  const [candidateCompletionData, setCandidateCompletionData] = useState(null);
+  const [activeTab, setActiveTab] = useState("description");
 
   const getJobData = (id) => {
     const baseJob = {
@@ -288,7 +305,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
   const job = {
     ...baseJobData,
     status: currentJobStatus || baseJobData.status,
-  }
+  };
 
   const canMarkComplete = () => {
     if (!candidateCompletionData) return false;
@@ -453,8 +470,8 @@ Please provide your analysis with specific recommendations and reasoning.`,
       [field]: prev[field].filter((_, i) => i !== index),
     }));
   };
-    const addArrayItem = () => {}   
 
+  const addArrayItem = () => {};
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -692,8 +709,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
               {job.candidateCounts && (
                 <div className="space-y-3">
                   <Button
-
-                  //TODO: colocar función del click
+                    //TODO: colocar función del click
                     // onClick={() =>
                     //   setLocation(`/admin/job-applicants-grid/${job.id}`)
                     // }
@@ -709,19 +725,19 @@ Please provide your analysis with specific recommendations and reasoning.`,
                   <div className="space-y-2">
                     <div className="flex items-center gap-4 text-sm text-gray-600">
                       <span className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full"/>
+                        <div className="w-2 h-2 bg-blue-500 rounded-full" />
                         {job.candidateCounts.new} New
                       </span>
                       <span className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full"/>
+                        <div className="w-2 h-2 bg-yellow-500 rounded-full" />
                         {job.candidateCounts.inProgress} In Progress
                       </span>
                       <span className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"/>
+                        <div className="w-2 h-2 bg-green-500 rounded-full" />
                         {job.candidateCounts.complete} Matched
                       </span>
                       <span className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-gray-500 rounded-full"/>
+                        <div className="w-2 h-2 bg-gray-500 rounded-full" />
                         {job.candidateCounts.hired} Complete
                       </span>
                     </div>
@@ -769,15 +785,16 @@ Please provide your analysis with specific recommendations and reasoning.`,
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger
               value="description"
-              className="flex items-center gap-2"
-            >
+              className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Job Description
             </TabsTrigger>
+
             <TabsTrigger value="persona" className="flex items-center gap-2">
               <UserCheck className="h-4 w-4" />
               Persona Results
             </TabsTrigger>
+            
             <TabsTrigger value="assessment" className="flex items-center gap-2">
               <Brain className="h-4 w-4" />
               Skills Assessment
@@ -1031,7 +1048,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
                           onChange={(e) =>
                             updateEditedJob(
                               "applicationDeadline",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                         />
@@ -1046,7 +1063,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
                           onChange={(e) =>
                             updateEditedJob(
                               "employmentTypeDetails",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           placeholder="e.g. Standard employment contract"
@@ -1140,7 +1157,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
                               updateArrayField(
                                 "responsibilities",
                                 index,
-                                e.target.value
+                                e.target.value,
                               )
                             }
                             className="flex-1"
@@ -1158,7 +1175,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
                             <X className="h-4 w-4" />
                           </Button>
                         </div>
-                      )
+                      ),
                     )}
                     <Button
                       type="button"
@@ -1202,7 +1219,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
                             updateArrayField(
                               "whoWouldLove",
                               index,
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           className="flex-1"
@@ -1274,7 +1291,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
                           <CheckCircle className="h-3 w-3 mr-2 mt-1 text-green-600 flex-shrink-0" />
                           <span className="text-gray-700">{requirement}</span>
                         </li>
-                      )
+                      ),
                     )}
                   </ul>
                 ) : (
@@ -1288,7 +1305,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
                               updateArrayField(
                                 "pollenApprovedRequirements",
                                 index,
-                                e.target.value
+                                e.target.value,
                               )
                             }
                             className="flex-1"
@@ -1301,7 +1318,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
                             onClick={() =>
                               removeArrayItem(
                                 "pollenApprovedRequirements",
-                                index
+                                index,
                               )
                             }
                             className="text-red-600 hover:text-red-700"
@@ -1309,7 +1326,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
                             <X className="h-4 w-4" />
                           </Button>
                         </div>
-                      )
+                      ),
                     )}
                     <Button
                       type="button"
@@ -1397,16 +1414,14 @@ Please provide your analysis with specific recommendations and reasoning.`,
                             Key Traits:
                           </span>
                           <div className="flex flex-wrap gap-1 mt-1">
-                            {personaData.traits.map(
-                              (trait, index) => (
-                                <Badge
-                                  key={index}
-                                  className="bg-blue-100 text-blue-800"
-                                >
-                                  {trait}
-                                </Badge>
-                              )
-                            )}
+                            {personaData.traits.map((trait, index) => (
+                              <Badge
+                                key={index}
+                                className="bg-blue-100 text-blue-800"
+                              >
+                                {trait}
+                              </Badge>
+                            ))}
                           </div>
                         </div>
                         <div>
@@ -1440,7 +1455,6 @@ Please provide your analysis with specific recommendations and reasoning.`,
                     <div className="flex justify-center">
                       <Button
                         variant="outline"
-
                         // TODO: colocar función del click
                         // onClick={() =>
                         //   setLocation(
@@ -1579,11 +1593,11 @@ Please provide your analysis with specific recommendations and reasoning.`,
                                               .replace(/$/, "</p>")
                                               .replace(
                                                 /\*\*(.+?)\*\*/g,
-                                                "<strong>$1</strong>"
+                                                "<strong>$1</strong>",
                                               )
                                               .replace(
                                                 /_(.+?)_/g,
-                                                "<em>$1</em>"
+                                                "<em>$1</em>",
                                               )
                                               .replace(/^<p><\/p>/, "")
                                               .replace(/<p><\/p>$/g, ""),
@@ -1597,7 +1611,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
                                         </span>
                                       </div>
                                     </div>
-                                  )
+                                  ),
                                 )}
                               </div>
                             )}
@@ -1620,11 +1634,11 @@ Please provide your analysis with specific recommendations and reasoning.`,
                                       .replace(/$/, "</p>")
                                       .replace(
                                         /###\s+(.+?)(<\/p><p>|$)/g,
-                                        '<h3 class="text-xl font-bold mb-4 mt-6 text-gray-900">$1</h3><p>'
+                                        '<h3 class="text-xl font-bold mb-4 mt-6 text-gray-900">$1</h3><p>',
                                       )
                                       .replace(
                                         /\*\*(.+?)\*\*/g,
-                                        "<strong>$1</strong>"
+                                        "<strong>$1</strong>",
                                       )
                                       .replace(/_(.+?)_/g, "<em>$1</em>")
                                       .replace(/^<p><\/p>/, "")
@@ -1701,4 +1715,5 @@ Please provide your analysis with specific recommendations and reasoning.`,
         </Tabs>
       </div>
     </div>
-  );}
+  );
+}

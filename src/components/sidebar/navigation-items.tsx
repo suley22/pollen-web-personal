@@ -32,6 +32,13 @@ export function NavigationItems() {
       section: "Main",
     },
     {
+      icon: Briefcase,
+      label: "Jobs",
+      path: "/main/jobs",
+      isActive: pathname === "/main/jobs",
+      section: "Main",
+    },
+    {
       icon: Building2,
       label: "Companies",
       path: "/main/companies",

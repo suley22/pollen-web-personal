@@ -61,6 +61,13 @@ export default function DashboardSidebar() {
       isActive: pathname === "/admin/all-job-seekers",
       section: "Admin",
     },
+    {
+      icon: LayoutDashboard,
+      label: "Jobs Managment",
+      path: "/admin/jobs-managment",
+      isActive: pathname === "/admin/jobs-managment",
+      section: "Admin",
+    },
   ];
 
   return (

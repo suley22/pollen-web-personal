@@ -1,19 +1,29 @@
-import { Header } from "@/components/header";
-import DashboardSidebar from "@/components/dashboard-sidebar";
+import {
+  SidebarProvider,
+  SidebarTrigger,
+  SidebarInset,
+} from "@/components/sidebar/sidebar";
+import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import { createClient } from "@/utils/supabase/server";
 
-export default function DashboardLayout({ children }) {
+export default async function DashboardLayout({ children }) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
-    <div className="flex min-h-screen max-h-screen min-w-screen max-w-screen">
-      <div className="flex bg-gray-50 w-full">
-        <DashboardSidebar />
-        <div className="flex flex-col w-full">
-          {/* <JobSeekrHeader onLogout={handleLogout} /> */}
-          <Header />
-          <main className="flex flex-col flex-1 items-center overflow-auto">
-            {children}
-          </main>
-        </div>
-      </div>
-    </div>
+    <SidebarProvider className="testing-sidebar-layout">
+      <AppSidebar user={user} />
+      <SidebarInset className="bg-gray-50">
+        <>
+          <div className="bg-background sticky top-0 z-40 flex items-center gap-2 border-b p-2 pl-2">
+            <SidebarTrigger />
+          </div>
+          <div className="p-4">{children}</div>
+        </>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

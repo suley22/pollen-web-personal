@@ -17,7 +17,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   useSidebar,
-} from "@/components/ui/sidebar";
+} from "@/components/sidebar/sidebar";
 
 export function NavigationItems() {
   const pathname = usePathname();
@@ -57,6 +57,13 @@ export function NavigationItems() {
       label: "Job Seekers",
       path: "/admin/all-job-seekers",
       isActive: pathname === "/admin/all-job-seekers",
+      section: "Admin",
+    },
+    {
+      icon: LayoutDashboard,
+      label: "Jobs Managment",
+      path: "/admin/jobs-managment",
+      isActive: pathname === "/admin/jobs-managment",
       section: "Admin",
     },
   ];

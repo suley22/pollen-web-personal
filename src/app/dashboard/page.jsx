@@ -12,7 +12,7 @@ import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
+} from "@/components/sidebar/sidebar"
 
 export default function Page() {
   return (

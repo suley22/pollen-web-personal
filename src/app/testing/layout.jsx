@@ -2,7 +2,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
   SidebarInset,
-} from "@/components/ui/sidebar";
+} from "@/components/sidebar/sidebar";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { createClient } from "@/utils/supabase/server";
 

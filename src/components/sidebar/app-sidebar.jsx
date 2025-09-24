@@ -11,8 +11,8 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-} from "@/components/ui/sidebar";
-import { useSidebar } from "@/components/ui/sidebar";
+} from "@/components/sidebar/sidebar";
+import { useSidebar } from "@/components/sidebar/sidebar";
 import { Logo } from "../icons/icons";
 import { useLogout } from "@/app/hooks/useLogout";
 import { NavigationItems } from "@/components/sidebar/navigation-items";

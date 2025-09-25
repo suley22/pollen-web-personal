@@ -21,7 +21,7 @@ export default async function DashboardLayout({ children }) {
           <div className="bg-background sticky top-0 z-40 flex items-center gap-2 border-b p-2 pl-2">
             <SidebarTrigger />
           </div>
-          <div className="p-4">{children}</div>
+          <div>{children}</div>
         </>
       </SidebarInset>
     </SidebarProvider>

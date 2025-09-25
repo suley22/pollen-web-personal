@@ -30,7 +30,7 @@ export function NavUser({ onLogout }) {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground focus-visible:ring-0 focus:ring-0 focus:outline-none"
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
@@ -52,16 +52,16 @@ export function NavUser({ onLogout }) {
             align="center"
             sideOffset={4}
           >
-            <DropdownMenuItem onClick={onLogout} className="cursor-pointer text-gray-600">
+            <DropdownMenuItem onClick={onLogout} className="cursor-pointer text-gray-600 focus-visible:ring-0 focus:ring-0 focus:outline-none">
               <User2 />
               View Profile
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={onLogout} className="cursor-pointer text-gray-600">
+            <DropdownMenuItem onClick={onLogout} className="cursor-pointer text-gray-600 focus-visible:ring-0 focus:ring-0 focus:outline-none">
               <Settings />
               Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={onLogout} className="cursor-pointer text-red-500">
+            <DropdownMenuItem onClick={onLogout} className="cursor-pointer text-red-500 focus-visible:ring-0 focus:ring-0 focus:outline-none">
               <LogOut className="text-red-500"/>
               Log out
             </DropdownMenuItem>

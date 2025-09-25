@@ -53,6 +53,13 @@ export function NavigationItems() {
       section: "Main",
     },
     {
+      icon: Home,
+      label: "Home",
+      path: "/admin/home",
+      isActive: pathname === "/admin/home",
+      section: "Admin",
+    },
+    {
       icon: User,
       label: "Employers Managment",
       path: "/admin/employers-managment",

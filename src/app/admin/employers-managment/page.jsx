@@ -18,6 +18,7 @@ import {
   Mail,
   Phone,
   Users,
+  ArrowLeft
 } from "lucide-react";
 import { PrimaryButton } from "@/components/ui/buttons/primary-button";
 
@@ -73,7 +74,14 @@ export default function AdminEmployersManagment() {
   return (
    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-        <div>
+        <div className="flex flex-row">
+      <Button 
+                  variant="ghost" 
+                  onClick={() => router.back()} 
+                  className="mb-4"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                </Button>
           <h1 className="text-4xl px-4 font-bold text-gray-900">Employers Management</h1>
         </div>
 

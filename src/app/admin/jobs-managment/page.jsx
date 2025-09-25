@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -306,12 +306,23 @@ export default function JobsManagmentPage() {
   return (
     <div className="min-h-screen bg-gray-50 admin-compact-mode">
       {/* Header */}
+       
       <div className="flex flex-1 bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-4">
+            <Button 
+                  variant="ghost" 
+                  onClick={() => router.back()} 
+                  className="mb-4"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                </Button>
             <div className="flex items-center space-x-4">
               <div>
+                
+             
                 <h1 className="text-3xl font-bold">Jobs Management</h1>
+              
                 <p className="text-muted-foreground mt-2">
                   Manage job postings and track application progress
                 </p>

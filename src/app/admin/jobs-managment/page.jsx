@@ -590,8 +590,9 @@ export default function JobsManagmentPage() {
                       <Button
                         size="sm"
                         // TODO: habilitar navegación a detalles del trabajo
-                        //  onClick={(e) => {
-                        //    e.stopPropagation();
+                        onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/admin/jobs-managment/review`);}}
                         //    sessionStorage.setItem('previousPage', '/admin/assigned-jobs');
                         //    if (job.status === 'draft') {
                         //      setLocation(`/admin/job-review/${job.id}?source=assigned-jobs`);
@@ -612,7 +613,8 @@ export default function JobsManagmentPage() {
                             size="sm"
                             variant="outline"
                             // TODO: habilitar navegación a candidatos del trabajo
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.stopPropagation();
                               router.push(`/admin/jobs-managment/job-applicants`);
                             }}
                             //    e.stopPropagation();

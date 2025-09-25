@@ -11,7 +11,7 @@ import {
   Eye,
   Users,
   TrendingUp,
-  Calendar
+  Calendar,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -31,63 +31,91 @@ export default function AdminHomePage() {
     pendingJobApprovals: 7,
   };
   const myAssignedJobs = [
-      {
-        id: 1,
-        jobTitle: "Marketing Assistant",
-        companyName: "TechFlow Solutions",
-        status: "draft",
-        assignedDate: "2025-01-10",
-        totalApplications: 0,
-        newApplicationsToReview: 0,
-        pollenInterviewsBooked: 0,
-        feedbackSent: 0,
-        candidatesMatchedToEmployer: 0,
-        assignedTo: "Holly (You)"
-      },
-      {
-        id: 2,
-        jobTitle: "Marketing Specialist",
-        companyName: "Creative Studios",
-        status: "live",
-        assignedDate: "2025-01-08",
-        totalApplications: 12,
-        newApplicationsToReview: 2,
-        pollenInterviewsBooked: 1,
-        feedbackSent: 8,
-        candidatesMatchedToEmployer: 2,
-        assignedTo: "Holly (You)"
-      },
-      {
-        id: 3,
-        jobTitle: "Digital Marketing Coordinator",
-        companyName: "Digital Media Co",
-        status: "paused",
-        assignedDate: "2025-01-12",
-        totalApplications: 8,
-        newApplicationsToReview: 3,
-        pollenInterviewsBooked: 2,
-        feedbackSent: 3,
-        candidatesMatchedToEmployer: 0,
-        assignedTo: "Holly (You)"
-      }
-    ];
+    {
+      id: 1,
+      jobTitle: "Marketing Assistant",
+      companyName: "TechFlow Solutions",
+      status: "draft",
+      assignedDate: "2025-01-10",
+      totalApplications: 0,
+      newApplicationsToReview: 0,
+      pollenInterviewsBooked: 0,
+      feedbackSent: 0,
+      candidatesMatchedToEmployer: 0,
+      assignedTo: "Holly (You)",
+    },
+    {
+      id: 2,
+      jobTitle: "Marketing Specialist",
+      companyName: "Creative Studios",
+      status: "live",
+      assignedDate: "2025-01-08",
+      totalApplications: 12,
+      newApplicationsToReview: 2,
+      pollenInterviewsBooked: 1,
+      feedbackSent: 8,
+      candidatesMatchedToEmployer: 2,
+      assignedTo: "Holly (You)",
+    },
+    {
+      id: 3,
+      jobTitle: "Digital Marketing Coordinator",
+      companyName: "Digital Media Co",
+      status: "paused",
+      assignedDate: "2025-01-12",
+      totalApplications: 8,
+      newApplicationsToReview: 3,
+      pollenInterviewsBooked: 2,
+      feedbackSent: 3,
+      candidatesMatchedToEmployer: 0,
+      assignedTo: "Holly (You)",
+    },
+  ];
 
   const getStatusBadge = (status) => {
     switch (status) {
-      case 'draft':
-        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 status-badge-compact">Draft</Badge>;
-      case 'live':
-        return <Badge className="bg-green-100 text-green-800 border-green-200 status-badge-compact">Live</Badge>;
-      case 'paused':
-        return <Badge className="bg-orange-100 text-orange-800 border-orange-200 status-badge-compact">Paused</Badge>;
-      case 'complete':
-        return <Badge className="bg-gray-100 text-gray-800 border-gray-200 status-badge-medium">Complete</Badge>;
-      case 'pending_approval':
-        return <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 inline-flex items-center justify-center px-2 text-xs">Pending Approval</Badge>;
-      case 'needs_attention':
-        return <Badge className="bg-red-100 text-red-800 border-red-200 inline-flex items-center justify-center px-2 text-xs">Needs Attention</Badge>;
+      case "draft":
+        return (
+          <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 status-badge-compact">
+            Draft
+          </Badge>
+        );
+      case "live":
+        return (
+          <Badge className="bg-green-100 text-green-800 border-green-200 status-badge-compact">
+            Live
+          </Badge>
+        );
+      case "paused":
+        return (
+          <Badge className="bg-orange-100 text-orange-800 border-orange-200 status-badge-compact">
+            Paused
+          </Badge>
+        );
+      case "complete":
+        return (
+          <Badge className="bg-gray-100 text-gray-800 border-gray-200 status-badge-medium">
+            Complete
+          </Badge>
+        );
+      case "pending_approval":
+        return (
+          <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 inline-flex items-center justify-center px-2 text-xs">
+            Pending Approval
+          </Badge>
+        );
+      case "needs_attention":
+        return (
+          <Badge className="bg-red-100 text-red-800 border-red-200 inline-flex items-center justify-center px-2 text-xs">
+            Needs Attention
+          </Badge>
+        );
       default:
-        return <Badge variant="outline" className="status-badge-compact">Unknown</Badge>;
+        return (
+          <Badge variant="outline" className="status-badge-compact">
+            Unknown
+          </Badge>
+        );
     }
   };
 
@@ -338,168 +366,190 @@ export default function AdminHomePage() {
           </div>
 
           {/* My Assigned Jobs Section */}
-        <div className="bg-white rounded-lg shadow-sm border">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-medium text-gray-900">My Assigned Jobs</h2>
-              <Button 
-                variant="outline" 
-                size="sm"
-                // onClick={() => setLocation("/admin/assigned-jobs")}
-              >
-                View All Jobs
-              </Button>
+          <div className="bg-white rounded-lg shadow-sm border">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-medium text-gray-900">
+                  My Assigned Jobs
+                </h2>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => router.push("/admin/jobs-managment")}
+                >
+                  View All Jobs
+                </Button>
+              </div>
             </div>
-          </div>
 
-          <div className="p-6 space-y-4">
-            {myAssignedJobs?.map((job) => (
-              <Card 
-                key={job.id} 
-                className="cursor-pointer hover:shadow-lg transition-shadow border border-gray-200 bg-white hover:bg-gray-50"
-                // onClick={() => {
-                //   if (job.status === 'draft') {
-                //     setLocation(`/admin/job-review/${job.id}?source=dashboard`);
-                //   } else {
-                //     setLocation(`/admin/job-review/${job.id}?source=dashboard`);
-                //   }
-                // }}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <h3 className="font-medium text-gray-900">{job.jobTitle}</h3>
-                        {getStatusBadge(job.status)}
-                      </div>
-                      
-                      <div className="flex items-center text-sm text-gray-600 mb-3">
-                        <Building2 className="h-4 w-4 mr-1 text-pink-600" />
-                        {job.companyName}
-                        <span className="mx-2">•</span>
-                        <Calendar className="h-4 w-4 mr-1 text-pink-600" />
-                        {job.status === 'draft' 
-                          ? `Created ${new Date(job.assignedDate).toLocaleDateString()}`
-                          : `Published ${new Date(job.assignedDate).toLocaleDateString()}`
-                        }
-                      </div>
+            <div className="p-6 space-y-4">
+              {myAssignedJobs?.map((job) => (
+                <Card
+                  key={job.id}
+                  className="cursor-pointer hover:shadow-lg transition-shadow border border-gray-200 bg-white hover:bg-gray-50"
+                  onClick={() => {
+                    router.push(`/admin/jobs-managment/review`);
+                  }}
+                  //   if (job.status === 'draft') {
+                  //     setLocation(`/admin/job-review/${job.id}?source=dashboard`);
+                  //   } else {
+                  //     setLocation(`/admin/job-review/${job.id}?source=dashboard`);
+                  //   }
+                  // }}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <h3 className="font-medium text-gray-900">
+                            {job.jobTitle}
+                          </h3>
+                          {getStatusBadge(job.status)}
+                        </div>
 
-                      {/* Application Summary - Total Count */}
-                      <div className="mb-2">
-                        <div className="inline-block px-3 py-1 bg-pink-50 text-pink-900 rounded-md font-semibold text-sm border border-pink-200">
-                          {job.totalApplications} Total Applications
+                        <div className="flex items-center text-sm text-gray-600 mb-3">
+                          <Building2 className="h-4 w-4 mr-1 text-pink-600" />
+                          {job.companyName}
+                          <span className="mx-2">•</span>
+                          <Calendar className="h-4 w-4 mr-1 text-pink-600" />
+                          {job.status === "draft"
+                            ? `Created ${new Date(job.assignedDate).toLocaleDateString()}`
+                            : `Published ${new Date(job.assignedDate).toLocaleDateString()}`}
+                        </div>
+
+                        {/* Application Summary - Total Count */}
+                        <div className="mb-2">
+                          <div className="inline-block px-3 py-1 bg-pink-50 text-pink-900 rounded-md font-semibold text-sm border border-pink-200">
+                            {job.totalApplications} Total Applications
+                          </div>
+                        </div>
+
+                        {/* Status Breakdown */}
+                        <div className="flex gap-2 text-sm mb-3">
+                          {job.newApplicationsToReview > 0 && (
+                            <span className="flex items-center gap-1 text-sm text-gray-600">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                              {job.newApplicationsToReview} New
+                            </span>
+                          )}
+                          {job.pollenInterviewsBooked > 0 && (
+                            <span className="flex items-center gap-1 text-sm text-gray-600">
+                              <div className="w-2 h-2 bg-yellow-500 rounded-full" />
+                              {job.pollenInterviewsBooked} In Progress
+                            </span>
+                          )}
+                          {job.candidatesMatchedToEmployer > 0 && (
+                            <span className="flex items-center gap-1 text-sm text-gray-600">
+                              <div className="w-2 h-2 bg-green-500 rounded-full" />
+                              {job.candidatesMatchedToEmployer} Matched
+                            </span>
+                          )}
+                          {job.feedbackSent > 0 && (
+                            <span className="flex items-center gap-1 text-sm text-gray-600">
+                              <div className="w-2 h-2 bg-gray-500 rounded-full" />
+                              {job.feedbackSent} Complete
+                            </span>
+                          )}
                         </div>
                       </div>
 
-                      {/* Status Breakdown */}
-                      <div className="flex gap-2 text-sm mb-3">
-                        {job.newApplicationsToReview > 0 && (
-                          <span className="flex items-center gap-1 text-sm text-gray-600">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full"/>
-                            {job.newApplicationsToReview} New
-                          </span>
-                        )}
-                        {job.pollenInterviewsBooked > 0 && (
-                          <span className="flex items-center gap-1 text-sm text-gray-600">
-                            <div className="w-2 h-2 bg-yellow-500 rounded-full"/>
-                            {job.pollenInterviewsBooked} In Progress
-                          </span>
-                        )}
-                        {job.candidatesMatchedToEmployer > 0 && (
-                          <span className="flex items-center gap-1 text-sm text-gray-600">
-                            <div className="w-2 h-2 bg-green-500 rounded-full"/>
-                            {job.candidatesMatchedToEmployer} Matched
-                          </span>
-                        )}
-                        {job.feedbackSent > 0 && (
-                          <span className="flex items-center gap-1 text-sm text-gray-600">
-                            <div className="w-2 h-2 bg-gray-500 rounded-full"/>
-                            {job.feedbackSent} Complete
-                          </span>
-                        )}
-                      </div>
-                    </div>
+                      <div className="flex flex-col space-y-2 ml-4">
+                        {job.status !== "draft" && (
+                          <Button
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
 
-                    <div className="flex flex-col space-y-2 ml-4">
-                      {job.status !== 'draft' && (
+                              router.push(
+                                `/admin/jobs-managment/job-applicants`,
+                              );
+                            }}
+                            className="bg-pink-600 hover:bg-pink-700 text-white"
+                          >
+                            <Users className="h-4 w-4 mr-1" />
+                            View Candidates
+                          </Button>
+                        )}
                         <Button
                           size="sm"
-                        //  onClick={(e) => {
-                        //    e.stopPropagation();
-                        //    setLocation(`/admin/job-applicants-grid/${job.id}`);
-                        //  }}
-                          className="bg-pink-600 hover:bg-pink-700 text-white"
+                          variant={
+                            job.status === "draft" ? "default" : "outline"
+                          }
+                          //  onClick={(e) => {
+                          //    e.stopPropagation();
+                          //    setLocation(`/admin/job-review/${job.id}?source=dashboard`);
+                          //  }}
+                          className={
+                            job.status === "draft"
+                              ? "bg-pink-600 hover:bg-pink-700 text-white"
+                              : "border-pink-200 text-pink-700 hover:bg-pink-50"
+                          }
                         >
-                          <Users className="h-4 w-4 mr-1" />
-                          View Candidates
+                          <Eye className="h-4 w-4 mr-1" />
+                          {job.status === "draft"
+                            ? "Review & Approve"
+                            : "Job Details"}
                         </Button>
-                      )}
-                      <Button
-                        size="sm"
-                        variant={job.status === 'draft' ? 'default' : 'outline'}
-                      //  onClick={(e) => {
-                      //    e.stopPropagation();
-                      //    setLocation(`/admin/job-review/${job.id}?source=dashboard`);
-                      //  }}
-                        className={job.status === 'draft' ? 'bg-pink-600 hover:bg-pink-700 text-white' : 'border-pink-200 text-pink-700 hover:bg-pink-50'}
-                      >
-                        <Eye className="h-4 w-4 mr-1" />
-                        {job.status === 'draft' ? 'Review & Approve' : 'Job Details'}
-                      </Button>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-        
-        {/* Quick Actions Section */}
-        <div className="bg-white rounded-lg shadow-sm border mt-6">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h2 className="text-lg font-medium text-gray-900">Quick Actions</h2>
-          </div>
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button 
-                variant="outline" 
-                className="justify-start h-12"
-              //  onClick={() => setLocation("/admin/comprehensive-analytics")}
-              >
-                <BarChart3 className="w-5 h-5 mr-3 text-blue-600" />
-                <div className="text-left">
-                  <div className="font-medium">Analytics Dashboard</div>
-                  <div className="text-xs text-gray-500">View comprehensive insights</div>
-                </div>
-              </Button>
-              <Button 
-                variant="outline" 
-                className="justify-start h-12"
-              //  onClick={() => setLocation("/admin/hidden-jobs")}
-              >
-                <Eye className="w-5 h-5 mr-3 text-purple-600" />
-                <div className="text-left">
-                  <div className="font-medium">Hidden Jobs Board</div>
-                  <div className="text-xs text-gray-500">Manage exclusive opportunities</div>
-                </div>
-              </Button>
-
-              <Button 
-                variant="outline" 
-                className="justify-start h-12"
-              //  onClick={() => setLocation("/admin/all-job-seekers")}
-              >
-                <Users className="w-5 h-5 mr-3 text-green-600" />
-                <div className="text-left">
-                  <div className="font-medium">Community</div>
-                  <div className="text-xs text-gray-500">Manage user profiles</div>
-                </div>
-              </Button>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
-        </div>
 
+          {/* Quick Actions Section */}
+          <div className="bg-white rounded-lg shadow-sm border mt-6">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h2 className="text-lg font-medium text-gray-900">
+                Quick Actions
+              </h2>
+            </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Button
+                  variant="outline"
+                  className="justify-start h-12"
+                  //  onClick={() => setLocation("/admin/comprehensive-analytics")}
+                >
+                  <BarChart3 className="w-5 h-5 mr-3 text-blue-600" />
+                  <div className="text-left">
+                    <div className="font-medium">Analytics Dashboard</div>
+                    <div className="text-xs text-gray-500">
+                      View comprehensive insights
+                    </div>
+                  </div>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="justify-start h-12"
+                  //  onClick={() => setLocation("/admin/hidden-jobs")}
+                >
+                  <Eye className="w-5 h-5 mr-3 text-purple-600" />
+                  <div className="text-left">
+                    <div className="font-medium">Hidden Jobs Board</div>
+                    <div className="text-xs text-gray-500">
+                      Manage exclusive opportunities
+                    </div>
+                  </div>
+                </Button>
 
+                <Button
+                  variant="outline"
+                  className="justify-start h-12"
+                  //  onClick={() => setLocation("/admin/all-job-seekers")}
+                >
+                  <Users className="w-5 h-5 mr-3 text-green-600" />
+                  <div className="text-left">
+                    <div className="font-medium">Community</div>
+                    <div className="text-xs text-gray-500">
+                      Manage user profiles
+                    </div>
+                  </div>
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

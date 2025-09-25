@@ -1,12 +1,10 @@
 "use client";
 
-import { LogOut, ChevronsDown } from "lucide-react";
+import { LogOut, ChevronDown, User2, Settings } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-  User2,
-  Settings,
 } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -44,27 +42,27 @@ export function NavUser({ onLogout }) {
                 <span className="truncate font-medium">{user.name}</span>
                 <span className="truncate text-xs">{user.email}</span>
               </div>
-              <ChevronsDown className="ml-auto size-4" />
+              <ChevronDown className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-64 rounded-lg"
             side="bottom"
-            align="end"
+            align="center"
             sideOffset={4}
           >
-            <DropdownMenuItem onClick={onLogout} className="cursor-pointer">
+            <DropdownMenuItem onClick={onLogout} className="cursor-pointer text-gray-600">
               <User2 />
               View Profile
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={onLogout} className="cursor-pointer">
+            <DropdownMenuItem onClick={onLogout} className="cursor-pointer text-gray-600">
               <Settings />
               Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={onLogout} className="cursor-pointer">
-              <LogOut />
+            <DropdownMenuItem onClick={onLogout} className="cursor-pointer text-red-500">
+              <LogOut className="text-red-500"/>
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -12,11 +12,11 @@ export default async function DashboardLayout({ children }) {
 
   return (
     <>
-      <Header />
       <SidebarProvider className="testing-sidebar-layout">
         <AppSidebar user={user} />
         <SidebarInset className="bg-gray-50">
           <>
+            <Header />
             <div>{children}</div>
           </>
         </SidebarInset>

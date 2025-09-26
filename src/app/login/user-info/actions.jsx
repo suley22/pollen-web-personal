@@ -2,9 +2,23 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { UserInfoModel } from "./userInfoSchema";
 
-export async function updateUserAction(data) {
+export async function updateUserInfo(_,formData) {
   const supabase = await createClient();
+
+  const data = Object.fromEntries(formData.entries());
+  let errors = UserInfoModel.safeParse(data);
+
+  if (!errors.success) {
+    return { message: errors.error.issues[0].message, success: false };
+  }
+
+  const formUserData = {
+    first_name: formData.get("first_name"),
+    last_name: formData.get("last_name"),
+    pronouns: formData.get("pronouns"),
+  };
 
   // obtener sesión
   const {
@@ -19,28 +33,33 @@ export async function updateUserAction(data) {
   const { errorProfileUpdate } = await supabase.from("profile").upsert(
     {
       id: user.id, // 👈 clave primaria o unique constraint
-      first_name: data.nombre,
-      last_name: data.apellido,
-      pronouns: data.pronouns,
+      first_name: formUserData.first_name,
+      last_name: formUserData.last_name,
+      pronouns: formUserData.pronouns,
     },
     { onConflict: "id" }, // 👈 le indicas con qué campo detectar duplicados
   );
 
   const { dataUpdateUser, errorUpdateUser } = await supabase.auth.updateUser({
-    data: { register_profile_completed: true },
+    data: {
+      register_profile_completed: true,
+      first_name: formUserData.first_name,
+      last_name: formUserData.last_name,
+      pronouns: formUserData.pronouns,
+    },
   });
 
   if (errorUpdateUser) {
     console.error("Error actualizando metadata:", errorUpdateUser.message);
+    return { message: "Error actualizando perfil", success: false };
   } else {
     console.log("User actualizado:", dataUpdateUser);
   }
 
   if (errorProfileUpdate) {
     console.error("Error actualizando profile:", errorProfileUpdate.message);
-    return { error: errorProfileUpdate.message, data: null };
+    return { message: "Error actualizando profile", success: false };
   } else {
     redirect("/main/home");
-    return { error: null, data };
   }
 }

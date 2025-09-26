@@ -14,9 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/sidebar/sidebar";
 import { useUser } from "@/app/providers";
 
@@ -24,8 +22,7 @@ export function NavUser({ onLogout }) {
   const user = useUser();
 
   return (
-    <SidebarMenu>
-      <SidebarMenuItem>
+    <div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
@@ -52,11 +49,11 @@ export function NavUser({ onLogout }) {
             align="center"
             sideOffset={4}
           >
-            <DropdownMenuItem onClick={onLogout} className="cursor-pointer text-gray-600 focus-visible:ring-0 focus:ring-0 focus:outline-none">
+            <DropdownMenuItem className="cursor-pointer text-gray-600 focus-visible:ring-0 focus:ring-0 focus:outline-none">
               <User2 />
               View Profile
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={onLogout} className="cursor-pointer text-gray-600 focus-visible:ring-0 focus:ring-0 focus:outline-none">
+            <DropdownMenuItem className="cursor-pointer text-gray-600 focus-visible:ring-0 focus:ring-0 focus:outline-none">
               <Settings />
               Settings
             </DropdownMenuItem>
@@ -67,7 +64,6 @@ export function NavUser({ onLogout }) {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      </SidebarMenuItem>
-    </SidebarMenu>
+    </div>
   );
 }

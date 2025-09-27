@@ -125,10 +125,10 @@ export default function Details({
             {/* Company info and rating */}
             <div className="flex-1">
               {/* Industry Tags - Colorful and integrated */}
-              {employerProfile?.industries &&
-                employerProfile.industries.length > 0 && (
+              {employerProfile?.industry &&
+                employerProfile.industry.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-3">
-                    {employerProfile.industries.map((industry) => {
+                    {employerProfile.industry.map((industry) => {
                       // Define colorful industry tag styles
                       const getIndustryStyle = (industry) => {
                         const styles = {

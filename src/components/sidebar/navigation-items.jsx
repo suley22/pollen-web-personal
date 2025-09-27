@@ -15,9 +15,9 @@ import {
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuItem,
-  SidebarMenuButton,
   useSidebar,
 } from "@/components/sidebar/sidebar";
+import { CustomSidebarMenuButton } from "@/components/sidebar/custom-sidebar-menu-button";
 export function NavigationItems() {
   const pathname = usePathname();
   const { state } = useSidebar();
@@ -87,17 +87,14 @@ export function NavigationItems() {
             <SidebarGroupContent className="">
               <SidebarMenu className="">
                 <SidebarMenuItem className="">
-                  <SidebarMenuButton
-                    className=""
+                  <CustomSidebarMenuButton
                     isActive={item.isActive}
                     tooltip={item.label}
-                    asChild
+                    onClick={() => window.location.href = item.path}
                   >
-                    <a href={item.path}>
-                      <item.icon />
-                      <span>{item.label}</span>
-                    </a>
-                  </SidebarMenuButton>
+                    <item.icon className="w-4 h-4" />
+                    <span>{item.label}</span>
+                  </CustomSidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>

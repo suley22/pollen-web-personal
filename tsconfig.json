@@ -23,6 +23,6 @@
     "moduleResolution": "node",
     "resolveJsonModule": true
   },
-  "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", ".next/types/**/*.ts", "**/*.ts", "**/*.tsx", "src/components/sidebar/navigation-items.jsx"],
   "exclude": ["node_modules"]
 }

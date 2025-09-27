@@ -21,7 +21,7 @@ export default function Details({
   setSelectedReview,
   setShowReviewModal,
 }) {
-  const [editValue, setEditValue] = useState(employerProfile.logoUrl || "");
+  const [editValue, setEditValue] = useState(employerProfile.logo_url || "");
 
   const handleFileChange = async (e) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -75,7 +75,7 @@ export default function Details({
                 color: "#ffffff",
               }}
             >
-              CreativeMinds Agency
+              {employerProfile.company_name}
             </h1>
           </div>
         </div>
@@ -125,10 +125,10 @@ export default function Details({
             {/* Company info and rating */}
             <div className="flex-1">
               {/* Industry Tags - Colorful and integrated */}
-              {employerProfile?.industry &&
-                employerProfile.industry.length > 0 && (
+              {employerProfile?.industries &&
+                employerProfile.industries.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-3">
-                    {employerProfile.industry.map((industry) => {
+                    {employerProfile.industries.map((industry) => {
                       // Define colorful industry tag styles
                       const getIndustryStyle = (industry) => {
                         const styles = {
@@ -178,15 +178,15 @@ export default function Details({
               <div className="flex items-center gap-8 text-sm text-gray-600 mb-3">
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4" />
-                  <span>{employerProfile.location}</span>
+                  <span>{employerProfile.company_location}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4" />
-                  <span>{employerProfile.companySize}</span>
+                  <span>{employerProfile.company_size}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
-                  <span>Founded {employerProfile.foundedYear}</span>
+                  <span>Founded {employerProfile.founded_year}</span>
                 </div>
               </div>
 

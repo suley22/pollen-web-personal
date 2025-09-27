@@ -28,25 +28,25 @@ export default function Contact({ employerProfile }) {
       </CardHeader>
 
       <CardContent className="space-y-3">
-        {employerProfile.website && (
+        {employerProfile.website_url && (
           <div className="flex items-center gap-2 text-sm ">
             <Globe className="w-4 h-4 text-gray-400" />
             <a
-              href={employerProfile.website}
+              href={employerProfile.website_url}
               target="_blank"
               rel="noopener noreferrer"
               className="text-pink-600 hover:underline"
             >
-              {employerProfile.website}
+              {employerProfile.website_url}
             </a>
           </div>
         )}
 
-        {employerProfile.linkedinPage && (
+        {employerProfile.linkedin_url && (
           <div className="flex items-center gap-2 text-sm">
             <Linkedin className="w-4 h-4 text-gray-400" />
             <a
-              href={employerProfile.linkedinPage}
+              href={employerProfile.linkedin_url}
               target="_blank"
               rel="noopener noreferrer"
               className="text-pink-600 hover:underline"

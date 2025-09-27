@@ -9,7 +9,7 @@ export default function Description({ employerProfile }) {
   const [isEditing, setIsEditing] = useState(false);
 
   const [editValue, setEditValue] = useState(
-    employerProfile?.description || "",
+    employerProfile?.company_description || "",
   );
 
   function _buildEditButton() {
@@ -66,7 +66,7 @@ export default function Description({ employerProfile }) {
             variant="outline"
             onClick={() => {
               setIsEditing(false);
-              setEditValue(employerProfile?.description || "");
+              setEditValue(employerProfile?.company_description || "");
             }}
             style={{ fontFamily: "Sora" }}
           >
@@ -81,7 +81,7 @@ export default function Description({ employerProfile }) {
     <Card className="p-6">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="font-bold font-sora text-2xl">
-          About {employerProfile.companyName}
+          About {employerProfile.company_name}
         </CardTitle>
 
         {!isEditing && _buildEditButton()}

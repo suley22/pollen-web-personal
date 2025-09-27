@@ -126,7 +126,7 @@ export default function AdminEmployersManagment() {
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-600">
                       <div className="flex items-center">
                         <Building2 className="h-4 w-4 mr-2" />
-                        {application.industry || "Industry not specified"}
+                        {application.industries || "Industry not specified"}
                       </div>
                       <div className="flex items-center">
                         <MapPin className="h-4 w-4 mr-2" />
@@ -162,7 +162,7 @@ export default function AdminEmployersManagment() {
                           size="sm"
                           className="bg-blue-600 hover:bg-blue-700 text-white"
                           onClick={() =>
-                            router.push(`/admin/employers-managment/review/`)
+                            router.push(`/admin/employers-managment/review/${application.id}`)
                           }
                         >
                           <Eye className="h-4 w-4 mr-1" />
@@ -176,7 +176,7 @@ export default function AdminEmployersManagment() {
                         className="bg-green-600 hover:bg-green-700 text-white"
                         onClick={() =>
                           router.push(
-                            `/main/admin/employers-managment/review/`,
+                            `/admin/employers-managment/review/${application.id}`
                           )
                         }
                       >
@@ -189,7 +189,7 @@ export default function AdminEmployersManagment() {
                         size="sm"
                         variant="destructive"
                         onClick={() =>
-                          router.push(`/main/admin/employers-managment/review/`)
+                          router.push(`/admin/employers-managment/review/${application.id}`)
                         }
                       >
                         <XCircle className="h-4 w-4 mr-1" />

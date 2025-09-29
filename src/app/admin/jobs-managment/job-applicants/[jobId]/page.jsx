@@ -31,7 +31,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,12 +59,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/query-client";
 
-export default async function JobApplicantsPage({ params }) {
-  const jobId = await params;
+export default function JobApplicantsPage({ params }) {
   const router = useRouter();
+  const jobId = params.jobId;
   const job = jobMock;
 
   const sortOrder = {

@@ -36,9 +36,9 @@ export function StatusInfo({ statusInfo, employerProfile }) {
                                     </button>
                                 </div>
                             )}
-                            {employerProfile?.lastUpdated && statusInfo.type === 'changes_pending' && (
+                            {employerProfile?.updated_at && statusInfo.type === 'changes_pending' && (
                                 <p className={`${statusInfo.textColor} text-xs mt-1 opacity-75`} style={{ fontFamily: 'Poppins' }}>
-                                    Last updated: {new Date(employerProfile.lastUpdated).toLocaleDateString('en-GB', {
+                                    Last updated: {new Date(employerProfile.updated_at).toLocaleDateString('en-GB', {
                                         day: 'numeric',
                                         month: 'long',
                                         year: 'numeric',

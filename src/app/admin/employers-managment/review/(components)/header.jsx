@@ -25,7 +25,7 @@ export function Header({ employerProfile }) {
             </Button>
             <div className="flex gap-2">
               {/* Development Status Switch (remove in production) */}
-              {employerProfile.approvalStatus === "pending" && (
+              {employerProfile.approval_status === "pending" && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -39,7 +39,7 @@ export function Header({ employerProfile }) {
                   Demo: Set Live
                 </Button>
               )}
-              {employerProfile.approvalStatus === "approved" &&
+              {employerProfile.approval_status === "approved" &&
                 !employerProfile.hasUnapprovedChanges && (
                   <Button
                     variant="outline"

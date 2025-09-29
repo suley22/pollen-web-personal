@@ -12,7 +12,7 @@ export function Providers({ children, user }) {
   const session = user?.user || null;
 
   const userData = {
-    name: session?.user_metadata?.full_name || "Guest User",
+    name: session?.user_metadata?.first_name + " " + session?.user_metadata?.last_name || "Guest User",
     email: session?.email || "",
     avatar:
       session?.user_metadata?.avatar_url ||

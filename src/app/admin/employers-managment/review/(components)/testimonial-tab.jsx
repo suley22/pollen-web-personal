@@ -11,7 +11,7 @@ export function TestimonialTab({ employerProfile }) {
   const [setShowApprovalNotification] = useState(false);
 
   return (
-    
+
     <Card className={"p-6"}>
       <CardHeader>
         <div className="flex items-center justify-between">
@@ -49,7 +49,7 @@ export function TestimonialTab({ employerProfile }) {
                 onClick={() => {
                   setEditingSection("company-statement");
                   setEditedValues({
-                    companyStatement: employerProfile.companyStatement || "",
+                    companyStatement: employerProfile.company_statement || "",
                   });
                 }}
                 className="hover:bg-gray-100"
@@ -108,9 +108,9 @@ export function TestimonialTab({ employerProfile }) {
             </div>
           ) : (
             <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-              {employerProfile.companyStatement ? (
+              {employerProfile.company_statement ? (
                 <p className="text-gray-700" style={{ fontFamily: "Poppins" }}>
-                  {employerProfile.companyStatement}
+                  {employerProfile.company_statement}
                 </p>
               ) : (
                 <div className="text-center py-4">
@@ -267,6 +267,6 @@ export function TestimonialTab({ employerProfile }) {
         )}
       </CardContent>
     </Card>
-  
+
   );
 }

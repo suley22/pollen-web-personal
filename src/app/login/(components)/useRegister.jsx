@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { UserInfoModel } from "@/app/login/registerSchema";
+import { signInWithGoogle } from "@/utils/auth/google-auth";
 import {
   emailErrorMessages,
   passwordErrorMessages,
@@ -9,6 +10,7 @@ export function useRegister() {
   const [isFormValid, setIsFormValid] = useState(false);
   const [emailChecks, setEmailChecks] = useState([]);
   const [passwordChecks, setPasswordChecks] = useState([]);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   useEffect(() => {
     const emailIsValid = emailChecks.every((c) => c.valid);
@@ -69,9 +71,25 @@ export function useRegister() {
     }
   }
 
+  function handleGoogleSignIn () {
+      setGoogleLoading(true);
+      try {
+        const { error } = signInWithGoogle();
+        if (error) {
+          console.error('Google sign in error:', error);
+          // Aquí podrías mostrar el error al usuario si quieres
+        }
+      } catch (error) {
+        console.error('Unexpected error:', error);
+      } finally {
+        setGoogleLoading(false);
+      }
+    }
+
   return {
     form: {
       valid: isFormValid,
+      googleLoading,
       checks: {
         email: emailChecks,
         password: passwordChecks,
@@ -81,6 +99,7 @@ export function useRegister() {
         passwordFieldId,
       },
       handleOnChange: handleOnChange,
+      handleGoogleSignIn: handleGoogleSignIn,
     },
   };
 }

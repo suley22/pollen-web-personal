@@ -22,7 +22,12 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
         </p>
       </div>
       <div className="grid gap-6">
-        <Button variant="outline" className="w-full">
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={form.handleGoogleSignIn}
+          disabled={form.googleLoading}
+          >
           <GoogleIcon className="mr-2 h-4 w-4" />
           Sign up with Google
         </Button>

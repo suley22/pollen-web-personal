@@ -1,5 +1,5 @@
 "use client";
-
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -573,23 +573,19 @@ export default function JobsPage() {
                       <td className="p-4">
                         <div className="text-left">
                           {job.pollenApproved ? (
-                            <a
+                            <Link
                               href={`/company/${job.company.toLowerCase().replace(/\s+/g, "-")}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
                               className="text-gray-900 font-medium hover:text-[#E2007A] hover:underline cursor-pointer text-left"
                             >
                               {job.company}
-                            </a>
+                            </Link>
                           ) : (
-                            <a
+                            <Link
                               href={getCompanyWebsiteUrl(job.company)}
-                              target="_blank"
-                              rel="noopener noreferrer"
                               className="text-gray-900 font-medium hover:text-blue-600 hover:underline cursor-pointer text-left"
                             >
                               {job.company}
-                            </a>
+                            </Link>
                           )}
                         </div>
                       </td>

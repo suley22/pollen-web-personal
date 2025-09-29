@@ -3,7 +3,7 @@
 import {
   LayoutGrid,
   Kanban,
-  ArrowLeft,
+  ArrowLeft, UserCheck, X,
   Eye, Edit3, Lock,
   Search, BarChart3, MessageSquare, ThumbsUp, Check,
   ChevronDown, Lightbulb,
@@ -32,23 +32,14 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { displayCandidates } from "./utils/display-candidates";
 import { getUnifiedCandidateData, getInteractionDisplayText } from "./utils/candidate-data"; 
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 
 export default function JobApplicantsPage() {
   const router = useRouter();
   const job = jobMock;
   const scoreFilter = scoreFilterOptions;
-  const handleCandidateAction = (action) => {
-    if (action === 'interview') {
-      // Skip confirmation dialog for interview invitations and proceed directly
-      candidateActionMutation.mutate(action);
-    } else {
-      // Show confirmation dialog for reject/match actions
-      setPendingAction(action);
-      setConfirmDialogOpen(true);
-    }
-  };
+  
 
   const sortOrder = {
     options: ["asc", "desc"],
@@ -222,6 +213,17 @@ export default function JobApplicantsPage() {
   });
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
+
+  const handleCandidateAction = (action) => {
+    if (action === 'interview') {
+      // Skip confirmation dialog for interview invitations and proceed directly
+      candidateActionMutation.mutate(action);
+    } else {
+      // Show confirmation dialog for reject/match actions
+      setPendingAction(action);
+      setConfirmDialogOpen(true);
+    }
+  };
 
   const isScoreApproved = (candidate) => {
     // Auto-approve scores for any candidate who has progressed beyond "New" status
@@ -1162,7 +1164,7 @@ const openAssessmentSplitView = (candidate) => {
                     <Button
                       variant="default"
                       size="sm"
-                      onClick={() => setLocation(buildUrlWithCurrentState(`/admin/provide-update/${selectedAssessment.id}`))}
+                      // onClick={() => setLocation(buildUrlWithCurrentState(`/admin/provide-update/${selectedAssessment.id}`))}
                       className="text-xs px-1 py-1 bg-[#E2007A] hover:bg-[#E2007A]/90 text-white"
                     >
                       <FileText className="h-3 w-3 mr-1" />
@@ -1193,11 +1195,12 @@ const openAssessmentSplitView = (candidate) => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => {
-                      // Store current page context for proper back navigation
-                      sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
-                      setLocation(`/admin/consolidated-candidate-profile/${selectedAssessment.id}`);
-                    }}
+                    // TODO: 
+                    // onClick={() => {
+                    //   // Store current page context for proper back navigation
+                    //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
+                    //   setLocation(`/admin/consolidated-candidate-profile/${selectedAssessment.id}`);
+                    // }}
                     className="text-xs px-1 py-1"
                   >
                     <User className="h-3 w-3 mr-1" />
@@ -1622,7 +1625,9 @@ const openAssessmentSplitView = (candidate) => {
                           {/* Interview button only for unopened/under review */}
                           <Button
                             onClick={() => handleCandidateAction('interview')}
-                            disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending}
+
+                            // TODO: consultar: en el código original se define más adelante, no comprendo la lógica
+                            // disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending}
                             size="default"
                             className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
                           >
@@ -1632,7 +1637,8 @@ const openAssessmentSplitView = (candidate) => {
                           
                           <Button
                             onClick={() => handleCandidateAction('match')}
-                            disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending || !canFastTrackToEmployer}
+                            // TODO: idem anterior 
+                            // disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending || !canFastTrackToEmployer}
                             size="default"
                             className="bg-green-600 hover:bg-green-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
                           >
@@ -1642,7 +1648,8 @@ const openAssessmentSplitView = (candidate) => {
                           
                           <Button
                             onClick={() => handleCandidateAction('reject')}
-                            disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending}
+                            // TODO: idem anterior 
+                            // disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending}
                             variant="outline"
                             size="default"
                             className="h-12 px-6 text-base font-medium"
@@ -1667,9 +1674,9 @@ const openAssessmentSplitView = (candidate) => {
                       {selectedAssessment?.subStatus === 'Pollen Interview Complete' && (
                         <div className="flex justify-center">
                           <Button
-                            onClick={() => {
-                              setLocation(buildUrlWithCurrentState(`/admin/provide-update/${selectedAssessment.id}`));
-                            }}
+                            // onClick={() => {
+                            //   setLocation(buildUrlWithCurrentState(`/admin/provide-update/${selectedAssessment.id}`));
+                            // }}
                             size="default"
                             className="bg-[#E2007A] hover:bg-[#E2007A]/90 text-white h-12 px-6 text-base font-medium"
                           >

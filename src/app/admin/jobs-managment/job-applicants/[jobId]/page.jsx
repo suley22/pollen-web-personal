@@ -62,10 +62,8 @@ import {
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 
-
-
-export default async function JobApplicantsPage({params}) {
-  const jobId = await params; 
+export default async function JobApplicantsPage({ params }) {
+  const jobId = await params;
   const router = useRouter();
   const job = jobMock;
 
@@ -252,7 +250,13 @@ export default async function JobApplicantsPage({params}) {
     setScoresApproved(false); // Reset approval status when scores are edited
   };
 
-  
+  const handleApproveAIScores = () => {
+    setScoresApproved(true);
+    toast({
+      title: "Assessment Approved",
+      description: "Scores confirmed. You can now make a candidate decision.",
+    });
+  };
 
   const [viewMode, setViewMode] = useState(() => {
     const saved = sessionStorage.getItem(`job-1-viewMode`);
@@ -319,78 +323,92 @@ export default async function JobApplicantsPage({params}) {
 
   const buildUrlWithCurrentState = (basePath) => {
     const params = new URLSearchParams();
-    
+
     // Preserve filters
     if (primaryStatusFilter.length > 0) {
-      params.set('primaryStatus', primaryStatusFilter.join(','));
+      params.set("primaryStatus", primaryStatusFilter.join(","));
     }
     if (subStatusFilter.length > 0) {
-      params.set('subStatus', subStatusFilter.join(','));
+      params.set("subStatus", subStatusFilter.join(","));
     }
     if (scoreFilter.length > 0) {
-      params.set('score', scoreFilter.join(','));
+      params.set("score", scoreFilter.join(","));
     }
     if (searchTerm) {
-      params.set('search', searchTerm);
+      params.set("search", searchTerm);
     }
-    if (viewMode !== 'grid') {
-      params.set('view', viewMode);
+    if (viewMode !== "grid") {
+      params.set("view", viewMode);
     }
-    if (sortBy !== 'default') {
-      params.set('sortBy', sortBy);
+    if (sortBy !== "default") {
+      params.set("sortBy", sortBy);
     }
-    if (sortOrder !== 'desc') {
-      params.set('sortOrder', sortOrder);
+    if (sortOrder !== "desc") {
+      params.set("sortOrder", sortOrder);
     }
-    
+
     // Add return URL for navigation back
     const currentUrl = `/admin/job-applicants-grid/${jobId}`;
     const currentParams = new URLSearchParams();
-    if (primaryStatusFilter.length > 0) currentParams.set('primaryStatus', primaryStatusFilter.join(','));
-    if (subStatusFilter.length > 0) currentParams.set('subStatus', subStatusFilter.join(','));
-    if (scoreFilter.length > 0) currentParams.set('score', scoreFilter.join(','));
-    if (searchTerm) currentParams.set('search', searchTerm);
-    if (viewMode !== 'grid') currentParams.set('view', viewMode);
-    if (sortBy !== 'default') currentParams.set('sortBy', sortBy);
-    if (sortOrder !== 'desc') currentParams.set('sortOrder', sortOrder);
-    
-    const returnUrl = currentParams.toString() ? `${currentUrl}?${currentParams.toString()}` : currentUrl;
-    params.set('returnUrl', encodeURIComponent(returnUrl));
-    
+    if (primaryStatusFilter.length > 0)
+      currentParams.set("primaryStatus", primaryStatusFilter.join(","));
+    if (subStatusFilter.length > 0)
+      currentParams.set("subStatus", subStatusFilter.join(","));
+    if (scoreFilter.length > 0)
+      currentParams.set("score", scoreFilter.join(","));
+    if (searchTerm) currentParams.set("search", searchTerm);
+    if (viewMode !== "grid") currentParams.set("view", viewMode);
+    if (sortBy !== "default") currentParams.set("sortBy", sortBy);
+    if (sortOrder !== "desc") currentParams.set("sortOrder", sortOrder);
+
+    const returnUrl = currentParams.toString()
+      ? `${currentUrl}?${currentParams.toString()}`
+      : currentUrl;
+    params.set("returnUrl", encodeURIComponent(returnUrl));
+
     return params.toString() ? `${basePath}?${params.toString()}` : basePath;
   };
 
   // Candidate action mutations for conditional CTA flow
   const candidateActionMutation = useMutation({
     mutationFn: async (action) => {
-      return await apiRequest(`/api/admin/candidates/${selectedAssessment?.id}/status`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
+      return await apiRequest(
+        `/api/admin/candidates/${selectedAssessment?.id}/status`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            action,
+            reviewedBy: "Holly",
+            reviewedAt: new Date().toISOString(),
+          }),
         },
-        body: JSON.stringify({
-          action,
-          reviewedBy: "Holly",
-          reviewedAt: new Date().toISOString()
-        })
-      });
+      );
     },
     onSuccess: (_, action) => {
-      queryClient.invalidateQueries({ queryKey: [`/api/admin/jobs/${jobId}/candidates`] });
-      
+      queryClient.invalidateQueries({
+        queryKey: [`/api/admin/jobs/${jobId}/candidates`],
+      });
+
       setConfirmDialogOpen(false);
       setPendingAction(null);
       setScoresLocked(true); // Lock scores after final action
-      
+
       // Route to interview availability page for interview invitations (no toast needed)
-      if (action === 'interview' && selectedAssessment) {
-        router.push(buildUrlWithCurrentState(`/admin/interview-availability/${selectedAssessment.id}`));
+      if (action === "interview" && selectedAssessment) {
+        router.push(
+          buildUrlWithCurrentState(
+            `/admin/interview-availability/${selectedAssessment.id}`,
+          ),
+        );
       } else {
         // Show toast for other actions only
         const actionLabels = {
-          reject: 'marked as not progressing',
-          match: 'matched to employer',
-          interview: 'invited to interview'
+          reject: "marked as not progressing",
+          match: "matched to employer",
+          interview: "invited to interview",
         };
         toast({
           title: "Candidate Updated",
@@ -402,8 +420,9 @@ export default async function JobApplicantsPage({params}) {
   });
 
   // Determine if candidate has previous Pollen interview history from unified data
-  const canFastTrackToEmployer = selectedAssessment ? getCandidateData(selectedAssessment.id).hasPollenInteraction : false;
-  
+  const canFastTrackToEmployer = selectedAssessment
+    ? getCandidateData(selectedAssessment.id).hasPollenInteraction
+    : false;
 
   const handleCandidateAction = (action) => {
     if (action === "interview") {
@@ -655,6 +674,46 @@ export default async function JobApplicantsPage({params}) {
           ? "grid-cols-3"
           : "grid-cols-4";
 
+  const navigateToCandidate = (direction) => {
+    if (!selectedAssessment) return;
+
+    // Use filtered candidates instead of status group - respects all current filters
+    const currentIndex = filteredCandidates.findIndex(
+      (c) => c.id === selectedAssessment.id,
+    );
+    let newIndex;
+
+    if (direction === "prev") {
+      newIndex =
+        currentIndex > 0 ? currentIndex - 1 : filteredCandidates.length - 1;
+    } else {
+      newIndex =
+        currentIndex < filteredCandidates.length - 1 ? currentIndex + 1 : 0;
+    }
+
+    const newCandidate = filteredCandidates[newIndex];
+    setSelectedAssessment(newCandidate);
+
+    // Dynamic locking based on new candidate status
+    const isInterviewComplete =
+      newCandidate.subStatus === "pollen_interview_complete" ||
+      newCandidate.subStatus === "awaiting_employer" ||
+      newCandidate.subStatus === "interview_requested" ||
+      newCandidate.subStatus === "interview_booked" ||
+      newCandidate.subStatus === "interview_complete" ||
+      newCandidate.subStatus === "offer_issued" ||
+      newCandidate.subStatus === "hired";
+
+    if (isInterviewComplete) {
+      setScoresApproved(true); // Scores are automatically approved for completed interviews
+      setScoresLocked(true); // Lock scores for completed interviews
+    } else {
+      setScoresApproved(false); // Reset approval state for new assessment
+      setScoresLocked(false); // Reset lock state for new assessment
+    }
+    setIsEditing(false);
+  };
+
   const openAssessmentSplitView = (candidate) => {
     console.log("🔍 Opening assessment for candidate:", {
       id: candidate.id,
@@ -739,7 +798,6 @@ export default async function JobApplicantsPage({params}) {
               <Button
                 variant="ghost"
                 size="sm"
-                
                 onClick={() => router.back}
                 className="flex items-center space-x-2"
               >
@@ -990,13 +1048,13 @@ export default async function JobApplicantsPage({params}) {
                       key={scoreRange}
                       className="flex items-center space-x-2 cursor-pointer"
                       onSelect={(e) => e.preventDefault()}
-                     onClick={() => {
-                       const isChecked = scoreFilter.includes(scoreRange);
-                       const newValues = isChecked
-                         ? scoreFilter.filter(v => v !== scoreRange)
-                         : [...scoreFilter, scoreRange];
-                       setScoreFilter(newValues);
-                     }}
+                      onClick={() => {
+                        const isChecked = scoreFilter.includes(scoreRange);
+                        const newValues = isChecked
+                          ? scoreFilter.filter((v) => v !== scoreRange)
+                          : [...scoreFilter, scoreRange];
+                        setScoreFilter(newValues);
+                      }}
                     >
                       <Checkbox
                         checked={scoreFilter.includes(scoreRange)}
@@ -1010,7 +1068,6 @@ export default async function JobApplicantsPage({params}) {
                       <div className="border-t my-1" />
                       <DropdownMenuItem
                         className="flex items-center justify-center text-blue-600 cursor-pointer"
-                    
                         onClick={() => setScoreFilter([])}
                       >
                         Clear All
@@ -1207,11 +1264,15 @@ export default async function JobApplicantsPage({params}) {
                                       <Button
                                         size="sm"
                                         variant="outline"
-                                        // onClick={(e) => {
-                                        //   e.stopPropagation();
-                                        //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
-                                        //   setLocation(`/admin/consolidated-candidate-profile/${candidate.id}`);
-                                        // }}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          sessionStorage.setItem(
+                                            "previousPage",
+                                            `/admin/job-applicants-grid/${jobId}`,
+                                          );
+                                          //TODO:
+                                          // setLocation(`/admin/consolidated-candidate-profile/${candidate.id}`);
+                                        }}
                                         className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-3 py-1 h-7 flex items-center gap-1"
                                       >
                                         <User className="h-3 w-3" />
@@ -1232,10 +1293,10 @@ export default async function JobApplicantsPage({params}) {
                                       <Button
                                         size="sm"
                                         variant="outline"
-                                        // </div>onClick={(e) => {
-                                        // </div>  e.stopPropagation();
-                                        // </div>  sessionStorage.setItem('previousPage', `/admin/job-applicants-kanban/${jobId}`);
-                                        // </div>  setLocation(`/admin/candidate-message/${candidate.id}`);
+                                        // onClick={(e) => {
+                                        //   e.stopPropagation();
+                                        //   sessionStorage.setItem('previousPage', `/admin/job-applicants-kanban/${jobId}`);
+                                        //   setLocation(`/admin/candidate-message/${candidate.id}`);
                                         // }}
                                         className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-3 py-1 h-7 flex items-center gap-1"
                                       >
@@ -1251,11 +1312,16 @@ export default async function JobApplicantsPage({params}) {
                                       <Button
                                         size="sm"
                                         variant="outline"
-                                        // onClick={(e) => {
-                                        //   e.stopPropagation();
-                                        //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
-                                        //   setLocation(`/admin/consolidated-candidate-profile/${candidate.id}`);
-                                        // }}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          sessionStorage.setItem(
+                                            "previousPage",
+                                            `/admin/job-applicants-grid/${jobId}`,
+                                          );
+
+                                          // TODO:
+                                          // setLocation(`/admin/consolidated-candidate-profile/${candidate.id}`);
+                                        }}
                                         className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-2 py-1 h-7"
                                       >
                                         <User className="h-3 w-3" />
@@ -1427,11 +1493,15 @@ export default async function JobApplicantsPage({params}) {
                               <Button
                                 size="sm"
                                 variant="outline"
-                                // onClick={(e) => {
-                                //   e.stopPropagation();
-                                //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
-                                //   setLocation(`/admin/consolidated-candidate-profile/${candidate.id}`);
-                                // }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  sessionStorage.setItem(
+                                    "previousPage",
+                                    `/admin/job-applicants-grid/${jobId}`,
+                                  );
+                                  // TODO:
+                                  // setLocation(`/admin/consolidated-candidate-profile/${candidate.id}`);
+                                }}
                                 className="text-xs"
                               >
                                 <User className="h-3 w-3" />
@@ -1527,7 +1597,13 @@ export default async function JobApplicantsPage({params}) {
                     <Button
                       variant="default"
                       size="sm"
-                      // onClick={() => setLocation(buildUrlWithCurrentState(`/admin/provide-update/${selectedAssessment.id}`))}
+                      onClick={() =>
+                        router.push(
+                          buildUrlWithCurrentState(
+                            `/admin/provide-update/${selectedAssessment.id}`,
+                          ),
+                        )
+                      }
                       className="text-xs px-1 py-1 bg-[#E2007A] hover:bg-[#E2007A]/90 text-white"
                     >
                       <FileText className="h-3 w-3 mr-1" />
@@ -1568,11 +1644,15 @@ export default async function JobApplicantsPage({params}) {
                   <Button
                     variant="outline"
                     size="sm"
-                    
                     onClick={() => {
                       // Store current page context for proper back navigation
-                      sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
-                      router.push(`/admin/consolidated-candidate-profile/${selectedAssessment.id}`);
+                      sessionStorage.setItem(
+                        "previousPage",
+                        `/admin/job-applicants-grid/${jobId}`,
+                      );
+                      router.push(
+                        `/admin/consolidated-candidate-profile/${selectedAssessment.id}`,
+                      );
                     }}
                     className="text-xs px-1 py-1"
                   >
@@ -1673,7 +1753,6 @@ export default async function JobApplicantsPage({params}) {
                   <Button
                     variant="ghost"
                     size="sm"
-                    
                     onClick={closeAssessmentSplitView}
                     className="p-0 h-8 w-8"
                   >
@@ -2030,7 +2109,7 @@ export default async function JobApplicantsPage({params}) {
                           <div className="flex flex-wrap gap-4 items-center">
                             {!scoresApproved ? (
                               <Button
-                                // onClick={handleApproveAIScores}
+                                onClick={handleApproveAIScores}
                                 size="default"
                                 className="bg-green-600 hover:bg-green-700 h-12 px-6 text-base font-medium"
                               >
@@ -2123,8 +2202,12 @@ export default async function JobApplicantsPage({params}) {
                             {/* Interview button only for unopened/under review */}
                             <Button
                               onClick={() => handleCandidateAction("interview")}
-                              
-                              disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending}
+                              disabled={
+                                !(
+                                  scoresApproved ||
+                                  isScoreApproved(selectedAssessment)
+                                ) || candidateActionMutation.isPending
+                              }
                               size="default"
                               className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
                             >
@@ -2134,8 +2217,14 @@ export default async function JobApplicantsPage({params}) {
 
                             <Button
                               onClick={() => handleCandidateAction("match")}
-                              
-                            disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending || !canFastTrackToEmployer}
+                              disabled={
+                                !(
+                                  scoresApproved ||
+                                  isScoreApproved(selectedAssessment)
+                                ) ||
+                                candidateActionMutation.isPending ||
+                                !canFastTrackToEmployer
+                              }
                               size="default"
                               className="bg-green-600 hover:bg-green-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
                             >
@@ -2145,8 +2234,12 @@ export default async function JobApplicantsPage({params}) {
 
                             <Button
                               onClick={() => handleCandidateAction("reject")}
-                              
-                              disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending}
+                              disabled={
+                                !(
+                                  scoresApproved ||
+                                  isScoreApproved(selectedAssessment)
+                                ) || candidateActionMutation.isPending
+                              }
                               variant="outline"
                               size="default"
                               className="h-12 px-6 text-base font-medium"
@@ -2176,7 +2269,11 @@ export default async function JobApplicantsPage({params}) {
                           <div className="flex justify-center">
                             <Button
                               onClick={() => {
-                                router.push(buildUrlWithCurrentState(`/admin/provide-update/${selectedAssessment.id}`));
+                                router.push(
+                                  buildUrlWithCurrentState(
+                                    `/admin/provide-update/${selectedAssessment.id}`,
+                                  ),
+                                );
                               }}
                               size="default"
                               className="bg-[#E2007A] hover:bg-[#E2007A]/90 text-white h-12 px-6 text-base font-medium"
@@ -2268,11 +2365,7 @@ export default async function JobApplicantsPage({params}) {
                     : "bg-green-600 hover:bg-green-700"
               }
             >
-              {
-                candidateActionMutation.isPending
-                ? "Processing..."
-                : "Confirm"
-              }
+              {candidateActionMutation.isPending ? "Processing..." : "Confirm"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -2296,8 +2389,13 @@ export default async function JobApplicantsPage({params}) {
                       <Button
                         variant="default"
                         size="sm"
-                        
-                        onClick={() => router.push(buildUrlWithCurrentState(`/admin/provide-update/${selectedAssessment.id}`))}
+                        onClick={() =>
+                          router.push(
+                            buildUrlWithCurrentState(
+                              `/admin/provide-update/${selectedAssessment.id}`,
+                            ),
+                          )
+                        }
                         className="text-xs px-2 py-1 bg-[#E2007A] hover:bg-[#E2007A]/90 text-white"
                       >
                         <FileText className="h-3 w-3 mr-1" />
@@ -2343,7 +2441,7 @@ export default async function JobApplicantsPage({params}) {
                   <Button
                     variant="outline"
                     size="sm"
-                    
+                    //TODO: quedan o no?
                     // onClick={() => {
                     //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
                     //   setLocation(`/admin/consolidated-candidate-profile/${selectedAssessment.id}`);
@@ -2357,7 +2455,7 @@ export default async function JobApplicantsPage({params}) {
                   <Button
                     variant="outline"
                     size="sm"
-                    // TODO:
+                    // TODO: idem anterior
                     // onClick={() => {
                     //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
                     //   setLocation(`/admin/candidate-message/${selectedAssessment.id}`);
@@ -2373,8 +2471,7 @@ export default async function JobApplicantsPage({params}) {
                     <Button
                       variant="outline"
                       size="sm"
-                      // TODO:
-                      // onClick={() => navigateToCandidate('prev')}
+                      onClick={() => navigateToCandidate("prev")}
                       disabled={
                         filteredCandidates.findIndex(
                           (c) => c.id === selectedAssessment?.id,
@@ -2395,7 +2492,7 @@ export default async function JobApplicantsPage({params}) {
                     <Button
                       variant="outline"
                       size="sm"
-                      // onClick={() => navigateToCandidate('next')}
+                      onClick={() => navigateToCandidate("next")}
                       disabled={
                         filteredCandidates.findIndex(
                           (c) => c.id === selectedAssessment?.id,
@@ -2778,8 +2875,7 @@ export default async function JobApplicantsPage({params}) {
                           scoresApproved || isScoreApproved(selectedAssessment)
                         ) ? (
                           <Button
-                            // TODO:
-                            // onClick={handleApproveAIScores}
+                            onClick={handleApproveAIScores}
                             size="default"
                             className="bg-green-600 hover:bg-green-700 h-12 px-6 text-base font-medium"
                           >
@@ -2876,15 +2972,14 @@ export default async function JobApplicantsPage({params}) {
                         <>
                           <Button
                             onClick={() => handleCandidateAction("interview")}
-                            // TODO:
-                            // disabled={
-                            //   !(
-                            //     scoresApproved ||
-                            //     isScoreApproved(selectedAssessment)
-                            //   ) ||
-                            //   candidateActionMutation.isPending ||
-                            //   scoresLocked
-                            // }
+                            disabled={
+                              !(
+                                scoresApproved ||
+                                isScoreApproved(selectedAssessment)
+                              ) ||
+                              candidateActionMutation.isPending ||
+                              scoresLocked
+                            }
                             size="default"
                             className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
                           >
@@ -2903,16 +2998,15 @@ export default async function JobApplicantsPage({params}) {
                             return canFastTrackToEmployer ? (
                               <Button
                                 onClick={() => handleCandidateAction("match")}
-                                // TODO:
-                                // disabled={
-                                //   !(
-                                //     scoresApproved ||
-                                //     isScoreApproved(selectedAssessment)
-                                //   ) ||
-                                //   candidateActionMutation.isPending ||
-                                //   scoresLocked ||
-                                //   !canFastTrackToEmployer
-                                // }
+                                disabled={
+                                  !(
+                                    scoresApproved ||
+                                    isScoreApproved(selectedAssessment)
+                                  ) ||
+                                  candidateActionMutation.isPending ||
+                                  scoresLocked ||
+                                  !canFastTrackToEmployer
+                                }
                                 size="default"
                                 className="bg-green-600 hover:bg-green-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
                               >
@@ -2925,15 +3019,14 @@ export default async function JobApplicantsPage({params}) {
                           {/* Not progressing option always available */}
                           <Button
                             onClick={() => handleCandidateAction("reject")}
-                            // TODO:
-                            // disabled={
-                            //   !(
-                            //     scoresApproved ||
-                            //     isScoreApproved(selectedAssessment)
-                            //   ) ||
-                            //   candidateActionMutation.isPending ||
-                            //   scoresLocked
-                            // }
+                            disabled={
+                              !(
+                                scoresApproved ||
+                                isScoreApproved(selectedAssessment)
+                              ) ||
+                              candidateActionMutation.isPending ||
+                              scoresLocked
+                            }
                             variant="outline"
                             size="default"
                             className="border-red-200 text-red-700 hover:bg-red-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 h-12 px-6 text-base font-medium"
@@ -2948,13 +3041,13 @@ export default async function JobApplicantsPage({params}) {
                       {selectedAssessment.subStatus ===
                         "Pollen Interview Complete" && (
                         <Button
-                          // onClick={() =>
-                          //   setLocation(
-                          //     buildUrlWithCurrentState(
-                          //       `/admin/provide-update/${selectedAssessment.id}`,
-                          //     ),
-                          //   )
-                          // }
+                          onClick={() =>
+                            router.push(
+                              buildUrlWithCurrentState(
+                                `/admin/provide-update/${selectedAssessment.id}`,
+                              ),
+                            )
+                          }
                           size="default"
                           className="bg-purple-600 hover:bg-purple-700 h-12 px-6 text-base font-medium"
                         >
@@ -3000,11 +3093,15 @@ export default async function JobApplicantsPage({params}) {
                     <Button
                       variant="outline"
                       size="sm"
-                      // TODO:
-                      // onClick={() => {
-                      //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
-                      //   setLocation(`/admin/consolidated-candidate-profile/${selectedAssessment.id}`);
-                      // }}
+                      onClick={() => {
+                        sessionStorage.setItem(
+                          "previousPage",
+                          `/admin/job-applicants-grid/${jobId}`,
+                        );
+                        router.push(
+                          `/admin/consolidated-candidate-profile/${selectedAssessment.id}`,
+                        );
+                      }}
                       className="text-xs px-2 py-1"
                     >
                       <User className="h-3 w-3" />
@@ -3014,11 +3111,17 @@ export default async function JobApplicantsPage({params}) {
                     <Button
                       variant="outline"
                       size="sm"
-                      // TODO:
-                      // onClick={() => {
-                      //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
-                      //   setLocation(`/admin/candidate-message/${selectedAssessment.id}`);
-                      // }}
+                      //TODO: checkear si va así o router.back
+
+                      onClick={() => {
+                        sessionStorage.setItem(
+                          "previousPage",
+                          `/admin/job-applicants-grid/${jobId}`,
+                        );
+                        router.push(
+                          `/admin/candidate-message/${selectedAssessment.id}`,
+                        );
+                      }}
                       className="text-xs px-2 py-1"
                     >
                       <MessageSquare className="h-3 w-3" />
@@ -3030,7 +3133,7 @@ export default async function JobApplicantsPage({params}) {
                       <Button
                         variant="outline"
                         size="sm"
-                        // onClick={() => navigateToCandidate('prev')}
+                        onClick={() => navigateToCandidate("prev")}
                         disabled={
                           filteredCandidates.findIndex(
                             (c) => c.id === selectedAssessment?.id,
@@ -3051,7 +3154,7 @@ export default async function JobApplicantsPage({params}) {
                       <Button
                         variant="outline"
                         size="sm"
-                        // onClick={() => navigateToCandidate('next')}
+                        onClick={() => navigateToCandidate("next")}
                         disabled={
                           filteredCandidates.findIndex(
                             (c) => c.id === selectedAssessment?.id,
@@ -3438,7 +3541,7 @@ export default async function JobApplicantsPage({params}) {
                             isScoreApproved(selectedAssessment)
                           ) ? (
                             <Button
-                              // onClick={handleApproveAIScores}
+                              onClick={handleApproveAIScores}
                               size="default"
                               className="bg-green-600 hover:bg-green-700 h-12 px-6 text-base font-medium"
                             >
@@ -3537,7 +3640,14 @@ export default async function JobApplicantsPage({params}) {
                           <>
                             <Button
                               onClick={() => handleCandidateAction("interview")}
-                              // disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending || scoresLocked}
+                              disabled={
+                                !(
+                                  scoresApproved ||
+                                  isScoreApproved(selectedAssessment)
+                                ) ||
+                                candidateActionMutation.isPending ||
+                                scoresLocked
+                              }
                               size="default"
                               className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
                             >
@@ -3556,7 +3666,15 @@ export default async function JobApplicantsPage({params}) {
                               return canFastTrackToEmployer ? (
                                 <Button
                                   onClick={() => handleCandidateAction("match")}
-                                  // disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending || scoresLocked || !canFastTrackToEmployer}
+                                  disabled={
+                                    !(
+                                      scoresApproved ||
+                                      isScoreApproved(selectedAssessment)
+                                    ) ||
+                                    candidateActionMutation.isPending ||
+                                    scoresLocked ||
+                                    !canFastTrackToEmployer
+                                  }
                                   size="default"
                                   className="bg-green-600 hover:bg-green-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
                                 >
@@ -3569,7 +3687,14 @@ export default async function JobApplicantsPage({params}) {
                             {/* Not progressing option always available */}
                             <Button
                               onClick={() => handleCandidateAction("reject")}
-                              // disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending || scoresLocked}
+                              disabled={
+                                !(
+                                  scoresApproved ||
+                                  isScoreApproved(selectedAssessment)
+                                ) ||
+                                candidateActionMutation.isPending ||
+                                scoresLocked
+                              }
                               variant="outline"
                               size="default"
                               className="border-red-200 text-red-700 hover:bg-red-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 h-12 px-6 text-base font-medium"
@@ -3584,7 +3709,13 @@ export default async function JobApplicantsPage({params}) {
                         {selectedAssessment.subStatus ===
                           "Pollen Interview Complete" && (
                           <Button
-                            // onClick={() => setLocation(buildUrlWithCurrentState(`/admin/provide-update/${selectedAssessment.id}`))}
+                            onClick={() =>
+                              router.push(
+                                buildUrlWithCurrentState(
+                                  `/admin/provide-update/${selectedAssessment.id}`,
+                                ),
+                              )
+                            }
                             size="default"
                             className="bg-purple-600 hover:bg-purple-700 h-12 px-6 text-base font-medium"
                           >

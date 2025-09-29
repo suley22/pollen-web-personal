@@ -40,6 +40,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
+    "@tanstack/react-query": "^5.90.2",
     "@types/uuid": "^10.0.0",
     "ai": "^5.0.43",
     "and": "^0.0.3",

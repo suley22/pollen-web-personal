@@ -27,7 +27,7 @@ export function NavUser({ onLogout }) {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="hover:text-accent-foreground focus-visible:ring-0 focus:ring-0 focus:outline-none"
+                className="hover:text-accent-foreground data-[state=open]:text-accent-foreground focus:ring-0 focus:outline-none"
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
@@ -50,11 +50,11 @@ export function NavUser({ onLogout }) {
             sideOffset={4}
           >
             <DropdownMenuItem className="cursor-pointer text-gray-600 focus-visible:ring-0 focus:ring-0 focus:outline-none">
-              <User2 />
+              <User2 className="hover:text-accent-foreground"/>
               View Profile
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer text-gray-600 focus-visible:ring-0 focus:ring-0 focus:outline-none">
-              <Settings />
+              <Settings className="hover:text-accent-foreground"/>
               Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />

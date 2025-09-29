@@ -9,7 +9,7 @@ import {
   User,
   LayoutDashboard,
 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   SidebarGroupLabel,
   SidebarGroupContent,
@@ -20,6 +20,7 @@ import {
 import { CustomSidebarMenuButton } from "@/components/sidebar/custom-sidebar-menu-button";
 export function NavigationItems() {
   const pathname = usePathname();
+  const router = useRouter();
   const { state } = useSidebar();
 
   const items = [
@@ -90,7 +91,7 @@ export function NavigationItems() {
                   <CustomSidebarMenuButton
                     isActive={item.isActive}
                     tooltip={item.label}
-                    onClick={() => window.location.href = item.path}
+                    onClick={() => router.push(item.path)}
                   >
                     <item.icon className="w-4 h-4" />
                     <span>{item.label}</span>

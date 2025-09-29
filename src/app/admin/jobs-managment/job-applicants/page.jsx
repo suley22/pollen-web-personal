@@ -3,11 +3,30 @@
 import {
   LayoutGrid,
   Kanban,
-  ArrowLeft, UserCheck, X,
-  Eye, Edit3, Lock,
-  Search, BarChart3, MessageSquare, ThumbsUp, Check,
-  ChevronDown, Lightbulb,
-  ChevronUp,TrendingUp, Calendar, AlertTriangle, User, FileText, MessageCircle
+  ArrowLeft,
+  UserCheck,
+  X,
+  Eye,
+  Edit3,
+  Lock,
+  Search,
+  BarChart3,
+  MessageSquare,
+  ThumbsUp,
+  Check,
+  ChevronDown,
+  Lightbulb,
+  ChevronUp,
+  ChevronLeft,
+  ChevronRight,
+  TrendingUp,
+  Calendar,
+  AlertTriangle,
+  User,
+  FileText,
+  MessageCircle,
+  SplitSquareHorizontal,
+  UserX,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -25,21 +44,26 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { candidates } from "./(mocks)/candidates";
 import { jobMock, scoreFilterOptions } from "./(mocks)/job";
 import { subStatusToPrimaryStatus } from "./(mocks)/sub-status-to-pramary-status";
-import {
-  getAvailableSubStatuses,
-  getSubStatusLabel,
-} from "./utils/status";
+import { getAvailableSubStatuses, getSubStatusLabel } from "./utils/status";
 import { Card, CardContent } from "@/components/ui/card";
 import { displayCandidates } from "./utils/display-candidates";
-import { getUnifiedCandidateData, getInteractionDisplayText } from "./utils/candidate-data"; 
+import {
+  getUnifiedCandidateData,
+  getInteractionDisplayText,
+} from "./utils/candidate-data";
 import { useToast } from "@/hooks/use-toast";
-
+import {
+  DialogFooter,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function JobApplicantsPage() {
   const router = useRouter();
   const job = jobMock;
   const scoreFilter = scoreFilterOptions;
-  
 
   const sortOrder = {
     options: ["asc", "desc"],
@@ -92,28 +116,76 @@ export default function JobApplicantsPage() {
   const getSubStatusDetails = (subStatus) => {
     const statusMap = {
       // New - Blue badges to match primary status
-      'Unopened': { label: 'Unopened', cta: 'Review Application', color: 'bg-blue-100 text-blue-800' },
-      'Under Review': { label: 'Under Review', cta: 'Review Application', color: 'bg-blue-100 text-blue-800' },
-      
+      Unopened: {
+        label: "Unopened",
+        cta: "Review Application",
+        color: "bg-blue-100 text-blue-800",
+      },
+      "Under Review": {
+        label: "Under Review",
+        cta: "Review Application",
+        color: "bg-blue-100 text-blue-800",
+      },
+
       // In Progress - Yellow badges to match primary status
-      'Invited to Pollen Interview': { label: 'Invited to Pollen Interview', cta: 'Send Reminder', color: 'bg-yellow-100 text-yellow-800' },
-      'Pollen Interview Complete': { label: 'Pollen Interview Complete', cta: 'Match to Employer', color: 'bg-yellow-100 text-yellow-800' },
-      
+      "Invited to Pollen Interview": {
+        label: "Invited to Pollen Interview",
+        cta: "Send Reminder",
+        color: "bg-yellow-100 text-yellow-800",
+      },
+      "Pollen Interview Complete": {
+        label: "Pollen Interview Complete",
+        cta: "Match to Employer",
+        color: "bg-yellow-100 text-yellow-800",
+      },
+
       // Matched to Employer - Green badges to match primary status
-      'Awaiting Employer': { label: 'Awaiting Employer', cta: 'View Profile', color: 'bg-green-100 text-green-800' },
-      'Interview Requested': { label: 'Interview Requested', cta: 'View Profile', color: 'bg-green-100 text-green-800' },
-      'Interview Booked': { label: 'Interview Booked', cta: 'View Profile', color: 'bg-green-100 text-green-800' },
-      'Interview Complete': { label: 'Interview Complete', cta: 'View Profile', color: 'bg-green-100 text-green-800' },
-      'Offer Issued': { label: 'Offer Issued', cta: 'View Profile', color: 'bg-green-100 text-green-800' },
-      
-      // Complete - Gray badges to match primary status  
-      'Hired': { label: 'Hired', cta: 'View', color: 'bg-gray-800 text-white' },
-      'Not Progressing': { label: 'Not Progressing', cta: 'View', color: 'bg-gray-100 text-gray-800' }
+      "Awaiting Employer": {
+        label: "Awaiting Employer",
+        cta: "View Profile",
+        color: "bg-green-100 text-green-800",
+      },
+      "Interview Requested": {
+        label: "Interview Requested",
+        cta: "View Profile",
+        color: "bg-green-100 text-green-800",
+      },
+      "Interview Booked": {
+        label: "Interview Booked",
+        cta: "View Profile",
+        color: "bg-green-100 text-green-800",
+      },
+      "Interview Complete": {
+        label: "Interview Complete",
+        cta: "View Profile",
+        color: "bg-green-100 text-green-800",
+      },
+      "Offer Issued": {
+        label: "Offer Issued",
+        cta: "View Profile",
+        color: "bg-green-100 text-green-800",
+      },
+
+      // Complete - Gray badges to match primary status
+      Hired: { label: "Hired", cta: "View", color: "bg-gray-800 text-white" },
+      "Not Progressing": {
+        label: "Not Progressing",
+        cta: "View",
+        color: "bg-gray-100 text-gray-800",
+      },
     };
-    
+
     // Fallback for any status not in the map - format it nicely
-    const fallbackLabel = subStatus.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-    return statusMap[subStatus] || { label: fallbackLabel, cta: 'View', color: 'bg-gray-100 text-gray-800' };
+    const fallbackLabel = subStatus
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (l) => l.toUpperCase());
+    return (
+      statusMap[subStatus] || {
+        label: fallbackLabel,
+        cta: "View",
+        color: "bg-gray-100 text-gray-800",
+      }
+    );
   };
 
   const sortBy = {
@@ -178,7 +250,7 @@ export default function JobApplicantsPage() {
 
   const [viewMode, setViewMode] = useState(() => {
     const saved = sessionStorage.getItem(`job-1-viewMode`);
-    return (saved) || "grid";
+    return saved || "grid";
   });
   const [selectedAssessment, setSelectedAssessment] = useState(null);
 
@@ -190,32 +262,53 @@ export default function JobApplicantsPage() {
   const [scoresApproved, setScoresApproved] = useState(() => {
     if (selectedAssessment) {
       // Check if candidate already has approved status
-      const approvedStatuses = ['invited_to_pollen_interview', 'pollen_interview_complete', 'awaiting_employer', 'interview_requested', 'interview_booked', 'interview_complete', 'offer_issued', 'hired', 'not_progressing'];
+      const approvedStatuses = [
+        "invited_to_pollen_interview",
+        "pollen_interview_complete",
+        "awaiting_employer",
+        "interview_requested",
+        "interview_booked",
+        "interview_complete",
+        "offer_issued",
+        "hired",
+        "not_progressing",
+      ];
       return approvedStatuses.includes(selectedAssessment.subStatus);
     }
     return false;
   });
-   const [scoresLocked, setScoresLocked] = useState(() => {
+  const [scoresLocked, setScoresLocked] = useState(() => {
     if (selectedAssessment) {
       // Scores are locked if candidate has been actioned (beyond invited_to_pollen_interview)
-      const lockedStatuses = ['pollen_interview_complete', 'awaiting_employer', 'interview_requested', 'interview_booked', 'interview_complete', 'offer_issued', 'hired', 'not_progressing'];
+      const lockedStatuses = [
+        "pollen_interview_complete",
+        "awaiting_employer",
+        "interview_requested",
+        "interview_booked",
+        "interview_complete",
+        "offer_issued",
+        "hired",
+        "not_progressing",
+      ];
       return lockedStatuses.includes(selectedAssessment.subStatus);
     }
     return false;
   });
   const [showFeedbackReview, setShowFeedbackReview] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState(null);
-   const [editedScores, setEditedScores] = useState({
+  const [editedScores, setEditedScores] = useState({
     creative: 8,
-    dataAnalysis: 8, 
+    dataAnalysis: 8,
     communication: 7,
-    strategic: 8
+    strategic: 8,
   });
   const [isEditing, setIsEditing] = useState(false);
   const { toast } = useToast();
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null);
 
   const handleCandidateAction = (action) => {
-    if (action === 'interview') {
+    if (action === "interview") {
       // Skip confirmation dialog for interview invitations and proceed directly
       candidateActionMutation.mutate(action);
     } else {
@@ -225,19 +318,40 @@ export default function JobApplicantsPage() {
     }
   };
 
+  const confirmCandidateAction = () => {
+    if (pendingAction) {
+      candidateActionMutation.mutate(pendingAction);
+    }
+  };
+
   const isScoreApproved = (candidate) => {
     // Auto-approve scores for any candidate who has progressed beyond "New" status
     // This means "In Progress" status and onwards should automatically show pink scores
     const autoApprovedStatuses = [
       // Internal format (used by some parts of the code)
-      'invited_to_pollen_interview', 'pollen_interview_complete', 'awaiting_employer', 'interview_requested', 'interview_booked', 'interview_complete', 'offer_issued', 'hired', 'not_progressing',
+      "invited_to_pollen_interview",
+      "pollen_interview_complete",
+      "awaiting_employer",
+      "interview_requested",
+      "interview_booked",
+      "interview_complete",
+      "offer_issued",
+      "hired",
+      "not_progressing",
       // Display format (used by API and modal)
-      'Invited to Pollen Interview', 'Pollen Interview Complete', 'Awaiting Employer', 'Interview Requested', 'Interview Booked', 'Interview Complete', 'Offer Issued', 'Hired', 'Not Progressing'
+      "Invited to Pollen Interview",
+      "Pollen Interview Complete",
+      "Awaiting Employer",
+      "Interview Requested",
+      "Interview Booked",
+      "Interview Complete",
+      "Offer Issued",
+      "Hired",
+      "Not Progressing",
     ];
-    
+
     return autoApprovedStatuses.includes(candidate.subStatus);
   };
-
 
   const availableSubStatuses = getAvailableSubStatuses(
     primaryStatusFilter,
@@ -247,79 +361,93 @@ export default function JobApplicantsPage() {
   const finalCandidates = displayCandidates;
 
   const filteredCandidates = finalCandidates
-    .filter(candidate => {
+    .filter((candidate) => {
       // Search filter
-      const searchMatch = candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         candidate.email.toLowerCase().includes(searchTerm.toLowerCase());
-      
+      const searchMatch =
+        candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        candidate.email.toLowerCase().includes(searchTerm.toLowerCase());
+
       // Primary status filter
-      const primaryStatusMatch = primaryStatusFilter.length === 0 || primaryStatusFilter.includes(candidate.status);
-      
-      // Sub status filter  
-      const subStatusMatch = subStatusFilter.length === 0 || subStatusFilter.includes(candidate.subStatus);
-      
+      const primaryStatusMatch =
+        primaryStatusFilter.length === 0 ||
+        primaryStatusFilter.includes(candidate.status);
+
+      // Sub status filter
+      const subStatusMatch =
+        subStatusFilter.length === 0 ||
+        subStatusFilter.includes(candidate.subStatus);
+
       // Score filter
-      const scoreMatch = scoreFilter.length === 0 || 
-                        scoreFilter.some(range => {
-                          const threshold = parseInt(range);
-                          return candidate.overallSkillsScore >= threshold;
-                        });
-      
+      const scoreMatch =
+        scoreFilter.length === 0 ||
+        scoreFilter.some((range) => {
+          const threshold = parseInt(range);
+          return candidate.overallSkillsScore >= threshold;
+        });
+
       return searchMatch && primaryStatusMatch && subStatusMatch && scoreMatch;
     })
     .sort((a, b) => {
       let comparison = 0;
-      
-      switch(sortBy) {
-        case 'name':
+
+      switch (sortBy) {
+        case "name":
           comparison = a.name.localeCompare(b.name);
           break;
-        case 'applicationDate':
-          comparison = new Date(a.applicationDate).getTime() - new Date(b.applicationDate).getTime();
+        case "applicationDate":
+          comparison =
+            new Date(a.applicationDate).getTime() -
+            new Date(b.applicationDate).getTime();
           break;
-        case 'score':
+        case "score":
           comparison = a.overallSkillsScore - b.overallSkillsScore;
           break;
-        case 'default': {
+        case "default": {
           // Default sorting: primary status first, then application date within each status
           const statusPriority = {
-            'new_applicants': 1,
-            'in_progress': 2,
-            'matched_to_employer': 3,
-            'complete': 4
+            new_applicants: 1,
+            in_progress: 2,
+            matched_to_employer: 3,
+            complete: 4,
           };
-          const statusComparison = (statusPriority[a.status] || 5) - 
-                                  (statusPriority[b.status] || 5);
+          const statusComparison =
+            (statusPriority[a.status] || 5) - (statusPriority[b.status] || 5);
           if (statusComparison !== 0) {
             comparison = statusComparison;
           } else {
             // Within same status, sort by application date (newest first)
-            comparison = new Date(b.applicationDate).getTime() - new Date(a.applicationDate).getTime();
+            comparison =
+              new Date(b.applicationDate).getTime() -
+              new Date(a.applicationDate).getTime();
           }
           break;
         }
         default:
           comparison = 0;
       }
-      
-      return sortBy === 'default' ? comparison : (sortOrder === 'desc' ? -comparison : comparison);
+
+      return sortBy === "default"
+        ? comparison
+        : sortOrder === "desc"
+          ? -comparison
+          : comparison;
     });
 
-const getStoppedAtStage = (candidateId) => {
+  const getStoppedAtStage = (candidateId) => {
     // Check the raw API candidate data for stopped_at status
-    const apiCandidate = candidates.find(c => c.id === candidateId);
-    if (apiCandidate?.subStatus?.startsWith('stopped_at_')) {
-      const stage = apiCandidate.subStatus.replace('stopped_at_', '');
+    const apiCandidate = candidates.find((c) => c.id === candidateId);
+    if (apiCandidate?.subStatus?.startsWith("stopped_at_")) {
+      const stage = apiCandidate.subStatus.replace("stopped_at_", "");
       switch (stage) {
-        case 'assessment':
-          return 'Assessment';
-        case 'application':
-          return 'Application';
-        case 'pollen_interview':
-          return 'Pollen Interview';
-        case 'employer':
-        case 'employer_interview':
-          return 'Employer';
+        case "assessment":
+          return "Assessment";
+        case "application":
+          return "Application";
+        case "pollen_interview":
+          return "Pollen Interview";
+        case "employer":
+        case "employer_interview":
+          return "Employer";
         default:
           return null;
       }
@@ -329,63 +457,107 @@ const getStoppedAtStage = (candidateId) => {
 
   const hasUnreviewedEmployerFeedback = (candidateId) => {
     // Check in the live API candidates data first for employer feedback
-    const apiCandidate = candidates.find(c => c.id === candidateId);
-    if (apiCandidate?.employerFeedback?.reviewStatus === 'pending') {
+    const apiCandidate = candidates.find((c) => c.id === candidateId);
+    if (apiCandidate?.employerFeedback?.reviewStatus === "pending") {
       return true;
     }
     // Fallback to static candidate data
     const candidateData = getCandidateData(candidateId);
-    return candidateData.employerFeedback?.reviewStatus === 'pending' || false;
+    return candidateData.employerFeedback?.reviewStatus === "pending" || false;
   };
 
-const applySorting = (candidateList) => {
+  const applySorting = (candidateList) => {
     return candidateList.sort((a, b) => {
       let comparison = 0;
-      
-      switch(sortBy) {
-        case 'name':
+
+      switch (sortBy) {
+        case "name":
           comparison = a.name.localeCompare(b.name);
           break;
-        case 'applicationDate':
-          comparison = new Date(a.applicationDate).getTime() - new Date(b.applicationDate).getTime();
+        case "applicationDate":
+          comparison =
+            new Date(a.applicationDate).getTime() -
+            new Date(b.applicationDate).getTime();
           break;
-        case 'score':
+        case "score":
           comparison = a.overallSkillsScore - b.overallSkillsScore;
           break;
         default:
           comparison = 0;
       }
-      
-      return sortOrder === 'desc' ? -comparison : comparison;
+
+      return sortOrder === "desc" ? -comparison : comparison;
     });
   };
   const candidatesByStatus = {
-    new_applicants: applySorting(filteredCandidates.filter(c => c.status === 'new_applicants')),
-    in_progress: applySorting(filteredCandidates.filter(c => c.status === 'in_progress')),
-    matched_to_employer: applySorting(filteredCandidates.filter(c => c.status === 'matched_to_employer')),
-    complete: applySorting(filteredCandidates.filter(c => c.status === 'complete'))
+    new_applicants: applySorting(
+      filteredCandidates.filter((c) => c.status === "new_applicants"),
+    ),
+    in_progress: applySorting(
+      filteredCandidates.filter((c) => c.status === "in_progress"),
+    ),
+    matched_to_employer: applySorting(
+      filteredCandidates.filter((c) => c.status === "matched_to_employer"),
+    ),
+    complete: applySorting(
+      filteredCandidates.filter((c) => c.status === "complete"),
+    ),
   };
- 
+
   const visibleColumns = [
-    { key: 'new_applicants', label: 'New', count: candidatesByStatus.new_applicants.length, bgColor: 'bg-blue-50', textColor: 'text-blue-900', badgeColor: 'bg-blue-100 text-blue-800' },
-    { key: 'in_progress', label: 'In Progress', count: candidatesByStatus.in_progress.length, bgColor: 'bg-yellow-50', textColor: 'text-yellow-900', badgeColor: 'bg-yellow-600 text-white' },
-    { key: 'matched_to_employer', label: 'Matched to Employer', count: candidatesByStatus.matched_to_employer.length, bgColor: 'bg-green-50', textColor: 'text-green-900', badgeColor: 'bg-green-100 text-green-800' },
-    { key: 'complete', label: 'Complete', count: candidatesByStatus.complete.length, bgColor: 'bg-gray-50', textColor: 'text-gray-900', badgeColor: 'bg-gray-100 text-gray-800' }
-  ].filter(column => column.count > 0);
+    {
+      key: "new_applicants",
+      label: "New",
+      count: candidatesByStatus.new_applicants.length,
+      bgColor: "bg-blue-50",
+      textColor: "text-blue-900",
+      badgeColor: "bg-blue-100 text-blue-800",
+    },
+    {
+      key: "in_progress",
+      label: "In Progress",
+      count: candidatesByStatus.in_progress.length,
+      bgColor: "bg-yellow-50",
+      textColor: "text-yellow-900",
+      badgeColor: "bg-yellow-600 text-white",
+    },
+    {
+      key: "matched_to_employer",
+      label: "Matched to Employer",
+      count: candidatesByStatus.matched_to_employer.length,
+      bgColor: "bg-green-50",
+      textColor: "text-green-900",
+      badgeColor: "bg-green-100 text-green-800",
+    },
+    {
+      key: "complete",
+      label: "Complete",
+      count: candidatesByStatus.complete.length,
+      bgColor: "bg-gray-50",
+      textColor: "text-gray-900",
+      badgeColor: "bg-gray-100 text-gray-800",
+    },
+  ].filter((column) => column.count > 0);
 
   const columnCount = Math.max(visibleColumns.length, 1); // Ensure at least 1 column
-  const gridColsClass = columnCount === 1 ? 'grid-cols-1' : 
-                       columnCount === 2 ? 'grid-cols-2' : 
-                       columnCount === 3 ? 'grid-cols-3' : 'grid-cols-4';
+  const gridColsClass =
+    columnCount === 1
+      ? "grid-cols-1"
+      : columnCount === 2
+        ? "grid-cols-2"
+        : columnCount === 3
+          ? "grid-cols-3"
+          : "grid-cols-4";
 
-const openAssessmentSplitView = (candidate) => {
-    console.log('🔍 Opening assessment for candidate:', {
+  const openAssessmentSplitView = (candidate) => {
+    console.log("🔍 Opening assessment for candidate:", {
       id: candidate.id,
       name: candidate.name,
       hasAssessment: !!candidate.assessmentSubmission,
-      assessmentQuestions: candidate.assessmentSubmission?.responses?.length || 0
+      assessmentQuestions:
+        candidate.assessmentSubmission?.responses?.length || 0,
     });
-    
+
     setSelectedAssessment(candidate);
     // Check if mobile and switch to full page mode
     const isMobile = window.innerWidth < 768;
@@ -394,16 +566,17 @@ const openAssessmentSplitView = (candidate) => {
     } else {
       setAssessmentSplitViewOpen(true);
     }
-    
+
     // Dynamic locking based on candidate status
-    const isInterviewComplete = candidate.subStatus === 'pollen_interview_complete' || 
-                               candidate.subStatus === 'awaiting_employer' ||
-                               candidate.subStatus === 'interview_requested' ||
-                               candidate.subStatus === 'interview_booked' ||
-                               candidate.subStatus === 'interview_complete' ||
-                               candidate.subStatus === 'offer_issued' ||
-                               candidate.subStatus === 'hired';
-    
+    const isInterviewComplete =
+      candidate.subStatus === "pollen_interview_complete" ||
+      candidate.subStatus === "awaiting_employer" ||
+      candidate.subStatus === "interview_requested" ||
+      candidate.subStatus === "interview_booked" ||
+      candidate.subStatus === "interview_complete" ||
+      candidate.subStatus === "offer_issued" ||
+      candidate.subStatus === "hired";
+
     if (isInterviewComplete) {
       setScoresApproved(true); // Scores are automatically approved for completed interviews
       setScoresLocked(true); // Lock scores for completed interviews
@@ -415,38 +588,40 @@ const openAssessmentSplitView = (candidate) => {
 
   // Status mapping functions
   const getStatusLabel = (status) => {
-    switch(status) {
-      case 'new_applicants': return 'New';
-      case 'in_progress': return 'In Progress';
-      case 'matched_to_employer': return 'Matched to Employer';
-      case 'complete': return 'Complete';
-      default: return status;
+    switch (status) {
+      case "new_applicants":
+        return "New";
+      case "in_progress":
+        return "In Progress";
+      case "matched_to_employer":
+        return "Matched to Employer";
+      case "complete":
+        return "Complete";
+      default:
+        return status;
     }
   };
 
   const getCandidateData = (id) => {
-  const candidateData = getUnifiedCandidateData(id);
-  if (!candidateData) {
+    const candidateData = getUnifiedCandidateData(id);
+    if (!candidateData) {
+      return {
+        applicationCount: 0,
+        hasPollenInteraction: false,
+        lastInteractionDate: null,
+        lastPollenTeamMember: null,
+        isFastTrack: false,
+      };
+    }
+
     return {
-      applicationCount: 0,
-      hasPollenInteraction: false,
-      lastInteractionDate: null,
-      lastPollenTeamMember: null,
-      isFastTrack: false
+      applicationCount: candidateData.applicationCount,
+      hasPollenInteraction: candidateData.hasPollenInteraction,
+      lastInteractionDate: candidateData.lastInteractionDate,
+      lastPollenTeamMember: candidateData.lastPollenTeamMember,
+      isFastTrack: candidateData.isFastTrack,
     };
-  }
-  
-  return {
-    applicationCount: candidateData.applicationCount,
-    hasPollenInteraction: candidateData.hasPollenInteraction,
-    lastInteractionDate: candidateData.lastInteractionDate,
-    lastPollenTeamMember: candidateData.lastPollenTeamMember,
-    isFastTrack: candidateData.isFastTrack
   };
-};
-
-
-
 
   return (
     <div className="min-h-screen bg-gray-50 admin-compact-mode">
@@ -787,582 +962,1514 @@ const openAssessmentSplitView = (candidate) => {
                 Grid
               </ToggleGroupItem>
             </ToggleGroup>
+          </div>
+          </div>
+      </div>
 
-              {/* Content Area */}
-      <div className={`${assessmentSplitViewOpen ? 'h-[calc(100vh-140px)]' : 'min-h-[calc(100vh-140px)]'} relative`}>
-        {/* Main Content */}
-        <div className={`w-full ${viewMode === 'kanban' ? `grid ${gridColsClass} gap-4 p-4 h-full` : 'p-4 overflow-y-auto'}`}>
-          {viewMode === 'kanban' ? (
-            // Kanban View - Dynamic columns based on visible data
-            <>
-            {visibleColumns.map((column) => (
-              <div key={column.key} className="min-h-0">
-                <div className="bg-white rounded-lg shadow-sm border h-full flex flex-col">
-                  <div className={`p-3 border-b ${column.bgColor}`}>
-                    <div className="flex items-center justify-between">
-                      <h3 className={`font-medium text-sm ${column.textColor}`}>{column.label}</h3>
-                      <Badge className={`${column.badgeColor} text-xs min-w-[24px] justify-center`}>
-                        {column.count}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className="flex-1 p-2 space-y-2 overflow-y-auto">
-                    {candidatesByStatus[column.key].map((candidate) => {
-                  const subStatusDetails = getSubStatusDetails(candidate.subStatus);
-                  return (
-                    <Card key={candidate.id} className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => openAssessmentSplitView(candidate)}>
-                      <CardContent className="p-4">
-                        <div className="flex items-center space-x-3 mb-3">
-                          <img 
-                            src={candidate.profilePicture}
-                            alt={candidate.name}
-                            className="w-10 h-10 rounded-full border border-gray-200"
-                          />
-                          <div>
-                            <h4 className="font-medium text-gray-900 flex items-center gap-2">
-                              {candidate.name}
-                              {(() => {
-                                const candidateData = getCandidateData(candidate.id);
-                                return candidateData.hasPollenInteraction && (
-                                  <span className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center text-xs text-white font-bold">
-                                    ✓
-                                  </span>
-                                );
-                              })()}
-                            </h4>
-                            <div className={`text-sm flex items-center font-medium ${
-                              isScoreApproved(candidate) ? 'text-pink-600' : 'text-gray-500'
-                            }`}>
-                              <TrendingUp className="h-3 w-3 mr-1" />
-                              {candidate.overallSkillsScore}% Score
-                            </div>
+          {/* Content Area */}
+          <div
+            className={`${assessmentSplitViewOpen ? "h-[calc(100vh-140px)]" : "min-h-[calc(100vh-140px)]"} relative`}
+          >
+            {/* Main Content */}
+            <div
+              className={`w-full ${viewMode === "kanban" ? `grid ${gridColsClass} gap-4 p-4 h-full` : "p-4 overflow-y-auto"}`}
+            >
+              {viewMode === "kanban" ? (
+                // Kanban View - Dynamic columns based on visible data
+                <>
+                  {visibleColumns.map((column) => (
+                    <div key={column.key} className="min-h-0">
+                      <div className="bg-white rounded-lg shadow-sm border h-full flex flex-col">
+                        <div className={`p-3 border-b ${column.bgColor}`}>
+                          <div className="flex items-center justify-between">
+                            <h3
+                              className={`font-medium text-sm ${column.textColor}`}
+                            >
+                              {column.label}
+                            </h3>
+                            <Badge
+                              className={`${column.badgeColor} text-xs min-w-[24px] justify-center`}
+                            >
+                              {column.count}
+                            </Badge>
                           </div>
                         </div>
-                        
-                        <div className="space-y-2 mb-3">
-                          <div className="text-xs text-gray-500 flex items-center">
-                            <Calendar className="h-3 w-3 mr-1" />
-                            Applied {new Date(candidate.applicationDate).toLocaleDateString('en-GB')}
-                          </div>
-                          <div className="flex flex-wrap gap-1">
-                            <Badge className={subStatusDetails.color + " text-xs"}>
-                              {subStatusDetails.label}
-                            </Badge>
-                            {getStoppedAtStage(candidate.id) && (
-                              <Badge className="bg-white text-gray-700 border border-gray-300 text-xs">
-                                Stopped at {getStoppedAtStage(candidate.id)}
-                              </Badge>
-                            )}
-                            {hasUnreviewedEmployerFeedback(candidate.id) && (
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  const candidateData = getCandidateData(candidate.id);
-                                  setSelectedFeedback(candidateData.employerFeedback);
-                                  setShowFeedbackReview(true);
-                                }}
-                                className="ml-1"
-                                title="Review employer feedback"
+                        <div className="flex-1 p-2 space-y-2 overflow-y-auto">
+                          {candidatesByStatus[column.key].map((candidate) => {
+                            const subStatusDetails = getSubStatusDetails(
+                              candidate.subStatus,
+                            );
+                            return (
+                              <Card
+                                key={candidate.id}
+                                className="cursor-pointer hover:shadow-md transition-shadow"
+                                onClick={() =>
+                                  openAssessmentSplitView(candidate)
+                                }
                               >
-                                <AlertTriangle className="h-4 w-4 text-red-500" />
-                              </button>
-                            )}
-                          </div>
-                        </div>
+                                <CardContent className="p-4">
+                                  <div className="flex items-center space-x-3 mb-3">
+                                    <img
+                                      src={candidate.profilePicture}
+                                      alt={candidate.name}
+                                      className="w-10 h-10 rounded-full border border-gray-200"
+                                    />
+                                    <div>
+                                      <h4 className="font-medium text-gray-900 flex items-center gap-2">
+                                        {candidate.name}
+                                        {(() => {
+                                          const candidateData =
+                                            getCandidateData(candidate.id);
+                                          return (
+                                            candidateData.hasPollenInteraction && (
+                                              <span className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center text-xs text-white font-bold">
+                                                ✓
+                                              </span>
+                                            )
+                                          );
+                                        })()}
+                                      </h4>
+                                      <div
+                                        className={`text-sm flex items-center font-medium ${
+                                          isScoreApproved(candidate)
+                                            ? "text-pink-600"
+                                            : "text-gray-500"
+                                        }`}
+                                      >
+                                        <TrendingUp className="h-3 w-3 mr-1" />
+                                        {candidate.overallSkillsScore}% Score
+                                      </div>
+                                    </div>
+                                  </div>
 
-                        {/* Action buttons at the bottom */}
-                        {(() => {
-                          // Check if any filters are active
-                          const hasActiveFilters = primaryStatusFilter.length > 0 || 
-                                                   subStatusFilter.length > 0 || 
-                                                   scoreFilter.length > 0 || 
-                                                   searchTerm.length > 0;
-                          
-                          if (hasActiveFilters) {
-                            // Filtered view: Subtle buttons with text
-                            return (
-                              <div className="flex gap-2 flex-wrap">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  // onClick={(e) => {
-                                  //   e.stopPropagation();
-                                  //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
-                                  //   setLocation(`/admin/consolidated-candidate-profile/${candidate.id}`);
-                                  // }}
-                                  className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-3 py-1 h-7 flex items-center gap-1"
-                                >
-                                  <User className="h-3 w-3" />
-                                  Profile
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    openAssessmentSplitView(candidate);
-                                  }}
-                                  className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-3 py-1 h-7 flex items-center gap-1"
-                                >
-                                  <FileText className="h-3 w-3" />
-                                  Assessment
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  // </div>onClick={(e) => {
-                                  // </div>  e.stopPropagation();
-                                  // </div>  sessionStorage.setItem('previousPage', `/admin/job-applicants-kanban/${jobId}`);
-                                  // </div>  setLocation(`/admin/candidate-message/${candidate.id}`);
-                                  // }}
-                                  className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-3 py-1 h-7 flex items-center gap-1"
-                                >
-                                  <MessageCircle className="h-3 w-3" />
-                                  Message
-                                </Button>
-                              </div>
+                                  <div className="space-y-2 mb-3">
+                                    <div className="text-xs text-gray-500 flex items-center">
+                                      <Calendar className="h-3 w-3 mr-1" />
+                                      Applied{" "}
+                                      {new Date(
+                                        candidate.applicationDate,
+                                      ).toLocaleDateString("en-GB")}
+                                    </div>
+                                    <div className="flex flex-wrap gap-1">
+                                      <Badge
+                                        className={
+                                          subStatusDetails.color + " text-xs"
+                                        }
+                                      >
+                                        {subStatusDetails.label}
+                                      </Badge>
+                                      {getStoppedAtStage(candidate.id) && (
+                                        <Badge className="bg-white text-gray-700 border border-gray-300 text-xs">
+                                          Stopped at{" "}
+                                          {getStoppedAtStage(candidate.id)}
+                                        </Badge>
+                                      )}
+                                      {hasUnreviewedEmployerFeedback(
+                                        candidate.id,
+                                      ) && (
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            const candidateData =
+                                              getCandidateData(candidate.id);
+                                            setSelectedFeedback(
+                                              candidateData.employerFeedback,
+                                            );
+                                            setShowFeedbackReview(true);
+                                          }}
+                                          className="ml-1"
+                                          title="Review employer feedback"
+                                        >
+                                          <AlertTriangle className="h-4 w-4 text-red-500" />
+                                        </button>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  {/* Action buttons at the bottom */}
+                                  {(() => {
+                                    // Check if any filters are active
+                                    const hasActiveFilters =
+                                      primaryStatusFilter.length > 0 ||
+                                      subStatusFilter.length > 0 ||
+                                      scoreFilter.length > 0 ||
+                                      searchTerm.length > 0;
+
+                                    if (hasActiveFilters) {
+                                      // Filtered view: Subtle buttons with text
+                                      return (
+                                        <div className="flex gap-2 flex-wrap">
+                                          <Button
+                                            size="sm"
+                                            variant="outline"
+                                            // onClick={(e) => {
+                                            //   e.stopPropagation();
+                                            //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
+                                            //   setLocation(`/admin/consolidated-candidate-profile/${candidate.id}`);
+                                            // }}
+                                            className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-3 py-1 h-7 flex items-center gap-1"
+                                          >
+                                            <User className="h-3 w-3" />
+                                            Profile
+                                          </Button>
+                                          <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              openAssessmentSplitView(
+                                                candidate,
+                                              );
+                                            }}
+                                            className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-3 py-1 h-7 flex items-center gap-1"
+                                          >
+                                            <FileText className="h-3 w-3" />
+                                            Assessment
+                                          </Button>
+                                          <Button
+                                            size="sm"
+                                            variant="outline"
+                                            // </div>onClick={(e) => {
+                                            // </div>  e.stopPropagation();
+                                            // </div>  sessionStorage.setItem('previousPage', `/admin/job-applicants-kanban/${jobId}`);
+                                            // </div>  setLocation(`/admin/candidate-message/${candidate.id}`);
+                                            // }}
+                                            className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-3 py-1 h-7 flex items-center gap-1"
+                                          >
+                                            <MessageCircle className="h-3 w-3" />
+                                            Message
+                                          </Button>
+                                        </div>
+                                      );
+                                    } else {
+                                      // Unfiltered view: Subtle buttons aligned left
+                                      return (
+                                        <div className="flex gap-2 justify-start">
+                                          <Button
+                                            size="sm"
+                                            variant="outline"
+                                            // onClick={(e) => {
+                                            //   e.stopPropagation();
+                                            //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
+                                            //   setLocation(`/admin/consolidated-candidate-profile/${candidate.id}`);
+                                            // }}
+                                            className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-2 py-1 h-7"
+                                          >
+                                            <User className="h-3 w-3" />
+                                          </Button>
+                                          <Button
+                                            size="sm"
+                                            variant="outline"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              openAssessmentSplitView(
+                                                candidate,
+                                              );
+                                            }}
+                                            className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-2 py-1 h-7"
+                                          >
+                                            <FileText className="h-3 w-3" />
+                                          </Button>
+                                          <Button
+                                            size="sm"
+                                            variant="outline"
+                                            // onClick={(e) => {
+                                            //   e.stopPropagation();
+                                            //   sessionStorage.setItem('previousPage', `/admin/job-applicants-kanban/${jobId}`);
+                                            //   setLocation(`/admin/candidate-message/${candidate.id}`);
+                                            // }}
+                                            className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-2 py-1 h-7"
+                                          >
+                                            <MessageCircle className="h-3 w-3" />
+                                          </Button>
+                                        </div>
+                                      );
+                                    }
+                                  })()}
+                                </CardContent>
+                              </Card>
                             );
-                          } else {
-                            // Unfiltered view: Subtle buttons aligned left
-                            return (
-                              <div className="flex gap-2 justify-start">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  // onClick={(e) => {
-                                  //   e.stopPropagation();
-                                  //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
-                                  //   setLocation(`/admin/consolidated-candidate-profile/${candidate.id}`);
-                                  // }}
-                                  className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-2 py-1 h-7"
-                                >
-                                  <User className="h-3 w-3" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    openAssessmentSplitView(candidate);
-                                  }}
-                                  className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-2 py-1 h-7"
-                                >
-                                  <FileText className="h-3 w-3" />
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  // onClick={(e) => {
-                                  //   e.stopPropagation();
-                                  //   sessionStorage.setItem('previousPage', `/admin/job-applicants-kanban/${jobId}`);
-                                  //   setLocation(`/admin/candidate-message/${candidate.id}`);
-                                  // }}
-                                  className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-2 py-1 h-7"
-                                >
-                                  <MessageCircle className="h-3 w-3" />
-                                </Button>
-                              </div>
-                            );
-                          }
-                        })()}
-                      </CardContent>
-                    </Card>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            ))}
-            </>
-          ):( 
-            <div className="bg-white rounded-lg border shadow-sm">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b">
-                    <tr>
-                      <th className="text-left p-3 font-semibold text-gray-900">Candidate</th>
-                      <th className="text-left p-3 font-semibold text-gray-900">Score</th>
-                      <th className="text-left p-3 font-semibold text-gray-900">Primary Status</th>
-                      <th className="text-left p-3 font-semibold text-gray-900">Applied</th>
-                      <th className="text-left p-3 font-semibold text-gray-900">Sub Status</th>
-                      <th className="text-left p-3 font-semibold text-gray-900">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredCandidates.map((candidate) => {
-                      const subStatusDetails = getSubStatusDetails(candidate.subStatus);
-                      return (
-                        <tr 
-                          key={candidate.id} 
-                          className="border-b hover:bg-gray-50 cursor-pointer transition-colors"
-                          onClick={() => openAssessmentSplitView(candidate)}
-                        >
-                          <td className="p-3">
-                            <div className="flex items-center gap-3">
-                              <img 
-                                src={candidate.profilePicture}
-                                alt={candidate.name}
-                                className="w-8 h-8 rounded-full border"
-                              />
-                              <div>
-                                <div className="font-medium text-gray-900 flex items-center gap-2">
-                                  {candidate.name}
-                                  {getCandidateData(candidate.id).hasPollenInteraction && (
-                                    <span className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center text-xs text-white font-bold">
-                                      ✓
-                                    </span>
-                                  )}
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <div className="bg-white rounded-lg border shadow-sm">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50 border-b">
+                        <tr>
+                          <th className="text-left p-3 font-semibold text-gray-900">
+                            Candidate
+                          </th>
+                          <th className="text-left p-3 font-semibold text-gray-900">
+                            Score
+                          </th>
+                          <th className="text-left p-3 font-semibold text-gray-900">
+                            Primary Status
+                          </th>
+                          <th className="text-left p-3 font-semibold text-gray-900">
+                            Applied
+                          </th>
+                          <th className="text-left p-3 font-semibold text-gray-900">
+                            Sub Status
+                          </th>
+                          <th className="text-left p-3 font-semibold text-gray-900">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredCandidates.map((candidate) => {
+                          const subStatusDetails = getSubStatusDetails(
+                            candidate.subStatus,
+                          );
+                          return (
+                            <tr
+                              key={candidate.id}
+                              className="border-b hover:bg-gray-50 cursor-pointer transition-colors"
+                              onClick={() => openAssessmentSplitView(candidate)}
+                            >
+                              <td className="p-3">
+                                <div className="flex items-center gap-3">
+                                  <img
+                                    src={candidate.profilePicture}
+                                    alt={candidate.name}
+                                    className="w-8 h-8 rounded-full border"
+                                  />
+                                  <div>
+                                    <div className="font-medium text-gray-900 flex items-center gap-2">
+                                      {candidate.name}
+                                      {getCandidateData(candidate.id)
+                                        .hasPollenInteraction && (
+                                        <span className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center text-xs text-white font-bold">
+                                          ✓
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="p-3">
-                            <span className={`font-bold ${
-                              candidate.status === 'in_progress' || candidate.status === 'matched_to_employer' || candidate.status === 'complete' ? 'text-pink-600' : 'text-gray-500'
-                            }`}>{candidate.overallSkillsScore}%</span>
-                          </td>
-                          <td className="p-3">
-                            <Badge className={`text-xs min-w-[80px] justify-center ${
-                              candidate.status === 'new_applicants' ? 'bg-blue-600 text-white' :
-                              candidate.status === 'in_progress' ? 'bg-yellow-600 text-white' :
-                              candidate.status === 'matched_to_employer' ? 'bg-green-600 text-white' :
-                              'bg-gray-600 text-white'
-                            }`}>
-                              {getStatusLabel(candidate.status)}
-                            </Badge>
-                          </td>
-                          <td className="p-3 text-sm text-gray-600">
-                            {new Date(candidate.applicationDate).toLocaleDateString('en-GB')}
-                          </td>
-                          <td className="p-3">
-                            <div className="flex justify-start">
-                              <div className="flex flex-wrap gap-1">
-                                <Badge className={`${subStatusDetails.color} text-xs min-w-[100px] justify-start`}>
-                                  {subStatusDetails.label}
+                              </td>
+                              <td className="p-3">
+                                <span
+                                  className={`font-bold ${
+                                    candidate.status === "in_progress" ||
+                                    candidate.status ===
+                                      "matched_to_employer" ||
+                                    candidate.status === "complete"
+                                      ? "text-pink-600"
+                                      : "text-gray-500"
+                                  }`}
+                                >
+                                  {candidate.overallSkillsScore}%
+                                </span>
+                              </td>
+                              <td className="p-3">
+                                <Badge
+                                  className={`text-xs min-w-[80px] justify-center ${
+                                    candidate.status === "new_applicants"
+                                      ? "bg-blue-600 text-white"
+                                      : candidate.status === "in_progress"
+                                        ? "bg-yellow-600 text-white"
+                                        : candidate.status ===
+                                            "matched_to_employer"
+                                          ? "bg-green-600 text-white"
+                                          : "bg-gray-600 text-white"
+                                  }`}
+                                >
+                                  {getStatusLabel(candidate.status)}
                                 </Badge>
-                                {getStoppedAtStage(candidate.id) && (
-                                  <Badge className="bg-white text-gray-700 border border-gray-300 text-xs">
-                                    Stopped at {getStoppedAtStage(candidate.id)}
-                                  </Badge>
-                                )}
-                                {hasUnreviewedEmployerFeedback(candidate.id) && (
-                                  <button
+                              </td>
+                              <td className="p-3 text-sm text-gray-600">
+                                {new Date(
+                                  candidate.applicationDate,
+                                ).toLocaleDateString("en-GB")}
+                              </td>
+                              <td className="p-3">
+                                <div className="flex justify-start">
+                                  <div className="flex flex-wrap gap-1">
+                                    <Badge
+                                      className={`${subStatusDetails.color} text-xs min-w-[100px] justify-start`}
+                                    >
+                                      {subStatusDetails.label}
+                                    </Badge>
+                                    {getStoppedAtStage(candidate.id) && (
+                                      <Badge className="bg-white text-gray-700 border border-gray-300 text-xs">
+                                        Stopped at{" "}
+                                        {getStoppedAtStage(candidate.id)}
+                                      </Badge>
+                                    )}
+                                    {hasUnreviewedEmployerFeedback(
+                                      candidate.id,
+                                    ) && (
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          const candidateData =
+                                            getCandidateData(candidate.id);
+                                          setSelectedFeedback(
+                                            candidateData.employerFeedback,
+                                          );
+                                          setShowFeedbackReview(true);
+                                        }}
+                                        className="ml-1"
+                                        title="Review employer feedback"
+                                      >
+                                        <AlertTriangle className="h-4 w-4 text-red-500" />
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="p-3">
+                                <div className="flex gap-1">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    // onClick={(e) => {
+                                    //   e.stopPropagation();
+                                    //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
+                                    //   setLocation(`/admin/consolidated-candidate-profile/${candidate.id}`);
+                                    // }}
+                                    className="text-xs"
+                                  >
+                                    <User className="h-3 w-3" />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      const candidateData = getCandidateData(candidate.id);
-                                      setSelectedFeedback(candidateData.employerFeedback);
-                                      setShowFeedbackReview(true);
+                                      openAssessmentSplitView(candidate);
                                     }}
-                                    className="ml-1"
-                                    title="Review employer feedback"
+                                    className="text-xs"
                                   >
-                                    <AlertTriangle className="h-4 w-4 text-red-500" />
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          </td>
-                          <td className="p-3">
-                            <div className="flex gap-1">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                // onClick={(e) => {
-                                //   e.stopPropagation();
-                                //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
-                                //   setLocation(`/admin/consolidated-candidate-profile/${candidate.id}`);
-                                // }}
-                                className="text-xs"
-                              >
-                                <User className="h-3 w-3" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  openAssessmentSplitView(candidate);
-                                }}
-                                className="text-xs"
-                              >
-                                <FileText className="h-3 w-3" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                // onClick={(e) => {
-                                //   e.stopPropagation();
-                                //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
-                                //   setLocation(`/admin/candidate-message/${candidate.id}`);
-                                // }}
-                                className="text-xs"
-                              >
-                                <MessageCircle className="h-3 w-3" />
-                              </Button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-           )}
+                                    <FileText className="h-3 w-3" />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    // onClick={(e) => {
+                                    //   e.stopPropagation();
+                                    //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
+                                    //   setLocation(`/admin/candidate-message/${candidate.id}`);
+                                    // }}
+                                    className="text-xs"
+                                  >
+                                    <MessageCircle className="h-3 w-3" />
+                                  </Button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Assessment Split View - Overlay */}
-        {assessmentSplitViewOpen && selectedAssessment && (
-          <div className="fixed top-0 right-0 w-2/3 h-full border-l border-gray-200 bg-white z-50 shadow-xl flex flex-col min-w-[800px]">
-            <div 
-              style={{
-                backgroundColor: '#f9fafb',
-                borderBottom: '1px solid #e5e7eb',
-                width: '100%',
-                margin: 0,
-                padding: '12px 16px',
-                boxSizing: 'border-box',
-                flexShrink: 0,
-                position: 'relative'
-              }}
-            >
-              <div 
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  width: '100%',
-                  height: 'auto',
-                  margin: 0,
-                  padding: 0,
-                  position: 'relative'
-                }}
-              >
-                <div className="flex items-center gap-3 flex-shrink-0">
-                  <img 
-                    src={selectedAssessment.profilePicture}
-                    alt={selectedAssessment.name}
-                    className="w-10 h-10 rounded-full border"
-                  />
-                  <h3 className="font-semibold text-sm">{selectedAssessment.name} - Assessment</h3>
-                </div>
-
-                <div 
+            {assessmentSplitViewOpen && selectedAssessment && (
+              <div className="fixed top-0 right-0 w-2/3 h-full border-l border-gray-200 bg-white z-50 shadow-xl flex flex-col min-w-[800px]">
+                <div
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    position: 'absolute',
-                    right: 0,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    flexShrink: 0
+                    backgroundColor: "#f9fafb",
+                    borderBottom: "1px solid #e5e7eb",
+                    width: "100%",
+                    margin: 0,
+                    padding: "12px 16px",
+                    boxSizing: "border-box",
+                    flexShrink: 0,
+                    position: "relative",
                   }}
                 >
-                  {/* Provide Update button for candidates who completed Pollen interviews */}
-                  {selectedAssessment.subStatus === 'Pollen Interview Complete' && (
-                    <Button
-                      variant="default"
-                      size="sm"
-                      // onClick={() => setLocation(buildUrlWithCurrentState(`/admin/provide-update/${selectedAssessment.id}`))}
-                      className="text-xs px-1 py-1 bg-[#E2007A] hover:bg-[#E2007A]/90 text-white"
-                    >
-                      <FileText className="h-3 w-3 mr-1" />
-                      Provide Update
-                    </Button>
-                  )}
-                  
-                  {/* Review Feedback button for candidates who stopped at employer */}
-                  {(() => {
-                    const apiCandidate = candidates.find(c => c.id === selectedAssessment.id);
-                    return apiCandidate?.subStatus === 'stopped_at_employer' && hasUnreviewedEmployerFeedback(selectedAssessment.id);
-                  })() && (
-                    <Button
-                      variant="default"
-                      size="sm"
-                      onClick={() => {
-                        const apiCandidate = candidates.find(c => c.id === selectedAssessment.id);
-                        const feedbackData = apiCandidate?.employerFeedback || getCandidateData(selectedAssessment.id).employerFeedback;
-                        setSelectedFeedback(feedbackData);
-                        setShowFeedbackReview(true);
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      width: "100%",
+                      height: "auto",
+                      margin: 0,
+                      padding: 0,
+                      position: "relative",
+                    }}
+                  >
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                      <img
+                        src={selectedAssessment.profilePicture}
+                        alt={selectedAssessment.name}
+                        className="w-10 h-10 rounded-full border"
+                      />
+                      <h3 className="font-semibold text-sm">
+                        {selectedAssessment.name} - Assessment
+                      </h3>
+                    </div>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        position: "absolute",
+                        right: 0,
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        flexShrink: 0,
                       }}
-                      className="text-xs px-1 py-1 bg-orange-600 hover:bg-orange-700 text-white"
                     >
-                      <MessageSquare className="h-3 w-3 mr-1" />
-                      Review Feedback
-                    </Button>
-                  )}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    // TODO: 
-                    // onClick={() => {
-                    //   // Store current page context for proper back navigation
-                    //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
-                    //   setLocation(`/admin/consolidated-candidate-profile/${selectedAssessment.id}`);
-                    // }}
-                    className="text-xs px-1 py-1"
-                  >
-                    <User className="h-3 w-3 mr-1" />
-                    Profile
-                  </Button>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
-                      setLocation(`/admin/candidate-message/${selectedAssessment.id}`);
-                    }}
-                    className="text-xs px-1 py-1"
-                  >
-                    <MessageSquare className="h-3 w-3 mr-1" />
-                    Message
-                  </Button>
+                      {/* Provide Update button for candidates who completed Pollen interviews */}
+                      {selectedAssessment.subStatus ===
+                        "Pollen Interview Complete" && (
+                        <Button
+                          variant="default"
+                          size="sm"
+                          // onClick={() => setLocation(buildUrlWithCurrentState(`/admin/provide-update/${selectedAssessment.id}`))}
+                          className="text-xs px-1 py-1 bg-[#E2007A] hover:bg-[#E2007A]/90 text-white"
+                        >
+                          <FileText className="h-3 w-3 mr-1" />
+                          Provide Update
+                        </Button>
+                      )}
 
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      const currentIndex = filteredCandidates.findIndex(c => c.id === selectedAssessment?.id);
-                      const prevIndex = currentIndex - 1;
-                      if (prevIndex >= 0) {
-                        setSelectedAssessment(filteredCandidates[prevIndex]);
-                      }
-                    }}
-                    disabled={filteredCandidates.findIndex(c => c.id === selectedAssessment?.id) === 0}
-                    className="text-xs px-1 py-1"
-                  >
-                    <ChevronLeft className="h-3 w-3" />
-                  </Button>
-                  
-                  <span className="text-xs text-gray-600 px-1">
-                    {filteredCandidates.findIndex(c => c.id === selectedAssessment?.id) + 1} of {filteredCandidates.length}
-                  </span>
-                  
-                  <Button
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => {
-                      const currentIndex = filteredCandidates.findIndex(c => c.id === selectedAssessment?.id);
-                      const nextIndex = currentIndex + 1;
-                      if (nextIndex < filteredCandidates.length) {
-                        setSelectedAssessment(filteredCandidates[nextIndex]);
-                      }
-                    }}
-                    disabled={filteredCandidates.findIndex(c => c.id === selectedAssessment?.id) === filteredCandidates.length - 1}
-                    className="text-xs px-1 py-1"
-                  >
-                    <ChevronRight className="h-3 w-3" />
-                  </Button>
+                      {/* Review Feedback button for candidates who stopped at employer */}
+                      {(() => {
+                        const apiCandidate = candidates.find(
+                          (c) => c.id === selectedAssessment.id,
+                        );
+                        return (
+                          apiCandidate?.subStatus === "stopped_at_employer" &&
+                          hasUnreviewedEmployerFeedback(selectedAssessment.id)
+                        );
+                      })() && (
+                        <Button
+                          variant="default"
+                          size="sm"
+                          onClick={() => {
+                            const apiCandidate = candidates.find(
+                              (c) => c.id === selectedAssessment.id,
+                            );
+                            const feedbackData =
+                              apiCandidate?.employerFeedback ||
+                              getCandidateData(selectedAssessment.id)
+                                .employerFeedback;
+                            setSelectedFeedback(feedbackData);
+                            setShowFeedbackReview(true);
+                          }}
+                          className="text-xs px-1 py-1 bg-orange-600 hover:bg-orange-700 text-white"
+                        >
+                          <MessageSquare className="h-3 w-3 mr-1" />
+                          Review Feedback
+                        </Button>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        // TODO:
+                        // onClick={() => {
+                        //   // Store current page context for proper back navigation
+                        //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
+                        //   setLocation(`/admin/consolidated-candidate-profile/${selectedAssessment.id}`);
+                        // }}
+                        className="text-xs px-1 py-1"
+                      >
+                        <User className="h-3 w-3 mr-1" />
+                        Profile
+                      </Button>
 
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      // Ensure we preserve the selected assessment when switching to full page
-                      if (selectedAssessment) {
-                        setAssessmentSplitViewOpen(false);
-                        setIsMobileFullPage(true);
-                        // Force a re-render by briefly clearing and setting the assessment
-                        setTimeout(() => {
-                          setSelectedAssessment(selectedAssessment);
-                        }, 10);
-                      }
-                    }}
-                    className="text-xs px-1 py-1"
-                  >
-                    <Eye className="h-3 w-3 mr-1" />
-                    Full Page
-                  </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        // onClick={() => {
+                        //   sessionStorage.setItem(
+                        //     "previousPage",
+                        //     `/admin/job-applicants-grid/${jobId}`,
+                        //   );
+                        //   setLocation(
+                        //     `/admin/candidate-message/${selectedAssessment.id}`,
+                        //   );
+                        // }}
+                        className="text-xs px-1 py-1"
+                      >
+                        <MessageSquare className="h-3 w-3 mr-1" />
+                        Message
+                      </Button>
 
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={closeAssessmentSplitView}
-                    className="p-0 h-8 w-8"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const currentIndex = filteredCandidates.findIndex(
+                            (c) => c.id === selectedAssessment?.id,
+                          );
+                          const prevIndex = currentIndex - 1;
+                          if (prevIndex >= 0) {
+                            setSelectedAssessment(
+                              filteredCandidates[prevIndex],
+                            );
+                          }
+                        }}
+                        disabled={
+                          filteredCandidates.findIndex(
+                            (c) => c.id === selectedAssessment?.id,
+                          ) === 0
+                        }
+                        className="text-xs px-1 py-1"
+                      >
+                        <ChevronLeft className="h-3 w-3" />
+                      </Button>
 
-            <div className="px-4 py-2 bg-white flex-shrink-0">
-              <div className="text-sm text-gray-600 flex items-center justify-between">
-                {getCandidateData(selectedAssessment.id).hasPollenInteraction ? (
-                  <div className="flex items-center gap-2">
-                    <span className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center text-xs text-white font-bold">✓</span>
-                    <span className="text-sm">
-                      Spoke to {getCandidateData(selectedAssessment.id).lastPollenTeamMember} on {getCandidateData(selectedAssessment.id).lastInteractionDate}
-                    </span>
+                      <span className="text-xs text-gray-600 px-1">
+                        {filteredCandidates.findIndex(
+                          (c) => c.id === selectedAssessment?.id,
+                        ) + 1}{" "}
+                        of {filteredCandidates.length}
+                      </span>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const currentIndex = filteredCandidates.findIndex(
+                            (c) => c.id === selectedAssessment?.id,
+                          );
+                          const nextIndex = currentIndex + 1;
+                          if (nextIndex < filteredCandidates.length) {
+                            setSelectedAssessment(
+                              filteredCandidates[nextIndex],
+                            );
+                          }
+                        }}
+                        disabled={
+                          filteredCandidates.findIndex(
+                            (c) => c.id === selectedAssessment?.id,
+                          ) ===
+                          filteredCandidates.length - 1
+                        }
+                        className="text-xs px-1 py-1"
+                      >
+                        <ChevronRight className="h-3 w-3" />
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          // Ensure we preserve the selected assessment when switching to full page
+                          if (selectedAssessment) {
+                            setAssessmentSplitViewOpen(false);
+                            setIsMobileFullPage(true);
+                            // Force a re-render by briefly clearing and setting the assessment
+                            setTimeout(() => {
+                              setSelectedAssessment(selectedAssessment);
+                            }, 10);
+                          }
+                        }}
+                        className="text-xs px-1 py-1"
+                      >
+                        <Eye className="h-3 w-3 mr-1" />
+                        Full Page
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        // TODO:
+                        // onClick={closeAssessmentSplitView}
+                        className="p-0 h-8 w-8"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
-                ) : (
-                  <span className="text-sm">{getInteractionDisplayText(getCandidateData(selectedAssessment.id))}</span>
-                )}
-              </div>
-            </div>
-            
-            {/* Overall Score */}
-            <div className="bg-white border-b border-gray-200 px-4 py-3 flex-shrink-0">
-              <div className="flex items-center gap-6">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-[#E2007A] mb-1">
-                    {Math.round((editedScores.creative + editedScores.dataAnalysis + editedScores.communication + editedScores.strategic) / 4 * 10)}%
-                  </div>
-                  <div className="text-sm font-medium text-gray-700">Overall Score</div>
                 </div>
-                <div className="w-6"/>
-                <div>
-                  <span className="text-gray-600 text-sm">Submission Date:</span>
-                  <div className="font-medium text-gray-900">16/01/2025</div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex-1 overflow-y-auto min-h-0">
-              {/* Assessment Content Wrapper */}
-              <div className="p-3 space-y-4">
 
-                {/* Authentic Assessment Q&A Section - Using Real Assessment Data */}
-                <div className="space-y-4">
-                  {selectedAssessment.assessmentSubmission?.responses?.map((response, index) => {
-                    // Remove duplicate numbering from question text (e.g., "Q1. Describe..." becomes "Describe...")
-                    const cleanQuestion = response.question.replace(/^Q\d+\.\s*/, '');
-                    
-                    return (
-                      <div key={index} className="border rounded-lg p-4 bg-white">
-                        <div className="font-medium text-sm mb-3 text-gray-700">
-                          Q{index + 1}: {cleanQuestion}
+                <div className="px-4 py-2 bg-white flex-shrink-0">
+                  <div className="text-sm text-gray-600 flex items-center justify-between">
+                    {getCandidateData(selectedAssessment.id)
+                      .hasPollenInteraction ? (
+                      <div className="flex items-center gap-2">
+                        <span className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center text-xs text-white font-bold">
+                          ✓
+                        </span>
+                        <span className="text-sm">
+                          Spoke to{" "}
+                          {
+                            getCandidateData(selectedAssessment.id)
+                              .lastPollenTeamMember
+                          }{" "}
+                          on{" "}
+                          {
+                            getCandidateData(selectedAssessment.id)
+                              .lastInteractionDate
+                          }
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-sm">
+                        {getInteractionDisplayText(
+                          getCandidateData(selectedAssessment.id),
+                        )}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Overall Score */}
+                <div className="bg-white border-b border-gray-200 px-4 py-3 flex-shrink-0">
+                  <div className="flex items-center gap-6">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-[#E2007A] mb-1">
+                        {Math.round(
+                          ((editedScores.creative +
+                            editedScores.dataAnalysis +
+                            editedScores.communication +
+                            editedScores.strategic) /
+                            4) *
+                            10,
+                        )}
+                        %
+                      </div>
+                      <div className="text-sm font-medium text-gray-700">
+                        Overall Score
+                      </div>
+                    </div>
+                    <div className="w-6" />
+                    <div>
+                      <span className="text-gray-600 text-sm">
+                        Submission Date:
+                      </span>
+                      <div className="font-medium text-gray-900">
+                        16/01/2025
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex-1 overflow-y-auto min-h-0">
+                  {/* Assessment Content Wrapper */}
+                  <div className="p-3 space-y-4">
+                    {/* Authentic Assessment Q&A Section - Using Real Assessment Data */}
+                    <div className="space-y-4">
+                      {selectedAssessment.assessmentSubmission?.responses?.map(
+                        (response, index) => {
+                          // Remove duplicate numbering from question text (e.g., "Q1. Describe..." becomes "Describe...")
+                          const cleanQuestion = response.question.replace(
+                            /^Q\d+\.\s*/,
+                            "",
+                          );
+
+                          return (
+                            <div
+                              key={index}
+                              className="border rounded-lg p-4 bg-white"
+                            >
+                              <div className="font-medium text-sm mb-3 text-gray-700">
+                                Q{index + 1}: {cleanQuestion}
+                              </div>
+                              <div className="text-sm text-gray-600 mb-3 leading-relaxed">
+                                {response.response}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                Word count: {response.wordCount}
+                              </div>
+                            </div>
+                          );
+                        },
+                      ) || (
+                        <div className="text-center py-8">
+                          <p className="text-gray-500">
+                            No assessment responses available
+                          </p>
                         </div>
-                        <div className="text-sm text-gray-600 mb-3 leading-relaxed">
-                          {response.response}
+                      )}
+                    </div>
+
+                    {/* Individual Scores Section - Moved below Q&A */}
+                    <div className="border rounded-lg bg-gray-50">
+                      <div className="px-6 py-4 border-b border-gray-200">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Individual Assessment Scores
+                        </h3>
+                        <p className="text-sm text-gray-600 mt-1">
+                          Rate performance across key areas (1-10 scale)
+                        </p>
+                      </div>
+                      <div className="p-6 pb-8 space-y-6">
+                        {/* Creative Campaign Development */}
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <Lightbulb className="h-4 w-4 text-gray-600" />
+                            <span className="font-medium text-sm">
+                              Creative Campaign Development
+                            </span>
+                            <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                              {editedScores.creative}/10
+                            </span>
+                          </div>
+                          {isEditing ? (
+                            <div className="px-2">
+                              <input
+                                type="range"
+                                min="1"
+                                max="10"
+                                value={editedScores.creative}
+                                onChange={(e) =>
+                                  setEditedScores((prev) => ({
+                                    ...prev,
+                                    creative: parseInt(e.target.value),
+                                  }))
+                                }
+                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                              />
+                              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>1</span>
+                                <span>2</span>
+                                <span>3</span>
+                                <span>4</span>
+                                <span>5</span>
+                                <span>6</span>
+                                <span>7</span>
+                                <span>8</span>
+                                <span>9</span>
+                                <span>10</span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="px-2">
+                              <div className="w-full h-2 bg-gray-200 rounded-lg relative">
+                                <div
+                                  className="h-full bg-[#E2007A] rounded-lg"
+                                  style={{
+                                    width: `${editedScores.creative * 10}%`,
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          )}
                         </div>
-                        <div className="text-xs text-gray-500">
-                          Word count: {response.wordCount}
+
+                        {/* Data Analysis & Insights */}
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <BarChart3 className="h-4 w-4 text-gray-600" />
+                            <span className="font-medium text-sm">
+                              Data Analysis & Insights
+                            </span>
+                            <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                              {editedScores.dataAnalysis}/10
+                            </span>
+                          </div>
+                          {isEditing ? (
+                            <div className="px-2">
+                              <input
+                                type="range"
+                                min="1"
+                                max="10"
+                                value={editedScores.dataAnalysis}
+                                onChange={(e) =>
+                                  setEditedScores((prev) => ({
+                                    ...prev,
+                                    dataAnalysis: parseInt(e.target.value),
+                                  }))
+                                }
+                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                              />
+                              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>1</span>
+                                <span>2</span>
+                                <span>3</span>
+                                <span>4</span>
+                                <span>5</span>
+                                <span>6</span>
+                                <span>7</span>
+                                <span>8</span>
+                                <span>9</span>
+                                <span>10</span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="px-2">
+                              <div className="w-full h-2 bg-gray-200 rounded-lg relative">
+                                <div
+                                  className="h-full bg-[#E2007A] rounded-lg"
+                                  style={{
+                                    width: `${editedScores.dataAnalysis * 10}%`,
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Communication & Presentation */}
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <MessageSquare className="h-4 w-4 text-gray-600" />
+                            <span className="font-medium text-sm">
+                              Communication & Presentation
+                            </span>
+                            <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                              {editedScores.communication}/10
+                            </span>
+                          </div>
+                          {isEditing ? (
+                            <div className="px-2">
+                              <input
+                                type="range"
+                                min="1"
+                                max="10"
+                                value={editedScores.communication}
+                                onChange={(e) =>
+                                  setEditedScores((prev) => ({
+                                    ...prev,
+                                    communication: parseInt(e.target.value),
+                                  }))
+                                }
+                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                              />
+                              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>1</span>
+                                <span>2</span>
+                                <span>3</span>
+                                <span>4</span>
+                                <span>5</span>
+                                <span>6</span>
+                                <span>7</span>
+                                <span>8</span>
+                                <span>9</span>
+                                <span>10</span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="px-2">
+                              <div className="w-full h-2 bg-gray-200 rounded-lg relative">
+                                <div
+                                  className="h-full bg-[#E2007A] rounded-lg"
+                                  style={{
+                                    width: `${editedScores.communication * 10}%`,
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Strategic Thinking */}
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2">
+                            <TrendingUp className="h-4 w-4 text-gray-600" />
+                            <span className="font-medium text-sm">
+                              Strategic Thinking
+                            </span>
+                            <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                              {editedScores.strategic}/10
+                            </span>
+                          </div>
+                          {isEditing ? (
+                            <div className="px-2">
+                              <input
+                                type="range"
+                                min="1"
+                                max="10"
+                                value={editedScores.strategic}
+                                onChange={(e) =>
+                                  setEditedScores((prev) => ({
+                                    ...prev,
+                                    strategic: parseInt(e.target.value),
+                                  }))
+                                }
+                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                              />
+                              <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>1</span>
+                                <span>2</span>
+                                <span>3</span>
+                                <span>4</span>
+                                <span>5</span>
+                                <span>6</span>
+                                <span>7</span>
+                                <span>8</span>
+                                <span>9</span>
+                                <span>10</span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="px-2">
+                              <div className="w-full h-2 bg-gray-200 rounded-lg relative">
+                                <div
+                                  className="h-full bg-[#E2007A] rounded-lg"
+                                  style={{
+                                    width: `${editedScores.strategic * 10}%`,
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
+                    </div>
+
+                    {/* Next Steps Section */}
+                    <div className="border rounded-lg bg-gray-50">
+                      <div className="px-6 py-4 border-b border-gray-200">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Next Steps
+                        </h3>
+                      </div>
+
+                      <div className="p-6 pb-8 space-y-6">
+                        {/* Step 1 - Score Review */}
+                        <div className="border rounded-lg p-6 bg-white">
+                          <div className="space-y-4">
+                            <h4 className="text-xs sm:text-sm font-medium text-gray-900">
+                              Step 1: Assessment Score Review
+                            </h4>
+                            <p className="text-xs text-gray-600 mb-4">
+                              Review AI-generated scores and make adjustments if
+                              needed before proceeding.
+                            </p>
+                            {!isScoreApproved(selectedAssessment) ? (
+                              <div className="flex flex-wrap gap-4 items-center">
+                                {!scoresApproved ? (
+                                  <Button
+                                    // onClick={handleApproveAIScores}
+                                    size="default"
+                                    className="bg-green-600 hover:bg-green-700 h-12 px-6 text-base font-medium"
+                                  >
+                                    <ThumbsUp className="h-5 w-5 mr-2" />
+                                    Approve Scores
+                                  </Button>
+                                ) : (
+                                  <div className="bg-green-100 border border-green-200 rounded-lg p-4 inline-flex items-center gap-3 text-green-700">
+                                    <Check className="h-5 w-5" />
+                                    <span className="font-medium text-base">
+                                      Scores Approved
+                                    </span>
+                                  </div>
+                                )}
+
+                                {isEditing ? (
+                                  <>
+                                    <Button
+                                      onClick={handleSaveScores}
+                                      size="default"
+                                      className="bg-green-600 hover:bg-green-700 h-12 px-6 text-base font-medium"
+                                    >
+                                      <Check className="h-5 w-5 mr-2" />
+                                      Save Changes
+                                    </Button>
+                                    <Button
+                                      variant="outline"
+                                      size="default"
+                                      onClick={() => setIsEditing(false)}
+                                      className="h-12 px-6 text-base font-medium"
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </>
+                                ) : (
+                                  <Button
+                                    variant="outline"
+                                    size="default"
+                                    onClick={() => setIsEditing(true)}
+                                    className="h-12 px-6 text-base font-medium"
+                                  >
+                                    <Edit3 className="h-5 w-5 mr-2" />
+                                    Edit Scores
+                                  </Button>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="bg-gray-100 border border-gray-200 rounded-lg p-6 text-center">
+                                <div className="flex items-center justify-center gap-2 text-gray-700">
+                                  <Lock className="h-4 w-4" />
+                                  <span className="font-medium">
+                                    Scores Locked - Candidate Progressed
+                                  </span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {["Unopened", "Under Review"].includes(
+                          selectedAssessment.subStatus,
+                        ) &&
+                          !scoresApproved &&
+                          !isScoreApproved(selectedAssessment) && (
+                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                              <div className="flex items-center gap-2 text-amber-800">
+                                <AlertTriangle className="h-5 w-5" />
+                                <span className="text-base font-medium">
+                                  Approve assessment scores before making
+                                  candidate decision
+                                </span>
+                              </div>
+                            </div>
+                          )}
+
+                        {/* Step 2 - Candidate Decision - Lock for completed statuses */}
+                        {["Unopened", "Under Review"].includes(
+                          selectedAssessment.subStatus,
+                        ) ? (
+                          <div className="border rounded-lg p-6 bg-white">
+                            <div className="space-y-4 pb-18">
+                              <h4 className="text-xs sm:text-sm font-medium text-gray-900 mb-2">
+                                Step 2: Candidate Decision
+                              </h4>
+                              <p className="text-xs text-gray-600 mb-3">
+                                Choose next action for this candidate. This will
+                                lock scores and update their status.
+                              </p>
+                              <div className="flex gap-4 flex-wrap">
+                                {/* Interview button only for unopened/under review */}
+                                <Button
+                                  onClick={() =>
+                                    handleCandidateAction("interview")
+                                  }
+                                  // TODO: consultar: en el código original se define más adelante, no comprendo la lógica
+                                  // disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending}
+                                  size="default"
+                                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
+                                >
+                                  <Calendar className="h-5 w-5 mr-2" />
+                                  Invite to Pollen Interview
+                                </Button>
+
+                                <Button
+                                  onClick={() => handleCandidateAction("match")}
+                                  // TODO: idem anterior
+                                  // disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending || !canFastTrackToEmployer}
+                                  size="default"
+                                  className="bg-green-600 hover:bg-green-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
+                                >
+                                  <UserCheck className="h-5 w-5 mr-2" />
+                                  Match to Employer
+                                </Button>
+
+                                <Button
+                                  onClick={() =>
+                                    handleCandidateAction("reject")
+                                  }
+                                  // TODO: idem anterior
+                                  // disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending}
+                                  variant="outline"
+                                  size="default"
+                                  className="h-12 px-6 text-base font-medium"
+                                >
+                                  <X className="h-5 w-5 mr-2" />
+                                  Not Progressing
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="border rounded-lg p-6 bg-gray-100">
+                            <div className="flex items-center justify-center gap-3 text-gray-700 mb-2">
+                              <Lock className="h-5 w-5" />
+                              <span className="font-medium text-lg">
+                                Step 2: Candidate Decision Completed
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-600 text-center mb-4">
+                              This candidate has progressed beyond initial
+                              review stage. Use "Provide Update" for further
+                              actions.
+                            </p>
+
+                            {/* Show Provide Update button for completed Pollen interview candidates */}
+                            {selectedAssessment?.subStatus ===
+                              "Pollen Interview Complete" && (
+                              <div className="flex justify-center">
+                                <Button
+                                  // onClick={() => {
+                                  //   setLocation(buildUrlWithCurrentState(`/admin/provide-update/${selectedAssessment.id}`));
+                                  // }}
+                                  size="default"
+                                  className="bg-[#E2007A] hover:bg-[#E2007A]/90 text-white h-12 px-6 text-base font-medium"
+                                >
+                                  <MessageCircle className="h-5 w-5 mr-2" />
+                                  Provide Update
+                                </Button>
+                              </div>
+                            )}
+
+                            {/* Show Review Feedback button for candidates who stopped at employer */}
+                            {(() => {
+                              const apiCandidate = candidates.find(
+                                (c) => c.id === selectedAssessment?.id,
+                              );
+                              return (
+                                apiCandidate?.subStatus ===
+                                  "stopped_at_employer" &&
+                                hasUnreviewedEmployerFeedback(
+                                  selectedAssessment.id,
+                                )
+                              );
+                            })() && (
+                              <div className="flex justify-center">
+                                <Button
+                                  onClick={() => {
+                                    const apiCandidate = candidates.find(
+                                      (c) => c.id === selectedAssessment.id,
+                                    );
+                                    const feedbackData =
+                                      apiCandidate?.employerFeedback ||
+                                      getCandidateData(selectedAssessment.id)
+                                        .employerFeedback;
+                                    setSelectedFeedback(feedbackData);
+                                    setShowFeedbackReview(true);
+                                  }}
+                                  size="default"
+                                  className="bg-orange-600 hover:bg-orange-700 text-white h-12 px-6 text-base font-medium"
+                                >
+                                  <MessageSquare className="h-5 w-5 mr-2" />
+                                  Review Feedback
+                                </Button>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Confirmation Dialog */}
+          <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Confirm Action</DialogTitle>
+              </DialogHeader>
+              <div className="py-4">
+                <p className="text-gray-700">
+                  {pendingAction === "interview" &&
+                    "Are you sure you want to invite this candidate to a Pollen interview?"}
+                  {pendingAction === "match" &&
+                    "Are you sure you want to match this candidate to an employer?"}
+                  {pendingAction === "reject" &&
+                    "Are you sure you want to mark this candidate as not progressing?"}
+                </p>
+                <p className="text-sm text-gray-500 mt-2">
+                  This action cannot be undone.
+                </p>
+              </div>
+              <DialogFooter className="flex gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setConfirmDialogOpen(false);
+                    setPendingAction(null);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={confirmCandidateAction}
+                  // TODO: candidateActionMutation
+                  // disabled={candidateActionMutation.isPending}
+                  className={
+                    pendingAction === "reject"
+                      ? "bg-red-600 hover:bg-red-700"
+                      : pendingAction === "interview"
+                        ? "bg-blue-600 hover:bg-blue-700"
+                        : "bg-green-600 hover:bg-green-700"
+                  }
+                >
+                  {
+                    //candidateActionMutation.isPending
+                    // ? "Processing..."
+                    // : "Confirm"
+                  }
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* Full Page Assessment Modal */}
+          {isMobileFullPage && selectedAssessment && (
+            <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+              <div className="sticky top-0 z-30 bg-white border-b border-gray-200">
+                {/* Header Section */}
+                <div className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-lg font-semibold text-gray-900">
+                          {selectedAssessment.name} - Assessment
+                        </h2>
+                        {/* Provide Update button for candidates who completed Pollen interviews */}
+                        {selectedAssessment.subStatus ===
+                          "Pollen Interview Complete" && (
+                          <Button
+                            variant="default"
+                            size="sm"
+                            // TODO:
+                            // onClick={() => setLocation(buildUrlWithCurrentState(`/admin/provide-update/${selectedAssessment.id}`))}
+                            className="text-xs px-2 py-1 bg-[#E2007A] hover:bg-[#E2007A]/90 text-white"
+                          >
+                            <FileText className="h-3 w-3 mr-1" />
+                            Provide Update
+                          </Button>
+                        )}
+
+                        {/* Review Feedback button for candidates who stopped at employer */}
+                        {(() => {
+                          const apiCandidate = candidates.find(
+                            (c) => c.id === selectedAssessment.id,
+                          );
+                          return (
+                            apiCandidate?.subStatus === "stopped_at_employer" &&
+                            hasUnreviewedEmployerFeedback(selectedAssessment.id)
+                          );
+                        })() && (
+                          <Button
+                            variant="default"
+                            size="sm"
+                            onClick={() => {
+                              const apiCandidate = candidates.find(
+                                (c) => c.id === selectedAssessment.id,
+                              );
+                              const feedbackData =
+                                apiCandidate?.employerFeedback ||
+                                getCandidateData(selectedAssessment.id)
+                                  .employerFeedback;
+                              setSelectedFeedback(feedbackData);
+                              setShowFeedbackReview(true);
+                            }}
+                            className="text-xs px-2 py-1 bg-orange-600 hover:bg-orange-700 text-white"
+                          >
+                            <MessageSquare className="h-3 w-3 mr-1" />
+                            Review Feedback
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {/* Profile and Message buttons moved to right side */}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        // TODO:
+                        // onClick={() => {
+                        //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
+                        //   setLocation(`/admin/consolidated-candidate-profile/${selectedAssessment.id}`);
+                        // }}
+                        className="text-xs px-2 py-1"
+                      >
+                        <User className="h-3 w-3" />
+                        Profile
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        // TODO:
+                        // onClick={() => {
+                        //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
+                        //   setLocation(`/admin/candidate-message/${selectedAssessment.id}`);
+                        // }}
+                        className="text-xs px-2 py-1"
+                      >
+                        <MessageSquare className="h-3 w-3" />
+                        Message
+                      </Button>
+
+                      {/* Navigation buttons */}
+                      <div className="flex items-center gap-2 ml-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          // TODO:
+                          // onClick={() => navigateToCandidate('prev')}
+                          disabled={
+                            filteredCandidates.findIndex(
+                              (c) => c.id === selectedAssessment?.id,
+                            ) === 0
+                          }
+                          className="text-xs px-2 py-1"
+                        >
+                          <ChevronLeft className="h-3 w-3" />
+                        </Button>
+
+                        <span className="text-xs text-gray-600 px-2">
+                          {filteredCandidates.findIndex(
+                            (c) => c.id === selectedAssessment?.id,
+                          ) + 1}{" "}
+                          of {filteredCandidates.length}
+                        </span>
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          // onClick={() => navigateToCandidate('next')}
+                          disabled={
+                            filteredCandidates.findIndex(
+                              (c) => c.id === selectedAssessment?.id,
+                            ) ===
+                            filteredCandidates.length - 1
+                          }
+                          className="text-xs px-2 py-1"
+                        >
+                          <ChevronRight className="h-3 w-3" />
+                        </Button>
+                      </div>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setIsMobileFullPage(false);
+                          setAssessmentSplitViewOpen(true);
+                        }}
+                        className="text-xs px-2 py-1"
+                      >
+                        <SplitSquareHorizontal className="h-3 w-3 mr-1" />
+                        Split Screen
+                      </Button>
+
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setIsMobileFullPage(false);
+                          setAssessmentSplitViewOpen(false);
+                          setSelectedAssessment(null);
+                        }}
+                        className="p-2 hover:bg-gray-100 border border-gray-300"
+                        title="Close Assessment"
+                      >
+                        <X className="h-5 w-5 text-gray-600" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Overall Score Section - Part of same sticky container */}
+                <div className="border-t border-gray-200 px-4 py-3">
+                  <div className="flex items-center gap-6">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-[#E2007A] mb-1">
+                        {Math.round(
+                          ((editedScores.creative +
+                            editedScores.dataAnalysis +
+                            editedScores.communication +
+                            editedScores.strategic) /
+                            4) *
+                            10,
+                        )}
+                        %
+                      </div>
+                      <div className="text-sm font-medium text-gray-700">
+                        Overall Score
+                      </div>
+                    </div>
+                    <div className="h-10 w-px bg-gray-300" />
+                    <div>
+                      <span className="text-gray-600 text-sm">
+                        Submission Date:
+                      </span>
+                      <div className="font-medium text-gray-900">
+                        16/01/2025
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Interaction Info Section - Positioned beneath top panel like split screen */}
+                <div className="border-t border-gray-200 px-4 py-3 bg-gray-50">
+                  {(() => {
+                    const candidateData = getCandidateData(
+                      selectedAssessment.id,
                     );
-                  }) || (
+                    return candidateData.hasPollenInteraction ? (
+                      <div className="flex items-center gap-2">
+                        <span className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center text-xs text-white font-bold">
+                          ✓
+                        </span>
+                        <span className="text-sm text-gray-600">
+                          Spoke to {candidateData.lastPollenTeamMember} on{" "}
+                          {candidateData.lastInteractionDate}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="text-sm text-gray-600">
+                        {candidateData.applicationCount} previous{" "}
+                        {candidateData.applicationCount === 1
+                          ? "application"
+                          : "applications"}
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+
+              <div className="p-4 space-y-6">
+                {/* Assessment Q&A Section */}
+                <div className="space-y-4">
+                  {selectedAssessment.assessmentSubmission?.responses?.map(
+                    (response, index) => {
+                      const cleanQuestion = response.question.replace(
+                        /^Q\d+\.\s*/,
+                        "",
+                      );
+
+                      return (
+                        <div
+                          key={index}
+                          className="border rounded-lg p-4 bg-white"
+                        >
+                          <div className="font-medium text-sm mb-3 text-gray-700">
+                            Q{index + 1}: {cleanQuestion}
+                          </div>
+                          <div className="text-sm text-gray-600 mb-3 leading-relaxed">
+                            {response.response}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Word count: {response.wordCount}
+                          </div>
+                        </div>
+                      );
+                    },
+                  ) || (
                     <div className="text-center py-8">
-                      <p className="text-gray-500">No assessment responses available</p>
+                      <p className="text-gray-500">
+                        No assessment responses available
+                      </p>
                     </div>
                   )}
                 </div>
 
-                {/* Individual Scores Section - Moved below Q&A */}
+                {/* Individual Scores Section - Same as split screen */}
                 <div className="border rounded-lg bg-gray-50">
                   <div className="px-6 py-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900">Individual Assessment Scores</h3>
-                    <p className="text-sm text-gray-600 mt-1">Rate performance across key areas (1-10 scale)</p>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Individual Assessment Scores
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Rate performance across key areas (1-10 scale)
+                    </p>
                   </div>
                   <div className="p-6 pb-8 space-y-6">
                     {/* Creative Campaign Development */}
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
                         <Lightbulb className="h-4 w-4 text-gray-600" />
-                        <span className="font-medium text-sm">Creative Campaign Development</span>
-                        <span className="ml-auto text-lg font-bold text-[#E2007A]">{editedScores.creative}/10</span>
+                        <span className="font-medium text-sm">
+                          Creative Campaign Development
+                        </span>
+                        <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                          {editedScores.creative}/10
+                        </span>
                       </div>
                       {isEditing ? (
                         <div className="px-2">
@@ -1371,7 +2478,12 @@ const openAssessmentSplitView = (candidate) => {
                             min="1"
                             max="10"
                             value={editedScores.creative}
-                            onChange={(e) => setEditedScores(prev => ({ ...prev, creative: parseInt(e.target.value) }))}
+                            onChange={(e) =>
+                              setEditedScores((prev) => ({
+                                ...prev,
+                                creative: parseInt(e.target.value),
+                              }))
+                            }
                             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                           />
                           <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -1390,9 +2502,11 @@ const openAssessmentSplitView = (candidate) => {
                       ) : (
                         <div className="px-2">
                           <div className="w-full h-2 bg-gray-200 rounded-lg relative">
-                            <div 
-                              className="h-full bg-[#E2007A] rounded-lg" 
-                              style={{ width: `${editedScores.creative * 10}%` }}
+                            <div
+                              className="h-full bg-[#E2007A] rounded-lg"
+                              style={{
+                                width: `${editedScores.creative * 10}%`,
+                              }}
                             />
                           </div>
                         </div>
@@ -1403,8 +2517,12 @@ const openAssessmentSplitView = (candidate) => {
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
                         <BarChart3 className="h-4 w-4 text-gray-600" />
-                        <span className="font-medium text-sm">Data Analysis & Insights</span>
-                        <span className="ml-auto text-lg font-bold text-[#E2007A]">{editedScores.dataAnalysis}/10</span>
+                        <span className="font-medium text-sm">
+                          Data Analysis & Insights
+                        </span>
+                        <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                          {editedScores.dataAnalysis}/10
+                        </span>
                       </div>
                       {isEditing ? (
                         <div className="px-2">
@@ -1413,7 +2531,12 @@ const openAssessmentSplitView = (candidate) => {
                             min="1"
                             max="10"
                             value={editedScores.dataAnalysis}
-                            onChange={(e) => setEditedScores(prev => ({ ...prev, dataAnalysis: parseInt(e.target.value) }))}
+                            onChange={(e) =>
+                              setEditedScores((prev) => ({
+                                ...prev,
+                                dataAnalysis: parseInt(e.target.value),
+                              }))
+                            }
                             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                           />
                           <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -1432,9 +2555,11 @@ const openAssessmentSplitView = (candidate) => {
                       ) : (
                         <div className="px-2">
                           <div className="w-full h-2 bg-gray-200 rounded-lg relative">
-                            <div 
-                              className="h-full bg-[#E2007A] rounded-lg" 
-                              style={{ width: `${editedScores.dataAnalysis * 10}%` }}
+                            <div
+                              className="h-full bg-[#E2007A] rounded-lg"
+                              style={{
+                                width: `${editedScores.dataAnalysis * 10}%`,
+                              }}
                             />
                           </div>
                         </div>
@@ -1445,8 +2570,12 @@ const openAssessmentSplitView = (candidate) => {
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
                         <MessageSquare className="h-4 w-4 text-gray-600" />
-                        <span className="font-medium text-sm">Communication & Presentation</span>
-                        <span className="ml-auto text-lg font-bold text-[#E2007A]">{editedScores.communication}/10</span>
+                        <span className="font-medium text-sm">
+                          Communication & Presentation
+                        </span>
+                        <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                          {editedScores.communication}/10
+                        </span>
                       </div>
                       {isEditing ? (
                         <div className="px-2">
@@ -1455,7 +2584,12 @@ const openAssessmentSplitView = (candidate) => {
                             min="1"
                             max="10"
                             value={editedScores.communication}
-                            onChange={(e) => setEditedScores(prev => ({ ...prev, communication: parseInt(e.target.value) }))}
+                            onChange={(e) =>
+                              setEditedScores((prev) => ({
+                                ...prev,
+                                communication: parseInt(e.target.value),
+                              }))
+                            }
                             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                           />
                           <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -1474,9 +2608,11 @@ const openAssessmentSplitView = (candidate) => {
                       ) : (
                         <div className="px-2">
                           <div className="w-full h-2 bg-gray-200 rounded-lg relative">
-                            <div 
-                              className="h-full bg-[#E2007A] rounded-lg" 
-                              style={{ width: `${editedScores.communication * 10}%` }}
+                            <div
+                              className="h-full bg-[#E2007A] rounded-lg"
+                              style={{
+                                width: `${editedScores.communication * 10}%`,
+                              }}
                             />
                           </div>
                         </div>
@@ -1487,8 +2623,12 @@ const openAssessmentSplitView = (candidate) => {
                     <div className="space-y-3">
                       <div className="flex items-center gap-2">
                         <TrendingUp className="h-4 w-4 text-gray-600" />
-                        <span className="font-medium text-sm">Strategic Thinking</span>
-                        <span className="ml-auto text-lg font-bold text-[#E2007A]">{editedScores.strategic}/10</span>
+                        <span className="font-medium text-sm">
+                          Strategic Thinking
+                        </span>
+                        <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                          {editedScores.strategic}/10
+                        </span>
                       </div>
                       {isEditing ? (
                         <div className="px-2">
@@ -1497,7 +2637,12 @@ const openAssessmentSplitView = (candidate) => {
                             min="1"
                             max="10"
                             value={editedScores.strategic}
-                            onChange={(e) => setEditedScores(prev => ({ ...prev, strategic: parseInt(e.target.value) }))}
+                            onChange={(e) =>
+                              setEditedScores((prev) => ({
+                                ...prev,
+                                strategic: parseInt(e.target.value),
+                              }))
+                            }
                             className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
                           />
                           <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -1516,9 +2661,11 @@ const openAssessmentSplitView = (candidate) => {
                       ) : (
                         <div className="px-2">
                           <div className="w-full h-2 bg-gray-200 rounded-lg relative">
-                            <div 
-                              className="h-full bg-[#E2007A] rounded-lg" 
-                              style={{ width: `${editedScores.strategic * 10}%` }}
+                            <div
+                              className="h-full bg-[#E2007A] rounded-lg"
+                              style={{
+                                width: `${editedScores.strategic * 10}%`,
+                              }}
                             />
                           </div>
                         </div>
@@ -1527,200 +2674,1021 @@ const openAssessmentSplitView = (candidate) => {
                   </div>
                 </div>
 
-                {/* Next Steps Section */}
+                {/* Next Steps Section for full page */}
                 <div className="border rounded-lg bg-gray-50">
                   <div className="px-6 py-4 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900">Next Steps</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Next Steps
+                    </h3>
                   </div>
-                  
+
                   <div className="p-6 pb-8 space-y-6">
                     {/* Step 1 - Score Review */}
-                    <div className="border rounded-lg p-6 bg-white">
-                    <div className="space-y-4">
-                      <h4 className="text-xs sm:text-sm font-medium text-gray-900">Step 1: Assessment Score Review</h4>
-                      <p className="text-xs text-gray-600 mb-4">Review AI-generated scores and make adjustments if needed before proceeding.</p>
-                      {!isScoreApproved(selectedAssessment) ? (
-                        <div className="flex flex-wrap gap-4 items-center">
-                          {!scoresApproved ? (
-                            <Button
-                              // onClick={handleApproveAIScores}
-                              size="default"
-                              className="bg-green-600 hover:bg-green-700 h-12 px-6 text-base font-medium"
-                            >
-                              <ThumbsUp className="h-5 w-5 mr-2" />
-                              Approve Scores
-                            </Button>
-                          ) : (
-                            <div className="bg-green-100 border border-green-200 rounded-lg p-4 inline-flex items-center gap-3 text-green-700">
-                              <Check className="h-5 w-5" />
-                              <span className="font-medium text-base">Scores Approved</span>
-                            </div>
-                          )}
-                          
-                          {isEditing ? (
-                            <>
+                    {["Unopened", "Under Review"].includes(
+                      selectedAssessment.subStatus,
+                    ) ? (
+                      <div className="border rounded-lg p-6 bg-white">
+                        <div className="space-y-4">
+                          <h4 className="text-xs sm:text-sm font-medium text-gray-900">
+                            Step 1: Assessment Score Review
+                          </h4>
+                          <p className="text-xs text-gray-600 mb-4">
+                            Review AI-generated scores and make adjustments if
+                            needed before proceeding.
+                          </p>
+                          <div className="flex flex-wrap gap-4 items-center">
+                            {!(
+                              scoresApproved ||
+                              isScoreApproved(selectedAssessment)
+                            ) ? (
                               <Button
-                                onClick={handleSaveScores}
+                                // TODO:
+                                // onClick={handleApproveAIScores}
                                 size="default"
                                 className="bg-green-600 hover:bg-green-700 h-12 px-6 text-base font-medium"
                               >
-                                <Check className="h-5 w-5 mr-2" />
-                                Save Changes
+                                <ThumbsUp className="h-5 w-5 mr-2" />
+                                Approve Scores
                               </Button>
+                            ) : (
+                              <div className="bg-green-100 border border-green-200 rounded-lg p-4 inline-flex items-center gap-3 text-green-700">
+                                <Check className="h-5 w-5" />
+                                <span className="font-medium text-base">
+                                  Scores Approved
+                                </span>
+                              </div>
+                            )}
+
+                            {isEditing ? (
+                              <>
+                                <Button
+                                  onClick={handleSaveScores}
+                                  size="default"
+                                  className="bg-green-600 hover:bg-green-700 h-12 px-6 text-base font-medium"
+                                >
+                                  <Check className="h-5 w-5 mr-2" />
+                                  Save Changes
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="default"
+                                  onClick={() => setIsEditing(false)}
+                                  className="h-12 px-6 text-base font-medium"
+                                >
+                                  Cancel
+                                </Button>
+                              </>
+                            ) : (
                               <Button
                                 variant="outline"
                                 size="default"
-                                onClick={() => setIsEditing(false)}
+                                onClick={() => setIsEditing(true)}
                                 className="h-12 px-6 text-base font-medium"
                               >
-                                Cancel
+                                <Edit3 className="h-5 w-5 mr-2" />
+                                Edit Scores
                               </Button>
-                            </>
-                          ) : (
-                            <Button
-                              variant="outline"
-                              size="default"
-                              onClick={() => setIsEditing(true)}
-                              className="h-12 px-6 text-base font-medium"
-                            >
-                              <Edit3 className="h-5 w-5 mr-2" />
-                              Edit Scores
-                            </Button>
-                          )}
+                            )}
+                          </div>
                         </div>
-                      ) : (
-                        <div className="bg-gray-100 border border-gray-200 rounded-lg p-6 text-center">
-                          <div className="flex items-center justify-center gap-2 text-gray-700">
-                            <Lock className="h-4 w-4" />
-                            <span className="font-medium">Scores Locked - Candidate Progressed</span>
+                      </div>
+                    ) : (
+                      <div className="border rounded-lg p-6 bg-gray-100">
+                        <div className="flex items-center justify-center gap-3 text-gray-700 mb-2">
+                          <Lock className="h-5 w-5" />
+                          <span className="font-medium text-lg">
+                            Assessment Scores Locked
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 text-center">
+                          Scores are automatically locked when candidates
+                          progress beyond the initial review stage.
+                        </p>
+                      </div>
+                    )}
+
+                    {["Unopened", "Under Review"].includes(
+                      selectedAssessment.subStatus,
+                    ) &&
+                      !(
+                        scoresApproved || isScoreApproved(selectedAssessment)
+                      ) && (
+                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                          <div className="flex items-center gap-2 text-amber-800">
+                            <AlertTriangle className="h-5 w-5" />
+                            <span className="text-base font-medium">
+                              Approve assessment scores before making candidate
+                              decision
+                            </span>
                           </div>
                         </div>
                       )}
+
+                    {/* Step 2 - Candidate action buttons */}
+                    <div className="border rounded-lg p-6 bg-white">
+                      <div className="space-y-4 pb-18">
+                        <h4 className="text-xs sm:text-sm font-medium text-gray-900 mb-2">
+                          Step 2: Candidate Decision
+                        </h4>
+                        <p className="text-xs text-gray-600 mb-3">
+                          Choose next action for this candidate. This will lock
+                          scores and update their status.
+                        </p>
+                        <div className="flex gap-4 flex-wrap">
+                          {/* Show different buttons based on status */}
+                          {["Unopened", "Under Review"].includes(
+                            selectedAssessment.subStatus,
+                          ) && (
+                            <>
+                              <Button
+                                onClick={() =>
+                                  handleCandidateAction("interview")
+                                }
+                                // TODO:
+                                // disabled={
+                                //   !(
+                                //     scoresApproved ||
+                                //     isScoreApproved(selectedAssessment)
+                                //   ) ||
+                                //   candidateActionMutation.isPending ||
+                                //   scoresLocked
+                                // }
+                                size="default"
+                                className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
+                              >
+                                <Calendar className="h-5 w-5 mr-2" />
+                                Invite to Pollen Interview
+                              </Button>
+
+                              {(() => {
+                                const candidateData = getCandidateData(
+                                  selectedAssessment.id,
+                                );
+                                const canFastTrackToEmployer =
+                                  candidateData.hasPollenInteraction &&
+                                  candidateData.isFastTrack;
+
+                                return canFastTrackToEmployer ? (
+                                  <Button
+                                    onClick={() =>
+                                      handleCandidateAction("match")
+                                    }
+                                    // TODO:
+                                    // disabled={
+                                    //   !(
+                                    //     scoresApproved ||
+                                    //     isScoreApproved(selectedAssessment)
+                                    //   ) ||
+                                    //   candidateActionMutation.isPending ||
+                                    //   scoresLocked ||
+                                    //   !canFastTrackToEmployer
+                                    // }
+                                    size="default"
+                                    className="bg-green-600 hover:bg-green-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
+                                  >
+                                    <UserCheck className="h-5 w-5 mr-2" />
+                                    Match to Employer
+                                  </Button>
+                                ) : null;
+                              })()}
+
+                              {/* Not progressing option always available */}
+                              <Button
+                                onClick={() => handleCandidateAction("reject")}
+                                // TODO:
+                                // disabled={
+                                //   !(
+                                //     scoresApproved ||
+                                //     isScoreApproved(selectedAssessment)
+                                //   ) ||
+                                //   candidateActionMutation.isPending ||
+                                //   scoresLocked
+                                // }
+                                variant="outline"
+                                size="default"
+                                className="border-red-200 text-red-700 hover:bg-red-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 h-12 px-6 text-base font-medium"
+                              >
+                                <UserX className="h-5 w-5 mr-2" />
+                                Not Progressing
+                              </Button>
+                            </>
+                          )}
+
+                          {/* Provide Update button for candidates who completed Pollen interviews */}
+                          {selectedAssessment.subStatus ===
+                            "Pollen Interview Complete" && (
+                            <Button
+                              // onClick={() =>
+                              //   setLocation(
+                              //     buildUrlWithCurrentState(
+                              //       `/admin/provide-update/${selectedAssessment.id}`,
+                              //     ),
+                              //   )
+                              // }
+                              size="default"
+                              className="bg-purple-600 hover:bg-purple-700 h-12 px-6 text-base font-medium"
+                            >
+                              <MessageCircle className="h-5 w-5 mr-2" />
+                              Provide Update
+                            </Button>
+                          )}
+
+                          {/* Review Feedback button for candidates who stopped at employer */}
+                          {(() => {
+                            const apiCandidate = candidates.find(
+                              (c) => c.id === selectedAssessment.id,
+                            );
+                            return (
+                              apiCandidate?.subStatus ===
+                                "stopped_at_employer" &&
+                              hasUnreviewedEmployerFeedback(
+                                selectedAssessment.id,
+                              )
+                            );
+                          })() && (
+                            <Button
+                              onClick={() => {
+                                const apiCandidate = candidates.find(
+                                  (c) => c.id === selectedAssessment.id,
+                                );
+                                const feedbackData =
+                                  apiCandidate?.employerFeedback ||
+                                  getCandidateData(selectedAssessment.id)
+                                    .employerFeedback;
+                                setSelectedFeedback(feedbackData);
+                                setShowFeedbackReview(true);
+                              }}
+                              size="default"
+                              className="bg-orange-600 hover:bg-orange-700 h-12 px-6 text-base font-medium"
+                            >
+                              <MessageSquare className="h-5 w-5 mr-2" />
+                              Review Feedback
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {/* Profile and Message buttons moved to right side */}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          // TODO:
+                          // onClick={() => {
+                          //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
+                          //   setLocation(`/admin/consolidated-candidate-profile/${selectedAssessment.id}`);
+                          // }}
+                          className="text-xs px-2 py-1"
+                        >
+                          <User className="h-3 w-3" />
+                          Profile
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          // TODO:
+                          // onClick={() => {
+                          //   sessionStorage.setItem('previousPage', `/admin/job-applicants-grid/${jobId}`);
+                          //   setLocation(`/admin/candidate-message/${selectedAssessment.id}`);
+                          // }}
+                          className="text-xs px-2 py-1"
+                        >
+                          <MessageSquare className="h-3 w-3" />
+                          Message
+                        </Button>
+
+                        {/* Navigation buttons */}
+                        <div className="flex items-center gap-2 ml-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            // onClick={() => navigateToCandidate('prev')}
+                            disabled={
+                              filteredCandidates.findIndex(
+                                (c) => c.id === selectedAssessment?.id,
+                              ) === 0
+                            }
+                            className="text-xs px-2 py-1"
+                          >
+                            <ChevronLeft className="h-3 w-3" />
+                          </Button>
+
+                          <span className="text-xs text-gray-600 px-2">
+                            {filteredCandidates.findIndex(
+                              (c) => c.id === selectedAssessment?.id,
+                            ) + 1}{" "}
+                            of {filteredCandidates.length}
+                          </span>
+
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            // onClick={() => navigateToCandidate('next')}
+                            disabled={
+                              filteredCandidates.findIndex(
+                                (c) => c.id === selectedAssessment?.id,
+                              ) ===
+                              filteredCandidates.length - 1
+                            }
+                            className="text-xs px-2 py-1"
+                          >
+                            <ChevronRight className="h-3 w-3" />
+                          </Button>
+                        </div>
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setIsMobileFullPage(false);
+                            setAssessmentSplitViewOpen(true);
+                          }}
+                          className="text-xs px-2 py-1"
+                        >
+                          <SplitSquareHorizontal className="h-3 w-3 mr-1" />
+                          Split Screen
+                        </Button>
+
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            setIsMobileFullPage(false);
+                            setAssessmentSplitViewOpen(false);
+                            setSelectedAssessment(null);
+                          }}
+                          className="p-2 hover:bg-gray-100 border border-gray-300"
+                          title="Close Assessment"
+                        >
+                          <X className="h-5 w-5 text-gray-600" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
 
-                  {['Unopened', 'Under Review'].includes(selectedAssessment.subStatus) && 
-                   !scoresApproved && !isScoreApproved(selectedAssessment) && (
-                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                      <div className="flex items-center gap-2 text-amber-800">
-                        <AlertTriangle className="h-5 w-5" />
-                        <span className="text-base font-medium">
-                          Approve assessment scores before making candidate decision
+                  {/* Overall Score Section - Part of same sticky container */}
+                  <div className="border-t border-gray-200 px-4 py-3">
+                    <div className="flex items-center gap-6">
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-[#E2007A] mb-1">
+                          {Math.round(
+                            ((editedScores.creative +
+                              editedScores.dataAnalysis +
+                              editedScores.communication +
+                              editedScores.strategic) /
+                              4) *
+                              10,
+                          )}
+                          %
+                        </div>
+                        <div className="text-sm font-medium text-gray-700">
+                          Overall Score
+                        </div>
+                      </div>
+                      <div className="h-10 w-px bg-gray-300" />
+                      <div>
+                        <span className="text-gray-600 text-sm">
+                          Submission Date:
                         </span>
-                      </div>
-                    </div>
-                  )}
-
-
-
-
-
-                  {/* Step 2 - Candidate Decision - Lock for completed statuses */}
-                  {['Unopened', 'Under Review'].includes(selectedAssessment.subStatus) ? (
-                    <div className="border rounded-lg p-6 bg-white">
-                      <div className="space-y-4 pb-18">
-                        <h4 className="text-xs sm:text-sm font-medium text-gray-900 mb-2">Step 2: Candidate Decision</h4>
-                        <p className="text-xs text-gray-600 mb-3">Choose next action for this candidate. This will lock scores and update their status.</p>
-                        <div className="flex gap-4 flex-wrap">
-                          {/* Interview button only for unopened/under review */}
-                          <Button
-                            onClick={() => handleCandidateAction('interview')}
-
-                            // TODO: consultar: en el código original se define más adelante, no comprendo la lógica
-                            // disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending}
-                            size="default"
-                            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
-                          >
-                            <Calendar className="h-5 w-5 mr-2" />
-                            Invite to Pollen Interview
-                          </Button>
-                          
-                          <Button
-                            onClick={() => handleCandidateAction('match')}
-                            // TODO: idem anterior 
-                            // disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending || !canFastTrackToEmployer}
-                            size="default"
-                            className="bg-green-600 hover:bg-green-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
-                          >
-                            <UserCheck className="h-5 w-5 mr-2" />
-                            Match to Employer
-                          </Button>
-                          
-                          <Button
-                            onClick={() => handleCandidateAction('reject')}
-                            // TODO: idem anterior 
-                            // disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending}
-                            variant="outline"
-                            size="default"
-                            className="h-12 px-6 text-base font-medium"
-                          >
-                            <X className="h-5 w-5 mr-2" />
-                            Not Progressing
-                          </Button>
+                        <div className="font-medium text-gray-900">
+                          16/01/2025
                         </div>
                       </div>
                     </div>
-                  ) : (
-                    <div className="border rounded-lg p-6 bg-gray-100">
-                      <div className="flex items-center justify-center gap-3 text-gray-700 mb-2">
-                        <Lock className="h-5 w-5" />
-                        <span className="font-medium text-lg">Step 2: Candidate Decision Completed</span>
+                  </div>
+
+                  {/* Interaction Info Section - Positioned beneath top panel like split screen */}
+                  <div className="border-t border-gray-200 px-4 py-3 bg-gray-50">
+                    {(() => {
+                      const candidateData = getCandidateData(
+                        selectedAssessment.id,
+                      );
+                      return candidateData.hasPollenInteraction ? (
+                        <div className="flex items-center gap-2">
+                          <span className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center text-xs text-white font-bold">
+                            ✓
+                          </span>
+                          <span className="text-sm text-gray-600">
+                            Spoke to {candidateData.lastPollenTeamMember} on{" "}
+                            {candidateData.lastInteractionDate}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="text-sm text-gray-600">
+                          {candidateData.applicationCount} previous{" "}
+                          {candidateData.applicationCount === 1
+                            ? "application"
+                            : "applications"}
+                        </div>
+                      );
+                    })()}
+                  </div>
+                </div>
+
+                <div className="p-4 space-y-6">
+                  {/* Assessment Q&A Section */}
+                  <div className="space-y-4">
+                    {selectedAssessment.assessmentSubmission?.responses?.map(
+                      (response, index) => {
+                        const cleanQuestion = response.question.replace(
+                          /^Q\d+\.\s*/,
+                          "",
+                        );
+
+                        return (
+                          <div
+                            key={index}
+                            className="border rounded-lg p-4 bg-white"
+                          >
+                            <div className="font-medium text-sm mb-3 text-gray-700">
+                              Q{index + 1}: {cleanQuestion}
+                            </div>
+                            <div className="text-sm text-gray-600 mb-3 leading-relaxed">
+                              {response.response}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              Word count: {response.wordCount}
+                            </div>
+                          </div>
+                        );
+                      },
+                    ) || (
+                      <div className="text-center py-8">
+                        <p className="text-gray-500">
+                          No assessment responses available
+                        </p>
                       </div>
-                      <p className="text-sm text-gray-600 text-center mb-4">
-                        This candidate has progressed beyond initial review stage. Use "Provide Update" for further actions.
+                    )}
+                  </div>
+
+                  {/* Individual Scores Section - Same as split screen */}
+                  <div className="border rounded-lg bg-gray-50">
+                    <div className="px-6 py-4 border-b border-gray-200">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Individual Assessment Scores
+                      </h3>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Rate performance across key areas (1-10 scale)
                       </p>
-                      
-                      {/* Show Provide Update button for completed Pollen interview candidates */}
-                      {selectedAssessment?.subStatus === 'Pollen Interview Complete' && (
-                        <div className="flex justify-center">
-                          <Button
-                            // onClick={() => {
-                            //   setLocation(buildUrlWithCurrentState(`/admin/provide-update/${selectedAssessment.id}`));
-                            // }}
-                            size="default"
-                            className="bg-[#E2007A] hover:bg-[#E2007A]/90 text-white h-12 px-6 text-base font-medium"
-                          >
-                            <MessageCircle className="h-5 w-5 mr-2" />
-                            Provide Update
-                          </Button>
-                        </div>
-                      )}
-                      
-                      {/* Show Review Feedback button for candidates who stopped at employer */}
-                      {(() => {
-                        const apiCandidate = candidates.find(c => c.id === selectedAssessment?.id);
-                        return apiCandidate?.subStatus === 'stopped_at_employer' && hasUnreviewedEmployerFeedback(selectedAssessment.id);
-                      })() && (
-                        <div className="flex justify-center">
-                          <Button
-                            onClick={() => {
-                              const apiCandidate = candidates.find(c => c.id === selectedAssessment.id);
-                              const feedbackData = apiCandidate?.employerFeedback || getCandidateData(selectedAssessment.id).employerFeedback;
-                              setSelectedFeedback(feedbackData);
-                              setShowFeedbackReview(true);
-                            }}
-                            size="default"
-                            className="bg-orange-600 hover:bg-orange-700 text-white h-12 px-6 text-base font-medium"
-                          >
-                            <MessageSquare className="h-5 w-5 mr-2" />
-                            Review Feedback
-                          </Button>
-                        </div>
-                      )}
                     </div>
-                  )}
+                    <div className="p-6 pb-8 space-y-6">
+                      {/* Creative Campaign Development */}
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <Lightbulb className="h-4 w-4 text-gray-600" />
+                          <span className="font-medium text-sm">
+                            Creative Campaign Development
+                          </span>
+                          <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                            {editedScores.creative}/10
+                          </span>
+                        </div>
+                        {isEditing ? (
+                          <div className="px-2">
+                            <input
+                              type="range"
+                              min="1"
+                              max="10"
+                              value={editedScores.creative}
+                              onChange={(e) =>
+                                setEditedScores((prev) => ({
+                                  ...prev,
+                                  creative: parseInt(e.target.value),
+                                }))
+                              }
+                              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                            />
+                            <div className="flex justify-between text-xs text-gray-500 mt-1">
+                              <span>1</span>
+                              <span>2</span>
+                              <span>3</span>
+                              <span>4</span>
+                              <span>5</span>
+                              <span>6</span>
+                              <span>7</span>
+                              <span>8</span>
+                              <span>9</span>
+                              <span>10</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="px-2">
+                            <div className="w-full h-2 bg-gray-200 rounded-lg relative">
+                              <div
+                                className="h-full bg-[#E2007A] rounded-lg"
+                                style={{
+                                  width: `${editedScores.creative * 10}%`,
+                                }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Data Analysis & Insights */}
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <BarChart3 className="h-4 w-4 text-gray-600" />
+                          <span className="font-medium text-sm">
+                            Data Analysis & Insights
+                          </span>
+                          <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                            {editedScores.dataAnalysis}/10
+                          </span>
+                        </div>
+                        {isEditing ? (
+                          <div className="px-2">
+                            <input
+                              type="range"
+                              min="1"
+                              max="10"
+                              value={editedScores.dataAnalysis}
+                              onChange={(e) =>
+                                setEditedScores((prev) => ({
+                                  ...prev,
+                                  dataAnalysis: parseInt(e.target.value),
+                                }))
+                              }
+                              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                            />
+                            <div className="flex justify-between text-xs text-gray-500 mt-1">
+                              <span>1</span>
+                              <span>2</span>
+                              <span>3</span>
+                              <span>4</span>
+                              <span>5</span>
+                              <span>6</span>
+                              <span>7</span>
+                              <span>8</span>
+                              <span>9</span>
+                              <span>10</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="px-2">
+                            <div className="w-full h-2 bg-gray-200 rounded-lg relative">
+                              <div
+                                className="h-full bg-[#E2007A] rounded-lg"
+                                style={{
+                                  width: `${editedScores.dataAnalysis * 10}%`,
+                                }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Communication & Presentation */}
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <MessageSquare className="h-4 w-4 text-gray-600" />
+                          <span className="font-medium text-sm">
+                            Communication & Presentation
+                          </span>
+                          <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                            {editedScores.communication}/10
+                          </span>
+                        </div>
+                        {isEditing ? (
+                          <div className="px-2">
+                            <input
+                              type="range"
+                              min="1"
+                              max="10"
+                              value={editedScores.communication}
+                              onChange={(e) =>
+                                setEditedScores((prev) => ({
+                                  ...prev,
+                                  communication: parseInt(e.target.value),
+                                }))
+                              }
+                              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                            />
+                            <div className="flex justify-between text-xs text-gray-500 mt-1">
+                              <span>1</span>
+                              <span>2</span>
+                              <span>3</span>
+                              <span>4</span>
+                              <span>5</span>
+                              <span>6</span>
+                              <span>7</span>
+                              <span>8</span>
+                              <span>9</span>
+                              <span>10</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="px-2">
+                            <div className="w-full h-2 bg-gray-200 rounded-lg relative">
+                              <div
+                                className="h-full bg-[#E2007A] rounded-lg"
+                                style={{
+                                  width: `${editedScores.communication * 10}%`,
+                                }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Strategic Thinking */}
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <TrendingUp className="h-4 w-4 text-gray-600" />
+                          <span className="font-medium text-sm">
+                            Strategic Thinking
+                          </span>
+                          <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                            {editedScores.strategic}/10
+                          </span>
+                        </div>
+                        {isEditing ? (
+                          <div className="px-2">
+                            <input
+                              type="range"
+                              min="1"
+                              max="10"
+                              value={editedScores.strategic}
+                              onChange={(e) =>
+                                setEditedScores((prev) => ({
+                                  ...prev,
+                                  strategic: parseInt(e.target.value),
+                                }))
+                              }
+                              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                            />
+                            <div className="flex justify-between text-xs text-gray-500 mt-1">
+                              <span>1</span>
+                              <span>2</span>
+                              <span>3</span>
+                              <span>4</span>
+                              <span>5</span>
+                              <span>6</span>
+                              <span>7</span>
+                              <span>8</span>
+                              <span>9</span>
+                              <span>10</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="px-2">
+                            <div className="w-full h-2 bg-gray-200 rounded-lg relative">
+                              <div
+                                className="h-full bg-[#E2007A] rounded-lg"
+                                style={{
+                                  width: `${editedScores.strategic * 10}%`,
+                                }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Next Steps Section for full page */}
+                  <div className="border rounded-lg bg-gray-50">
+                    <div className="px-6 py-4 border-b border-gray-200">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        Next Steps
+                      </h3>
+                    </div>
+
+                    <div className="p-6 pb-8 space-y-6">
+                      {/* Step 1 - Score Review */}
+                      {["Unopened", "Under Review"].includes(
+                        selectedAssessment.subStatus,
+                      ) ? (
+                        <div className="border rounded-lg p-6 bg-white">
+                          <div className="space-y-4">
+                            <h4 className="text-xs sm:text-sm font-medium text-gray-900">
+                              Step 1: Assessment Score Review
+                            </h4>
+                            <p className="text-xs text-gray-600 mb-4">
+                              Review AI-generated scores and make adjustments if
+                              needed before proceeding.
+                            </p>
+                            <div className="flex flex-wrap gap-4 items-center">
+                              {!(
+                                scoresApproved ||
+                                isScoreApproved(selectedAssessment)
+                              ) ? (
+                                <Button
+                                  // onClick={handleApproveAIScores}
+                                  size="default"
+                                  className="bg-green-600 hover:bg-green-700 h-12 px-6 text-base font-medium"
+                                >
+                                  <ThumbsUp className="h-5 w-5 mr-2" />
+                                  Approve Scores
+                                </Button>
+                              ) : (
+                                <div className="bg-green-100 border border-green-200 rounded-lg p-4 inline-flex items-center gap-3 text-green-700">
+                                  <Check className="h-5 w-5" />
+                                  <span className="font-medium text-base">
+                                    Scores Approved
+                                  </span>
+                                </div>
+                              )}
+
+                              {isEditing ? (
+                                <>
+                                  <Button
+                                    onClick={handleSaveScores}
+                                    size="default"
+                                    className="bg-green-600 hover:bg-green-700 h-12 px-6 text-base font-medium"
+                                  >
+                                    <Check className="h-5 w-5 mr-2" />
+                                    Save Changes
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    size="default"
+                                    onClick={() => setIsEditing(false)}
+                                    className="h-12 px-6 text-base font-medium"
+                                  >
+                                    Cancel
+                                  </Button>
+                                </>
+                              ) : (
+                                <Button
+                                  variant="outline"
+                                  size="default"
+                                  onClick={() => setIsEditing(true)}
+                                  className="h-12 px-6 text-base font-medium"
+                                >
+                                  <Edit3 className="h-5 w-5 mr-2" />
+                                  Edit Scores
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="border rounded-lg p-6 bg-gray-100">
+                          <div className="flex items-center justify-center gap-3 text-gray-700 mb-2">
+                            <Lock className="h-5 w-5" />
+                            <span className="font-medium text-lg">
+                              Assessment Scores Locked
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-600 text-center">
+                            Scores are automatically locked when candidates
+                            progress beyond the initial review stage.
+                          </p>
+                        </div>
+                      )}
+
+                      {["Unopened", "Under Review"].includes(
+                        selectedAssessment.subStatus,
+                      ) &&
+                        !(
+                          scoresApproved || isScoreApproved(selectedAssessment)
+                        ) && (
+                          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                            <div className="flex items-center gap-2 text-amber-800">
+                              <AlertTriangle className="h-5 w-5" />
+                              <span className="text-base font-medium">
+                                Approve assessment scores before making
+                                candidate decision
+                              </span>
+                            </div>
+                          </div>
+                        )}
+
+                      {/* Step 2 - Candidate action buttons */}
+                      <div className="border rounded-lg p-6 bg-white">
+                        <div className="space-y-4 pb-18">
+                          <h4 className="text-xs sm:text-sm font-medium text-gray-900 mb-2">
+                            Step 2: Candidate Decision
+                          </h4>
+                          <p className="text-xs text-gray-600 mb-3">
+                            Choose next action for this candidate. This will
+                            lock scores and update their status.
+                          </p>
+                          <div className="flex gap-4 flex-wrap">
+                            {/* Show different buttons based on status */}
+                            {["Unopened", "Under Review"].includes(
+                              selectedAssessment.subStatus,
+                            ) && (
+                              <>
+                                <Button
+                                  onClick={() =>
+                                    handleCandidateAction("interview")
+                                  }
+                                  // disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending || scoresLocked}
+                                  size="default"
+                                  className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
+                                >
+                                  <Calendar className="h-5 w-5 mr-2" />
+                                  Invite to Pollen Interview
+                                </Button>
+
+                                {(() => {
+                                  const candidateData = getCandidateData(
+                                    selectedAssessment.id,
+                                  );
+                                  const canFastTrackToEmployer =
+                                    candidateData.hasPollenInteraction &&
+                                    candidateData.isFastTrack;
+
+                                  return canFastTrackToEmployer ? (
+                                    <Button
+                                      onClick={() =>
+                                        handleCandidateAction("match")
+                                      }
+                                      // disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending || scoresLocked || !canFastTrackToEmployer}
+                                      size="default"
+                                      className="bg-green-600 hover:bg-green-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
+                                    >
+                                      <UserCheck className="h-5 w-5 mr-2" />
+                                      Match to Employer
+                                    </Button>
+                                  ) : null;
+                                })()}
+
+                                {/* Not progressing option always available */}
+                                <Button
+                                  onClick={() =>
+                                    handleCandidateAction("reject")
+                                  }
+                                  // disabled={!(scoresApproved || isScoreApproved(selectedAssessment)) || candidateActionMutation.isPending || scoresLocked}
+                                  variant="outline"
+                                  size="default"
+                                  className="border-red-200 text-red-700 hover:bg-red-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 h-12 px-6 text-base font-medium"
+                                >
+                                  <UserX className="h-5 w-5 mr-2" />
+                                  Not Progressing
+                                </Button>
+                              </>
+                            )}
+
+                            {/* Provide Update button for candidates who completed Pollen interviews */}
+                            {selectedAssessment.subStatus ===
+                              "Pollen Interview Complete" && (
+                              <Button
+                                // onClick={() => setLocation(buildUrlWithCurrentState(`/admin/provide-update/${selectedAssessment.id}`))}
+                                size="default"
+                                className="bg-purple-600 hover:bg-purple-700 h-12 px-6 text-base font-medium"
+                              >
+                                <MessageCircle className="h-5 w-5 mr-2" />
+                                Provide Update
+                              </Button>
+                            )}
+
+                            {/* Review Feedback button for candidates who stopped at employer */}
+                            {(() => {
+                              const apiCandidate = candidates.find(
+                                (c) => c.id === selectedAssessment.id,
+                              );
+                              return (
+                                apiCandidate?.subStatus ===
+                                  "stopped_at_employer" &&
+                                hasUnreviewedEmployerFeedback(
+                                  selectedAssessment.id,
+                                )
+                              );
+                            })() && (
+                              <Button
+                                onClick={() => {
+                                  const apiCandidate = candidates.find(
+                                    (c) => c.id === selectedAssessment.id,
+                                  );
+                                  const feedbackData =
+                                    apiCandidate?.employerFeedback ||
+                                    getCandidateData(selectedAssessment.id)
+                                      .employerFeedback;
+                                  setSelectedFeedback(feedbackData);
+                                  setShowFeedbackReview(true);
+                                }}
+                                size="default"
+                                className="bg-orange-600 hover:bg-orange-700 h-12 px-6 text-base font-medium"
+                              >
+                                <MessageSquare className="h-5 w-5 mr-2" />
+                                Review Feedback
+                              </Button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
 
+          {/* Feedback Review Dialog */}
+          <Dialog
+            open={showFeedbackReview}
+            onOpenChange={setShowFeedbackReview}
+          >
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5 text-pink-600" />
+                  Feedback from Employer
+                </DialogTitle>
+              </DialogHeader>
 
+              {selectedFeedback && (
+                <div className="space-y-6">
+                  {/* Header showing it's direct feedback */}
+                  <div className="bg-pink-50 border border-pink-200 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <FileText className="h-4 w-4 text-pink-600" />
+                      <span className="font-medium text-pink-800">
+                        Direct feedback from the employer
+                      </span>
+                    </div>
+                    <p className="text-sm text-pink-700">
+                      This feedback has been provided by the employer and
+                      reviewed by our team. It includes their assessment of the
+                      candidate's interview performance and specific insights
+                      about their fit for the role.
+                    </p>
+                  </div>
 
+                  {/* Interview Scores */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      <BarChart3 className="h-5 w-5 text-purple-600" />
+                      Employer Interview Scores
+                    </h3>
 
-          </div>
+                    <div className="grid grid-cols-4 gap-4">
+                      <div className="text-center">
+                        <div className="text-sm text-gray-600">Overall</div>
+                        <div className="text-lg font-semibold text-purple-600">
+                          {selectedFeedback.overallScore}/10
+                        </div>
+                      </div>
+
+                      <div className="text-center">
+                        <div className="text-sm text-gray-600">Skills</div>
+                        <div className="text-lg font-semibold text-blue-600">
+                          {selectedFeedback.skillsScore}/10
+                        </div>
+                      </div>
+
+                      <div className="text-center">
+                        <div className="text-sm text-gray-600">
+                          Communication
+                        </div>
+                        <div className="text-lg font-semibold text-green-600">
+                          {selectedFeedback.communicationScore}/10
+                        </div>
+                      </div>
+
+                      <div className="text-center">
+                        <div className="text-sm text-gray-600">Values Fit</div>
+                        <div className="text-lg font-semibold text-pink-600">
+                          {selectedFeedback.culturalFitScore}/10
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Feedback Notes */}
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-purple-600">Notes:</h4>
+                    <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-purple-500">
+                      <p className="text-gray-700">{selectedFeedback.notes}</p>
+                    </div>
+                  </div>
+
+                  {/* Approval Section */}
+                  {selectedFeedback.reviewStatus === "pending" && (
+                    <div className="flex justify-end gap-3 pt-4 border-t">
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowFeedbackReview(false)}
+                      >
+                        Close
+                      </Button>
+                      <Button
+                        className="bg-green-600 hover:bg-green-700 text-white"
+                        onClick={() => {
+                          // Here you would typically make an API call to approve the feedback
+                          toast({
+                            title: "Feedback Approved",
+                            description:
+                              "The employer feedback has been approved and will be sent to the candidate.",
+                          });
+                          setShowFeedbackReview(false);
+                        }}
+                      >
+                        <Check className="h-4 w-4 mr-2" />
+                        Approve Feedback
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
         </div>
-      </div>
-    </div>
-     </div>)} 
+    
+    
+  );
+}

@@ -9,19 +9,19 @@ import {
   User,
   LayoutDashboard,
 } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   SidebarGroupLabel,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuItem,
-  SidebarMenuButton,
   useSidebar,
 } from "@/components/sidebar/sidebar";
-
+import { CustomSidebarMenuButton } from "@/components/sidebar/custom-sidebar-menu-button";
 export function NavigationItems() {
   const pathname = usePathname();
-  const {isCollapsedActive } = useSidebar();
+  const router = useRouter();
+  const { state } = useSidebar();
 
   const items = [
     {
@@ -86,22 +86,23 @@ export function NavigationItems() {
     <>
       {items.map((item, idx) => {
         const prev = items[idx - 1];
-        const sectionLabel = idx === 0 || prev.section !== item.section;
-        const isCollapsed = sectionLabel && isCollapsedActive;
+        const showSectionLabel = idx === 0 || prev.section !== item.section;
         return (
           <React.Fragment key={item.path}>
-            {isCollapsed && (
+            {showSectionLabel && state !== "collapsed" && (
               <SidebarGroupLabel className="">{item.section}</SidebarGroupLabel>
             )}
             <SidebarGroupContent className="">
               <SidebarMenu className="">
                 <SidebarMenuItem className="">
-                  <SidebarMenuButton className="" tooltip={item.label} isActive={item.isActive} asChild>
-                    <a href={item.path}>
-                      <item.icon />
-                      <span>{item.label}</span>
-                    </a>
-                  </SidebarMenuButton>
+                  <CustomSidebarMenuButton
+                    isActive={item.isActive}
+                    tooltip={item.label}
+                    onClick={() => router.push(item.path)}
+                  >
+                    <item.icon className="w-4 h-4" />
+                    <span>{item.label}</span>
+                  </CustomSidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>

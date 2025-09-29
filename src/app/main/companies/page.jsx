@@ -121,14 +121,14 @@ export default function CompaniesPage() {
   const router = useRouter();
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-5xl mx-auto py-8">
       {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Companies</h1>
-          <p className="text-gray-600 text-lg">
-            Discover amazing companies and career opportunities
-          </p>
-        </div>
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">Companies</h1>
+        <p className="text-gray-600 text-lg">
+          Discover amazing companies and career opportunities
+        </p>
+      </div>
 
       <div className="my-4">
         <div className="bg-gradient-to-r from-blue-50 to-pink-50 rounded-xl mb-3 mx-2 p-4">
@@ -198,9 +198,7 @@ export default function CompaniesPage() {
                     <Button
                       size="sm"
                       style={{ fontFamily: "Sora" }}
-                      onClick={() =>
-                        router.push(`/companies/review/`)
-                      }
+                      onClick={() => router.push(`/companies/review/`)}
                     >
                       View Details
                     </Button>
@@ -278,7 +276,9 @@ export default function CompaniesPage() {
                     variant="outline"
                     style={{ fontFamily: "Sora" }}
                     onClick={() =>
-                      (window.location.href = `/company-profile/${company.id}`)
+                      router.push(
+                        `/main/companies/review`,
+                      )
                     }
                   >
                     View Company

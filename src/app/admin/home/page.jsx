@@ -461,7 +461,7 @@ export default function AdminHomePage() {
                               e.stopPropagation();
 
                               router.push(
-                                `/admin/jobs-managment/job-applicants`,
+                                `/admin/jobs-managment/job-applicants/${job.id}`,
                               );
                             }}
                             className="bg-pink-600 hover:bg-pink-700 text-white"

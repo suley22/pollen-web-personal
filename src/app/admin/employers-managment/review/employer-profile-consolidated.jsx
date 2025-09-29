@@ -30,7 +30,9 @@ export default function EmployerProfileConsolidated({ employerProfile }) {
   const getStatusInfo = () => {
     if (!employerProfile) return null;
 
-    if (employerProfile.approvalStatus === "pending") {
+    console.log(employerProfile)
+
+    if (employerProfile.approval_status === "pending") {
       return {
         type: "review",
         icon: Clock,
@@ -58,7 +60,7 @@ export default function EmployerProfileConsolidated({ employerProfile }) {
       };
     }
 
-    if (employerProfile.approvalStatus === "approved") {
+    if (employerProfile.approval_status === "approved") {
       return {
         type: "live",
         icon: CheckCircle,
@@ -72,7 +74,7 @@ export default function EmployerProfileConsolidated({ employerProfile }) {
       };
     }
 
-    if (employerProfile.approvalStatus === "requires_changes") {
+    if (employerProfile.approval_status === "requires_changes") {
       return {
         type: "requires_changes",
         icon: AlertCircle,
@@ -128,7 +130,7 @@ export default function EmployerProfileConsolidated({ employerProfile }) {
                   className="data-[state=active]:bg-pink-50 data-[state=active]:text-pink-700 data-[state=active]:border-pink-200 data-[state=active]:shadow-sm transition-all duration-200 rounded-md border border-transparent px-2 py-2 mx-1 h-10 flex items-center justify-center text-sm"
                 >
                   <span className="font-medium">Overview</span>
-                  {!employerProfile.about && !employerProfile.description && (
+                  {!employerProfile.about && !employerProfile.company_description && (
                     <span className="ml-1 text-xs text-gray-500">+</span>
                   )}
                 </TabsTrigger>

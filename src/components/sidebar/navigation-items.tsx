@@ -53,6 +53,13 @@ export function NavigationItems() {
       section: "Main",
     },
     {
+      icon: Home,
+      label: "Home",
+      path: "/admin/home",
+      isActive: pathname === "/admin/home",
+      section: "Admin",
+    },
+    {
       icon: User,
       label: "Employers Managment",
       path: "/admin/employers-managment",
@@ -88,12 +95,12 @@ export function NavigationItems() {
             )}
             <SidebarGroupContent className="">
               <SidebarMenu className="">
-                <SidebarMenuItem active={item.isActive} className="">
-                  <SidebarMenuButton className="" tooltip={item.label} asChild>
+                <SidebarMenuItem className="">
+                  <SidebarMenuButton className="" tooltip={item.label} isActive={item.isActive} asChild>
                     <a href={item.path}>
                       <item.icon />
                       <span>{item.label}</span>
-                    </a>        
+                    </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>

@@ -64,7 +64,7 @@ export default function Description({ employerProfile }) {
             variant="outline"
             onClick={() => {
               setIsEditing(false);
-              setEditValue(employerProfile?.description || "");
+              setEditValue(employerProfile?.company_description || "");
             }}
             style={{ fontFamily: "Sora" }}
           >

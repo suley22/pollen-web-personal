@@ -78,7 +78,11 @@ export default function Page() {
                 disabled={isLoading}
               />
             </div>
-            <p className="text-red-500">{state?.message}</p>
+            {state?.message && (
+              <p className={state?.success ? "text-green-500" : "text-red-500"}>
+                {state.message}
+              </p>
+            )}
           </form>
 
         </div>

@@ -33,6 +33,13 @@ export async function middleware(request) {
     }
   }
 
+  // Evitar que usuarios que ya completaron su perfil accedan a user-info
+  if (user && user.user_metadata.register_profile_completed && request.nextUrl.pathname === "/login/user-info") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/main/home";
+    return NextResponse.redirect(url);
+  }
+
   return response;
 }
 

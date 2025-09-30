@@ -24,7 +24,7 @@ import {
   MapPin,
   Clock,
   Users,
-  ArrowLeft
+  ArrowLeft,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
@@ -648,9 +648,9 @@ Please provide your analysis with specific recommendations and reasoning.`,
 
         {/* Live Job Status Card */}
         {job.status !== "draft" && (
-          <Card className="mb-6">
+          <Card className="mb-6 p-6">
             <CardHeader>
-              <CardTitle className="flex items-center">
+              <CardTitle className="flex items-center mb-6">
                 <Building2 className="h-5 w-5 mr-2" />
                 Job Status
               </CardTitle>
@@ -796,7 +796,8 @@ Please provide your analysis with specific recommendations and reasoning.`,
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger
               value="description"
-              className="flex items-center gap-2">
+              className="flex items-center gap-2"
+            >
               <FileText className="h-4 w-4" />
               Job Description
             </TabsTrigger>
@@ -805,7 +806,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
               <UserCheck className="h-4 w-4" />
               Persona Results
             </TabsTrigger>
-            
+
             <TabsTrigger value="assessment" className="flex items-center gap-2">
               <Brain className="h-4 w-4" />
               Skills Assessment
@@ -1468,7 +1469,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
                         variant="outline"
                         // TODO: colocar función del click
                         onClick={() => {
-                          router.push(`/admin/jobs-managment/persona-results`)
+                          router.push(`/admin/jobs-managment/persona-results`);
                         }}
                         //   setLocation(
                         //     "/admin/persona-results?job=" +

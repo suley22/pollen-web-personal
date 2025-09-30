@@ -31,7 +31,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,12 +59,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/query-client";
 
-export default function JobApplicantsPage({ params }) {
+export default function JobApplicantsPage({ jobId }) {
   const router = useRouter();
-  const jobId = params.jobId;
   const job = jobMock;
 
   const sortOrder = {
@@ -258,7 +255,7 @@ export default function JobApplicantsPage({ params }) {
     });
   };
 
-  const [viewMode, setViewMode] = useState(() => {
+  const [viewMode] = useState(() => {
     const saved = sessionStorage.getItem(`job-1-viewMode`);
     return saved || "grid";
   });
@@ -370,54 +367,6 @@ export default function JobApplicantsPage({ params }) {
   };
 
   // Candidate action mutations for conditional CTA flow
-  const candidateActionMutation = useMutation({
-    mutationFn: async (action) => {
-      return await apiRequest(
-        `/api/admin/candidates/${selectedAssessment?.id}/status`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            action,
-            reviewedBy: "Holly",
-            reviewedAt: new Date().toISOString(),
-          }),
-        },
-      );
-    },
-    onSuccess: (_, action) => {
-      queryClient.invalidateQueries({
-        queryKey: [`/api/admin/jobs/${jobId}/candidates`],
-      });
-
-      setConfirmDialogOpen(false);
-      setPendingAction(null);
-      setScoresLocked(true); // Lock scores after final action
-
-      // Route to interview availability page for interview invitations (no toast needed)
-      if (action === "interview" && selectedAssessment) {
-        router.push(
-          buildUrlWithCurrentState(
-            `/admin/interview-availability/${selectedAssessment.id}`,
-          ),
-        );
-      } else {
-        // Show toast for other actions only
-        const actionLabels = {
-          reject: "marked as not progressing",
-          match: "matched to employer",
-          interview: "invited to interview",
-        };
-        toast({
-          title: "Candidate Updated",
-          description: `Candidate has been ${actionLabels[action]} successfully`,
-        });
-        closeAssessmentSplitView();
-      }
-    },
-  });
 
   // Determine if candidate has previous Pollen interview history from unified data
   const canFastTrackToEmployer = selectedAssessment
@@ -427,7 +376,6 @@ export default function JobApplicantsPage({ params }) {
   const handleCandidateAction = (action) => {
     if (action === "interview") {
       // Skip confirmation dialog for interview invitations and proceed directly
-      candidateActionMutation.mutate(action);
     } else {
       // Show confirmation dialog for reject/match actions
       setPendingAction(action);
@@ -435,11 +383,7 @@ export default function JobApplicantsPage({ params }) {
     }
   };
 
-  const confirmCandidateAction = () => {
-    if (pendingAction) {
-      candidateActionMutation.mutate(pendingAction);
-    }
-  };
+  const confirmCandidateAction = () => {};
 
   const isScoreApproved = (candidate) => {
     // Auto-approve scores for any candidate who has progressed beyond "New" status
@@ -1289,19 +1233,6 @@ export default function JobApplicantsPage({ params }) {
                                       >
                                         <FileText className="h-3 w-3" />
                                         Assessment
-                                      </Button>
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        // onClick={(e) => {
-                                        //   e.stopPropagation();
-                                        //   sessionStorage.setItem('previousPage', `/admin/job-applicants-kanban/${jobId}`);
-                                        //   setLocation(`/admin/candidate-message/${candidate.id}`);
-                                        // }}
-                                        className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-3 py-1 h-7 flex items-center gap-1"
-                                      >
-                                        <MessageCircle className="h-3 w-3" />
-                                        Message
                                       </Button>
                                     </div>
                                   );
@@ -2206,7 +2137,7 @@ export default function JobApplicantsPage({ params }) {
                                 !(
                                   scoresApproved ||
                                   isScoreApproved(selectedAssessment)
-                                ) || candidateActionMutation.isPending
+                                )
                               }
                               size="default"
                               className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
@@ -2221,9 +2152,7 @@ export default function JobApplicantsPage({ params }) {
                                 !(
                                   scoresApproved ||
                                   isScoreApproved(selectedAssessment)
-                                ) ||
-                                candidateActionMutation.isPending ||
-                                !canFastTrackToEmployer
+                                ) || !canFastTrackToEmployer
                               }
                               size="default"
                               className="bg-green-600 hover:bg-green-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
@@ -2238,7 +2167,7 @@ export default function JobApplicantsPage({ params }) {
                                 !(
                                   scoresApproved ||
                                   isScoreApproved(selectedAssessment)
-                                ) || candidateActionMutation.isPending
+                                )
                               }
                               variant="outline"
                               size="default"
@@ -2356,7 +2285,6 @@ export default function JobApplicantsPage({ params }) {
             </Button>
             <Button
               onClick={confirmCandidateAction}
-              disabled={candidateActionMutation.isPending}
               className={
                 pendingAction === "reject"
                   ? "bg-red-600 hover:bg-red-700"
@@ -2365,7 +2293,7 @@ export default function JobApplicantsPage({ params }) {
                     : "bg-green-600 hover:bg-green-700"
               }
             >
-              {candidateActionMutation.isPending ? "Processing..." : "Confirm"}
+              {"Confirm"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -2976,9 +2904,7 @@ export default function JobApplicantsPage({ params }) {
                               !(
                                 scoresApproved ||
                                 isScoreApproved(selectedAssessment)
-                              ) ||
-                              candidateActionMutation.isPending ||
-                              scoresLocked
+                              ) || scoresLocked
                             }
                             size="default"
                             className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
@@ -3003,7 +2929,6 @@ export default function JobApplicantsPage({ params }) {
                                     scoresApproved ||
                                     isScoreApproved(selectedAssessment)
                                   ) ||
-                                  candidateActionMutation.isPending ||
                                   scoresLocked ||
                                   !canFastTrackToEmployer
                                 }
@@ -3023,9 +2948,7 @@ export default function JobApplicantsPage({ params }) {
                               !(
                                 scoresApproved ||
                                 isScoreApproved(selectedAssessment)
-                              ) ||
-                              candidateActionMutation.isPending ||
-                              scoresLocked
+                              ) || scoresLocked
                             }
                             variant="outline"
                             size="default"
@@ -3644,9 +3567,7 @@ export default function JobApplicantsPage({ params }) {
                                 !(
                                   scoresApproved ||
                                   isScoreApproved(selectedAssessment)
-                                ) ||
-                                candidateActionMutation.isPending ||
-                                scoresLocked
+                                ) || scoresLocked
                               }
                               size="default"
                               className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
@@ -3671,7 +3592,6 @@ export default function JobApplicantsPage({ params }) {
                                       scoresApproved ||
                                       isScoreApproved(selectedAssessment)
                                     ) ||
-                                    candidateActionMutation.isPending ||
                                     scoresLocked ||
                                     !canFastTrackToEmployer
                                   }
@@ -3691,9 +3611,7 @@ export default function JobApplicantsPage({ params }) {
                                 !(
                                   scoresApproved ||
                                   isScoreApproved(selectedAssessment)
-                                ) ||
-                                candidateActionMutation.isPending ||
-                                scoresLocked
+                                ) || scoresLocked
                               }
                               variant="outline"
                               size="default"

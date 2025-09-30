@@ -459,7 +459,6 @@ export default function AdminHomePage() {
                             size="sm"
                             onClick={(e) => {
                               e.stopPropagation();
-
                               router.push(
                                 `/admin/jobs-managment/job-applicants/${job.id}`,
                               );

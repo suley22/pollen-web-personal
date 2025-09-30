@@ -4,8 +4,6 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { Toaster } from "sonner";
 import { createClient } from "@/utils/supabase/server";
-import { SidebarProvider, SidebarInset } from "@/components/sidebar/sidebar";
-import { AppSidebar } from "@/components/sidebar/app-sidebar";
 
 const sora = Sora({
   subsets: ["latin"],
@@ -37,14 +35,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${sora.variable} ${poppins.variable} antialiased`}>
-        <Providers user={{ user }}>
-          <SidebarProvider className="testing-sidebar-layout">
-            <AppSidebar user={user} />
-            <SidebarInset className="bg-gray-50">
-              {children}
-            </SidebarInset>
-          </SidebarProvider>
-        </Providers>
+        <Providers user={{ user }}>{children}</Providers>
         <Toaster richColors position="top-right" />
       </body>
     </html>

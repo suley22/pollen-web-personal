@@ -1,5 +1,5 @@
-import { useState, useEffect} from "react";
-import {getEmployerProfile} from "@/app/admin/employers-managment/actions";
+import { useState, useEffect } from "react";
+import { getEmployerProfile } from "@/app/(portal)/admin/employers-managment/actions";
 
 export function useEmployerManagement() {
   const [selectedStatus, setSelectedStatus] = useState("all");
@@ -15,7 +15,7 @@ export function useEmployerManagement() {
   // Usar debounce para la búsqueda
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (searchTerm !== '') {
+      if (searchTerm !== "") {
         loadApplications();
       }
     }, 500);
@@ -25,7 +25,7 @@ export function useEmployerManagement() {
 
   // Cargar todas las aplicaciones cuando se borre la búsqueda
   useEffect(() => {
-    if (searchTerm === '') {
+    if (searchTerm === "") {
       loadApplications();
     }
   }, [searchTerm]);
@@ -35,22 +35,21 @@ export function useEmployerManagement() {
     setError(null);
 
     try {
-
       const result = await getEmployerProfile({
         status: selectedStatus,
-        searchTerm: searchTerm.trim()
+        searchTerm: searchTerm.trim(),
       });
 
       if (result.success) {
         setEmployers(result.data || []);
         setError(null);
       } else {
-        console.error('❌ Error from server:', result.error);
+        console.error("❌ Error from server:", result.error);
         setError(result.error);
       }
     } catch (err) {
-      console.error('💥 Exception caught:', err);
-      setError('Failed to load employers: ' + err.message);
+      console.error("💥 Exception caught:", err);
+      setError("Failed to load employers: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -84,7 +83,7 @@ export function useEmployerManagement() {
       default:
         return null;
     }
-  }
+  };
 
   return {
     form: {
@@ -97,7 +96,7 @@ export function useEmployerManagement() {
       setSearchTerm: setSearchTerm,
       loadApplications: loadApplications,
       addButtonOnClick: addButtonOnClick,
-      getStatusBadge: getStatusBadge
+      getStatusBadge: getStatusBadge,
     },
   };
 }

@@ -17,7 +17,6 @@ import { Logo } from "../icons/icons";
 import { NavigationItems } from "@/components/sidebar/navigation-items";
 
 export function AppSidebar({ ...props }) {
-
   const { state } = useSidebar();
 
   return (

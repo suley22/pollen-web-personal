@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useContext } from "react";
 import {
   Home,
   Briefcase,
@@ -18,6 +18,7 @@ import {
   useSidebar,
 } from "@/components/sidebar/sidebar";
 import { CustomSidebarMenuButton } from "@/components/sidebar/custom-sidebar-menu-button";
+
 export function NavigationItems() {
   const pathname = usePathname();
   const router = useRouter();

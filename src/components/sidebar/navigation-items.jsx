@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext } from "react";
+import React from "react";
 import {
   Home,
   Briefcase,
@@ -19,12 +19,14 @@ import {
 } from "@/components/sidebar/sidebar";
 import { CustomSidebarMenuButton } from "@/components/sidebar/custom-sidebar-menu-button";
 
-export function NavigationItems() {
+export function NavigationItems({ user }) {
   const pathname = usePathname();
   const router = useRouter();
   const { state } = useSidebar();
 
-  const items = [
+  console.log("User in NavigationItems:", user);
+
+  const itemsJobSeeker = [
     {
       icon: Home,
       label: "Home",
@@ -53,6 +55,9 @@ export function NavigationItems() {
       isActive: pathname === "/main/community",
       section: "Main",
     },
+  ];
+
+  const itemsAdmin = [
     {
       icon: Home,
       label: "Home",
@@ -82,6 +87,8 @@ export function NavigationItems() {
       section: "Admin",
     },
   ];
+
+  const items = user?.role === "admin" ? itemsAdmin : itemsJobSeeker;
 
   return (
     <>

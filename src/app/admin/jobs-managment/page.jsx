@@ -201,7 +201,7 @@ export default function JobsManagmentPage() {
 
               //TODO: habilitar navegación a detalles del trabajo real
               onClick={() => {
-                router.push(`/admin/jobs-managment/review`);
+                router.push(`/admin/jobs-managment/review/${job.id}`);
               }}
 
 
@@ -308,7 +308,7 @@ export default function JobsManagmentPage() {
                         // TODO: habilitar navegación a detalles del trabajo
                         onClick={(e) => {
                           e.stopPropagation();
-                          router.push(`/admin/jobs-managment/review`);
+                          router.push(`/admin/jobs-managment/review/${job.id}`);
                         }}
                         //    sessionStorage.setItem('previousPage', '/admin/assigned-jobs');
                         //    if (job.status === 'draft') {

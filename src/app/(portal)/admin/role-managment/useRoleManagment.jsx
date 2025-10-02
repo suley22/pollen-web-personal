@@ -59,8 +59,26 @@ export function useRoleManagment() {
   }
 
   async function onHandleRoleChange(userId, role) {
-    updateUserRole(userId, role);
-    loadUsers();
+    try {
+      // Actualizar el rol en la base de datos
+      const result = await updateUserRole(userId, role);
+
+      if (result.success) {
+        // Actualizar el estado local inmediatamente para reflejar el cambio en la UI
+        setProfiles(prevProfiles =>
+          prevProfiles.map(profile =>
+            profile.id === userId
+              ? { ...profile, role: role }
+              : profile
+          )
+        );
+      } else {
+        console.error("Error updating user role:", result.error);
+        // Opcionalmente mostrar un mensaje de error al usuario
+      }
+    } catch (error) {
+      console.error("Failed to update user role:", error);
+    }
   }
 
   return {

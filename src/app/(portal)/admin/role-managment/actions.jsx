@@ -8,9 +8,21 @@ export async function getUsers(filters = {}) {
 
     const supabase = await createClient();
 
+    // Obtener el usuario logueado
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      console.error("Error getting current user:", userError);
+      return { success: false, error: "User not authenticated" };
+    }
+
     let query = supabase
       .from("profile")
       .select("*")
+      .neq("id", user.id) // Excluir al usuario logueado
       .order("created_at", { ascending: false });
 
     // Aplicar filtro de búsqueda si existe
@@ -35,32 +47,38 @@ export async function getUsers(filters = {}) {
 }
 
 export async function updateUserRole(userId, role) {
-  const supabase = await createClient();
+  try {
+    const supabase = await createClient();
 
-  // actualizar role en la tabla profile
-  const { errorProfileUpdate } = await supabase.from("profile").upsert(
-    {
-      id: userId, // 👈 clave primaria o unique constraint
-      role: role,
-    },
-    { onConflict: "id" }, // 👈 le indicas con qué campo detectar duplicados
-  );
+    // actualizar role en la tabla profile
+    const { errorProfileUpdate } = await supabase.from("profile").upsert(
+      {
+        id: userId, // 👈 clave primaria o unique constraint
+        role: role,
+      },
+      { onConflict: "id" }, // 👈 le indicas con qué campo detectar duplicados
+    );
 
-  if (errorProfileUpdate) {
-    console.error("Error actualizando profile:", errorProfileUpdate.message);
-    return { message: "Error actualizando profile", success: false };
-  }
+    if (errorProfileUpdate) {
+      console.error("Error actualizando profile:", errorProfileUpdate.message);
+      return { message: "Error actualizando profile", success: false };
+    }
 
-  const { dataUpdateUser, errorUpdateUser } = await supabase.auth.updateUser({
-    data: {
-      role: role,
-    },
-  });
+    const { dataUpdateUser, errorUpdateUser } = await supabase.auth.updateUser({
+      data: {
+        role: role,
+      },
+    });
 
-  if (errorUpdateUser) {
-    console.error("Error actualizando metadata:", errorUpdateUser.message);
-    return { message: "Error actualizando perfil", success: false };
-  } else {
-    console.log("User actualizado:", dataUpdateUser);
+    if (errorUpdateUser) {
+      console.error("Error actualizando metadata:", errorUpdateUser.message);
+      return { message: "Error actualizando perfil", success: false };
+    } else {
+      console.log("User actualizado:", dataUpdateUser);
+      return { message: "Role actualizado correctamente", success: true };
+    }
+  } catch (error) {
+    console.error("Error inesperado:", error);
+    return { message: "Error inesperado al actualizar role", success: false };
   }
 }

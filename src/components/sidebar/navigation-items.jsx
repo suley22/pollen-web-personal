@@ -86,6 +86,13 @@ export function NavigationItems({ user }) {
       isActive: pathname === "/admin/jobs-managment",
       section: "Admin",
     },
+    {
+      icon: Briefcase,
+      label: "Roles Managment",
+      path: "/admin/role-managment",
+      isActive: pathname === "/admin/role-managment",
+      section: "Admin",
+    },
   ];
 
   const items = user?.role === "admin" ? itemsAdmin : itemsJobSeeker;

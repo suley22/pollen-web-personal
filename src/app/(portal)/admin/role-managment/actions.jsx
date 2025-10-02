@@ -1,0 +1,66 @@
+"use server";
+
+import { createClient } from "@/utils/supabase/server";
+
+export async function getUsers(filters = {}) {
+  try {
+    console.log("Fetching employer profiles with filters:", filters);
+
+    const supabase = await createClient();
+
+    let query = supabase
+      .from("profile")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    // Aplicar filtro de búsqueda si existe
+    if (filters.searchTerm) {
+      query = query.or(
+        `first_name.ilike.%${filters.searchTerm}%,last_name.ilike.%${filters.searchTerm}%`,
+      );
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Error fetching applications:", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data: data };
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return { success: false, error: "Failed to fetch applications" };
+  }
+}
+
+export async function updateUserRole(userId, role) {
+  const supabase = await createClient();
+
+  // actualizar role en la tabla profile
+  const { errorProfileUpdate } = await supabase.from("profile").upsert(
+    {
+      id: userId, // 👈 clave primaria o unique constraint
+      role: role,
+    },
+    { onConflict: "id" }, // 👈 le indicas con qué campo detectar duplicados
+  );
+
+  if (errorProfileUpdate) {
+    console.error("Error actualizando profile:", errorProfileUpdate.message);
+    return { message: "Error actualizando profile", success: false };
+  }
+
+  const { dataUpdateUser, errorUpdateUser } = await supabase.auth.updateUser({
+    data: {
+      role: role,
+    },
+  });
+
+  if (errorUpdateUser) {
+    console.error("Error actualizando metadata:", errorUpdateUser.message);
+    return { message: "Error actualizando perfil", success: false };
+  } else {
+    console.log("User actualizado:", dataUpdateUser);
+  }
+}

@@ -34,7 +34,7 @@ export async function login(_, formData) {
   }
 
   let redirectUrl =
-    data.user.user_metadata.role == "admin" ? "/admin/home" : "/main/login";
+    data.user.user_metadata.role == "admin" ? "/admin/home" : "/main/home";
 
   revalidatePath("/", "layout");
   redirect(redirectUrl);

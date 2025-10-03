@@ -1214,8 +1214,10 @@ export default function JobApplicantsPage({ jobId }) {
                                             "previousPage",
                                             `/admin/job-applicants-grid/${jobId}`,
                                           );
-                                          //TODO:
-                                          // setLocation(`/admin/consolidated-candidate-profile/${candidate.id}`);
+                                          // TODO: agregar función
+                                          // router.push(
+                                          //   `/admin/jobs-managment/job-applicants/candidate-profile/`,
+                                          // );
                                         }}
                                         className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-3 py-1 h-7 flex items-center gap-1"
                                       >
@@ -1250,8 +1252,10 @@ export default function JobApplicantsPage({ jobId }) {
                                             `/admin/job-applicants-grid/${jobId}`,
                                           );
 
-                                          // TODO:
-                                          // setLocation(`/admin/consolidated-candidate-profile/${candidate.id}`);
+                                          // TODO: agregar función
+                                          // router.push(
+                                          //   `/admin/jobs-managment/job-applicants/candidate-profile/`,
+                                          // );
                                         }}
                                         className="border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 text-xs px-2 py-1 h-7"
                                       >
@@ -1430,8 +1434,10 @@ export default function JobApplicantsPage({ jobId }) {
                                     "previousPage",
                                     `/admin/job-applicants-grid/${jobId}`,
                                   );
-                                  // TODO:
-                                  // setLocation(`/admin/consolidated-candidate-profile/${candidate.id}`);
+                                  // TODO: agregar función
+                                  // router.push(
+                                  //   `/admin/jobs-managment/job-applicants/candidate-profile/`,
+                                  // );
                                 }}
                                 className="text-xs"
                               >

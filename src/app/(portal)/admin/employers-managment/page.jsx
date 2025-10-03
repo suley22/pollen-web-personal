@@ -17,28 +17,24 @@ import {
   Mail,
   Phone,
   Users,
-  ArrowLeft
+  ArrowLeft,
 } from "lucide-react";
 
-
 export default function AdminEmployersManagment() {
-
   const router = useRouter();
   const { form } = useEmployerManagement();
 
   return (
-   <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-        <div className="flex flex-row">
-      <Button
-                  variant="ghost"
-                  onClick={() => router.back()}
-                  className="mb-4"
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                </Button>
-          <h1 className="text-4xl px-4 font-bold text-gray-900">Employers Management</h1>
-        </div>
+      <div className="flex flex-row">
+        <Button variant="ghost" onClick={() => router.back()} className="mb-4">
+          <ArrowLeft className="w-4 h-4 mr-2" />
+        </Button>
+        <h1 className="text-4xl px-4 font-bold text-gray-900">
+          Employers Management
+        </h1>
+      </div>
 
       <div className="p-4">
         {/* Search Bar */}
@@ -74,7 +70,10 @@ export default function AdminEmployersManagment() {
           <div className="flex flex-grow justify-end items-center">
             <PrimaryButton
               text="Add +"
-              onClick={form.addButtonOnClick}
+              onClick={router.push.bind(
+                this,
+                "/admin/employers-managment/create",
+              )}
               className=""
             />
 
@@ -111,96 +110,104 @@ export default function AdminEmployersManagment() {
 
         {/* Applications List */}
         <div className="space-y-4">
-          {!form.loading && form.employers.map((application) => (
-            <Card key={application.id} className="bg-white">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-3">
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {application.company_name || "Unknown Company"}
-                      </h3>
-                      {form.getStatusBadge(application.approval_status)}
-                    </div>
+          {!form.loading &&
+            form.employers.map((application) => (
+              <Card key={application.id} className="bg-white">
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          {application.company_name || "Unknown Company"}
+                        </h3>
+                        {form.getStatusBadge(application.approval_status)}
+                      </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-600">
-                      <div className="flex items-center">
-                        <Building2 className="h-4 w-4 mr-2" />
-                        {application.industries || "Industry not specified"}
-                      </div>
-                      <div className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        {application.company_location || "Location not specified"}
-                      </div>
-                      <div className="flex items-center">
-                        <Users className="h-4 w-4 mr-2" />
-                        {application.company_size || "Size not specified"}
-                      </div>
-                      <div className="flex items-center">
-                        <Mail className="h-4 w-4 mr-2" />
-                        {application.contact_email || "Email not provided"}
-                      </div>
-                      {application.contact_phone && (
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-600">
                         <div className="flex items-center">
-                          <Phone className="h-4 w-4 mr-2" />
-                          {application.contact_phone}
+                          <Building2 className="h-4 w-4 mr-2" />
+                          {application.industries || "Industry not specified"}
                         </div>
-                      )}
-                      <div className="flex items-center">
-                        <Calendar className="h-4 w-4 mr-2" />
-                        {application.created_at ? new Date(
-                          application.created_at,
-                        ).toLocaleDateString() : "Date not available"}
+                        <div className="flex items-center">
+                          <MapPin className="h-4 w-4 mr-2" />
+                          {application.company_location ||
+                            "Location not specified"}
+                        </div>
+                        <div className="flex items-center">
+                          <Users className="h-4 w-4 mr-2" />
+                          {application.company_size || "Size not specified"}
+                        </div>
+                        <div className="flex items-center">
+                          <Mail className="h-4 w-4 mr-2" />
+                          {application.contact_email || "Email not provided"}
+                        </div>
+                        {application.contact_phone && (
+                          <div className="flex items-center">
+                            <Phone className="h-4 w-4 mr-2" />
+                            {application.contact_phone}
+                          </div>
+                        )}
+                        <div className="flex items-center">
+                          <Calendar className="h-4 w-4 mr-2" />
+                          {application.created_at
+                            ? new Date(
+                                application.created_at,
+                              ).toLocaleDateString()
+                            : "Date not available"}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="flex space-x-2 ml-4">
-                    {application.approval_status === "pending" && (
-                      <>
+                    <div className="flex space-x-2 ml-4">
+                      {application.approval_status === "pending" && (
+                        <>
+                          <Button
+                            size="sm"
+                            className="bg-blue-600 hover:bg-blue-700 text-white"
+                            onClick={() =>
+                              router.push(
+                                `/admin/employers-managment/review/${application.id}`,
+                              )
+                            }
+                          >
+                            <Eye className="h-4 w-4 mr-1" />
+                            Review Application
+                          </Button>
+                        </>
+                      )}
+                      {application.approval_status === "approved" && (
                         <Button
                           size="sm"
-                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                          className="bg-green-600 hover:bg-green-700 text-white"
                           onClick={() =>
-                            router.push(`/admin/employers-managment/review/${application.id}`)
+                            router.push(
+                              `/admin/employers-managment/review/${application.id}`,
+                            )
                           }
                         >
-                          <Eye className="h-4 w-4 mr-1" />
-                          Review Application
+                          <CheckCircle className="h-4 w-4 mr-1" />
+                          View Approved
                         </Button>
-                      </>
-                    )}
-                    {application.approval_status === "approved" && (
-                      <Button
-                        size="sm"
-                        className="bg-green-600 hover:bg-green-700 text-white"
-                        onClick={() =>
-                          router.push(
-                            `/admin/employers-managment/review/${application.id}`
-                          )
-                        }
-                      >
-                        <CheckCircle className="h-4 w-4 mr-1" />
-                        View Approved
-                      </Button>
-                    )}
-                    {application.approval_status === "rejected" && (
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() =>
-                          router.push(`/admin/employers-managment/review/${application.id}`)
-                        }
-                      >
-                        <XCircle className="h-4 w-4 mr-1" />
-                        View Rejected
-                      </Button>
-                    )}
+                      )}
+                      {application.approval_status === "rejected" && (
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() =>
+                            router.push(
+                              `/admin/employers-managment/review/${application.id}`,
+                            )
+                          }
+                        >
+                          <XCircle className="h-4 w-4 mr-1" />
+                          View Rejected
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            ))}
         </div>
       </div>
     </div>

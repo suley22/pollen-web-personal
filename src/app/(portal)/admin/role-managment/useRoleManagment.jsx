@@ -11,6 +11,14 @@ export function useRoleManagment() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [confirmDialog, setConfirmDialog] = useState({
+    isOpen: false,
+    userId: null,
+    userName: "",
+    currentRole: "",
+    newRole: ""
+  });
+
   useEffect(() => {
     loadUsers();
   }, [selectedStatus]);
@@ -58,27 +66,54 @@ export function useRoleManagment() {
     }
   }
 
-  async function onHandleRoleChange(userId, role) {
+  function onHandleRoleChange(userId, newRole) {
+    const user = profiles.find(profile => profile.id === userId);
+    if (!user) return;
+
+    if (user.role === newRole) return;
+
+    setConfirmDialog({
+      isOpen: true,
+      userId: userId,
+      userName: `${user.first_name} ${user.last_name}`,
+      currentRole: user.role,
+      newRole: newRole
+    });
+  }
+
+  async function confirmRoleChange() {
+    const { userId, newRole } = confirmDialog;
+
     try {
-      // Actualizar el rol en la base de datos
-      const result = await updateUserRole(userId, role);
+      const result = await updateUserRole(userId, newRole);
 
       if (result.success) {
         // Actualizar el estado local inmediatamente para reflejar el cambio en la UI
         setProfiles(prevProfiles =>
           prevProfiles.map(profile =>
             profile.id === userId
-              ? { ...profile, role: role }
+              ? { ...profile, role: newRole }
               : profile
           )
         );
       } else {
-        console.error("Error updating user role:", result.error);
-        // Opcionalmente mostrar un mensaje de error al usuario
+        console.error("❌ Error actualizando rol:", result.message);
+        setError(result.message || "Error actualizando el rol del usuario");
       }
     } catch (error) {
-      console.error("Failed to update user role:", error);
+      console.error("💥 Error inesperado:", error);
+      setError("Error inesperado al actualizar el rol del usuario");
     }
+  }
+
+  function closeConfirmDialog() {
+    setConfirmDialog({
+      isOpen: false,
+      userId: null,
+      userName: "",
+      currentRole: "",
+      newRole: ""
+    });
   }
 
   return {
@@ -88,9 +123,12 @@ export function useRoleManagment() {
       profiles: profiles,
       loading: loading,
       error: error,
+      confirmDialog: confirmDialog,
       setSearchTerm: setSearchTerm,
       loadApplications: loadUsers,
       onHandleRoleChange: onHandleRoleChange,
+      confirmRoleChange: confirmRoleChange,
+      closeConfirmDialog: closeConfirmDialog,
     },
   };
 }

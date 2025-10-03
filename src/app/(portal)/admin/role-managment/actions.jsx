@@ -51,13 +51,11 @@ export async function updateUserRole(userId, role) {
     const supabase = await createClient();
 
     // actualizar role en la tabla profile
-    const { errorProfileUpdate } = await supabase.from("profile").upsert(
-      {
-        id: userId, // 👈 clave primaria o unique constraint
-        role: role,
-      },
-      { onConflict: "id" }, // 👈 le indicas con qué campo detectar duplicados
-    );
+    const { data, error: errorProfileUpdate } = await supabase
+      .from("profile")
+      .update({ role: role })
+      .eq("id", userId)
+      .select();
 
     if (errorProfileUpdate) {
       console.error("Error actualizando profile:", errorProfileUpdate.message);

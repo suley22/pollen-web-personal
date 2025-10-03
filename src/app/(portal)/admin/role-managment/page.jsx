@@ -1,6 +1,7 @@
 "use client";
 
 import { useRoleManagment } from "./useRoleManagment";
+import { RoleChangeConfirmDialog } from "./RoleChangeConfirmDialog";
 import { User, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
@@ -104,7 +105,7 @@ export default function RoleManagmentPage() {
                     <td className="py-2 px-4">
                       <div className="flex">
                         <Select
-                          key={jobSeeker.id}
+                          key={`${jobSeeker.id}-${jobSeeker.role}`}
                           onValueChange={(role) =>
                             form.onHandleRoleChange(jobSeeker.id, role)
                           }
@@ -134,6 +135,16 @@ export default function RoleManagmentPage() {
           </div>
         </div>
       </div>
+
+      {/* Diálogo de confirmación para cambio de rol */}
+      <RoleChangeConfirmDialog
+        isOpen={form.confirmDialog.isOpen}
+        onClose={form.closeConfirmDialog}
+        onConfirm={form.confirmRoleChange}
+        userName={form.confirmDialog.userName}
+        currentRole={form.confirmDialog.currentRole}
+        newRole={form.confirmDialog.newRole}
+      />
     </div>
   );
 }

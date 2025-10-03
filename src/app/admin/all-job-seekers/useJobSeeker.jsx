@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getEmployerProfile, getJobSeeker } from "@/app/admin/all-job-seekers/actions";
+import { getJobSeeker } from "@/app/admin/all-job-seekers/actions";
 import { Badge } from "@/components/ui/badge";
 
 

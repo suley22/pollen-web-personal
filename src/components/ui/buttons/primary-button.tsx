@@ -1,6 +1,6 @@
 import { Button } from "./button";
 
-function PrimaryButton({ text, size, onClick, ...props }) {
+function PrimaryButton({ text, size, onClick, icon, ...props }) {
   return (
     <Button
       variant="default"
@@ -9,6 +9,7 @@ function PrimaryButton({ text, size, onClick, ...props }) {
       className="bg-pink-600 hover:bg-pink-700 text-white font-semibold flex-1 font-sora"
       {...props}
     >
+      {icon && <span className="mr-2">{icon}</span>}
       {text}
     </Button>
   );

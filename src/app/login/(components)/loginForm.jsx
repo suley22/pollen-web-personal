@@ -5,11 +5,10 @@ import { Button } from "@/components/ui/buttons/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/icons/icons";
-import { useActionState, useState } from "react";
+import { useActionState } from "react";
 import { useLogin } from "./useLogin";
 
 export function LoginForm({ className, loginAction, onChangeLogin, ...props }) {
-
   const { form } = useLogin();
   const [state, formAction, isLoading] = useActionState(loginAction);
 
@@ -59,9 +58,14 @@ export function LoginForm({ className, loginAction, onChangeLogin, ...props }) {
                 Forgot your password?
               </a>
             </div>
-            <Input id="password" name="password" type="password" required
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              required
               value={form.password}
-              onChange={(e) => form.setPassword(e.target.value)} />
+              onChange={(e) => form.setPassword(e.target.value)}
+            />
           </div>
           <Button disabled={isLoading} type="submit" className="w-full">
             {isLoading ? "Loading..." : "Login"}

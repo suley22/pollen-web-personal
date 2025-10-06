@@ -18,8 +18,10 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import { useHome } from "./useHome";
 
 export default function AdminHomePage() {
+  const { homeState } = useHome();
   const router = useRouter();
   const notifications = [];
   const stats = {
@@ -30,47 +32,49 @@ export default function AdminHomePage() {
     liveJobs: 23,
     pendingJobApprovals: 7,
   };
-  const myAssignedJobs = [
-    {
-      id: 1,
-      jobTitle: "Marketing Assistant",
-      companyName: "TechFlow Solutions",
-      status: "draft",
-      assignedDate: "2025-01-10",
-      totalApplications: 0,
-      newApplicationsToReview: 0,
-      pollenInterviewsBooked: 0,
-      feedbackSent: 0,
-      candidatesMatchedToEmployer: 0,
-      assignedTo: "Holly (You)",
-    },
-    {
-      id: 2,
-      jobTitle: "Marketing Specialist",
-      companyName: "Creative Studios",
-      status: "live",
-      assignedDate: "2025-01-08",
-      totalApplications: 12,
-      newApplicationsToReview: 2,
-      pollenInterviewsBooked: 1,
-      feedbackSent: 8,
-      candidatesMatchedToEmployer: 2,
-      assignedTo: "Holly (You)",
-    },
-    {
-      id: 3,
-      jobTitle: "Digital Marketing Coordinator",
-      companyName: "Digital Media Co",
-      status: "paused",
-      assignedDate: "2025-01-12",
-      totalApplications: 8,
-      newApplicationsToReview: 3,
-      pollenInterviewsBooked: 2,
-      feedbackSent: 3,
-      candidatesMatchedToEmployer: 0,
-      assignedTo: "Holly (You)",
-    },
-  ];
+
+  const myAssignedJobs = homeState.jobs;
+  // const myAssignedJobs = [
+  //   {
+  //     id: "ffb9511f-48ce-4272-87bd-cbb90ddb40f2",
+  //     jobTitle: "Marketing Assistant",
+  //     companyName: "TechFlow Solutions",
+  //     status: "draft",
+  //     assignedDate: "2025-01-10",
+  //     totalApplications: 0,
+  //     newApplicationsToReview: 0,
+  //     pollenInterviewsBooked: 0,
+  //     feedbackSent: 0,
+  //     candidatesMatchedToEmployer: 0,
+  //     assignedTo: "Holly (You)",
+  //   },
+  //   {
+  //     id: 2,
+  //     jobTitle: "Marketing Specialist",
+  //     companyName: "Creative Studios",
+  //     status: "live",
+  //     assignedDate: "2025-01-08",
+  //     totalApplications: 12,
+  //     newApplicationsToReview: 2,
+  //     pollenInterviewsBooked: 1,
+  //     feedbackSent: 8,
+  //     candidatesMatchedToEmployer: 2,
+  //     assignedTo: "Holly (You)",
+  //   },
+  //   {
+  //     id: 3,
+  //     jobTitle: "Digital Marketing Coordinator",
+  //     companyName: "Digital Media Co",
+  //     status: "paused",
+  //     assignedDate: "2025-01-12",
+  //     totalApplications: 8,
+  //     newApplicationsToReview: 3,
+  //     pollenInterviewsBooked: 2,
+  //     feedbackSent: 3,
+  //     candidatesMatchedToEmployer: 0,
+  //     assignedTo: "Holly (You)",
+  //   },
+  // ];
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -383,12 +387,13 @@ export default function AdminHomePage() {
             </div>
 
             <div className="p-6 space-y-4">
+              {/* TODO: */}
               {myAssignedJobs?.map((job) => (
                 <Card
                   key={job.id}
                   className="cursor-pointer hover:shadow-lg transition-shadow border border-gray-200 bg-white hover:bg-gray-50"
                   onClick={() => {
-                    router.push(`/admin/jobs-managment/review/2`);
+                    router.push(`/admin/jobs-managment/review/${job.id}`);
                   }}
                   //   if (job.status === 'draft') {
                   //     setLocation(`/admin/job-review/${job.id}?source=dashboard`);
@@ -402,25 +407,26 @@ export default function AdminHomePage() {
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-2">
                           <h3 className="font-medium text-gray-900">
-                            {job.jobTitle}
+                            {job.job_title}
                           </h3>
                           {getStatusBadge(job.status)}
                         </div>
 
                         <div className="flex items-center text-sm text-gray-600 mb-3">
                           <Building2 className="h-4 w-4 mr-1 text-pink-600" />
-                          {job.companyName}
+                          {job.company_name}
                           <span className="mx-2">•</span>
                           <Calendar className="h-4 w-4 mr-1 text-pink-600" />
                           {job.status === "draft"
-                            ? `Created ${new Date(job.assignedDate).toLocaleDateString()}`
-                            : `Published ${new Date(job.assignedDate).toLocaleDateString()}`}
+                            ? `Created ${new Date(job.assigned_date).toLocaleDateString()}`
+                            : `Published ${new Date(job.assigned_date).toLocaleDateString()}`}
                         </div>
 
                         {/* Application Summary - Total Count */}
                         <div className="mb-2">
                           <div className="inline-block px-3 py-1 bg-pink-50 text-pink-900 rounded-md font-semibold text-sm border border-pink-200">
-                            {job.totalApplications} Total Applications
+                            {/* TODO: Summary */}
+                            {job.total_applications} Total Applications
                           </div>
                         </div>
 
@@ -474,10 +480,14 @@ export default function AdminHomePage() {
                           variant={
                             job.status === "draft" ? "default" : "outline"
                           }
-                          //  onClick={(e) => {
-                          //    e.stopPropagation();
-                          //    setLocation(`/admin/job-review/${job.id}?source=dashboard`);
-                          //  }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+
+                            // /admin/jobs-managment/review/ffb9511f-48ce-4272-87bd-cbb90ddb40f2
+                            router.push(
+                              `/admin/jobs-managment/review/${job.id}`,
+                            );
+                          }}
                           className={
                             job.status === "draft"
                               ? "bg-pink-600 hover:bg-pink-700 text-white"

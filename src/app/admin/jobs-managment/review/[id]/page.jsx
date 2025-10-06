@@ -1,5 +1,5 @@
 import { fetchJobProfile } from "../actions";
-import JobProfileConsolidated from "../job-profile-consolidated";
+import JobsManagmentReviewPage from "../job-profile-consolidated";
 
 export default async function JobReviewPage({ params }) {
   const { id } = await params;
@@ -12,5 +12,5 @@ export default async function JobReviewPage({ params }) {
 
   const jobData = data;
 
-  return <JobProfileConsolidated job={jobData} />;
+  return <JobsManagmentReviewPage job={jobData} />;
 }

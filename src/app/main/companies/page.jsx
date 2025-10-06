@@ -275,9 +275,7 @@ export default function CompaniesPage() {
                     className="flex-1 text-xs sm:text-sm"
                     variant="outline"
                     style={{ fontFamily: "Sora" }}
-                    onClick={() =>
-                      (window.location.href = `/company-profile/${company.id}`)
-                    }
+                    onClick={() => router.push(`/main/companies/review/2`)}
                   >
                     View Company
                   </Button>

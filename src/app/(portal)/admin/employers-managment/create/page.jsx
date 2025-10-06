@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, EyeOff, User, UploadIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -28,6 +29,8 @@ export default function CreateProfilePage() {
     createCompanyData,
     null,
   );
+  const [checked, setChecked] = useState(false);
+  const [accolades, setAccolades] = useState([]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -68,7 +71,7 @@ export default function CreateProfilePage() {
                 <div className="p-6 pt-0 space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Company Name */}
-                    <div>
+                    <div className="md:col-span-2">
                       <Label
                         htmlFor="company_name"
                         className="mb-1 text-gray-800"
@@ -84,19 +87,163 @@ export default function CreateProfilePage() {
                     </div>
 
                     {/* Industry */}
-                    <div>
+                    <div className="md:col-span-2">
                       <Label
-                        htmlFor="company_industries"
+                        htmlFor="industries"
                         className="mb-1 text-gray-800"
                       >
                         Industry
                       </Label>
-                      <Input
-                        type="text"
-                        name="company_industries"
-                        className="w-full border p-2 rounded"
-                        placeholder="Industry"
-                      />
+                      <div className="grid grid-cols-3 gap-4 text-sm">
+                        <div className="flex flex-col space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox name="industries" value="technology" />
+                            <span>Technology</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox name="industries" value="education" />
+                            <span>Education </span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox name="industries" value="consulting" />
+                            <span>Consulting</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox name="industries" value="government" />
+                            <span>Government</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox name="industries" value="real_estate" />
+                            <span>Real Estate</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              name="industries"
+                              value="marketing_advertising"
+                            />
+                            <span>Marketing & Advertising</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              name="industries"
+                              value="hr_recruitment"
+                            />
+                            <span>HR/Recruitment</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              name="industries"
+                              value="other"
+                              checked={checked}
+                              onCheckedChange={() => setChecked(!checked)}
+                            />
+                            <span>Other</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-col space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox name="industries" value="healthcare" />
+                            <span>Healthcare</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox name="industries" value="retail" />
+                            <span>Retail</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              name="industries"
+                              value="media_entertainment"
+                            />
+                            <span>Media & Entertainment</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox name="industries" value="energy" />
+                            <span>Energy</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox name="industries" value="food_beverage" />
+                            <span>Food & Beverage</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              name="industries"
+                              value="legal_services"
+                            />
+                            <span>Legal Services</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox name="industries" value="social_impact" />
+                            <span>Social Impact</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-col space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox name="industries" value="finance" />
+                            <span>Finance</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox name="industries" value="manufacturing" />
+                            <span>Manufacturing</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox name="industries" value="non_profit" />
+                            <span>Non-profit</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              name="industries"
+                              value="transportation"
+                            />
+                            <span>Transportation</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              name="industries"
+                              value="travel_hospitality"
+                            />
+                            <span>Travel & Hospitality</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              name="industries"
+                              value="architecture_design"
+                            />
+                            <span>Architecture & Design</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox name="industries" value="environmental" />
+                            <span>Environmental</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    {checked && (
+                      <div className="md:col-span-2">
+                        <AccoladesSection
+                          placeholder={
+                            "Add your industry types and press Enter"
+                          }
+                        />
+                      </div>
+                    )}
+                    {/* No renderizar AccoladesSection aquí, solo en la sección principal */}
+                    <div className="md:col-span-2" />
+
+                    {/* Company Logo */}
+                    <div className="md:col-span-2">
+                      <Label className="mb-1 text-gray-800">Company Logo</Label>
+                      <div className="flex flex-row items-center space-x-4">
+                        <Input
+                          type="text"
+                          name="logo_url"
+                          className="w-full border p-2 rounded"
+                          placeholder="Logo URL"
+                        />
+                        <PrimaryButton
+                          icon={<UploadIcon />}
+                          text="Upload Logo"
+                        />
+                      </div>
                     </div>
 
                     {/* Company Size */}
@@ -178,23 +325,6 @@ export default function CreateProfilePage() {
                         placeholder="Website"
                       />
                     </div>
-
-                    {/* Company Logo */}
-                    <div className="md:col-span-2">
-                      <Label className="mb-1 text-gray-800">Company Logo</Label>
-                      <div className="flex flex-row items-center space-x-4">
-                        <Input
-                          type="text"
-                          name="logo_url"
-                          className="w-full border p-2 rounded"
-                          placeholder="Logo URL"
-                        />
-                        <PrimaryButton
-                          icon={<UploadIcon />}
-                          text="Upload Logo"
-                        />
-                      </div>
-                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -236,7 +366,10 @@ export default function CreateProfilePage() {
                 <h3 className="!mb-0 text-lg font-semibold text-gray-900">
                   Accolades & Acreditations
                 </h3>
-                <AccoladesSection />
+                <AccoladesSection
+                  accolades={accolades}
+                  setAccolades={setAccolades}
+                />
               </CardContent>
             </Card>
 
@@ -493,46 +626,76 @@ export default function CreateProfilePage() {
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div className="flex flex-col space-y-2">
                           <div className="flex items-center space-x-2">
-                            <Checkbox name="previous_hired" />
+                            <Checkbox
+                              name="previous_hired"
+                              value="recruitment_agencies"
+                            />
                             <span>Recruitment agencies</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <Checkbox name="previous_hired" />
+                            <Checkbox
+                              name="previous_hired"
+                              value="university_partnerships"
+                            />
                             <span>University partnerships</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <Checkbox name="previous_hired" />
+                            <Checkbox
+                              name="previous_hired"
+                              value="social_media_recruiting"
+                            />
                             <span>Social media recruiting</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <Checkbox name="previous_hired" />
+                            <Checkbox
+                              name="previous_hired"
+                              value="career_fairs"
+                            />
                             <span>Career fairs</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <Checkbox name="previous_hired" />
+                            <Checkbox
+                              name="previous_hired"
+                              value="freelance_platforms"
+                            />
                             <span>Freelance platforms</span>
                           </div>
                         </div>
 
                         <div className="flex flex-col space-y-2">
                           <div className="flex items-center space-x-2">
-                            <Checkbox name="previous_hired" />
+                            <Checkbox
+                              name="previous_hired"
+                              value="job_boards"
+                            />
                             <span>Job boards (LinkedIn, Indeed, etc.)</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <Checkbox name="previous_hired" />
+                            <Checkbox
+                              name="previous_hired"
+                              value="internal_referrals"
+                            />
                             <span>Internal referrals</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <Checkbox name="previous_hired" />
+                            <Checkbox
+                              name="previous_hired"
+                              value="headhunters"
+                            />
                             <span>Headhunters</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <Checkbox name="previous_hired" />
+                            <Checkbox
+                              name="previous_hired"
+                              value="direct_applications"
+                            />
                             <span>Direct applications</span>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <Checkbox name="previous_hired" />
+                            <Checkbox
+                              name="previous_hired"
+                              value="never_hired"
+                            />
                             <span>Never hired before</span>
                           </div>
                         </div>

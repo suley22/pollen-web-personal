@@ -1,11 +1,9 @@
-import { useState } from "react";
+// El estado ahora se maneja en el padre, no aquí
 
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 
-export function AccoladesSection() {
-  const [accolades, setAccolades] = useState([]);
-
+export function AccoladesSection({ accolades, setAccolades, placeholder }) {
   const handleAddAccolade = (value) => {
     if (value && !accolades.includes(value)) {
       setAccolades([...accolades, value]);
@@ -18,12 +16,18 @@ export function AccoladesSection() {
 
   return (
     <div className="space-y-3">
+      {/* Hidden input to export accolades as comma-separated string */}
+      <input
+        type="hidden"
+        name="company_accolades"
+        value={accolades.join(",")}
+      />
       {/* Selected accolades */}
       {accolades.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {accolades.map((accolade, index) => (
+          {accolades.map((accolade) => (
             <Badge
-              key={index}
+              key={accolade}
               variant="secondary"
               className="flex items-center gap-1"
             >
@@ -42,9 +46,11 @@ export function AccoladesSection() {
       {/* Add new accolades */}
       <div className="flex space-x-2">
         <Input
-          placeholder="Add accolade..."
+          placeholder={placeholder || "Add an accolade and press Enter"}
           onKeyPress={(e) => {
             if (e.key === "Enter") {
+              e.preventDefault();
+              e.stopPropagation();
               const value = e.currentTarget.value.trim();
               handleAddAccolade(value);
               e.currentTarget.value = "";

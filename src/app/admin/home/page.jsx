@@ -209,7 +209,7 @@ export default function AdminHomePage() {
             {/* Job Seekers Card */}
             <Card
               className="cursor-pointer hover:shadow-lg transition-all duration-200 bg-blue-50 shadow-md p-6"
-              onClick={() => router.push("/admin/community/members")}
+              onClick={() => router.push("/admin/all-job-seekers")}
             >
               <CardHeader className="pb-3">
                 <CardTitle
@@ -388,7 +388,7 @@ export default function AdminHomePage() {
                   key={job.id}
                   className="cursor-pointer hover:shadow-lg transition-shadow border border-gray-200 bg-white hover:bg-gray-50"
                   onClick={() => {
-                    router.push(`/admin/jobs-managment/review`);
+                    router.push(`/admin/jobs-managment/review/2`);
                   }}
                   //   if (job.status === 'draft') {
                   //     setLocation(`/admin/job-review/${job.id}?source=dashboard`);

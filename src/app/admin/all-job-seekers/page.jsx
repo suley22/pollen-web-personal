@@ -447,7 +447,9 @@ export default function JobsPage() {
                           variant="ghost"
                           size="lg"
                           onClick={() =>
-                            router.push(`/admin/job-seekers/${jobSeeker.id}`)
+                            router.push(
+                              `/admin/all-job-seekers/review/${jobSeeker.id}`,
+                            )
                           }
                           className="!text-base !font-medium !font-sora text-blue-600 hover:text-blue-800"
                         >

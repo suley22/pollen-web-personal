@@ -1,16 +1,16 @@
-import { fetchJobProfile } from "../actions"
+import { fetchJobProfile } from "../actions";
 import JobProfileConsolidated from "../job-profile-consolidated";
 
 export default async function JobReviewPage({ params }) {
   const { id } = await params;
-  console.log('Employer ID from URL:', id);
+  console.log("Employer ID from URL:", id);
 
   const { data, error } = await fetchJobProfile(id);
 
-  console.log('Fetched data:', data);
-  console.log('Error:', error);
+  console.log("Fetched data:", data);
+  console.log("Error:", error);
 
-  const jobData = data && !error ? data : jobProfile;
+  const jobData = data;
 
-  return <JobProfileConsolidated job={jobData} />
+  return <JobProfileConsolidated job={jobData} />;
 }

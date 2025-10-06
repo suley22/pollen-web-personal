@@ -11,6 +11,8 @@ import {
   Clock,
   Briefcase,
   Search,
+  ArrowLeft,
+  Home,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/buttons/button";
@@ -270,6 +272,40 @@ export default function JobsPage() {
   return (
     <div>
       <div className="mx-auto p-4 space-y-4">
+        {/* Header */}
+        <div className="bg-white border-b border-gray-200 sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between py-6">
+              <div className="flex items-center space-x-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => router.push("/admin/home")}
+                  className="text-gray-600 hover:text-gray-900"
+                  title="Go to Admin Dashboard"
+                >
+                  <Home className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => router.push("/admin/home")}
+                  className="text-gray-600 hover:text-gray-900"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </Button>
+                <div>
+                  <h1 className="text-xl font-semibold text-gray-900">
+                    Community
+                  </h1>
+                  <p className="text-sm text-gray-600">
+                    {filteredJobSeekers.length} community members found
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="text-left mb-6">
           {/* Search and Filters */}
           <div className="bg-white p-4 rounded-lg shadow-sm border space-y-3 mb-3">

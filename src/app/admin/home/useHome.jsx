@@ -75,10 +75,10 @@ export function useHome() {
 
   const getStatusBadge = (status) => {
     switch (status) {
-      case "active":
+      case "live":
         return (
           <Badge className="bg-green-100 text-green-800 status-badge-compact">
-            Active
+            Live
           </Badge>
         );
       case "paused":

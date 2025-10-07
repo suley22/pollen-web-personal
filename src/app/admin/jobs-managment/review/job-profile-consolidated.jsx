@@ -268,7 +268,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
     };
 
     const handleStatusAction = (action) => {
-        console.log(`Job ${action} action for job:`, jobId);
+        console.log(`Job ${action} action for job:`, job.id);
 
         if (action === "submit-to-employer") {
             console.log("Submitting job to employer for approval...");

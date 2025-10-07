@@ -13,6 +13,14 @@ export async function fetchJobProfile(id) {
   const job = {
     ...data,
     who_would_love: data?.who_would_love || [],
+    candidate_counts: data?.candidate_counts || {},
+    candidateCounts: {
+      total: data?.candidate_counts?.total || 15,
+      new: data?.candidate_counts?.new || 10,
+      inProgress: data?.candidate_counts?.inProgress || 5,
+      complete: data?.candidate_counts?.complete || 8,
+      hired: data?.candidate_counts?.hired || 2,
+    },
   };
 
   if (error) {

@@ -1,6 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, EyeOff, User, UploadIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -25,6 +35,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 export default function CreateProfilePage() {
+  const formRef = useRef(null);
   const router = useRouter();
   const [state, CompanyData, isPending] = useActionState(
     createCompanyData,
@@ -57,7 +68,8 @@ export default function CreateProfilePage() {
         </p>
       </div>
 
-      <form className="flex flex-col gap-6" action={CompanyData}>
+      {/* Formulario original */}
+      <form ref={formRef} className="flex flex-col gap-6" action={CompanyData}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2 space-y-6">
             {/* Employer Information */}
@@ -721,10 +733,42 @@ export default function CreateProfilePage() {
           </div>
         </div>
 
-        <div className="flex justify-end mt-8">
-          <Button type="submit">Create company profile</Button>
-        </div>
+        {/* Botón de submit original debajo del formulario */}
       </form>
+      <div className="flex justify-end mt-8">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button type="button">Create company profile</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>¿Confirmar creación de empresa?</DialogTitle>
+              <DialogDescription>
+                ¿Estás seguro que deseas crear la empresa? Esta acción no
+                afectará la lógica actual.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="secondary" type="button">
+                  Cancelar
+                </Button>
+              </DialogClose>
+              <DialogClose asChild>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    if (formRef.current) formRef.current.requestSubmit();
+                    router.push("/admin/employers-managment");
+                  }}
+                >
+                  Confirmar
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }

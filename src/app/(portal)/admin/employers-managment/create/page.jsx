@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AccoladesSection } from "./(components)/accolades-section";
+import { CustomIndustriesSection } from "./(components)/custom-industries-section";
 import { Progress } from "./(components)/progress";
 import { useActionState } from "react";
 import { PrimaryButton } from "@/components/ui/buttons/primary-button";
@@ -31,6 +32,7 @@ export default function CreateProfilePage() {
   );
   const [checked, setChecked] = useState(false);
   const [accolades, setAccolades] = useState([]);
+  const [customIndustries, setCustomIndustries] = useState([]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -132,8 +134,6 @@ export default function CreateProfilePage() {
                           </div>
                           <div className="flex items-center space-x-2">
                             <Checkbox
-                              name="industries"
-                              value="other"
                               checked={checked}
                               onCheckedChange={() => setChecked(!checked)}
                             />
@@ -219,9 +219,11 @@ export default function CreateProfilePage() {
                     </div>
                     {checked && (
                       <div className="md:col-span-2">
-                        <AccoladesSection
+                        <CustomIndustriesSection
+                          customIndustries={customIndustries}
+                          setCustomIndustries={setCustomIndustries}
                           placeholder={
-                            "Add your industry types and press Enter"
+                            "Add your custom industry types and press Enter"
                           }
                         />
                       </div>

@@ -4,7 +4,11 @@ import { createClient } from "@/utils/supabase/server";
 export async function createCompanyData(_, formData) {
   const supabase = await createClient();
   const formCompanyData = Object.fromEntries(formData.entries());
-  const industries = formData.getAll("industries");
+  const standardIndustries = formData.getAll("industries");
+  const customIndustries = formCompanyData.custom_industries
+    ? formCompanyData.custom_industries.split(",").map((i) => i.trim()).filter(Boolean)
+    : [];
+  const allIndustries = [...standardIndustries, ...customIndustries];
   const accolades = formCompanyData.company_accolades; // será un string separado por comas
   const { data, error } = await supabase.from("employer_profile").insert({
     company_name: formCompanyData.company_name,
@@ -28,7 +32,7 @@ export async function createCompanyData(_, formData) {
     updated_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
     user_id: "1e4c06ce-3181-4368-bbee-bc38b079919b",
-    industries: industries,
+    industries: allIndustries,
     company_loves: formCompanyData.company_loves,
     company_entry_level: formCompanyData.company_entry_level,
     contact_name: formCompanyData.contact_name,

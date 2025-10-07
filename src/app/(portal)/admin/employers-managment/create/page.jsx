@@ -220,6 +220,8 @@ export default function CreateProfilePage() {
                     {checked && (
                       <div className="md:col-span-2">
                         <AccoladesSection
+                          accolades={accolades}
+                          setAccolades={setAccolades}
                           placeholder={
                             "Add your industry types and press Enter"
                           }

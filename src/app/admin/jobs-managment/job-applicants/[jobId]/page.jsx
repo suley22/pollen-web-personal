@@ -1026,7 +1026,7 @@ export default function JobApplicantsPage({ jobId }) {
             <div className="flex items-center gap-2">
               <select
                 value={sortBy}
-                // onChange={(e) => setSortBy(e.target.value)}
+                onChange={() => {}}
                 className="px-3 py-2 border border-gray-300 rounded-md text-sm bg-white hover:border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               >
                 <option value="default">Default Order</option>

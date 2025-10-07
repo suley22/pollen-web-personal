@@ -5,12 +5,12 @@ export default async function JobReviewPage({ params }) {
   const { id } = await params;
   console.log("Employer ID from URL:", id);
 
-  const { data, error } = await fetchJobProfile(id);
+  const { job, error } = await fetchJobProfile(id);
 
-  console.log("Fetched data:", data);
+  console.log("Fetched data:", job);
   console.log("Error:", error);
 
-  const jobData = data;
+  const jobData = job;
 
   return <JobsManagmentReviewPage job={jobData} />;
 }

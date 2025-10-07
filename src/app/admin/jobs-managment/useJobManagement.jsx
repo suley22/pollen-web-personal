@@ -44,7 +44,22 @@ export function useJobManagement() {
       });
 
       if (result.success) {
-        setJobs(result.data || []);
+        const jobsResult = result.data.map((job) => ({
+          ...job,
+          assigned_date: job.published_at || job.created_at,
+          total_applications: 2,
+          newApplicationsToReview: 10,
+          pollenInterviewsBooked: 5,
+          needsApproval: job.needs_approval || false,
+          company_name: job.company_name || "Unknown Company",
+          responsibilities: job.responsibilities || [],
+          candidatesMatchedToEmployer: 15,
+          feedbackSent: 8,
+          interviewsScheduled: 4,
+          offersExtended: 2,
+          hiresMade: 1,
+        }));
+        setJobs(jobsResult || []);
         setError(null);
       } else {
         console.error("❌ Error from server:", result.error);

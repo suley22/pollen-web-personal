@@ -47,11 +47,17 @@ export function useHome() {
         const assignedJobs = result.data.map((job) => ({
           ...job,
           assigned_date: job.published_at || job.created_at,
-          totalApplications: job.total_applications || 0,
-          newApplicationsToReview: job.new_applications_to_review || 0,
-          pollenInterviewsBooked: job.pollen_interviews_booked || 0,
+          total_applications: 2,
+          newApplicationsToReview: 10,
+          pollenInterviewsBooked: 5,
           needsApproval: job.needs_approval || false,
           company_name: job.company_name || "Unknown Company",
+          responsibilities: job.responsibilities || [],
+          candidatesMatchedToEmployer: 15,
+          feedbackSent: 8,
+          interviewsScheduled: 4,
+          offersExtended: 2,
+          hiresMade: 1,
         }));
         setJobs(assignedJobs || []);
         setError(null);
@@ -69,10 +75,10 @@ export function useHome() {
 
   const getStatusBadge = (status) => {
     switch (status) {
-      case "live":
+      case "active":
         return (
           <Badge className="bg-green-100 text-green-800 status-badge-compact">
-            Live
+            Active
           </Badge>
         );
       case "paused":

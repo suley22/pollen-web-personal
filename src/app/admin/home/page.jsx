@@ -76,53 +76,6 @@ export default function AdminHomePage() {
   //   },
   // ];
 
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case "draft":
-        return (
-          <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 status-badge-compact">
-            Draft
-          </Badge>
-        );
-      case "live":
-        return (
-          <Badge className="bg-green-100 text-green-800 border-green-200 status-badge-compact">
-            Live
-          </Badge>
-        );
-      case "paused":
-        return (
-          <Badge className="bg-orange-100 text-orange-800 border-orange-200 status-badge-compact">
-            Paused
-          </Badge>
-        );
-      case "complete":
-        return (
-          <Badge className="bg-gray-100 text-gray-800 border-gray-200 status-badge-medium">
-            Complete
-          </Badge>
-        );
-      case "pending_approval":
-        return (
-          <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200 inline-flex items-center justify-center px-2 text-xs">
-            Pending Approval
-          </Badge>
-        );
-      case "needs_attention":
-        return (
-          <Badge className="bg-red-100 text-red-800 border-red-200 inline-flex items-center justify-center px-2 text-xs">
-            Needs Attention
-          </Badge>
-        );
-      default:
-        return (
-          <Badge variant="outline" className="status-badge-compact">
-            Unknown
-          </Badge>
-        );
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 admin-compact-mode pb-16">
       {/* Header with Alerts */}
@@ -409,7 +362,7 @@ export default function AdminHomePage() {
                           <h3 className="font-medium text-gray-900">
                             {job.job_title}
                           </h3>
-                          {getStatusBadge(job.status)}
+                          {homeState.getStatusBadge(job.status)}
                         </div>
 
                         <div className="flex items-center text-sm text-gray-600 mb-3">

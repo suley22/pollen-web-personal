@@ -20,10 +20,10 @@ export function AccoladesSection({ accolades, setAccolades, placeholder }) {
       <input
         type="hidden"
         name="company_accolades"
-        value={accolades.join(",")}
+        value={accolades?.join(",")}
       />
       {/* Selected accolades */}
-      {accolades.length > 0 && (
+      {accolades?.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {accolades.map((accolade) => (
             <Badge

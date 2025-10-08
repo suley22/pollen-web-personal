@@ -38,7 +38,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-export default function JobsManagmentReviewPage({ job }) {
+export default function JobsManagmentReviewPage({ job, personaData }) {
   const [copySuccess, setCopySuccess] = useState(false);
   const [submittedToEmployer, setSubmittedToEmployer] = useState(false);
   const [editedAssessment, setEditedAssessment] = useState(null);
@@ -155,7 +155,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
   };
 
   // Mock persona data
-  const personaData = {
+  const defaultPersonaData = {
     primaryDisc: "Influencer (I/D)",
     traits: [
       "Enthusiastic",
@@ -171,6 +171,8 @@ Please provide your analysis with specific recommendations and reasoning.`,
     behavioralInsights:
       "This role is perfect for someone who enjoys building relationships, creating engaging content, and working in a fast-paced, collaborative environment. The ideal candidate will be naturally outgoing and comfortable with change.",
   };
+
+  const persona = personaData ?? defaultPersonaData;
 
   const canMarkComplete = () => {
     if (!candidateCompletionData) return false;
@@ -1282,7 +1284,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
                       </h3>
                       <p className="text-sm text-blue-800 mb-3">
                         <strong>Primary Behavioral Type:</strong>{" "}
-                        {personaData.primaryDisc}
+                        {persona.primaryDisc}
                       </p>
                       <div className="space-y-2">
                         <div>
@@ -1290,7 +1292,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
                             Key Traits:
                           </span>
                           <div className="flex flex-wrap gap-1 mt-1">
-                            {personaData.traits.map((trait, index) => (
+                            {persona.traits.map((trait, index) => (
                               <Badge
                                 key={index}
                                 className="bg-blue-100 text-blue-800"
@@ -1305,7 +1307,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
                             Work Style:
                           </span>
                           <p className="text-sm text-blue-700 mt-1">
-                            {personaData.workStyle}
+                            {persona.workStyle}
                           </p>
                         </div>
                         <div>
@@ -1313,7 +1315,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
                             Ideal Environment:
                           </span>
                           <p className="text-sm text-blue-700 mt-1">
-                            {personaData.idealEnvironment}
+                            {persona.idealEnvironment}
                           </p>
                         </div>
                       </div>
@@ -1324,7 +1326,7 @@ Please provide your analysis with specific recommendations and reasoning.`,
                         Behavioral Insights
                       </h4>
                       <p className="text-sm text-gray-700">
-                        {personaData.behavioralInsights}
+                        {persona.behavioralInsights}
                       </p>
                     </div>
 

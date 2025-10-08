@@ -29,3 +29,28 @@ export async function fetchJobProfile(id) {
     return { error: null, job };
   }
 }
+
+export async function fetchPersonaData(job_id) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("persona_data")
+    .select("*")
+    .eq("job_id", job_id)
+    .single();
+
+  const persona_data = {
+    ...data,
+    primaryDisc: data?.primary_disc || "N/A",
+    traits: data?.traits || [],
+    workStyle: data?.work_style || "Not specified",
+    idealEnvironment: data?.ideal_environment || "Not specified",
+    behavioralInsights: data?.behavioral_insights || "Not specified",
+  };
+
+  if (error) {
+    return { error: error.message, persona_data: null };
+  } else {
+    return { error: null, persona_data: persona_data };
+  }
+}

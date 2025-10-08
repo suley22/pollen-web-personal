@@ -6,7 +6,8 @@ export default async function JobReviewPage({ params }) {
   console.log("Employer ID from URL:", id);
 
   const { job, error } = await fetchJobProfile(id);
-  const { persona_data, error: personaError } = await fetchPersonaData(job.id);
+  const job_id = job?.id;
+  const { persona_data, error: personaError } = await fetchPersonaData(job_id);
 
   console.log("Fetched data:", job);
   console.log("Error:", error);

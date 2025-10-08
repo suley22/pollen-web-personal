@@ -586,10 +586,11 @@ Please provide your analysis with specific recommendations and reasoning.`,
               {job.candidate_counts && (
                 <div className="space-y-3">
                   <Button
-                    //TODO: colocar función del click
-                    // onClick={() =>
-                    //   setLocation(`/admin/job-applicants-grid/${job.id}`)
-                    // }
+                    onClick={() =>
+                      router.push(
+                        `/admin/jobs-managment/job-applicants/${job.id}`,
+                      )
+                    }
                     variant="outline"
                     size="sm"
                     className="text-blue-600 border-blue-300 hover:bg-blue-50"

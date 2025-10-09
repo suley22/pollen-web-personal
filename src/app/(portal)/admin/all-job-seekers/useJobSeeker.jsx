@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { getJobSeeker } from "@/app/admin/all-job-seekers/actions";
+import { getJobSeeker } from "@/app/(portal)/admin/all-job-seekers/actions";
 import { Badge } from "@/components/ui/badge";
-
 
 export function useJobSeeker() {
   const [statusFilter, setStatusFilter] = useState("all");
@@ -20,7 +19,7 @@ export function useJobSeeker() {
   // Usar debounce para la búsqueda
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (searchTerm !== '') {
+      if (searchTerm !== "") {
         loadJobSeekers();
       }
     }, 500);
@@ -30,7 +29,7 @@ export function useJobSeeker() {
 
   // Cargar todas las aplicaciones cuando se borre la búsqueda
   useEffect(() => {
-    if (searchTerm === '') {
+    if (searchTerm === "") {
       loadJobSeekers();
     }
   }, [searchTerm]);
@@ -40,24 +39,23 @@ export function useJobSeeker() {
     setError(null);
 
     try {
-
       const result = await getJobSeeker({
         status: statusFilter,
         searchTerm: searchTerm.trim(),
         profile: profileFilter,
-        application: applicationFilter
+        application: applicationFilter,
       });
 
       if (result.success) {
         setJobSeekers(result.data || []);
         setError(null);
       } else {
-        console.error('❌ Error from server:', result.error);
+        console.error("❌ Error from server:", result.error);
         setError(result.error);
       }
     } catch (err) {
-      console.error('💥 Exception caught:', err);
-      setError('Failed to load employers: ' + err.message);
+      console.error("💥 Exception caught:", err);
+      setError("Failed to load employers: " + err.message);
     } finally {
       setLoading(false);
     }
@@ -108,7 +106,6 @@ export function useJobSeeker() {
         );
     }
   };
-
 
   return {
     form: {

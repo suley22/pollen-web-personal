@@ -54,3 +54,20 @@ export async function fetchPersonaData(job_id) {
     return { error: null, persona_data: persona_data };
   }
 }
+
+export async function fetchAssessmentData(job_id) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("job_assessment")
+    .select("*")
+    .eq("job_id", job_id);
+
+  const assessment = data ? data : [];
+
+  if (error) {
+    return { error: error.message, assessment: null };
+  } else {
+    return { error: null, assessment: assessment };
+  }
+}

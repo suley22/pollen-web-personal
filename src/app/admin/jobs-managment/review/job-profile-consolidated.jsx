@@ -38,7 +38,11 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-export default function JobsManagmentReviewPage({ job, personaData }) {
+export default function JobsManagmentReviewPage({
+  job,
+  personaData,
+  assessmentData,
+}) {
   const [copySuccess, setCopySuccess] = useState(false);
   const [submittedToEmployer, setSubmittedToEmployer] = useState(false);
   const [editedAssessment, setEditedAssessment] = useState(null);
@@ -53,106 +57,6 @@ export default function JobsManagmentReviewPage({ job, personaData }) {
   const [activeTab, setActiveTab] = useState("description");
 
   // Mock assessment data
-  const assessmentData = {
-    assessmentType: "Multiple Focused Tasks",
-    estimatedDuration:
-      "We recommend allowing approximately 45-60 minutes to complete this assessment, though it's not timed and you can take as long as you need.",
-    generatedContent: `MARKETING ASSISTANT SKILLS ASSESSMENT
-
-We recommend allowing approximately 45-60 minutes to complete this assessment, though it's not timed and you can take as long as you need.
-
-WHY DID YOU APPLY TO THIS ROLE?
-Please tell us what attracted you to this Marketing Assistant position and how it aligns with your career interests. (No word limit)
-
-TASK 1: CONTENT CREATION
-You've been asked to create social media content for TechCorp's new product launch.
-
-Task: Write three different social media posts for the same product announcement:
-1. LinkedIn post (professional tone, 150 words max)
-2. Twitter post (engaging, 280 characters max)
-3. Instagram caption (creative, storytelling approach, 100 words max)
-
-Product Details:
-- New project management software called "TaskFlow"
-- Key features: Real-time collaboration, AI-powered insights, mobile-first design
-- Target audience: Small to medium businesses
-- Launch date: Next month
-
-Tips: Focus on the unique benefits for each platform's audience. LinkedIn users value professional efficiency, Twitter users want quick insights, and Instagram users appreciate visual storytelling.
-
-TASK 2: CAMPAIGN ANALYSIS
-Review the campaign performance data and provide your analysis:
-
-1. What are the top 3 insights from this data?
-2. What would you recommend to improve performance?
-3. How would you present these findings to the marketing director?
-
-Campaign Data:
-- Email open rate: 18% (industry average: 21%)
-- Click-through rate: 2.1% (industry average: 2.6%)
-- Social media engagement: 150 likes, 23 shares, 8 comments per post
-- Website traffic increase: 15% during campaign period
-
-Tips: Look for patterns in the data and think about what actions could address the lower-performing metrics. Consider how to present both challenges and opportunities constructively.
-
-Please provide your analysis with specific recommendations and reasoning.`,
-    structuredQuestions: {
-      openingQuestion: {
-        title: "Why did you apply to this role?",
-        subtitle:
-          "Please tell us what attracted you to this Marketing Assistant position and how it aligns with your career interests.",
-      },
-      guidelines: {
-        timeGuideline: "45-60 minutes (not timed - take as long as you need)",
-        assessmentCriteria:
-          "Your responses will be evaluated based on creativity, communication skills, analytical thinking, and understanding of marketing principles. We're looking for practical solutions and clear reasoning.",
-      },
-      tasks: [
-        {
-          title: "Content Creation Challenge",
-          content: `You've been asked to create social media content for TechCorp's new product launch.
-
-**Task:** Write three different social media posts for the same product announcement:
-1. LinkedIn post (professional tone, 150 words max)
-2. Twitter post (engaging, 280 characters max)
-3. Instagram caption (creative, storytelling approach, 100 words max)
-
-**Product Details:**
-- New project management software called "TaskFlow"
-- Key features: Real-time collaboration, AI-powered insights, mobile-first design
-- Target audience: Small to medium businesses
-- Launch date: Next month
-
-**Tips:** Focus on the unique benefits for each platform's audience. LinkedIn users value professional efficiency, Twitter users want quick insights, and Instagram users appreciate visual storytelling.`,
-        },
-        {
-          title: "Campaign Performance Analysis",
-          content: `Review the campaign performance data and provide your analysis:
-
-1. What are the top 3 insights from this data?
-2. What would you recommend to improve performance?
-3. How would you present these findings to the marketing director?
-
-**Campaign Data:**
-- Email open rate: 18% (industry average: 21%)
-- Click-through rate: 2.1% (industry average: 2.6%)
-- Social media engagement: 150 likes, 23 shares, 8 comments per post
-- Website traffic increase: 15% during campaign period
-
-**Tips:** Look for patterns in the data and think about what actions could address the lower-performing metrics. Consider how to present both challenges and opportunities constructively.
-
-Please provide your analysis with specific recommendations and reasoning.`,
-        },
-      ],
-    },
-    scoringCriteria: `1. Communication Skills: Excellent - Candidate uses clear, professional language with appropriate tone. Poor - Candidate provides unclear responses or inappropriate tone.
-
-2. Problem-Solving Ability: Excellent - Candidate systematically identifies issues and provides practical solutions. Poor - Candidate fails to understand problems or offers vague solutions.
-
-3. Organisation & Prioritisation: Excellent - Candidate demonstrates clear task management and logical sequencing. Poor - Candidate shows disorganised approach with poor time management.
-
-4. Customer Focus & Values Alignment: Excellent - Candidate shows genuine care for customer experience. Poor - Candidate lacks customer empathy or understanding.`,
-  };
 
   // Mock persona data
   const defaultPersonaData = {

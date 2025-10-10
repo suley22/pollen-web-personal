@@ -1,14 +1,14 @@
 import { z } from "zod";
 
 export const emailErrorMessages = {
-  EMAIL_NOT_VALID: "El email no es válido",
+  EMAIL_NOT_VALID: "Email is not valid",
 };
 
 export const passwordErrorMessages = {
-  MIN_PASSWORD_LENGTH: "Mínimo 8 caracteres",
-  MIN_UPPERCASE_LETTER: "Al menos una mayúscula",
-  MIN_PASSWORD_NUMBER: "Al menos un número",
-  MIN_PASSWORD_SYMBOL: "Al menos un símbolo",
+  MIN_PASSWORD_LENGTH: "Minimum 8 characters",
+  MIN_UPPERCASE_LETTER: "At least one uppercase letter",
+  MIN_PASSWORD_NUMBER: "At least one number",
+  MIN_PASSWORD_SYMBOL: "At least one symbol",
 };
 
 export const UserInfoModel = z.object({

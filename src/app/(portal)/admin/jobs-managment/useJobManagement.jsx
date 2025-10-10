@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getJobList } from "@/app/admin/jobs-managment/actions";
+import { getJobList } from "@/app/(portal)/admin/jobs-managment/actions";
 import { Badge } from "@/components/ui/badge";
 
 export function useJobManagement() {

@@ -18,9 +18,9 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@/portal/*": ["./src/app/(portal)/*"],
       "@/login/*": ["./src/app/(login)/*"],
-      "@/admin/*": ["./src/app/(admin)/*"]
+      "@/admin/*": ["./src/app/(portal)/admin/*"],
+      "@/job-seeker/*": ["./src/app/(portal)/(job-seeker)/*"]
     },
     "moduleResolution": "bundler",
     "resolveJsonModule": true,

@@ -2,8 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { UserInfoModel } from "./registerSchema";
+import { UserInfoModel } from "@/login/_schema/registerSchema";
 import { createClient } from "@/utils/supabase/server";
+import { AdminRoutes } from "@/admin/router";
+import { JobSeekerRoutes } from "@/job-seeker/router";
 
 // TODO: Agregar validaciones de servidor.
 
@@ -33,8 +35,10 @@ export async function login(_, formData) {
     return { error: "Error al iniciar sesión" };
   }
 
-  let redirectUrl =
-    data.user.user_metadata.role == "admin" ? "/admin/home" : "/main/home";
+  // TODO: -> Mismo código en src/app/page.tsx
+
+  const isAdmin = data.user.user_metadata.role === "admin";
+  let redirectUrl = isAdmin ? AdminRoutes.home : JobSeekerRoutes.home;
 
   revalidatePath("/", "layout");
   redirect(redirectUrl);
@@ -79,18 +83,18 @@ export async function signInWithGoogle(origin) {
   const supabase = await createClient();
 
   const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
+    provider: "google",
     options: {
       redirectTo: `${origin}/auth/callback`,
       queryParams: {
-        access_type: 'offline',
-        prompt: 'consent',
+        access_type: "offline",
+        prompt: "consent",
       },
-    }
+    },
   });
 
   if (error) {
-    console.error('Error signing in with Google:', error.message);
+    console.error("Error signing in with Google:", error.message);
     return { error: error.message };
   }
 
@@ -98,4 +102,3 @@ export async function signInWithGoogle(origin) {
 
   return { data, error: null };
 }
-

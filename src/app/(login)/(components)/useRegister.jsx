@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { UserInfoModel } from "@/app/login/registerSchema";
 import { signInWithGoogle } from "../actions";
 import {
   emailErrorMessages,
   passwordErrorMessages,
-} from "@/app/login/registerSchema";
+  UserInfoModel,
+} from "@/login/_schema/registerSchema";
 
 export function useRegister() {
   const [isFormValid, setIsFormValid] = useState(false);
@@ -71,20 +71,20 @@ export function useRegister() {
     }
   }
 
-  function handleGoogleSignIn () {
-      setGoogleLoading(true);
-      try {
-        const { error } = signInWithGoogle(window.location.origin);
-        if (error) {
-          console.error('Google sign in error:', error);
-          // Aquí podrías mostrar el error al usuario si quieres
-        }
-      } catch (error) {
-        console.error('Unexpected error:', error);
-      } finally {
-        setGoogleLoading(false);
+  function handleGoogleSignIn() {
+    setGoogleLoading(true);
+    try {
+      const { error } = signInWithGoogle(window.location.origin);
+      if (error) {
+        console.error("Google sign in error:", error);
+        // Aquí podrías mostrar el error al usuario si quieres
       }
+    } catch (error) {
+      console.error("Unexpected error:", error);
+    } finally {
+      setGoogleLoading(false);
     }
+  }
 
   return {
     form: {

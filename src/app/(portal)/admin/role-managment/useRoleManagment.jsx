@@ -16,7 +16,7 @@ export function useRoleManagment() {
     userId: null,
     userName: "",
     currentRole: "",
-    newRole: ""
+    newRole: "",
   });
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export function useRoleManagment() {
   }
 
   function onHandleRoleChange(userId, newRole) {
-    const user = profiles.find(profile => profile.id === userId);
+    const user = profiles.find((profile) => profile.id === userId);
     if (!user) return;
 
     if (user.role === newRole) return;
@@ -77,7 +77,7 @@ export function useRoleManagment() {
       userId: userId,
       userName: `${user.first_name} ${user.last_name}`,
       currentRole: user.role,
-      newRole: newRole
+      newRole: newRole,
     });
   }
 
@@ -89,12 +89,10 @@ export function useRoleManagment() {
 
       if (result.success) {
         // Actualizar el estado local inmediatamente para reflejar el cambio en la UI
-        setProfiles(prevProfiles =>
-          prevProfiles.map(profile =>
-            profile.id === userId
-              ? { ...profile, role: newRole }
-              : profile
-          )
+        setProfiles((prevProfiles) =>
+          prevProfiles.map((profile) =>
+            profile.id === userId ? { ...profile, role: newRole } : profile,
+          ),
         );
       } else {
         console.error("❌ Error actualizando rol:", result.message);
@@ -112,7 +110,7 @@ export function useRoleManagment() {
       userId: null,
       userName: "",
       currentRole: "",
-      newRole: ""
+      newRole: "",
     });
   }
 

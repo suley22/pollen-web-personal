@@ -74,3 +74,28 @@ export async function signup(_, formData) {
     success: true,
   };
 }
+
+export async function signInWithGoogle(origin) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${origin}/auth/callback`,
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent',
+      },
+    }
+  });
+
+  if (error) {
+    console.error('Error signing in with Google:', error.message);
+    return { error: error.message };
+  }
+
+  redirect(data.url);
+
+  return { data, error: null };
+}
+

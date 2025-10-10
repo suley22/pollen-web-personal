@@ -35,10 +35,7 @@ export async function createCompanyData(_, formData) {
     updated_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
     user_id: "1e4c06ce-3181-4368-bbee-bc38b079919b",
-    industries:
-      formCompanyData.industries === "other"
-        ? formCompanyData.other_industry
-        : formCompanyData.industries,
+    industries: allIndustries,
     company_loves: formCompanyData.company_loves,
     company_entry_level: formCompanyData.company_entry_level,
     contact_name: formCompanyData.contact_name,

@@ -1,7 +1,16 @@
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { CustomIndustriesSection } from "./custom-industries-section";
+import { useState } from "react";
 
-export function IndustryCategoriesSection({ value, onValueChange }) {
+export function IndustryCategoriesSection() {
+  const [checked, setChecked] = useState(false);
+  const [customIndustries, setCustomIndustries] = useState([]);
+
+  // Handler para el checkbox 'Other'
+  const handleOtherCheckedChange = (value) => {
+    setChecked(!!value);
+  };
+
   const items = [
     { label: "Technology", value: "technology" },
     { label: "Healthcare", value: "healthcare" },
@@ -34,33 +43,35 @@ export function IndustryCategoriesSection({ value, onValueChange }) {
     { label: "Security Services", value: "security_services" },
     { label: "Other", value: "other" },
   ];
-  const other = value === "other";
   return (
     <>
-      <RadioGroup
-        name="industries"
-        value={value}
-        onValueChange={onValueChange}
-        className="grid grid-cols-3 gap-4 text-sm"
-      >
-        {items.map((item) => (
-          <div className="flex flex-col space-y-2" key={item.value}>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value={item.value} id={item.value} />
-              <label htmlFor={item.value}>{item.label}</label>
+      <div className="grid grid-cols-3 gap-4 text-sm">
+        {items.map((item) => {
+          const isOther = item.value === "other";
+          return (
+            <div className="flex flex-col space-y-2" key={item.value}>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  name={`industries.${item.value}`}
+                  value={item.value}
+                  checked={isOther ? !!checked : undefined}
+                  onCheckedChange={
+                    isOther ? handleOtherCheckedChange : undefined
+                  }
+                />
+                <span>{item.label}</span>
+              </div>
             </div>
-          </div>
-        ))}
-      </RadioGroup>
-      {other && (
-        <div className="mt-4">
-          <label htmlFor="other-industry" className="block text-sm font-medium">
-            Please specify other industry
-          </label>
-          <Input
-            type="text"
-            name="other_industry"
-            placeholder="Other industry"
+          );
+        })}
+      </div>
+
+      {checked && (
+        <div className="md:col-span-2">
+          <CustomIndustriesSection
+            customIndustries={customIndustries}
+            setCustomIndustries={setCustomIndustries}
+            placeholder={"Add your custom industry types and press Enter"}
           />
         </div>
       )}

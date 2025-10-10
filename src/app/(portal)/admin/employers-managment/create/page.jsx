@@ -110,6 +110,7 @@ export default function CreateProfilePage() {
                       >
                         Industry
                       </Label>
+
                       <IndustryCategoriesSection
                         value={industryValue}
                         onValueChange={setIndustryValue}
@@ -127,6 +128,7 @@ export default function CreateProfilePage() {
                       </div>
                     )}
                     {/* No renderizar AccoladesSection aquí, solo en la sección principal */}
+                    <div className="md:col-span-2" />
 
                     {/* Company Logo */}
                     <div className="md:col-span-2">

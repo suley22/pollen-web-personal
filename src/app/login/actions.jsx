@@ -19,7 +19,6 @@ export async function login(_, formData) {
     return { error: "Please check your credentials" };
   }
 
-  let redirectUrl = "/main/home";
   const supabase = await createClient();
 
   const credentials = {
@@ -27,12 +26,15 @@ export async function login(_, formData) {
     password: password,
   };
 
-  const { error: authError } =
+  const { data, error: authError } =
     await supabase.auth.signInWithPassword(credentials);
 
   if (authError) {
     return { error: "Error al iniciar sesión" };
   }
+
+  let redirectUrl =
+    data.user.user_metadata.role == "admin" ? "/admin/home" : "/main/home";
 
   revalidatePath("/", "layout");
   redirect(redirectUrl);
@@ -72,3 +74,28 @@ export async function signup(_, formData) {
     success: true,
   };
 }
+
+export async function signInWithGoogle(origin) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${origin}/auth/callback`,
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent',
+      },
+    }
+  });
+
+  if (error) {
+    console.error('Error signing in with Google:', error.message);
+    return { error: error.message };
+  }
+
+  redirect(data.url);
+
+  return { data, error: null };
+}
+

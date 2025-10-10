@@ -1,3 +1,22 @@
+/* Overlays: solo reciben eventos si están abiertos y visibles */
+[data-slot="sheet-overlay"],
+[data-slot="dropdown-menu-content"],
+[data-slot="dialog-overlay"] {
+  pointer-events: none !important;
+}
+[data-slot="sheet-overlay"][data-state="open"],
+[data-slot="dropdown-menu-content"][data-state="open"],
+[data-slot="dialog-overlay"][data-state="open"] {
+  pointer-events: auto !important;
+  opacity: 1 !important;
+}
+/* Fix: overlays nunca deben bloquear el mouse cuando están cerrados */
+[data-slot="sheet-overlay"][data-state="closed"],
+[data-slot="dropdown-menu-content"][data-state="closed"],
+[data-slot="dialog-overlay"][data-state="closed"] {
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
 /* Importamos archivos CSS adicionales primero */
 @import "../styles/pollen-style.css";
 
@@ -10,6 +29,8 @@
 .perspective-1000 {
   perspective: 1000px;
 }
+
+
 
 /* Sidebar Section Labels */
 .sidebar-section-label {
@@ -1025,7 +1046,6 @@ h3 {
   /* Hide navigation elements during PDF generation */
   .pdf-hidden,
   button,
-  .cursor-pointer,
   nav,
   .navigation {
     display: none !important;

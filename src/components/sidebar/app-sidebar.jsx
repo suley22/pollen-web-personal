@@ -1,6 +1,5 @@
 "use client";
 
-import { NavUser } from "@/components/sidebar/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -11,17 +10,14 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarTrigger,
 } from "@/components/sidebar/sidebar";
 import { useSidebar } from "@/components/sidebar/sidebar";
 import { Logo } from "../icons/icons";
-import { useLogout } from "@/app/hooks/useLogout";
 import { NavigationItems } from "@/components/sidebar/navigation-items";
 
 export function AppSidebar({ user, ...props }) {
-  const { onLogout, isLogoutInProgress } = useLogout();
-
   const { state } = useSidebar();
-  const isLoading = !user || isLogoutInProgress;
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -56,24 +52,11 @@ export function AppSidebar({ user, ...props }) {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <NavigationItems />
+          <NavigationItems user={user} />
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        {isLoading ? (
-          <div className="flex items-center justify-center p-4">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary" />
-            {state !== "collapsed" && (
-              <span className="ml-2 text-sm">Cargando...</span>
-            )}
-          </div>
-        ) : (
-          <NavUser
-            user={user}
-            onLogout={onLogout}
-            isLogoutInProgress={isLogoutInProgress}
-          />
-        )}
+        <SidebarTrigger />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

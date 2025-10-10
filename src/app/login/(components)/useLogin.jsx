@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { signInWithGoogle } from "@/utils/auth/google-auth";
+import { useState } from "react";
+import { signInWithGoogle } from "../actions";
 
 export function useLogin() {
  const [email, setEmail] = useState("");
@@ -9,7 +9,7 @@ export function useLogin() {
   const handleGoogleSignIn = async () => {
       setGoogleLoading(true);
       try {
-        const { error } = await signInWithGoogle();
+        const { error } = await signInWithGoogle(window.location.origin);
         if (error) {
           console.error('Google sign in error:', error);
           // Aquí podrías mostrar el error al usuario si quieres

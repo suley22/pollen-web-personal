@@ -198,7 +198,9 @@ export default function CompaniesPage() {
                     <Button
                       size="sm"
                       style={{ fontFamily: "Sora" }}
-                      onClick={() => router.push(`/main/companies/review`)}
+                      onClick={() =>
+                        router.push(`/main/companies/review/${company.id}`)
+                      }
                     >
                       View Details
                     </Button>
@@ -275,7 +277,9 @@ export default function CompaniesPage() {
                     className="flex-1 text-xs sm:text-sm"
                     variant="outline"
                     style={{ fontFamily: "Sora" }}
-                    onClick={() => router.push(`/main/companies/review`)}
+                    onClick={() =>
+                      router.push(`/main/companies/review/${company.id}`)
+                    }
                   >
                     View Company
                   </Button>

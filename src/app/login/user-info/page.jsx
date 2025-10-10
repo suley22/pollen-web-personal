@@ -16,8 +16,8 @@ export default function Page() {
     <div className="max-w-xl mx-auto mt-10">
       <div className="bg-white shadow-lg rounded-2xl p-6">
         <div className="mb-4">
-          <h2 className="text-xl font-semibold !mb-0">¡Ya casi!</h2>
-          <p>Completa la información para continuar</p>
+          <h2 className="text-xl font-semibold !mb-0">Almost there!</h2>
+          <p>Complete the information to continue</p>
         </div>
 
         <div className="space-y-3">
@@ -25,25 +25,25 @@ export default function Page() {
           <form action={formAction} className="flex flex-col gap-6">
           <div className="flex gap-2">
             <div className="flex-1">
-              <Label htmlFor="first_name" className="mb-1 font-semibold">Nombre</Label>
+              <Label htmlFor="first_name" className="mb-1 font-semibold">First Name</Label>
               <Input
                 type="text"
                 name="first_name"
                 value={form.first_name}
                 onChange={form.handleChange}
                 className="w-full border p-2 rounded"
-                placeholder="Nombre"
+                placeholder="First Name"
               />
             </div>
             <div className="flex-1">
-              <Label htmlFor="last_name" className="mb-1 font-semibold">Apellido</Label>
+              <Label htmlFor="last_name" className="mb-1 font-semibold">Surname</Label>
               <Input
                 type="text"
                 name="last_name"
                 value={form.last_name}
                 onChange={form.handleChange}
                 className="w-full border p-2 rounded"
-                placeholder="Apellido"
+                placeholder="Surname"
               />
             </div>
           </div>
@@ -65,7 +65,7 @@ export default function Page() {
           </div>
           <div className="flex gap-2 mt-4">
             <PrimaryButton
-              text="Save changes"
+              text="Save Changes"
               className=""
               disabled={isLoading}
             />

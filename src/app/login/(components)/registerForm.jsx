@@ -74,8 +74,8 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
                   }`}
                 >
                   {check.valid
-                    ? "✔ El mail es válido"
-                    : "✖ El mail no es válido"}
+                    ? "✔ Email is valid"
+                    : "✖ Email is not valid"}
                 </li>
               ))}
             </ul>

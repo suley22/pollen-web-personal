@@ -629,10 +629,10 @@ export default function CreateProfilePage() {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>¿Confirmar creación de empresa?</DialogTitle>
+              <DialogTitle>Confirm company creation?</DialogTitle>
               <DialogDescription>
-                ¿Estás seguro que deseas crear la empresa? Esta acción no
-                afectará la lógica actual.
+                Are you sure you want to create the company? This action will not
+                affect current logic.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>

@@ -2,9 +2,11 @@ import { NextResponse } from "next/server";
 import { updateSession } from "@/utils/supabase/middleware";
 
 const publicRoutes = [
+  "/auth/reset-password",
   "/auth/callback",
   "/auth/confirm",
   "/login",
+  "/login/forgot-password",
   "/auth",
   "/error",
   "/",

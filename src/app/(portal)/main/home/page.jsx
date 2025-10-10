@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/buttons/button";
 import CircularProgress from "@/components/ui/circular-progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+
 
 import { Badge } from "@/components/ui/badge";
 
@@ -21,6 +23,7 @@ import {
 
 export default function Home() {
   const [, setProgress] = useState(0);
+  const router = useRouter();
 
   // estado para guardados (JS puro)
   const [savedJobs, setSavedJobs] = useState(new Set());
@@ -172,7 +175,7 @@ export default function Home() {
 
                   <Button
                     onClick={() =>
-                      (window.location.href = "/profile-checkpoints")
+                      router.push('/profile-checkpoints')
                     }
                     variant="pollen"
                     size="sm"

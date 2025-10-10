@@ -18,12 +18,15 @@ import {
   useSidebar,
 } from "@/components/sidebar/sidebar";
 import { CustomSidebarMenuButton } from "@/components/sidebar/custom-sidebar-menu-button";
-export function NavigationItems() {
+
+export function NavigationItems({ user }) {
   const pathname = usePathname();
   const router = useRouter();
   const { state } = useSidebar();
 
-  const items = [
+  console.log("User in NavigationItems:", user);
+
+  const itemsJobSeeker = [
     {
       icon: Home,
       label: "Home",
@@ -52,6 +55,9 @@ export function NavigationItems() {
       isActive: pathname === "/main/community",
       section: "Main",
     },
+  ];
+
+  const itemsAdmin = [
     {
       icon: Home,
       label: "Home",
@@ -80,7 +86,16 @@ export function NavigationItems() {
       isActive: pathname === "/admin/jobs-managment",
       section: "Admin",
     },
+    {
+      icon: Briefcase,
+      label: "Roles Managment",
+      path: "/admin/role-managment",
+      isActive: pathname === "/admin/role-managment",
+      section: "Admin",
+    },
   ];
+
+  const items = user?.role === "admin" ? itemsAdmin : itemsJobSeeker;
 
   return (
     <>

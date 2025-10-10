@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { UserInfoModel } from "@/app/login/registerSchema";
-import { signInWithGoogle } from "@/utils/auth/google-auth";
+import { signInWithGoogle } from "../actions";
 import {
   emailErrorMessages,
   passwordErrorMessages,
@@ -74,7 +74,7 @@ export function useRegister() {
   function handleGoogleSignIn () {
       setGoogleLoading(true);
       try {
-        const { error } = signInWithGoogle();
+        const { error } = signInWithGoogle(window.location.origin);
         if (error) {
           console.error('Google sign in error:', error);
           // Aquí podrías mostrar el error al usuario si quieres

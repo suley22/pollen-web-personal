@@ -25,6 +25,7 @@ import { Progress } from "./(components)/progress";
 import { useActionState } from "react";
 import { PrimaryButton } from "@/components/ui/buttons/primary-button";
 import { createCompanyData } from "./actions";
+import { IndustryCategoriesSection } from "./(components)/industry-categories";
 import {
   Select,
   SelectContent,
@@ -44,6 +45,7 @@ export default function CreateProfilePage() {
   const [checked, setChecked] = useState(false);
   const [accolades, setAccolades] = useState([]);
   const [customIndustries, setCustomIndustries] = useState([]);
+  const [industryValue, setIndustryValue] = useState("");
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -108,126 +110,10 @@ export default function CreateProfilePage() {
                       >
                         Industry
                       </Label>
-                      <div className="grid grid-cols-3 gap-4 text-sm">
-                        <div className="flex flex-col space-y-2">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox name="industries" value="technology" />
-                            <span>Technology</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox name="industries" value="education" />
-                            <span>Education </span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox name="industries" value="consulting" />
-                            <span>Consulting</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox name="industries" value="government" />
-                            <span>Government</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox name="industries" value="real_estate" />
-                            <span>Real Estate</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              name="industries"
-                              value="marketing_advertising"
-                            />
-                            <span>Marketing & Advertising</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              name="industries"
-                              value="hr_recruitment"
-                            />
-                            <span>HR/Recruitment</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              checked={checked}
-                              onCheckedChange={() => setChecked(!checked)}
-                            />
-                            <span>Other</span>
-                          </div>
-                        </div>
-                        <div className="flex flex-col space-y-2">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox name="industries" value="healthcare" />
-                            <span>Healthcare</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox name="industries" value="retail" />
-                            <span>Retail</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              name="industries"
-                              value="media_entertainment"
-                            />
-                            <span>Media & Entertainment</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox name="industries" value="energy" />
-                            <span>Energy</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox name="industries" value="food_beverage" />
-                            <span>Food & Beverage</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              name="industries"
-                              value="legal_services"
-                            />
-                            <span>Legal Services</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox name="industries" value="social_impact" />
-                            <span>Social Impact</span>
-                          </div>
-                        </div>
-                        <div className="flex flex-col space-y-2">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox name="industries" value="finance" />
-                            <span>Finance</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox name="industries" value="manufacturing" />
-                            <span>Manufacturing</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox name="industries" value="non_profit" />
-                            <span>Non-profit</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              name="industries"
-                              value="transportation"
-                            />
-                            <span>Transportation</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              name="industries"
-                              value="travel_hospitality"
-                            />
-                            <span>Travel & Hospitality</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              name="industries"
-                              value="architecture_design"
-                            />
-                            <span>Architecture & Design</span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Checkbox name="industries" value="environmental" />
-                            <span>Environmental</span>
-                          </div>
-                        </div>
-                      </div>
+                      <IndustryCategoriesSection
+                        value={industryValue}
+                        onValueChange={setIndustryValue}
+                      />
                     </div>
                     {checked && (
                       <div className="md:col-span-2">
@@ -241,7 +127,6 @@ export default function CreateProfilePage() {
                       </div>
                     )}
                     {/* No renderizar AccoladesSection aquí, solo en la sección principal */}
-                    <div className="md:col-span-2" />
 
                     {/* Company Logo */}
                     <div className="md:col-span-2">

@@ -19,6 +19,16 @@ import {
   Users,
   ArrowLeft,
 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Globe } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
 
 export default function AdminEmployersManagment() {
   const router = useRouter();
@@ -112,97 +122,250 @@ export default function AdminEmployersManagment() {
         <div className="space-y-4">
           {!form.loading &&
             form.employers.map((application) => (
-              <Card key={application.id} className="bg-white">
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3 mb-3">
-                        <h3 className="text-lg font-semibold text-gray-900">
-                          {application.company_name || "Unknown Company"}
-                        </h3>
-                        {form.getStatusBadge(application.approval_status)}
-                      </div>
+              // <Card key={application.id} className="bg-white">
+              //   <CardContent className="p-6">
+              //     <div className="flex justify-between items-start">
+              //       <div className="flex-1">
+              //         <div className="flex items-center space-x-3 mb-3">
+              //           <h3 className="text-lg font-semibold text-gray-900">
+              //             {application.company_name || "Unknown Company"}
+              //           </h3>
+              //           {form.getStatusBadge(application.approval_status)}
+              //         </div>
 
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-600">
-                        <div className="flex items-center">
-                          <Building2 className="h-4 w-4 mr-2" />
-                          {application.industries || "Industry not specified"}
+              //         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-600">
+              //           <div className="flex items-center">
+              //             <Building2 className="h-4 w-4 mr-2" />
+              //             {application.industries || "Industry not specified"}
+              //           </div>
+              //           <div className="flex items-center">
+              //             <MapPin className="h-4 w-4 mr-2" />
+              //             {application.company_location ||
+              //               "Location not specified"}
+              //           </div>
+              //           <div className="flex items-center">
+              //             <Users className="h-4 w-4 mr-2" />
+              //             {application.company_size || "Size not specified"}
+              //           </div>
+              //           <div className="flex items-center">
+              //             <Mail className="h-4 w-4 mr-2" />
+              //             {application.contact_email || "Email not provided"}
+              //           </div>
+              //           {application.contact_phone && (
+              //             <div className="flex items-center">
+              //               <Phone className="h-4 w-4 mr-2" />
+              //               {application.contact_phone}
+              //             </div>
+              //           )}
+              //           <div className="flex items-center">
+              //             <Calendar className="h-4 w-4 mr-2" />
+              //             {application.created_at
+              //               ? new Date(
+              //                   application.created_at,
+              //                 ).toLocaleDateString()
+              //               : "Date not available"}
+              //           </div>
+              //         </div>
+              //       </div>
+
+              //       <div className="flex space-x-2 ml-4">
+              //         {application.approval_status === "pending" && (
+              //           <>
+              //             <Button
+              //               size="sm"
+              //               className="bg-blue-600 hover:bg-blue-700 text-white"
+              //               onClick={() =>
+              //                 router.push(
+              //                   `/admin/employers-managment/review/${application.id}`,
+              //                 )
+              //               }
+              //             >
+              //               <Eye className="h-4 w-4 mr-1" />
+              //               Review Application
+              //             </Button>
+              //           </>
+              //         )}
+              //         {application.approval_status === "approved" && (
+              //           <Button
+              //             size="sm"
+              //             className="bg-green-600 hover:bg-green-700 text-white"
+              //             onClick={() =>
+              //               router.push(
+              //                 `/admin/employers-managment/review/${application.id}`,
+              //               )
+              //             }
+              //           >
+              //             <CheckCircle className="h-4 w-4 mr-1" />
+              //             View Approved
+              //           </Button>
+              //         )}
+              //         {application.approval_status === "rejected" && (
+              //           <Button
+              //             size="sm"
+              //             variant="destructive"
+              //             onClick={() =>
+              //               router.push(
+              //                 `/admin/employers-managment/review/${application.id}`,
+              //               )
+              //             }
+              //           >
+              //             <XCircle className="h-4 w-4 mr-1" />
+              //             View Rejected
+              //           </Button>
+              //         )}
+              //       </div>
+              //     </div>
+              //   </CardContent>
+              // </Card>
+
+              <Card
+                key={application.id}
+                className="hover:shadow-md transition-shadow cursor-pointer"
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start space-x-4">
+                      <Avatar className="h-16 w-16">
+                        <AvatarImage
+                          src={application.logo}
+                          alt={application.company_name}
+                        />
+                        <AvatarFallback>
+                          <Building2 className="h-8 w-8" />
+                        </AvatarFallback>
+                      </Avatar>
+
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-3">
+                          <h3 className="text-lg font-semibold">
+                            {application.company_name || "Unknown Company"}
+                          </h3>
+                          {form.getStatusBadge(application.approval_status)}
                         </div>
-                        <div className="flex items-center">
-                          <MapPin className="h-4 w-4 mr-2" />
-                          {application.company_location ||
-                            "Location not specified"}
+
+                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                          <span className="flex items-center">
+                            {application.industries || "Industry not specified"}
+                          </span>
+                          <span className="flex items-center">
+                            <Users className="w-4 h-4 mr-1" />
+                            {application.company_size || "Size not specified"}
+                          </span>
+                          <span className="flex items-center">
+                            <Globe className="w-4 h-4 mr-1" />
+                            {application.company_location ||
+                              "Location not specified"}
+                          </span>
                         </div>
-                        <div className="flex items-center">
-                          <Users className="h-4 w-4 mr-2" />
-                          {application.company_size || "Size not specified"}
+
+                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                          <span className="flex items-center">
+                            <Mail className="w-4 h-4 mr-1" />
+                            {application.contact_email || "Email not provided"}
+                          </span>
+                          {application.contact_phone && (
+                            <span className="flex items-center">
+                              <Phone className="w-4 h-4 mr-1" />
+                              {application.contact_phone}
+                            </span>
+                          )}
                         </div>
-                        <div className="flex items-center">
-                          <Mail className="h-4 w-4 mr-2" />
-                          {application.contact_email || "Email not provided"}
-                        </div>
-                        {application.contact_phone && (
-                          <div className="flex items-center">
-                            <Phone className="h-4 w-4 mr-2" />
-                            {application.contact_phone}
+
+                        {application.assignedAdmin && (
+                          <div className="text-sm">
+                            <span className="text-muted-foreground">
+                              Assigned to:{" "}
+                            </span>
+                            <span className="font-medium">
+                              {application.assignedAdmin}
+                            </span>
                           </div>
                         )}
-                        <div className="flex items-center">
-                          <Calendar className="h-4 w-4 mr-2" />
-                          {application.created_at
-                            ? new Date(
-                                application.created_at,
-                              ).toLocaleDateString()
-                            : "Date not available"}
+
+                        {/* Job Counts */}
+                        <div className="flex items-center space-x-3 text-sm mt-2">
+                          {(application.liveJobsCount || 0) > 0 && (
+                            <Badge
+                              variant="outline"
+                              className="bg-green-50 text-green-700 border-green-200"
+                            >
+                              {application.liveJobsCount} Live Jobs
+                            </Badge>
+                          )}
+                          {(application.draftJobsCount || 0) > 0 && (
+                            <Badge
+                              variant="outline"
+                              className="bg-orange-50 text-orange-700 border-orange-200"
+                            >
+                              {application.draftJobsCount} Draft Jobs
+                            </Badge>
+                          )}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex space-x-2 ml-4">
-                      {application.approval_status === "pending" && (
-                        <>
+                    <div className="flex items-center space-x-3">
+                      <div className="text-right space-y-1">
+                        <div className="text-sm">
+                          <span className="text-muted-foreground">
+                            Profile:{" "}
+                          </span>
+                          <span className="font-medium">
+                            {application.profileCompleteness}%
+                          </span>
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          Updated{" "}
+                          {application.updated_at
+                            ? new Date(
+                                application.updated_at,
+                              ).toLocaleDateString()
+                            : "Date not available"}
+                        </div>
+                      </div>
+
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
                           <Button
+                            variant="ghost"
                             size="sm"
-                            className="bg-blue-600 hover:bg-blue-700 text-white"
-                            onClick={() =>
-                              router.push(
-                                `/admin/employers-managment/review/${application.id}`,
-                              )
-                            }
+                            onClick={(e) => e.stopPropagation()}
                           >
-                            <Eye className="h-4 w-4 mr-1" />
-                            Review Application
+                            <MoreHorizontal className="h-4 w-4" />
                           </Button>
-                        </>
-                      )}
-                      {application.approval_status === "approved" && (
-                        <Button
-                          size="sm"
-                          className="bg-green-600 hover:bg-green-700 text-white"
-                          onClick={() =>
-                            router.push(
-                              `/admin/employers-managment/review/${application.id}`,
-                            )
-                          }
-                        >
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          View Approved
-                        </Button>
-                      )}
-                      {application.approval_status === "rejected" && (
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() =>
-                            router.push(
-                              `/admin/employers-managment/review/${application.id}`,
-                            )
-                          }
-                        >
-                          <XCircle className="h-4 w-4 mr-1" />
-                          View Rejected
-                        </Button>
-                      )}
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // setLocation(
+                              //   `/admin/company-profiles/${application.id}`,
+                              // );
+                            }}
+                          >
+                            <Eye className="mr-2 h-4 w-4" />
+                            View Profile
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // setLocation(
+                              //   `/admin/company-profiles/${company.id}?edit=true`,
+                              // );
+                            }}
+                          >
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit Profile
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            // onClick={(e) => handleDeleteClick(company, e)}
+                            className="text-red-600 focus:text-red-600"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete Profile
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
                 </CardContent>

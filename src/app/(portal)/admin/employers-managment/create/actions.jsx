@@ -6,7 +6,10 @@ export async function createCompanyData(_, formData) {
   const formCompanyData = Object.fromEntries(formData.entries());
   const standardIndustries = formData.getAll("industries");
   const customIndustries = formCompanyData.custom_industries
-    ? formCompanyData.custom_industries.split(",").map((i) => i.trim()).filter(Boolean)
+    ? formCompanyData.custom_industries
+        .split(",")
+        .map((i) => i.trim())
+        .filter(Boolean)
     : [];
   const allIndustries = [...standardIndustries, ...customIndustries];
   const accolades = formCompanyData.company_accolades; // será un string separado por comas
@@ -32,7 +35,10 @@ export async function createCompanyData(_, formData) {
     updated_at: new Date().toISOString(),
     created_at: new Date().toISOString(),
     user_id: "1e4c06ce-3181-4368-bbee-bc38b079919b",
-    industries: allIndustries,
+    industries:
+      formCompanyData.industries === "other"
+        ? formCompanyData.other_industry
+        : formCompanyData.industries,
     company_loves: formCompanyData.company_loves,
     company_entry_level: formCompanyData.company_entry_level,
     contact_name: formCompanyData.contact_name,

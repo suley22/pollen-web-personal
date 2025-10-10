@@ -25,7 +25,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
-import { company as companiesData } from "./(mocks)/mocks";
+import { company as companiesData } from "./_mocks/mocks";
 import { CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function CompanyReviewPage() {
@@ -33,7 +33,7 @@ export default function CompanyReviewPage() {
   const [candidateExperienceDialogOpen, setCandidateExperienceDialogOpen] =
     useState(false);
   const [activeTab, setActiveTab] = useState("overview");
-  const [demoSavedState, setDemoSavedState] = useState(null);
+  const [demoSavedState] = useState(null);
 
   const router = useRouter();
 
@@ -94,7 +94,7 @@ export default function CompanyReviewPage() {
                   {/* Industry Tags */}
                   {company.industries && company.industries.length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {company.industries.map((industry, index) => {
+                      {company.industries.map((industry) => {
                         const getIndustryStyle = (industry) => {
                           const styles = {
                             "Marketing & Advertising":
@@ -130,7 +130,9 @@ export default function CompanyReviewPage() {
 
                         return (
                           <Badge
-                            key={index}
+                            key={industry
+                              .toLocaleLowerCase()
+                              .replace(/\s+/g, "-")}
                             variant="outline"
                             className={`${getIndustryStyle(industry)} font-medium px-3 py-1 text-xs border hover:shadow-sm transition-all`}
                           >
@@ -287,8 +289,11 @@ export default function CompanyReviewPage() {
                   <CardContent>
                     <ul className="space-y-2">
                       {company.pollenInsights.pollenObservations.map(
-                        (observation, index) => (
-                          <li key={index} className="flex items-start gap-2">
+                        (observation) => (
+                          <li
+                            key={observation}
+                            className="flex items-start gap-2"
+                          >
                             <div className="w-2 h-2 rounded-full bg-pink-600 mt-2 flex-shrink-0" />
                             <span
                               className="text-gray-600"
@@ -342,9 +347,9 @@ export default function CompanyReviewPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="grid md:grid-cols-2 gap-3">
-                      {company.accolades.map((accolade, index) => (
+                      {company.accolades.map((accolade) => (
                         <div
-                          key={index}
+                          key={accolade}
                           className="flex items-center gap-3 p-3 border rounded-lg"
                         >
                           <Award className="w-5 h-5 text-yellow-500 flex-shrink-0" />
@@ -584,55 +589,53 @@ export default function CompanyReviewPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {company.candidateTestimonials.map(
-                        (testimonial, index) => (
-                          <div
-                            key={index}
-                            className="p-4 border rounded-lg bg-gray-50"
-                          >
-                            <div className="flex items-start justify-between mb-2">
-                              <div>
-                                <h4
-                                  className="font-semibold text-gray-900"
-                                  style={{ fontFamily: "Sora" }}
-                                >
-                                  {testimonial.name}
-                                </h4>
-                                <p className="text-sm text-gray-600">
-                                  {testimonial.role}
-                                </p>
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                {testimonial.timeframe}
-                              </div>
-                            </div>
-                            <p
-                              className="text-gray-700 leading-relaxed"
-                              style={{ fontFamily: "Poppins" }}
-                            >
-                              "{testimonial.quote}"
-                            </p>
-                            <div className="mt-3">
-                              <Badge
-                                variant="outline"
-                                className={`text-xs ${
-                                  testimonial.experienceType === "feedback"
-                                    ? "bg-green-50 text-green-700 border-green-200"
-                                    : testimonial.experienceType === "process"
-                                      ? "bg-blue-50 text-blue-700 border-blue-200"
-                                      : "bg-purple-50 text-purple-700 border-purple-200"
-                                }`}
+                      {company.candidateTestimonials.map((testimonial) => (
+                        <div
+                          key={testimonial.id}
+                          className="p-4 border rounded-lg bg-gray-50"
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <div>
+                              <h4
+                                className="font-semibold text-gray-900"
+                                style={{ fontFamily: "Sora" }}
                               >
-                                {testimonial.experienceType === "feedback"
-                                  ? "Feedback Experience"
-                                  : testimonial.experienceType === "process"
-                                    ? "Process Experience"
-                                    : "Interview Experience"}
-                              </Badge>
+                                {testimonial.name}
+                              </h4>
+                              <p className="text-sm text-gray-600">
+                                {testimonial.role}
+                              </p>
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {testimonial.timeframe}
                             </div>
                           </div>
-                        ),
-                      )}
+                          <p
+                            className="text-gray-700 leading-relaxed"
+                            style={{ fontFamily: "Poppins" }}
+                          >
+                            "{testimonial.quote}"
+                          </p>
+                          <div className="mt-3">
+                            <Badge
+                              variant="outline"
+                              className={`text-xs ${
+                                testimonial.experienceType === "feedback"
+                                  ? "bg-green-50 text-green-700 border-green-200"
+                                  : testimonial.experienceType === "process"
+                                    ? "bg-blue-50 text-blue-700 border-blue-200"
+                                    : "bg-purple-50 text-purple-700 border-purple-200"
+                              }`}
+                            >
+                              {testimonial.experienceType === "feedback"
+                                ? "Feedback Experience"
+                                : testimonial.experienceType === "process"
+                                  ? "Process Experience"
+                                  : "Interview Experience"}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>

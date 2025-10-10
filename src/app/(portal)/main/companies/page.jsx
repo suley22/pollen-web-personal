@@ -198,11 +198,9 @@ export default function CompaniesPage() {
                     <Button
                       size="sm"
                       style={{ fontFamily: "Sora" }}
-<<<<<<< HEAD:src/app/main/companies/page.jsx
-                      onClick={() => router.push(`/main/companies/review/2`)}
-=======
-                      onClick={() => router.push(`/main/companies/review`)}
->>>>>>> ae9222938fc5feadd6a28c2fc7742dc9592a707f:src/app/(portal)/main/companies/page.jsx
+                      onClick={() =>
+                        router.push(`/main/companies/review/${company.id}`)
+                      }
                     >
                       View Details
                     </Button>
@@ -279,11 +277,9 @@ export default function CompaniesPage() {
                     className="flex-1 text-xs sm:text-sm"
                     variant="outline"
                     style={{ fontFamily: "Sora" }}
-<<<<<<< HEAD:src/app/main/companies/page.jsx
-                    onClick={() => router.push(`/main/companies/review/2`)}
-=======
-                    onClick={() => router.push(`/main/companies/review`)}
->>>>>>> ae9222938fc5feadd6a28c2fc7742dc9592a707f:src/app/(portal)/main/companies/page.jsx
+                    onClick={() =>
+                      router.push(`/main/companies/review/${company.id}`)
+                    }
                   >
                     View Company
                   </Button>

@@ -6,7 +6,10 @@ export async function createCompanyData(_, formData) {
   const formCompanyData = Object.fromEntries(formData.entries());
   const standardIndustries = formData.getAll("industries");
   const customIndustries = formCompanyData.custom_industries
-    ? formCompanyData.custom_industries.split(",").map((i) => i.trim()).filter(Boolean)
+    ? formCompanyData.custom_industries
+        .split(",")
+        .map((i) => i.trim())
+        .filter(Boolean)
     : [];
   const allIndustries = [...standardIndustries, ...customIndustries];
   const accolades = formCompanyData.company_accolades; // será un string separado por comas

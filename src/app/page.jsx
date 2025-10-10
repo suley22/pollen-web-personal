@@ -14,7 +14,7 @@ import nyPostLogo from "@/assets/image_1753303981878.png";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { LoginRoutes } from "./(login)/router";
+import { LoginRoutes } from "./login/router";
 import { JobSeekerRoutes } from "./(portal)/(job-seeker)/router";
 import { AdminRoutes } from "./(portal)/admin/router";
 
@@ -34,7 +34,7 @@ export default function Home() {
 
         console.log(data);
 
-        const isAdmin = data.user.user_metadata.role === "admin";
+        const isAdmin = data.session.user.user_metadata.role === "admin";
         let redirectUrl = isAdmin ? AdminRoutes.home : JobSeekerRoutes.home;
 
         router.push(redirectUrl);

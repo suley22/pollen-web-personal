@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { signInWithGoogle } from "../actions";
+import { signInWithGoogle } from "@/login/login/actions";
+
 import {
   emailErrorMessages,
   passwordErrorMessages,

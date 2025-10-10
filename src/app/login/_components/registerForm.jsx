@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/buttons/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/icons/icons";
-import { useRegister } from "./useRegister";
+import { useRegister } from "../_hooks/useRegister";
 import { useActionState } from "react";
 import { Alert } from "@/components/ui/alert";
 
@@ -27,7 +27,7 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
           className="w-full"
           onClick={form.handleGoogleSignIn}
           disabled={form.googleLoading}
-          >
+        >
           <GoogleIcon className="mr-2 h-4 w-4" />
           Sign up with Google
         </Button>

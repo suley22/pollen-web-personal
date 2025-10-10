@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { UserInfoModel } from "@/login/_schema/registerSchema";
+import { UserInfoModel } from "@/app/login/_schema/registerSchema";
 import { createClient } from "@/utils/supabase/server";
 import { AdminRoutes } from "@/admin/router";
 import { JobSeekerRoutes } from "@/job-seeker/router";

@@ -1,9 +1,9 @@
-const basePath = "/auth";
+const basePath = "";
 
 export const LoginRoutes = {
-  login: `/login`,
+  login: `${basePath}/login`,
   logout: `${basePath}/logout`,
   confirm: `${basePath}/confirm`,
   callback: `${basePath}/callback`,
-  userInfo: `/login/user-info`,
+  userInfo: `${basePath}/user-info`,
 };

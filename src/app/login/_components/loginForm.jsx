@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/icons/icons";
 import { useActionState } from "react";
-import { useLogin } from "./useLogin";
+import { useLogin } from "../_hooks/useLogin";
 
 export function LoginForm({ className, loginAction, onChangeLogin, ...props }) {
   const { form } = useLogin();

@@ -1,3 +1,4 @@
+import { JobSeekerRoutes } from "@/app/(portal)/(job-seeker)/router";
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 
@@ -5,7 +6,7 @@ export async function GET(request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   // if "next" is in param, use it as the redirect URL
-  const next = searchParams.get("next") ?? "/main/home";
+  const next = searchParams.get("next") ?? JobSeekerRoutes.home;
 
   if (code) {
     const supabase = await createClient();

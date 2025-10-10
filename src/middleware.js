@@ -3,9 +3,10 @@ import { updateSession } from "@/utils/supabase/middleware";
 import { LoginRoutes } from "./app/login/router";
 
 const publicRoutes = [
-  LoginRoutes.callback,
   LoginRoutes.login,
+  LoginRoutes.authCallback,
   LoginRoutes.logout,
+  LoginRoutes.confirm,
   "/error",
   "/",
 ];

@@ -6,6 +6,7 @@ import { UserInfoModel } from "@/app/login/_schema/registerSchema";
 import { createClient } from "@/utils/supabase/server";
 import { AdminRoutes } from "@/admin/router";
 import { JobSeekerRoutes } from "@/job-seeker/router";
+import { LoginRoutes } from "./router";
 
 // TODO: Agregar validaciones de servidor.
 
@@ -85,7 +86,7 @@ export async function signInWithGoogle(origin) {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${origin}/auth/callback`,
+      redirectTo: `${origin}/${LoginRoutes.authCallback}`,
       queryParams: {
         access_type: "offline",
         prompt: "consent",

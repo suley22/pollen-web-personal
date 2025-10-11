@@ -73,9 +73,7 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
                     check.valid ? "text-green-600" : "text-gray-500"
                   }`}
                 >
-                  {check.valid
-                    ? "✔ Email is valid"
-                    : "✖ Email is not valid"}
+                  ● {check.valid ? "Email is valid" : "Email is not valid"}
                 </li>
               ))}
             </ul>
@@ -102,7 +100,7 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
                     check.valid ? "text-green-600" : "text-gray-500"
                   }`}
                 >
-                  {check.valid ? "✔" : "✖"} {check.label}
+                  ● {check.label}
                 </li>
               ))}
             </ul>

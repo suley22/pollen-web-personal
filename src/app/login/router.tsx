@@ -6,4 +6,7 @@ export const LoginRoutes = {
   confirm: `${basePath}/confirm`,
   authCallback: `${basePath}/auth/code-callback`,
   userInfo: `${basePath}/user-info`,
+  authResetPassword: "/auth/reset-password",
+  forgotPassword: `${basePath}/forgot-password`,
+  authConfirm: "/auth/confirm",
 };

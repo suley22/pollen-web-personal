@@ -1,7 +1,7 @@
 "use client";
 
 import { useRoleManagment } from "./useRoleManagment";
-import { RoleChangeConfirmDialog } from "./RoleChangeConfirmDialog";
+import { RoleChangeConfirmDialog } from "./role-change-confirm-dialog";
 import { User, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,10 +18,6 @@ export default function RoleManagmentPage() {
     { id: "1", name: "Admin", value: "admin" },
     { id: "2", name: "JobSeeker", value: "job_seeker" },
   ];
-  // const toLabel = (s) =>
-  //   String(s)
-  //     .replace(/_/g, " ")
-  //     .replace(/\b\w/g, (c) => c.toUpperCase());
 
   return form.loading ? (
     <div className="flex justify-center items-center py-8">
@@ -43,23 +39,6 @@ export default function RoleManagmentPage() {
                   className="pl-10"
                 />
               </div>
-              {/* <div className="flex gap-4">
-                {facetMeta.map(({ key, value, onChange }) => (
-                  <Select key={key} value={value} onValueChange={onChange}>
-                    <SelectTrigger className="w-[200px]">
-                      <SelectValue placeholder={`All ${toLabel(key)}`} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">{`All ${toLabel(key)}`}</SelectItem>
-                      {facets[key].map((v) => (
-                        <SelectItem key={String(v)} value={String(v)}>
-                          {toLabel(v)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ))}
-              </div> */}
             </div>
           </div>
 
@@ -69,13 +48,13 @@ export default function RoleManagmentPage() {
               <thead className="bg-gray-50 border-b">
                 <tr>
                   <th className="" />
-                  <th className="text-left py-3 px-4 font-medium text-gray-900 w-[280px]">
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">
                     Name
                   </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900 w-[120px]">
+                  <th className="text-left py-3 px-4 font-medium text-gray-900">
                     Email
                   </th>
-                  <th className=" text-left py-3 px-4 font-medium text-gray-900 w-[200px]">
+                  <th className=" text-left py-3 px-4 font-medium text-gray-900">
                     Actions
                   </th>
                 </tr>

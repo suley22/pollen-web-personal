@@ -2,13 +2,10 @@
 
 import { GalleryVerticalEnd } from "lucide-react";
 import { useState } from "react";
-
-import { LoginForm } from "@/app/login/(components)/loginForm";
-import { RegisterForm } from "@/app/login/(components)/registerForm";
-
-import { TestimonialSlider } from "./(components)/testimonialSlider";
-import { login as loginAction } from "./actions";
-import { signup as signupAction } from "./actions";
+import { LoginForm } from "@/login/_components/loginForm";
+import { RegisterForm } from "@/login/_components/registerForm";
+import { TestimonialSlider } from "@/login/_components/testimonialSlider";
+import { login as loginAction, signup as signupAction } from "@/login/actions";
 
 export default function LoginPage() {
   const [isLogging, setIsLogging] = useState(true);

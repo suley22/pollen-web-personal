@@ -133,7 +133,7 @@
 
   --sidebar-border: var(--border);
 
-  --sidebar-ring: var(--ring)
+  --sidebar-ring: var(--ring);
 }
 
 /* Brand Cleanup CSS */
@@ -429,13 +429,6 @@ h3 {
 }
 
 /* Kanban columns narrower */
-.admin-compact-mode [class*="w-72"] {
-  width: 240px !important;
-}
-
-.admin-compact-mode [class*="w-80"] {
-  width: 240px !important;
-}
 
 /* All kanban cards smaller padding */
 .admin-compact-mode .cursor-pointer.hover\:shadow-md [class*="CardContent"] {
@@ -702,17 +695,20 @@ h3 {
 }
 
 @layer base {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     border-color: var(--border);
     /* Do not force borders globally */
   }
 
-  html, body {
+  html,
+  body {
     min-height: 100%;
   }
 
   body {
-    font-family: 'Sora', 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+    font-family: "Sora", "Poppins", "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: var(--background);
@@ -722,54 +718,124 @@ h3 {
 
 /* Custom utility classes for Pollen brand colors */
 @layer utilities {
-  .text-primary-50 { color: var(--primary-50); }
-  .text-primary-100 { color: var(--primary-100); }
-  .text-primary-500 { color: var(--primary-500); }
-  .text-primary-600 { color: var(--primary-600); }
-  .text-primary-700 { color: var(--primary-700); }
+  .text-primary-50 {
+    color: var(--primary-50);
+  }
+  .text-primary-100 {
+    color: var(--primary-100);
+  }
+  .text-primary-500 {
+    color: var(--primary-500);
+  }
+  .text-primary-600 {
+    color: var(--primary-600);
+  }
+  .text-primary-700 {
+    color: var(--primary-700);
+  }
 
-  .bg-primary-50 { background-color: var(--primary-50); }
-  .bg-primary-100 { background-color: var(--primary-100); }
-  .bg-primary-500 { background-color: var(--primary-500); }
-  .bg-primary-600 { background-color: var(--primary-600); }
-  .bg-primary-700 { background-color: var(--primary-700); }
+  .bg-primary-50 {
+    background-color: var(--primary-50);
+  }
+  .bg-primary-100 {
+    background-color: var(--primary-100);
+  }
+  .bg-primary-500 {
+    background-color: var(--primary-500);
+  }
+  .bg-primary-600 {
+    background-color: var(--primary-600);
+  }
+  .bg-primary-700 {
+    background-color: var(--primary-700);
+  }
 
-  .text-success-50 { color: var(--success-50); }
-  .text-success-100 { color: var(--success-100); }
-  .text-success-500 { color: var(--success-500); }
-  .text-success-600 { color: var(--success-600); }
+  .text-success-50 {
+    color: var(--success-50);
+  }
+  .text-success-100 {
+    color: var(--success-100);
+  }
+  .text-success-500 {
+    color: var(--success-500);
+  }
+  .text-success-600 {
+    color: var(--success-600);
+  }
 
-  .bg-success-50 { background-color: var(--success-50); }
-  .bg-success-100 { background-color: var(--success-100); }
-  .bg-success-500 { background-color: var(--success-500); }
-  .bg-success-600 { background-color: var(--success-600); }
+  .bg-success-50 {
+    background-color: var(--success-50);
+  }
+  .bg-success-100 {
+    background-color: var(--success-100);
+  }
+  .bg-success-500 {
+    background-color: var(--success-500);
+  }
+  .bg-success-600 {
+    background-color: var(--success-600);
+  }
 
-  .text-accent-50 { color: var(--accent-50); }
-  .text-accent-100 { color: var(--accent-100); }
-  .text-accent-500 { color: var(--accent-500); }
-  .text-accent-600 { color: var(--accent-600); }
+  .text-accent-50 {
+    color: var(--accent-50);
+  }
+  .text-accent-100 {
+    color: var(--accent-100);
+  }
+  .text-accent-500 {
+    color: var(--accent-500);
+  }
+  .text-accent-600 {
+    color: var(--accent-600);
+  }
 
-  .bg-accent-50 { background-color: var(--accent-50); }
-  .bg-accent-100 { background-color: var(--accent-100); }
-  .bg-accent-500 { background-color: var(--accent-500); }
-  .bg-accent-600 { background-color: var(--accent-600); }
+  .bg-accent-50 {
+    background-color: var(--accent-50);
+  }
+  .bg-accent-100 {
+    background-color: var(--accent-100);
+  }
+  .bg-accent-500 {
+    background-color: var(--accent-500);
+  }
+  .bg-accent-600 {
+    background-color: var(--accent-600);
+  }
 
   /* Replaced purple variables with Pollen brand colors */
-  .text-pink-50 { color: #fdf2f8; }
-  .text-pink-100 { color: #fce7f3; }
-  .text-pink-500 { color: var(--pollen-pink); }
-  .text-pink-600 { color: #db2777; }
+  .text-pink-50 {
+    color: #fdf2f8;
+  }
+  .text-pink-100 {
+    color: #fce7f3;
+  }
+  .text-pink-500 {
+    color: var(--pollen-pink);
+  }
+  .text-pink-600 {
+    color: #db2777;
+  }
 
-  .bg-pink-50 { background-color: #fdf2f8; }
-  .bg-pink-100 { background-color: #fce7f3; }
-  .bg-pink-500 { background-color: var(--pollen-pink); }
-  .bg-pink-600 { background-color: #db2777; }
+  .bg-pink-50 {
+    background-color: #fdf2f8;
+  }
+  .bg-pink-100 {
+    background-color: #fce7f3;
+  }
+  .bg-pink-500 {
+    background-color: var(--pollen-pink);
+  }
+  .bg-pink-600 {
+    background-color: #db2777;
+  }
 
   /* Enhanced focus styles for accessibility */
   .focus-visible:focus-visible {
     outline: 2px solid var(--primary, #e2007a);
     outline-offset: 2px;
-    box-shadow: 0 0 0 2px var(--primary, #e2007a), 0 0 0 4px var(--background, #fff);
+    box-shadow:
+      0 0 0 2px var(--primary, #e2007a),
+      0 0 0 4px var(--background, #fff);
   }
 
   /* Smooth transitions for interactive elements */
@@ -804,28 +870,49 @@ h3 {
   .testing-sidebar-layout [data-slot="sidebar-gap"] {
     width: var(--sidebar-width) !important;
   }
-  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-gap"] {
+  .testing-sidebar-layout
+    [data-slot="sidebar"][data-collapsible="icon"]
+    [data-slot="sidebar-gap"] {
     width: var(--sidebar-width-icon) !important;
   }
   .testing-sidebar-layout [data-slot="sidebar-container"] {
     width: var(--sidebar-width) !important;
   }
-  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-container"] {
+  .testing-sidebar-layout
+    [data-slot="sidebar"][data-collapsible="icon"]
+    [data-slot="sidebar-container"] {
     width: var(--sidebar-width-icon) !important;
   }
   /* Hide label/chevron in TeamSwitcher only (header) when collapsed */
-  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-header"] [data-slot="sidebar-menu-button"] .grid { display: none !important; }
-  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-header"] [data-slot="sidebar-menu-button"] .ml-auto { display: none !important; }
+  .testing-sidebar-layout
+    [data-slot="sidebar"][data-collapsible="icon"]
+    [data-slot="sidebar-header"]
+    [data-slot="sidebar-menu-button"]
+    .grid {
+    display: none !important;
+  }
+  .testing-sidebar-layout
+    [data-slot="sidebar"][data-collapsible="icon"]
+    [data-slot="sidebar-header"]
+    [data-slot="sidebar-menu-button"]
+    .ml-auto {
+    display: none !important;
+  }
 
   /* Header pill: set button to 3rem and center content when collapsed */
-  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-header"] [data-slot="sidebar-menu-button"] {
-    width: 3rem !important;     /* 48px column */
+  .testing-sidebar-layout
+    [data-slot="sidebar"][data-collapsible="icon"]
+    [data-slot="sidebar-header"]
+    [data-slot="sidebar-menu-button"] {
+    width: 3rem !important; /* 48px column */
     height: 3rem !important;
-    padding: 0 !important;      /* remove inner padding to avoid clipping */
+    padding: 0 !important; /* remove inner padding to avoid clipping */
     justify-content: center !important;
   }
   /* Remove SidebarHeader padding in collapsed mode so 48px fits fully */
-  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-header"] {
+  .testing-sidebar-layout
+    [data-slot="sidebar"][data-collapsible="icon"]
+    [data-slot="sidebar-header"] {
     padding: 0 !important;
   }
   /* Let header logo size be controlled by component classes in collapsed mode */
@@ -841,22 +928,28 @@ h3 {
     box-shadow: none !important;
   }
   /* Keep rail visible in collapsed mode but remove its internal line */
-  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-rail"] {
+  .testing-sidebar-layout
+    [data-slot="sidebar"][data-collapsible="icon"]
+    [data-slot="sidebar-rail"] {
     opacity: 1 !important;
     pointer-events: auto !important;
   }
-  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-rail"]::after {
+  .testing-sidebar-layout
+    [data-slot="sidebar"][data-collapsible="icon"]
+    [data-slot="sidebar-rail"]::after {
     content: none !important; /* prevent double line from rail */
   }
   /* Provide a single divider line via the gap instead */
-  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-gap"] {
+  .testing-sidebar-layout
+    [data-slot="sidebar"][data-collapsible="icon"]
+    [data-slot="sidebar-gap"] {
     border-right: 1px solid var(--sidebar-border) !important;
   }
 
   /* Match dashboard-sidebar button colors and interactions */
   /* Default state: gray text, transparent bg */
   .testing-sidebar-layout [data-slot="sidebar-menu-button"] {
-    color: #374151 !important;            /* text-gray-700 */
+    color: #374151 !important; /* text-gray-700 */
     background-color: transparent !important;
   }
   /* Hover state: gray background (match dashboard-sidebar) */
@@ -865,11 +958,13 @@ h3 {
     color: var(--accent-foreground) !important; /* Pollen accent fg */
   }
   /* Active state: brand pink background, white text */
-  .testing-sidebar-layout [data-slot="sidebar-menu-button"][data-active="true"] {
-    background-color: #E2007A !important;
+  .testing-sidebar-layout
+    [data-slot="sidebar-menu-button"][data-active="true"] {
+    background-color: #e2007a !important;
     color: #ffffff !important;
   }
-  .testing-sidebar-layout [data-slot="sidebar-menu-button"][data-active="true"]:hover {
+  .testing-sidebar-layout
+    [data-slot="sidebar-menu-button"][data-active="true"]:hover {
     background-color: rgba(226, 0, 122, 0.9) !important; /* #E2007A/90 */
     color: #ffffff !important;
   }
@@ -880,7 +975,10 @@ h3 {
     fill: none !important;
   }
   /* Collapsed header link hover */
-  .testing-sidebar-layout [data-slot="sidebar"][data-collapsible="icon"] [data-slot="sidebar-header"] a[data-slot="sidebar-menu-button"]:hover {
+  .testing-sidebar-layout
+    [data-slot="sidebar"][data-collapsible="icon"]
+    [data-slot="sidebar-header"]
+    a[data-slot="sidebar-menu-button"]:hover {
     background-color: #f3f4f6 !important; /* bg-gray-100 */
     color: var(--accent-foreground) !important;
   }

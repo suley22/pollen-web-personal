@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
 import { updateSession } from "@/utils/supabase/middleware";
+import { LoginRoutes } from "./app/login/router";
 
 const publicRoutes = [
-  "/auth/callback",
-  "/auth/confirm",
-  "/login",
-  "/auth",
+  LoginRoutes.login,
+  LoginRoutes.authCallback,
+  LoginRoutes.logout,
+  LoginRoutes.confirm,
+  LoginRoutes.authResetPassword,
+  LoginRoutes.authConfirm,
+  LoginRoutes.forgotPassword,
   "/error",
   "/",
 ];
@@ -26,9 +30,10 @@ export async function middleware(request) {
   }
 
   if (user && !user.user_metadata.register_profile_completed) {
-    if (request.nextUrl.pathname !== "/login/user-info") {
+    if (request.nextUrl.pathname !== LoginRoutes.userInfo) {
       const url = request.nextUrl.clone();
-      url.pathname = "/login/user-info";
+      url.pathname = LoginRoutes.userInfo;
+
       return NextResponse.redirect(url);
     }
   }

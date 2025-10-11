@@ -14,6 +14,9 @@ import nyPostLogo from "@/assets/image_1753303981878.png";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
+import { LoginRoutes } from "./login/router";
+import { JobSeekerRoutes } from "./(portal)/(job-seeker)/router";
+import { AdminRoutes } from "./(portal)/admin/router";
 
 export default function Home() {
   const router = useRouter();
@@ -25,13 +28,20 @@ export default function Home() {
       const { data, error } = await supabase.auth.getSession();
 
       if (error || !data.session) {
-        router.push("/login");
+        router.push(LoginRoutes.login);
       } else {
-        router.push("/main/home");
+        // TODO: -> Mismo código en src/app/login/actions.tsx
+
+        console.log(data);
+
+        const isAdmin = data.session.user.user_metadata.role === "admin";
+        let redirectUrl = isAdmin ? AdminRoutes.home : JobSeekerRoutes.home;
+
+        router.push(redirectUrl);
       }
     } catch (error) {
       console.error("Error al verificar la sesión:", error);
-      router.push("/login");
+      router.push(LoginRoutes.login);
     }
   };
 

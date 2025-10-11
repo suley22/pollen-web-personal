@@ -40,8 +40,16 @@ export function useEmployerManagement() {
         searchTerm: searchTerm.trim(),
       });
 
+      const employersResult = result.data.map((employer) => ({
+        ...employer,
+        company_name: employer.company_name || "Unknown Company",
+        approval_status: employer.approval_status || "pending",
+        logo: employer.logo_url,
+        industries: employer.industries || "Not specified",
+      }));
+
       if (result.success) {
-        setEmployers(result.data || []);
+        setEmployers(employersResult);
         setError(null);
       } else {
         console.error("❌ Error from server:", result.error);

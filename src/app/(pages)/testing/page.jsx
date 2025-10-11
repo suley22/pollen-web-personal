@@ -1,6 +1,6 @@
 "use client";
-import { PrimaryButton } from "@/app/components/ui/buttons/primary-button";
-import { Card } from "@/app/components/ui/card";
+import { PrimaryButton } from "@/components/ui/buttons/primary-button";
+import { Card } from "@/components/ui/card";
 
 export default function Page() {
   return (

@@ -11,15 +11,15 @@ import {
   Briefcase,
   Search,
 } from "lucide-react";
-import { Button } from "@/app/components/ui/buttons/button";
-import { Input } from "@/app/components/ui/input";
+import { Button } from "@/components/ui/buttons/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/app/components/ui/select/select";
+} from "@/components/ui/select/select";
 import { useJobSeeker } from "./useJobSeeker";
 
 export default function JobsPage() {

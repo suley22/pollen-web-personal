@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/app/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Plus, ArrowLeft } from "lucide-react";
-import { Input } from "@/app/components/ui/input";
-import { Badge } from "@/app/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { useJobManagement } from "./useJobManagement";
 import {
   Users,
@@ -14,7 +14,7 @@ import {
   Calendar,
   UserCircle,
 } from "lucide-react";
-import { Card, CardContent } from "@/app/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 
 export default function JobsManagmentPage() {

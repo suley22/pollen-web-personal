@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent } from "@/app/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { MessageCircle, MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
 

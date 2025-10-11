@@ -1,18 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Button } from "@/app/components/ui/buttons/button";
+import { Button } from "@/components/ui/buttons/button";
 import { Plus, ArrowLeft, Search } from "lucide-react";
-import { Card, CardContent } from "@/app/components/ui/card";
-import { Input } from "@/app/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Building2, CheckCircle, Clock } from "lucide-react";
 import { useEmployerManagement } from "./useEmployerManagement";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/app/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Users,
   Globe,
@@ -29,8 +25,8 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/app/components/ui/dropdown-menu";
-import { Badge } from "@/app/components/ui/badge";
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 
 export default function AdminEmployersManagment() {
   const router = useRouter();

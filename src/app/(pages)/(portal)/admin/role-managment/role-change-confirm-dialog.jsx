@@ -7,8 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/app/components/ui/dialog";
-import { Button } from "@/app/components/ui/buttons/button";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/buttons/button";
 import { AlertTriangle } from "lucide-react";
 
 export function RoleChangeConfirmDialog({

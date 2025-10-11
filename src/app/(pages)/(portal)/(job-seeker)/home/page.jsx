@@ -1,17 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@/app/components/ui/buttons/button";
-import CircularProgress from "@/app/components/ui/circular-progress";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/app/components/ui/card";
+import { Button } from "@/components/ui/buttons/button";
+import CircularProgress from "@/components/ui/circular-progress";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 
-import { Badge } from "@/app/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 
 import {
   Heart,

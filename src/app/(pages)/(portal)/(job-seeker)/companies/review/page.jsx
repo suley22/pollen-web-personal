@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/app/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   ChevronLeft,
   MapPin,
@@ -19,14 +19,14 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/app/components/ui/dialog";
-import { Progress } from "@/app/components/ui/progress";
+} from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
 import { useRouter } from "next/navigation";
-import { Card, CardContent } from "@/app/components/ui/card";
-import { Badge } from "@/app/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { company as companiesData } from "./_mocks/mocks";
-import { CardHeader, CardTitle } from "@/app/components/ui/card";
+import { CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function CompanyReviewPage() {
   const company = companiesData["techflow-solutions"];

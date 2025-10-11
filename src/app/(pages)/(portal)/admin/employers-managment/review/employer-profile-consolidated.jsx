@@ -2,12 +2,7 @@
 
 import { Clock, AlertCircle, CheckCircle } from "lucide-react";
 import { useState } from "react";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from "@/app/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { StatusInfo } from "./(components)/status-info";
 import { Header } from "./(components)/header";
 import Details from "./(components)/details";

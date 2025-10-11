@@ -3,14 +3,14 @@
 import { useRoleManagment } from "./useRoleManagment";
 import { RoleChangeConfirmDialog } from "./role-change-confirm-dialog";
 import { User, Search } from "lucide-react";
-import { Input } from "@/app/components/ui/input";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/app/components/ui/select/select";
+} from "@/components/ui/select/select";
 
 export default function RoleManagmentPage() {
   const { form } = useRoleManagment();

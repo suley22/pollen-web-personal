@@ -1,4 +1,4 @@
-import { Checkbox } from "@/app/components/ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import { CustomIndustriesSection } from "./custom-industries-section";
 import { useState } from "react";
 

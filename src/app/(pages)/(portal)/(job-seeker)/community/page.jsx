@@ -8,9 +8,9 @@ import {
   Mic,
   UserCheck,
 } from "lucide-react";
-import { Card, CardContent } from "@/app/components/ui/card";
-import { Badge } from "@/app/components/ui/badge";
-import { Button } from "@/app/components/ui/buttons/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/buttons/button";
 
 export default function CommunityPage() {
   console.log("Community page rendering...");

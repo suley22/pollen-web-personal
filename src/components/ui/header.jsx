@@ -1,7 +1,7 @@
 "use client";
 
-import { NavUser } from "@/app/components/sidebar/nav-user";
-import { useLogout } from "@/app/_lib/hooks/useLogout";
+import { NavUser } from "@/components/sidebar/nav-user";
+import { useLogout } from "@/hooks/useLogout";
 
 export function Header() {
   const { onLogout, isLogoutInProgress } = useLogout();

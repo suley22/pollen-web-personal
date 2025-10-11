@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/utils/supabase/client";
-import { LoginRoutes } from "../../(pages)/login/router";
-import { JobSeekerRoutes } from "../../(pages)/(portal)/(job-seeker)/router";
-import { AdminRoutes } from "../../(pages)/(portal)/admin/router";
+
+import { LoginRoutes } from "@/login/router";
+import { JobSeekerRoutes } from "@/job-seeker/router";
+import { AdminRoutes } from "@/admin/router";
+
 import { useRouter } from "next/navigation";
 
 export const useLandingPage = () => {

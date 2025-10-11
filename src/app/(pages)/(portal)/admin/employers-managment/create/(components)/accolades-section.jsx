@@ -1,7 +1,7 @@
 // El estado ahora se maneja en el padre, no aquí
 
-import { Badge } from "@/app/components/ui/badge";
-import { Input } from "@/app/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 
 export function AccoladesSection({ accolades, setAccolades, placeholder }) {
   const handleAddAccolade = (value) => {

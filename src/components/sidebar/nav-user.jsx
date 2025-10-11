@@ -1,19 +1,15 @@
 "use client";
 
 import { LogOut, ChevronDown, User2, Settings } from "lucide-react";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/app/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/app/components/ui/dropdown-menu";
-import { SidebarMenuButton } from "@/app/components/sidebar/sidebar";
+} from "@/components/ui/dropdown-menu";
+import { SidebarMenuButton } from "@/components/sidebar/sidebar";
 import { useUser } from "@/app/providers";
 
 export function NavUser({ onLogout }) {

@@ -1,11 +1,11 @@
 "use client";
 
-import { PrimaryButton } from "@/app/components/ui/buttons/primary-button";
+import { PrimaryButton } from "@/components/ui/buttons/primary-button";
 import { updateUserInfo as updateUserAction } from "./actions";
 import { useUserInfo } from "./useUserInfo";
 import { useActionState } from "react";
-import { Input } from "@/app/components/ui/input";
-import { Label } from "@/app/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function Page() {
   const { form } = useUserInfo();

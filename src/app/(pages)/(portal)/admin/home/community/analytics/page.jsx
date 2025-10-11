@@ -1,11 +1,11 @@
-import { Button } from "@/app/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/app/components/ui/select";
+} from "@/components/ui/select";
 import { ArrowLeft, Download, Home } from "lucide-react";
 import { setLocation } from "@/lib/utils/navigation";
 import { useState } from "react";

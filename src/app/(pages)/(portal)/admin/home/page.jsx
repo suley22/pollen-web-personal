@@ -13,15 +13,10 @@ import {
   TrendingUp,
   Calendar,
 } from "lucide-react";
-import { Button } from "@/app/components/ui/button";
-import { Avatar, AvatarFallback } from "@/app/components/ui/avatar";
-import { Alert, AlertDescription } from "@/app/components/ui/alert";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/app/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { useHome } from "./useHome";
 

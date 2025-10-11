@@ -1,9 +1,9 @@
 import { Sora, Poppins } from "next/font/google";
-import "./globals.css";
+import "@/styles/globals.css";
 
 import { Providers } from "./providers";
 import { Toaster } from "sonner";
-import { createClient } from "@/lib/utils/supabase/server";
+import { createClient } from "@/utils/supabase/server";
 
 const sora = Sora({
   subsets: ["latin"],

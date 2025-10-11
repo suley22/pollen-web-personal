@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/app/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, CheckCircle, Brain, Target, Download } from "lucide-react";
-import { Card } from "@/app/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 
 export default function PersonaResultsPage() {

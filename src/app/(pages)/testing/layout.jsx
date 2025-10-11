@@ -2,8 +2,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
   SidebarInset,
-} from "@/app/components/sidebar/sidebar";
-import { AppSidebar } from "@/app/components/sidebar/app-sidebar";
+} from "@/components/sidebar/sidebar";
+import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { createClient } from "@/lib/utils/supabase/server";
 
 export default async function DashboardLayout({ children }) {

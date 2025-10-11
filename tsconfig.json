@@ -24,7 +24,8 @@
       "@/job-seeker/*": ["./src/app/(pages)/(portal)/(job-seeker)/*"],
       "@/constants/*": ["./src/lib/configs/constants/*"],
       "@/utils/*": ["./src/lib/utils/*"],
-      "@/components/*": ["./src/lib/_components/*"]
+      "@/components/*": ["./src/components/*"],
+      "@/hooks/*": ["./src/app/_hooks/*"]
     },
     "moduleResolution": "bundler",
     "resolveJsonModule": true,

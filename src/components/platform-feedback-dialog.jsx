@@ -6,13 +6,13 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/app/components/ui/dialog";
-import { Button } from "@/app/components/ui/buttons/button";
-import { Card, CardContent } from "@/app/components/ui/card";
-import { Label } from "@/app/components/ui/label";
-import { Textarea } from "@/app/components/ui/text-area/textarea";
-import { RadioGroup, RadioGroupItem } from "@/app/components/ui/radio-group";
-import { Checkbox } from "@/app/components/ui/checkbox";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/buttons/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/text-area/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import { useToast } from "@/lib/hooks/use-toast";
 import { Heart, MessageSquare, X } from "lucide-react";

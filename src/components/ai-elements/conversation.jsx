@@ -1,6 +1,6 @@
 "use client";
 
-import { ButtonIA } from "@/app/components/ai-elements/button";
+import { ButtonIA } from "@/componentsai-elements/button";
 import { cn } from "@/lib/utils";
 import { ArrowDownIcon } from "lucide-react";
 import { useCallback } from "react";

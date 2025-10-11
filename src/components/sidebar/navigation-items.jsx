@@ -17,8 +17,8 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   useSidebar,
-} from "@/app/components/sidebar/sidebar";
-import { CustomSidebarMenuButton } from "@/app/components/sidebar/custom-sidebar-menu-button";
+} from "@/components/sidebar/sidebar";
+import { CustomSidebarMenuButton } from "@/components/sidebar/custom-sidebar-menu-button";
 
 export function NavigationItems({ user }) {
   const pathname = usePathname();

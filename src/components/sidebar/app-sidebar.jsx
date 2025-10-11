@@ -11,10 +11,10 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarTrigger,
-} from "@/app/components/sidebar/sidebar";
-import { useSidebar } from "@/app/components/sidebar/sidebar";
+} from "@/components/sidebar/sidebar";
+import { useSidebar } from "@/components/sidebar/sidebar";
 import { Logo } from "../icons/icons";
-import { NavigationItems } from "@/app/components/sidebar/navigation-items";
+import { NavigationItems } from "@/components/sidebar/navigation-items";
 
 export function AppSidebar({ user, ...props }) {
   const { state } = useSidebar();

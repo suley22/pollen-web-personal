@@ -1,10 +1,10 @@
 "use client";
-import { useSidebar } from "@/app/components/sidebar/sidebar";
+import { useSidebar } from "@/components/sidebar/sidebar";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/app/components/ui/tooltip";
+} from "@/components/ui/tooltip";
 
 export function CustomSidebarMenuButton({
   children,

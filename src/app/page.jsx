@@ -1,16 +1,12 @@
 "use client";
 
-import { Button } from "@/app/components/ui/buttons/button";
-import { Card, CardContent } from "@/app/components/ui/card";
+import { Button } from "@/components/ui/buttons/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Users, Trophy, Briefcase, Code, Loader } from "lucide-react";
 import Image from "next/image";
 import { LandingImagePaths } from "@/lib/configs/constants/image_paths";
-import { useLandingPage } from "./_lib/hooks/useLandingPage";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/app/components/ui/avatar";
+import { useLandingPage } from "./_hooks/useLandingPage";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function LandingPage() {
   const { handleLogin, isCheckingSession, user } = useLandingPage();
@@ -87,18 +83,6 @@ export default function LandingPage() {
             look beyond the CV. Pollen helps you get hired through real skills,
             behavioural insights, and community support.
           </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button
-              onClick={handleLogin}
-              size="lg"
-              disabled={isCheckingSession}
-              className="bg-pink-600 hover:bg-pink-700 text-white px-12 py-4 text-lg disabled:opacity-50"
-              style={{ fontFamily: "Sora" }}
-            >
-              {isCheckingSession ? "Checking..." : "Explore Demo"}
-            </Button>
-          </div>
 
           {/* Secondary CTA for employers */}
           <div className="bg-yellow-50 rounded-lg p-6 max-w-md mx-auto mb-16">
@@ -487,7 +471,7 @@ export default function LandingPage() {
             className="bg-white text-pink-600 hover:bg-gray-100 px-12 py-4 text-lg disabled:opacity-50"
             style={{ fontFamily: "Sora" }}
           >
-            {isCheckingSession ? "Checking..." : "Explore Demo"}
+            Find jobs now →
           </Button>
         </div>
       </div>
@@ -499,7 +483,7 @@ export default function LandingPage() {
             className="text-3xl font-bold text-gray-900 mb-4"
             style={{ fontFamily: "Sora" }}
           >
-            Employers – Learn More
+            Employers
           </h2>
           <p
             className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto"
@@ -518,7 +502,7 @@ export default function LandingPage() {
               className="px-8 py-4 text-lg border-gray-300"
               style={{ fontFamily: "Sora" }}
             >
-              Go to Employer Page →
+              Learn More →
             </Button>
           </div>
         </div>

@@ -1,5 +1,5 @@
-import { Badge } from "@/app/components/ui/badge";
-import { Input } from "@/app/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 
 export function CustomIndustriesSection({
   customIndustries,

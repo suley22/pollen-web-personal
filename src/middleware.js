@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { updateSession } from "@/utils/supabase/middleware";
-import { LoginRoutes } from "./app/login/router";
+import { LoginRoutes } from "./app/(pages)/login/router";
 
 const publicRoutes = [
   LoginRoutes.login,

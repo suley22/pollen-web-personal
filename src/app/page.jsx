@@ -2,41 +2,14 @@
 
 import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Users, Trophy, Briefcase, Code } from "lucide-react";
+import { Users, Trophy, Briefcase, Code, Loader } from "lucide-react";
 import Image from "next/image";
-import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
-import { LoginRoutes } from "./login/router";
-import { JobSeekerRoutes } from "./(portal)/(job-seeker)/router";
-import { AdminRoutes } from "./(portal)/admin/router";
 import { LandingImagePaths } from "@/configs/constants/image_paths";
+import { useLandingPage } from "./_hooks/useLandingPage";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function LandingPage() {
-  const router = useRouter();
-
-  const handleLogin = async () => {
-    try {
-      const supabase = createClient();
-
-      const { data, error } = await supabase.auth.getSession();
-
-      if (error || !data.session) {
-        router.push(LoginRoutes.login);
-      } else {
-        // TODO: -> Mismo código en src/app/login/actions.tsx
-
-        console.log(data);
-
-        const isAdmin = data.session.user.user_metadata.role === "admin";
-        let redirectUrl = isAdmin ? AdminRoutes.home : JobSeekerRoutes.home;
-
-        router.push(redirectUrl);
-      }
-    } catch (error) {
-      console.error("Error al verificar la sesión:", error);
-      router.push(LoginRoutes.login);
-    }
-  };
+  const { handleLogin, isCheckingSession, user } = useLandingPage();
 
   return (
     <div className="min-h-screen bg-white">
@@ -61,20 +34,33 @@ export default function LandingPage() {
               Pollen
             </span>
           </div>
-          <div className="flex items-center gap-4">
-            <a
-              href="/employers"
-              className="text-gray-600 hover:text-gray-900 text-sm hidden sm:inline"
-            >
-              Employers? <span className="text-pink-600">Learn More →</span>
-            </a>
-            <Button
-              onClick={handleLogin}
-              className="bg-pink-600 hover:bg-pink-700 text-white"
-              style={{ fontFamily: "Sora" }}
-            >
-              Login
-            </Button>
+          <div className="flex items-center">
+            <div className="flex flex-row cursor-pointer" onClick={handleLogin}>
+              {!user && (
+                <Button
+                  onClick={handleLogin}
+                  disabled={isCheckingSession}
+                  className="bg-pink-600 hover:bg-pink-700 text-white disabled:opacity-50 min-w-[120px]"
+                  style={{ fontFamily: "Sora" }}
+                >
+                  {isCheckingSession ? <Loader /> : "Login"}
+                </Button>
+              )}
+              {user && (
+                <div className="flex flex-row gap-2">
+                  <Avatar className="h-8 w-8 rounded-lg">
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarFallback className="rounded-lg">
+                      {user.name}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-medium">{user.name}</span>
+                    <span className="truncate text-xs">{user.email}</span>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </nav>
@@ -102,10 +88,11 @@ export default function LandingPage() {
             <Button
               onClick={handleLogin}
               size="lg"
-              className="bg-pink-600 hover:bg-pink-700 text-white px-12 py-4 text-lg"
+              disabled={isCheckingSession}
+              className="bg-pink-600 hover:bg-pink-700 text-white px-12 py-4 text-lg disabled:opacity-50"
               style={{ fontFamily: "Sora" }}
             >
-              Explore Demo
+              {isCheckingSession ? "Checking..." : "Explore Demo"}
             </Button>
           </div>
 
@@ -492,10 +479,11 @@ export default function LandingPage() {
           <Button
             onClick={handleLogin}
             size="lg"
-            className="bg-white text-pink-600 hover:bg-gray-100 px-12 py-4 text-lg"
+            disabled={isCheckingSession}
+            className="bg-white text-pink-600 hover:bg-gray-100 px-12 py-4 text-lg disabled:opacity-50"
             style={{ fontFamily: "Sora" }}
           >
-            Explore Demo
+            {isCheckingSession ? "Checking..." : "Explore Demo"}
           </Button>
         </div>
       </div>

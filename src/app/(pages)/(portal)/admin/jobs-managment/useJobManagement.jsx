@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { getJobList } from "@/app/(portal)/admin/jobs-managment/actions";
+import { getJobList } from "@/app/(pages)/(portal)/admin/jobs-managment/actions";
 import { Badge } from "@/components/ui/badge";
 
-export function useHome() {
+export function useJobManagement() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [jobs, setJobs] = useState([]);
@@ -44,7 +44,7 @@ export function useHome() {
       });
 
       if (result.success) {
-        const assignedJobs = result.data.map((job) => ({
+        const jobsResult = result.data.map((job) => ({
           ...job,
           assigned_date: job.published_at || job.created_at,
           total_applications: 2,
@@ -59,7 +59,7 @@ export function useHome() {
           offersExtended: 2,
           hiresMade: 1,
         }));
-        setJobs(assignedJobs || []);
+        setJobs(jobsResult || []);
         setError(null);
       } else {
         console.error("❌ Error from server:", result.error);
@@ -100,11 +100,7 @@ export function useHome() {
           </Badge>
         );
       case "draft":
-        return (
-          <Badge className="bg-yellow-100 text-yellow-800 status-badge-compact">
-            Draft
-          </Badge>
-        );
+        return <Badge className="bg-yellow-100 text-yellow-800 ">Draft</Badge>;
       default:
         return (
           <Badge variant="outline" className="status-badge-compact">
@@ -123,7 +119,7 @@ export function useHome() {
   };
 
   return {
-    homeState: {
+    form: {
       selectedStatus: selectedStatus,
       selectedAssignment: selectedAssignment,
       activeTab: activeTab,

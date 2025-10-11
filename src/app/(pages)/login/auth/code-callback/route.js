@@ -1,4 +1,4 @@
-import { JobSeekerRoutes } from "@/app/(portal)/(job-seeker)/router";
+import { JobSeekerRoutes } from "@/app/(pages)/(portal)/(job-seeker)/router";
 import { createClient } from "@/utils/supabase/server";
 import { NextResponse } from "next/server";
 

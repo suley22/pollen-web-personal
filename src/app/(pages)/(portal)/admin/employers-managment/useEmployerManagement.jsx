@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getEmployerProfile } from "@/app/(portal)/admin/employers-managment/actions";
+import { getEmployerProfile } from "@/app/(pages)/(portal)/admin/employers-managment/actions";
 
 export function useEmployerManagement() {
   const [selectedStatus, setSelectedStatus] = useState("all");

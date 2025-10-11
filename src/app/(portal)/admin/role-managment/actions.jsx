@@ -62,17 +62,18 @@ export async function updateUserRole(userId, role) {
       return { message: "Error actualizando profile", success: false };
     }
 
-    const { dataUpdateUser, errorUpdateUser } = await supabase.auth.updateUser({
-      data: {
-        role: role,
-      },
-    });
+    const { data: dataUpdateUser, error: errorUpdateUser } =
+      await supabase.auth.updateUser({
+        data: {
+          role: role,
+        },
+      });
 
     if (errorUpdateUser) {
       console.error("Error actualizando metadata:", errorUpdateUser.message);
       return { message: "Error actualizando perfil", success: false };
     } else {
-      console.log("User actualizado:", dataUpdateUser);
+      console.log("User actualizado:", dataUpdateUser.user.user_metadata.role);
       return { message: "Role actualizado correctamente", success: true };
     }
   } catch (error) {

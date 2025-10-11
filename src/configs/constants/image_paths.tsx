@@ -1,5 +1,5 @@
 // Image paths
-const ImagePaths = {
+export const ImagePaths = {
   honeycombLogo: "/images/honeycomb_1753116372462.png",
   platformScreenshot: "/images/image_1753357343185.png",
   bbcLogo: "/images/image_1753303879889.png",

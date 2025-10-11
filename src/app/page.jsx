@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { LoginRoutes } from "./login/router";
 import { JobSeekerRoutes } from "./(portal)/(job-seeker)/router";
 import { AdminRoutes } from "./(portal)/admin/router";
-import { ImagePaths } from "@/constants/image_constants";
+import { ImagePaths } from "@/configs/constants/image_paths";
 
 export default function LandingPage() {
   const router = useRouter();

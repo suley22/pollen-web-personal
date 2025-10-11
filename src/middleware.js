@@ -4,12 +4,11 @@ import { LoginRoutes } from "./app/login/router";
 
 const publicRoutes = [
   LoginRoutes.login,
-  LoginRoutes.authCallback,
   LoginRoutes.logout,
-  LoginRoutes.confirm,
-  LoginRoutes.authResetPassword,
-  LoginRoutes.authConfirm,
   LoginRoutes.forgotPassword,
+  LoginRoutes.authConfirm,
+  LoginRoutes.authResetPassword,
+  LoginRoutes.authCodeCallback,
   "/error",
   "/",
 ];

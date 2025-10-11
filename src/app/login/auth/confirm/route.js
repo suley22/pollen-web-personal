@@ -10,8 +10,6 @@ export async function GET(request) {
   if (token_hash && type) {
     const supabase = await createClient();
 
-
-
     const { error } = await supabase.auth.verifyOtp({
       type,
       token_hash,
@@ -21,6 +19,8 @@ export async function GET(request) {
       redirect(next);
     }
   }
+
+  // TODO: Si el código expiró, permitir reenviar el correo
 
   // redirect the user to an error page with some instructions
   redirect("/error");

@@ -158,6 +158,8 @@ export default function LandingPage() {
                       style={{ aspectRatio: "16/10" }}
                     >
                       <Image
+                        width={800}
+                        height={500}
                         src={ImagePaths.platformScreenshot}
                         alt="Pollen Platform Demo"
                         className="w-full h-full object-cover object-top"
@@ -194,45 +196,52 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-nowrap justify-center items-center gap-6 md:gap-8 opacity-100 overflow-x-auto">
               <Image
+                width={100}
+                height={100}
                 src={ImagePaths.bbcLogo}
                 alt="BBC"
-                width={100}
                 className="h-8 object-contain flex-shrink-0"
               />
               <Image
                 src={ImagePaths.timesLogo}
                 alt="The Times"
                 width={100}
+                height={100}
                 className="h-20 object-contain flex-shrink-0"
               />
               <Image
                 src={ImagePaths.honeycombLogo}
                 alt="Honeycomb"
                 width={100}
+                height={100}
                 className="h-20 object-contain flex-shrink-0"
               />
               <Image
                 src={ImagePaths.fastCompanyLogo}
                 alt="FastCompany"
                 width={100}
+                height={100}
                 className="h-8 object-contain flex-shrink-0"
               />
               <Image
                 src={ImagePaths.businessInsiderLogo}
                 alt="Business Insider"
                 width={100}
+                height={100}
                 className="h-8 object-contain flex-shrink-0"
               />
               <Image
                 src={ImagePaths.stylistLogo}
                 alt="Stylist"
                 width={100}
+                height={100}
                 className="h-8 object-contain flex-shrink-0"
               />
               <Image
                 src={ImagePaths.nyPostLogo}
                 alt="New York Post"
                 width={100}
+                height={100}
                 className="h-8 object-contain flex-shrink-0"
               />
             </div>
@@ -533,6 +542,7 @@ export default function LandingPage() {
                   src={ImagePaths.honeycombLogo}
                   alt="Pollen"
                   width={100}
+                  height={100}
                   className="w-full h-full object-contain"
                 />
               </div>

@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/buttons/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { resetPassword } from "../actions";
+import { usePasswordReset } from "../_hooks/usePasswordReset";
 import Link from "next/link";
 
 export default function ForgotPasswordPage() {
   const [state, formAction, isLoading] = useActionState(resetPassword);
+  const { email, emailChecks, isEmailValid, handleEmailChange } = usePasswordReset();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -43,7 +45,25 @@ export default function ForgotPasswordPage() {
                 required
                 className="mt-1"
                 placeholder="Enter your email"
+                value={email}
+                onChange={(e) => handleEmailChange(e.target.value)}
               />
+              
+              {/* Email validation feedback */}
+              <ul className="mt-2 text-sm space-y-1">
+                {emailChecks.map((check) => (
+                  <li
+                    key={check.label}
+                    className={`flex items-center gap-2 ${
+                      check.valid ? "text-green-600" : "text-gray-500"
+                    }`}
+                  >
+                    {check.valid
+                      ? "✔ Email is valid"
+                      : "✖ Email is not valid"}
+                  </li>
+                ))}
+              </ul>
             </div>
             
             {state?.error && (
@@ -54,7 +74,7 @@ export default function ForgotPasswordPage() {
             
             <Button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || !isEmailValid}
               className="w-full"
             >
               {isLoading ? "Sending..." : "Send Reset Link"}

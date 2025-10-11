@@ -18,6 +18,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
+      "@/app/*": ["./src/app/*"],
       "@/lib/*": ["./src/lib/*"],
       "@/login/*": ["./src/app/(pages)/login/*"],
       "@/admin/*": ["./src/app/(pages)/(portal)/admin/*"],
@@ -25,7 +26,7 @@
       "@/constants/*": ["./src/lib/configs/constants/*"],
       "@/utils/*": ["./src/lib/utils/*"],
       "@/components/*": ["./src/components/*"],
-      "@/hooks/*": ["./src/app/_hooks/*"]
+      "@/hooks/*": ["./src/hooks/*"]
     },
     "moduleResolution": "bundler",
     "resolveJsonModule": true,

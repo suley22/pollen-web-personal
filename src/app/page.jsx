@@ -1,16 +1,16 @@
 "use client";
 
+import Image from "next/image";
+
 import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Users, Trophy, Briefcase, Code, Loader } from "lucide-react";
-import Image from "next/image";
+import { Users, Trophy, Briefcase, Code } from "lucide-react";
 import { LandingImagePaths } from "@/lib/configs/constants/image_paths";
-import { useLandingPage } from "./_hooks/useLandingPage";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+import { LoginStatusButton } from "@/app/LoginStatusButton";
+import { FindJobsButton } from "@/app/FindJobsButton";
 
 export default function LandingPage() {
-  const { handleLogin, isCheckingSession, user } = useLandingPage();
-
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
@@ -34,34 +34,7 @@ export default function LandingPage() {
               Pollen
             </span>
           </div>
-          <div className="flex items-center">
-            <div className="flex flex-row cursor-pointer" onClick={handleLogin}>
-              {!user && (
-                <Button
-                  onClick={handleLogin}
-                  disabled={isCheckingSession}
-                  className="bg-pink-600 hover:bg-pink-700 text-white disabled:opacity-50 min-w-[120px]"
-                  style={{ fontFamily: "Sora" }}
-                >
-                  {isCheckingSession ? <Loader /> : "Login"}
-                </Button>
-              )}
-              {user && (
-                <div className="flex flex-row gap-2">
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback className="rounded-lg">
-                      {user.name}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{user.name}</span>
-                    <span className="truncate text-xs">{user.email}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+          <LoginStatusButton />
         </div>
       </nav>
 
@@ -464,15 +437,7 @@ export default function LandingPage() {
             💡 No CVs. No pressure. Just your skills and potential.
           </p>
 
-          <Button
-            onClick={handleLogin}
-            size="lg"
-            disabled={isCheckingSession}
-            className="bg-white text-pink-600 hover:bg-gray-100 px-12 py-4 text-lg disabled:opacity-50"
-            style={{ fontFamily: "Sora" }}
-          >
-            Find jobs now →
-          </Button>
+          <FindJobsButton />
         </div>
       </div>
 

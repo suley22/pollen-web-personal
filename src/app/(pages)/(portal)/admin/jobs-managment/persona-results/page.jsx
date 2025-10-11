@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, CheckCircle, Brain, Target, Download } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/app/components/ui/card";
 import { useState, useEffect } from "react";
 
 export default function PersonaResultsPage() {
@@ -17,15 +17,15 @@ export default function PersonaResultsPage() {
         { style: "Red", percentage: 30 },
         { style: "Yellow", percentage: 25 },
         { style: "Green", percentage: 25 },
-        { style: "Blue", percentage: 20 }
+        { style: "Blue", percentage: 20 },
       ],
       personalityInsights: {
         primary: "Results-oriented and decisive",
         workApproach: "Takes initiative and drives projects forward",
         teamStyle: "Direct communication and goal-focused leadership",
         motivations: "Achievement, challenges, and measurable outcomes",
-        strengths: "Decision making, problem solving, and strategic thinking"
-      }
+        strengths: "Decision making, problem solving, and strategic thinking",
+      },
     };
     setProfileData(mockData);
   }, []);
@@ -60,10 +60,10 @@ export default function PersonaResultsPage() {
           </div>
         </div>
       </div>
-      
+
       <div className="max-w-4xl mx-auto p-6">
         <div className="space-y-8">
-            <div className="text-center space-y-4">
+          <div className="text-center space-y-4">
             <CheckCircle className="h-16 w-16 mx-auto text-green-500" />
             <h1 className="text-3xl font-bold text-gray-900">
               Persona Profile Created
@@ -89,17 +89,22 @@ export default function PersonaResultsPage() {
                       Red: "bg-red-500",
                       Yellow: "bg-yellow-400",
                       Green: "bg-green-500",
-                      Blue: "bg-blue-500"
+                      Blue: "bg-blue-500",
                     };
                     const behaviorNames = {
                       Red: "Decisive",
                       Yellow: "Interactive",
                       Green: "Steady",
-                      Blue: "Conscientious"
+                      Blue: "Conscientious",
                     };
                     return (
-                      <div key={style} className="flex items-center justify-between">
-                        <span className="font-medium">{behaviorNames[style]}</span>
+                      <div
+                        key={style}
+                        className="flex items-center justify-between"
+                      >
+                        <span className="font-medium">
+                          {behaviorNames[style]}
+                        </span>
                         <div className="flex items-center gap-2">
                           <div className="w-20 bg-gray-200 rounded-full h-2">
                             <div
@@ -171,7 +176,9 @@ export default function PersonaResultsPage() {
                     </div>
                   </>
                 ) : (
-                  <p className="text-gray-500">Loading personality insights...</p>
+                  <p className="text-gray-500">
+                    Loading personality insights...
+                  </p>
                 )}
               </div>
             </Card>
@@ -246,7 +253,6 @@ export default function PersonaResultsPage() {
           </div>
 
           <div className="flex gap-4 justify-center">
-            
             <Button
               className="flex items-center gap-2"
               onClick={() => window.print()}
@@ -255,10 +261,8 @@ export default function PersonaResultsPage() {
               Download Summary
             </Button>
           </div>
-
-
         </div>
-        </div>
+      </div>
     </div>
   );
 }

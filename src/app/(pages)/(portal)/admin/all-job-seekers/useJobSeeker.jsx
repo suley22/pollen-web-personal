@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getJobSeeker } from "@/app/(pages)/(portal)/admin/all-job-seekers/actions";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/app/components/ui/badge";
 
 export function useJobSeeker() {
   const [statusFilter, setStatusFilter] = useState("all");

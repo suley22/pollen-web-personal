@@ -1,13 +1,13 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/buttons/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { GoogleIcon } from "@/components/icons/icons";
+import { Button } from "@/app/components/ui/buttons/button";
+import { Input } from "@/app/components/ui/input";
+import { Label } from "@/app/components/ui/label";
+import { GoogleIcon } from "@/app/components/icons/icons";
 import { useRegister } from "../_hooks/useRegister";
 import { useActionState } from "react";
-import { Alert } from "@/components/ui/alert";
+import { Alert } from "@/app/components/ui/alert";
 
 export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
   const { form } = useRegister();
@@ -73,9 +73,7 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
                     check.valid ? "text-green-600" : "text-gray-500"
                   }`}
                 >
-                  {check.valid
-                    ? "✔ Email is valid"
-                    : "✖ Email is not valid"}
+                  {check.valid ? "✔ Email is valid" : "✖ Email is not valid"}
                 </li>
               ))}
             </ul>

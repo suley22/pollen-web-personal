@@ -1,12 +1,16 @@
 "use client";
 
-import { Button } from "@/components/ui/buttons/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/app/components/ui/buttons/button";
+import { Card, CardContent } from "@/app/components/ui/card";
 import { Users, Trophy, Briefcase, Code, Loader } from "lucide-react";
 import Image from "next/image";
-import { LandingImagePaths } from "@/configs/constants/image_paths";
-import { useLandingPage } from "./_hooks/useLandingPage";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { LandingImagePaths } from "@/lib/configs/constants/image_paths";
+import { useLandingPage } from "./_lib/hooks/useLandingPage";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/app/components/ui/avatar";
 
 export default function LandingPage() {
   const { handleLogin, isCheckingSession, user } = useLandingPage();

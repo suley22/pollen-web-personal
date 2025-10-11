@@ -3,7 +3,7 @@ import "./globals.css";
 
 import { Providers } from "./providers";
 import { Toaster } from "sonner";
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/lib/utils/supabase/server";
 
 const sora = Sora({
   subsets: ["latin"],

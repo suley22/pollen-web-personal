@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { UserInfoModel } from "@/app/(pages)/login/_schema/registerSchema";
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/lib/utils/supabase/server";
 import { AdminRoutes } from "@/app/(pages)/(portal)/admin/router";
 import { JobSeekerRoutes } from "@/app/(pages)/(portal)/(job-seeker)/router";
 import { LoginRoutes } from "./router";

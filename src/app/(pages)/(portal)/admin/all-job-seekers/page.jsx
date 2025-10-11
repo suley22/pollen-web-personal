@@ -11,19 +11,18 @@ import {
   Briefcase,
   Search,
 } from "lucide-react";
-import { Button } from "@/components/ui/buttons/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/app/components/ui/buttons/button";
+import { Input } from "@/app/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select/select";
+} from "@/app/components/ui/select/select";
 import { useJobSeeker } from "./useJobSeeker";
 
 export default function JobsPage() {
-
   const router = useRouter();
   const { form } = useJobSeeker();
 
@@ -53,7 +52,11 @@ export default function JobsPage() {
       value: form.applicationFilter,
       onChange: form.setApplicationFilter,
     },
-    { key: "profile", value: form.profileFilter, onChange: form.setProfileFilter },
+    {
+      key: "profile",
+      value: form.profileFilter,
+      onChange: form.setProfileFilter,
+    },
   ];
 
   return (

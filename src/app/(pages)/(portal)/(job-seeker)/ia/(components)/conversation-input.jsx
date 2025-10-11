@@ -13,7 +13,7 @@ import {
   PromptInputTextarea,
   PromptInputToolbar,
   PromptInputTools,
-} from "@/components/ai-elements/prompt-input";
+} from "@/app/components/ai-elements/prompt-input";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 

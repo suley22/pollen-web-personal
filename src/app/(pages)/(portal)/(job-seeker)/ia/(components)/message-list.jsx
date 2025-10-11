@@ -1,6 +1,6 @@
 "use client";
 
-import { Message, MessageContent } from "@/components/ai-elements/message";
+import { Message, MessageContent } from "@/app/components/ai-elements/message";
 
 export default function MessageList({ messages }) {
   return (

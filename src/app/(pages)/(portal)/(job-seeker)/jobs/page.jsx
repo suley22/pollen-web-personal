@@ -13,17 +13,17 @@ import {
   Heart,
   Eye,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/buttons/button";
+import { Badge } from "@/app/components/ui/badge";
+import { Input } from "@/app/components/ui/input";
+import { Button } from "@/app/components/ui/buttons/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select/select";
-import { Card, CardContent } from "@/components/ui/card";
+} from "@/app/components/ui/select/select";
+import { Card, CardContent } from "@/app/components/ui/card";
 
 export default function JobsPage() {
   const [searchTerm, setSearchTerm] = useState("");

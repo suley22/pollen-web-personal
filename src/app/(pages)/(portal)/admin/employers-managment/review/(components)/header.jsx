@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/buttons/button";
+import { Button } from "@/app/components/ui/buttons/button";
 import { Eye } from "lucide-react";
 
 export function Header({ employerProfile }) {

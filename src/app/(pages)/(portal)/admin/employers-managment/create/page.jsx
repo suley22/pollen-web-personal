@@ -10,20 +10,20 @@ import {
   DialogDescription,
   DialogClose,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from "@/app/components/ui/dialog";
+import { Button } from "@/app/components/ui/button";
 import { ArrowLeft, EyeOff, User, UploadIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/app/components/ui/card";
 import { Building2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/app/components/ui/input";
+import { Label } from "@/app/components/ui/label";
+import { Checkbox } from "@/app/components/ui/checkbox";
 import { AccoladesSection } from "./(components)/accolades-section";
 import { CustomIndustriesSection } from "./(components)/custom-industries-section";
 import { Progress } from "./(components)/progress";
 import { useActionState } from "react";
-import { PrimaryButton } from "@/components/ui/buttons/primary-button";
+import { PrimaryButton } from "@/app/components/ui/buttons/primary-button";
 import { createCompanyData } from "./actions";
 import { IndustryCategoriesSection } from "./(components)/industry-categories";
 import {
@@ -32,8 +32,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select/select";
-import { Textarea } from "@/components/ui/textarea";
+} from "@/app/components/ui/select/select";
+import { Textarea } from "@/app/components/ui/textarea";
 
 export default function CreateProfilePage() {
   const formRef = useRef(null);
@@ -631,8 +631,8 @@ export default function CreateProfilePage() {
             <DialogHeader>
               <DialogTitle>Confirm company creation?</DialogTitle>
               <DialogDescription>
-                Are you sure you want to create the company? This action will not
-                affect current logic.
+                Are you sure you want to create the company? This action will
+                not affect current logic.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>

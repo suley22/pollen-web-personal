@@ -1,13 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/buttons/button";
-import CircularProgress from "@/components/ui/circular-progress";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/app/components/ui/buttons/button";
+import CircularProgress from "@/app/components/ui/circular-progress";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/card";
 import { useRouter } from "next/navigation";
 
-
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/app/components/ui/badge";
 
 import {
   Heart,
@@ -174,9 +178,7 @@ export default function Home() {
                   </div>
 
                   <Button
-                    onClick={() =>
-                      router.push('/profile-checkpoints')
-                    }
+                    onClick={() => router.push("/profile-checkpoints")}
                     variant="pollen"
                     size="sm"
                     className="w-full sm:w-auto whitespace-nowrap font-sora"

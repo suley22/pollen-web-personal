@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getJobList } from "@/app/(pages)/(portal)/admin/jobs-managment/actions";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/app/components/ui/badge";
 
 export function useJobManagement() {
   const [selectedStatus, setSelectedStatus] = useState("all");

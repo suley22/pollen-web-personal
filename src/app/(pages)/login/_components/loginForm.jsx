@@ -1,11 +1,11 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/buttons/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/app/components/ui/buttons/button";
+import { Input } from "@/app/components/ui/input";
+import { Label } from "@/app/components/ui/label";
 import Link from "next/link";
-import { GoogleIcon } from "@/components/icons/icons";
+import { GoogleIcon } from "@/app/components/icons/icons";
 import { useActionState } from "react";
 import { useLogin } from "../_hooks/useLogin";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/buttons/button";
+import { Button } from "@/app/components/ui/buttons/button";
 import { useRouter } from "next/navigation";
 import {
   PieChart,
@@ -26,10 +26,20 @@ import {
   Users,
 } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/app/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/app/components/ui/tabs";
 import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/app/components/ui/badge";
 
 export default function AdminAllJobSeekersReviewPage() {
   const router = useRouter();

@@ -1,9 +1,9 @@
 "use client";
 
 import { ChevronLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/components/ui/button";
 import { useRouter } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/app/components/ui/badge";
 import {
   GraduationCap,
   MapPin,
@@ -16,9 +16,14 @@ import {
   Globe,
   MessageSquare,
 } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
+import { Progress } from "@/app/components/ui/progress";
 import { useState } from "react";
-import { CardHeader, CardTitle, Card, CardContent } from "@/components/ui/card";
+import {
+  CardHeader,
+  CardTitle,
+  Card,
+  CardContent,
+} from "@/app/components/ui/card";
 
 export default function CompanyReviewPage() {
   const [demoSavedState, setDemoSavedState] = useState(null);

@@ -2,7 +2,12 @@
 
 import { Clock, AlertCircle, CheckCircle } from "lucide-react";
 import { useState } from "react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/app/components/ui/tabs";
 import { StatusInfo } from "./(components)/status-info";
 import { Header } from "./(components)/header";
 import Details from "./(components)/details";
@@ -30,7 +35,7 @@ export default function EmployerProfileConsolidated({ employerProfile }) {
   const getStatusInfo = () => {
     if (!employerProfile) return null;
 
-    console.log(employerProfile)
+    console.log(employerProfile);
 
     if (employerProfile.approval_status === "pending") {
       return {
@@ -130,9 +135,10 @@ export default function EmployerProfileConsolidated({ employerProfile }) {
                   className="data-[state=active]:bg-pink-50 data-[state=active]:text-pink-700 data-[state=active]:border-pink-200 data-[state=active]:shadow-sm transition-all duration-200 rounded-md border border-transparent px-2 py-2 mx-1 h-10 flex items-center justify-center text-sm"
                 >
                   <span className="font-medium">Overview</span>
-                  {!employerProfile.about && !employerProfile.company_description && (
-                    <span className="ml-1 text-xs text-gray-500">+</span>
-                  )}
+                  {!employerProfile.about &&
+                    !employerProfile.company_description && (
+                      <span className="ml-1 text-xs text-gray-500">+</span>
+                    )}
                 </TabsTrigger>
                 <TabsTrigger
                   value="testimonials"
@@ -278,8 +284,6 @@ export default function EmployerProfileConsolidated({ employerProfile }) {
               <TabsContent value="gallery">
                 <GalleryTab />
               </TabsContent>
-
-
             </div>
           </Tabs>
         </div>

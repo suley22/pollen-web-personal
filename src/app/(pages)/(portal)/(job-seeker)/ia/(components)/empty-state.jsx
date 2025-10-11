@@ -1,6 +1,6 @@
 "use client";
 
-import { ConversationEmptyState } from "@/components/ai-elements/conversation";
+import { ConversationEmptyState } from "@/app/components/ai-elements/conversation";
 import { MessageSquare } from "lucide-react";
 
 export default function EmptyState() {

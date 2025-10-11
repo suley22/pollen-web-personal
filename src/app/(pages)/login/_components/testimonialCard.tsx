@@ -1,7 +1,11 @@
 import { Star } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/app/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { TestimonialComponentImagePaths } from "@/configs/constants/image_paths";
+import { TestimonialComponentImagePaths } from "@/lib/configs/constants/image_paths";
 
 interface TestimonialCardProps {
   name: string;

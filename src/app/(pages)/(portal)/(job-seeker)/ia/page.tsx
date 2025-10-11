@@ -4,16 +4,16 @@ import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
-} from "@/components/ai-elements/conversation";
-import { Message, MessageContent } from "@/components/ai-elements/message";
+} from "@/app/components/ai-elements/conversation";
+import { Message, MessageContent } from "@/app/components/ai-elements/message";
 import { JSX } from "react";
-import { Image } from "@/components/ai-elements/image";
+import { Image } from "@/app/components/ai-elements/image";
 
 import EmptyState from "./(components)/empty-state";
 import ConversationInput from "./(components)/conversation-input";
 import { useChatMessages } from "./(hooks)/useChatMessages";
-import { Loader } from "@/components/ai-elements/loader";
-import { Alert } from "@/components/ui/alert";
+import { Loader } from "@/app/components/ai-elements/loader";
+import { Alert } from "@/app/components/ui/alert";
 
 export default function IA(): JSX.Element {
   const { messages, isLoading, error, handleSubmit } = useChatMessages();

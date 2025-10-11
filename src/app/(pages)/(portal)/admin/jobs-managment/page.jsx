@@ -1,9 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/components/ui/button";
 import { Plus, ArrowLeft } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { Input } from "@/app/components/ui/input";
+import { Badge } from "@/app/components/ui/badge";
 import { useJobManagement } from "./useJobManagement";
 import {
   Users,
@@ -14,7 +14,7 @@ import {
   Calendar,
   UserCircle,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/app/components/ui/card";
 import { useRouter } from "next/navigation";
 
 export default function JobsManagmentPage() {
@@ -37,8 +37,6 @@ export default function JobsManagmentPage() {
             </Button>
             <div className="flex items-center space-x-4">
               <div>
-
-
                 <h1 className="text-3xl font-bold">Jobs Management</h1>
 
                 <p className="text-muted-foreground mt-2">
@@ -72,11 +70,14 @@ export default function JobsManagmentPage() {
           <div className="flex">
             <button
               onClick={() => form.setActiveTab("all")}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${form.activeTab === "all"
-                ? "text-white shadow-sm"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                }`}
-              style={form.activeTab === "all" ? { backgroundColor: "#E2007A" } : {}}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                form.activeTab === "all"
+                  ? "text-white shadow-sm"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+              }`}
+              style={
+                form.activeTab === "all" ? { backgroundColor: "#E2007A" } : {}
+              }
             >
               <Users className="h-4 w-4" />
               All Jobs
@@ -86,10 +87,10 @@ export default function JobsManagmentPage() {
                 style={
                   form.activeTab === "all"
                     ? {
-                      backgroundColor: "white",
-                      color: "#E2007A",
-                      borderColor: "white",
-                    }
+                        backgroundColor: "white",
+                        color: "#E2007A",
+                        borderColor: "white",
+                      }
                     : {}
                 }
               >
@@ -98,12 +99,15 @@ export default function JobsManagmentPage() {
             </button>
             <button
               onClick={() => form.setActiveTab("management")}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${form.activeTab === "management"
-                ? "text-white shadow-sm"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                }`}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                form.activeTab === "management"
+                  ? "text-white shadow-sm"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+              }`}
               style={
-                form.activeTab === "management" ? { backgroundColor: "#E2007A" } : {}
+                form.activeTab === "management"
+                  ? { backgroundColor: "#E2007A" }
+                  : {}
               }
             >
               <Eye className="h-4 w-4" />
@@ -114,10 +118,10 @@ export default function JobsManagmentPage() {
                 style={
                   form.activeTab === "management"
                     ? {
-                      backgroundColor: "white",
-                      color: "#E2007A",
-                      borderColor: "white",
-                    }
+                        backgroundColor: "white",
+                        color: "#E2007A",
+                        borderColor: "white",
+                      }
                     : {}
                 }
               >
@@ -198,21 +202,18 @@ export default function JobsManagmentPage() {
             <Card
               key={job.id}
               className="cursor-pointer hover:shadow-lg transition-shadow border border-gray-200 bg-white hover:bg-gray-50"
-
               //TODO: habilitar navegación a detalles del trabajo real
               onClick={() => {
                 router.push(`/admin/jobs-managment/review/${job.id}`);
               }}
 
-
-
-            //   sessionStorage.setItem('previousPage', '/admin/assigned-jobs');
-            //   if (job.status === 'draft') {
-            //     setLocation(`/admin/job-review/${job.id}?source=assigned-jobs`);
-            //   } else {
-            //     setLocation(`/admin/job-review/${job.id}?source=assigned-jobs`);
-            //   }
-            // }}
+              //   sessionStorage.setItem('previousPage', '/admin/assigned-jobs');
+              //   if (job.status === 'draft') {
+              //     setLocation(`/admin/job-review/${job.id}?source=assigned-jobs`);
+              //   } else {
+              //     setLocation(`/admin/job-review/${job.id}?source=assigned-jobs`);
+              //   }
+              // }}
             >
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
@@ -332,7 +333,9 @@ export default function JobsManagmentPage() {
                             // TODO: habilitar navegación a candidatos del trabajo
                             onClick={(e) => {
                               e.stopPropagation();
-                              router.push(`/admin/jobs-managment/job-applicants`);
+                              router.push(
+                                `/admin/jobs-managment/job-applicants`,
+                              );
                             }}
                             //    e.stopPropagation();
                             //    setLocation(`/admin/job-applicants-grid/${job.id}`);
@@ -349,15 +352,15 @@ export default function JobsManagmentPage() {
                           variant="ghost"
                           size="sm"
                           className="text-xs text-gray-600 hover:text-gray-800 hover:bg-gray-50 h-7 px-2 font-normal"
-                        // TODO: habilitar navegación a detalles del trabajo
-                        // onClick={(e) => {
-                        //   e.stopPropagation();
-                        //   sessionStorage.setItem(
-                        //     "previousPage",
-                        //     "/admin/assigned-jobs",
-                        //   );
-                        //   setLocation(`/admin/job-review/${job.id}`);
-                        // }}
+                          // TODO: habilitar navegación a detalles del trabajo
+                          // onClick={(e) => {
+                          //   e.stopPropagation();
+                          //   sessionStorage.setItem(
+                          //     "previousPage",
+                          //     "/admin/assigned-jobs",
+                          //   );
+                          //   setLocation(`/admin/job-review/${job.id}`);
+                          // }}
                         >
                           <Eye className="h-3 w-3 mr-1" />
                           Job Details

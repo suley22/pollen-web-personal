@@ -1,9 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
-import { Button } from "@/components/ui/buttons/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/app/components/ui/buttons/button";
+import { Input } from "@/app/components/ui/input";
+import { Label } from "@/app/components/ui/label";
 import { resetPassword } from "../actions";
 import Link from "next/link";
 
@@ -16,16 +16,17 @@ export default function ForgotPasswordPage() {
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900">Reset Password</h2>
           <p className="mt-2 text-sm text-gray-600">
-            Enter your email address and we'll send you a link to reset your password.
+            Enter your email address and we'll send you a link to reset your
+            password.
           </p>
         </div>
-        
+
         {state?.success ? (
           <div className="text-center space-y-4">
             <div className="p-4 bg-green-50 border border-green-200 rounded-md">
               <p className="text-green-800">{state.message}</p>
             </div>
-            <Link 
+            <Link
               href="/login"
               className="text-pink-600 hover:text-pink-500 underline"
             >
@@ -45,23 +46,19 @@ export default function ForgotPasswordPage() {
                 placeholder="Enter your email"
               />
             </div>
-            
+
             {state?.error && (
               <div className="p-3 bg-red-50 border border-red-200 rounded-md">
                 <p className="text-red-800 text-sm">{state.error}</p>
               </div>
             )}
-            
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full"
-            >
+
+            <Button type="submit" disabled={isLoading} className="w-full">
               {isLoading ? "Sending..." : "Send Reset Link"}
             </Button>
-            
+
             <div className="text-center">
-              <Link 
+              <Link
                 href="/login"
                 className="text-pink-600 hover:text-pink-500 underline"
               >

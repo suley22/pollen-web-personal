@@ -44,17 +44,17 @@ export default function RoleManagmentPage() {
 
           {/* Jobs Display */}
           <div className="bg-white rounded-lg border overflow-hidden">
-            <table className="w-full">
+            <table className="w-full table-auto">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="" />
+                  <th className="w-auto" style={{ width: "1%" }} />
                   <th className="text-left py-3 px-4 font-medium text-gray-900">
                     Name
                   </th>
                   <th className="text-left py-3 px-4 font-medium text-gray-900">
                     Email
                   </th>
-                  <th className=" text-left py-3 px-4 font-medium text-gray-900">
+                  <th className="text-left py-3 px-4 font-medium text-gray-900 w-auto" style={{ width: "1%" }}>
                     Actions
                   </th>
                 </tr>
@@ -62,9 +62,13 @@ export default function RoleManagmentPage() {
               <tbody>
                 {form.profiles.map((jobSeeker) => (
                   <tr key={jobSeeker.id} className="border-b hover:bg-gray-50">
-                    <td className="py-s2 px-4">
-                      <div className="h-12 w-12 bg-gray-200 rounded-full flex items-center justify-center">
-                        <User className="h-6 w-6  text-gray-500" />
+                    <td className="py-2 px-4 w-auto" style={{ width: "1%" }}>
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0">
+                          <div className="h-12 w-12 bg-gray-200 rounded-full flex items-center justify-center">
+                            <User className="h-6 w-6  text-gray-500" />
+                          </div>
+                        </div>
                       </div>
                     </td>
                     <td className="py-2 px-4">
@@ -81,7 +85,7 @@ export default function RoleManagmentPage() {
                       </div>
                     </td>
 
-                    <td className="py-2 px-4">
+                    <td className="py-2 px-4 w-auto" style={{ width: "1%" }}>
                       <div className="flex">
                         <Select
                           key={`${jobSeeker.id}-${jobSeeker.role}`}

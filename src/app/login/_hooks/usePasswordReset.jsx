@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { passwordErrorMessages, emailErrorMessages } from "../_schema/registerSchema";
+import {
+  passwordErrorMessages,
+  emailErrorMessages,
+  UserInfoModel,
+} from "../_schema/registerSchema";
 
 export function usePasswordReset() {
   const [passwordChecks, setPasswordChecks] = useState([]);
@@ -19,60 +23,62 @@ export function usePasswordReset() {
     setIsEmailValid(emailIsValid && emailChecks.length > 0);
   }, [passwordChecks, password, confirmPassword, emailChecks]);
 
+  const emailId = "email";
+  const passwordFieldId = "password";
 
-
-  function validateEmail(value) {
-    setEmail(value);
-    
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const checks = [{
-      label: emailErrorMessages.EMAIL_NOT_VALID,
-      valid: emailRegex.test(value) && value.length > 0,
-    }];
-
-    setEmailChecks(checks);
+  function getErrorMessages(messages, errorList) {
+    return Object.entries(messages).map(([, message]) => ({
+      label: message,
+      valid: !errorList.includes(message),
+    }));
   }
 
-  function validatePassword(value) {
-    setPassword(value);
-    
-    // Validate against schema
-    const checks = [];
-    
-    // Check minimum length
-    checks.push({
-      label: passwordErrorMessages.MIN_PASSWORD_LENGTH,
-      valid: value.length >= 8,
-    });
-    
-    // Check uppercase letter
-    checks.push({
-      label: passwordErrorMessages.MIN_UPPERCASE_LETTER,
-      valid: /[A-Z]/.test(value),
-    });
-    
-    // Check number
-    checks.push({
-      label: passwordErrorMessages.MIN_PASSWORD_NUMBER,
-      valid: /[0-9]/.test(value),
-    });
-    
-    // Check symbol
-    checks.push({
-      label: passwordErrorMessages.MIN_PASSWORD_SYMBOL,
-      valid: /[^a-zA-Z0-9]/.test(value),
-    });
 
-    setPasswordChecks(checks);
+
+  function validateFormChecks(name, errorList = []) {
+    let errorMessageList = errorList
+      .filter((issue) => issue.path.toString() == name)
+      .map((issue) => issue.message);
+
+    switch (name) {
+      case emailId: {
+        const checks = getErrorMessages(emailErrorMessages, errorMessageList);
+        setEmailChecks(checks);
+        break;
+      }
+      case passwordFieldId: {
+        const checks = getErrorMessages(
+          passwordErrorMessages,
+          errorMessageList,
+        );
+        setPasswordChecks(checks);
+        break;
+      }
+    }
   }
 
   function handleEmailChange(value) {
-    validateEmail(value);
+    setEmail(value);
+    try {
+      UserInfoModel.parse({ [emailId]: value });
+      validateFormChecks(emailId);
+    } catch (error) {
+      if (error) {
+        validateFormChecks(emailId, error.issues ?? []);
+      }
+    }
   }
 
   function handlePasswordChange(value) {
-    validatePassword(value);
+    setPassword(value);
+    try {
+      UserInfoModel.parse({ [passwordFieldId]: value });
+      validateFormChecks(passwordFieldId);
+    } catch (error) {
+      if (error) {
+        validateFormChecks(passwordFieldId, error.issues ?? []);
+      }
+    }
   }
 
   function handleConfirmPasswordChange(value) {

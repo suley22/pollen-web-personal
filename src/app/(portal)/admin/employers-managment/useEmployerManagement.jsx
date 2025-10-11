@@ -46,6 +46,14 @@ export function useEmployerManagement() {
         approval_status: employer.approval_status || "pending",
         logo: employer.logo_url,
         industries: employer.industries || "Not specified",
+        contact_email: employer.contact_email || "No email provided",
+        contact_phone: employer.contact_phone || "No phone provided",
+        live_jobs_count: 10,
+        draft_jobs_count: 5,
+        profileCompleteness: 45,
+        lastUpdated: employer.updated_at || "N/A",
+        location: employer.company_location || "Location not specified",
+        size: employer.company_size || "Size not specified",
       }));
 
       if (result.success) {

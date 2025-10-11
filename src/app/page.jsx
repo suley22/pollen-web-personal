@@ -40,7 +40,7 @@ export default function Home() {
         router.push(redirectUrl);
       }
     } catch (error) {
-      console.error("Error al verificar la sesión:", error);
+      console.error("Error verifying session:", error);
       router.push(LoginRoutes.login);
     }
   };

@@ -12,14 +12,14 @@ export const useLogout = () => {
     try {
       setLoading(true);
 
-      console.log("Cerrando sesión...");
+      console.log("Logging out...");
 
       const supabase = createClient();
       await supabase.auth.signOut();
       router.push("/");
     } catch (error) {
-      console.error("Error al cerrar sesión:", error);
-      alert("Hubo un problema al cerrar sesión. Por favor intenta de nuevo.");
+      console.error("Error logging out:", error);
+      alert("There was a problem logging out. Please try again.");
       setLoading(false);
     }
   };

@@ -4,6 +4,7 @@ import { useActionState, useEffect, useState } from "react";
 import { Button } from "@/components/ui/buttons/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LoginRoutes } from "@/login/router";
 import { updatePassword } from "../../actions";
 import Link from "next/link";
 
@@ -152,7 +153,7 @@ export default function ResetPasswordPage() {
               {(state.expired || state.invalid) && (
                 <div className="mt-3">
                   <Link
-                    href="/forgot-password"
+                    href={`${LoginRoutes.forgotPassword}`}
                     className="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-pink-600 border border-transparent rounded-md hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
                   >
                     Request New Reset Link

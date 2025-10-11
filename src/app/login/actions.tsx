@@ -174,8 +174,7 @@ export async function updatePassword(_, formData) {
     // Manejo específico de diferentes tipos de error
     if (error.code === "otp_expired") {
       return {
-        error:
-          "This password reset link has expired. Reset links are valid for 1 hour.",
+        error: error.message,
         expired: true,
         success: false,
       };
@@ -202,11 +201,11 @@ export async function updatePassword(_, formData) {
 
   if (updateError) {
     return {
-      error: "Error updating password. Please try again.",
+      error: updateError.message,
       success: false,
     };
   }
 
   revalidatePath("/", "layout");
-  redirect("/login");
+  redirect(LoginRoutes.login);
 }

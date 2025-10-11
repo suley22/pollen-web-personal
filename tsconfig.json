@@ -20,7 +20,8 @@
       "@/*": ["./src/*"],
       "@/login/*": ["./src/app/login/*"],
       "@/admin/*": ["./src/app/(portal)/admin/*"],
-      "@/job-seeker/*": ["./src/app/(portal)/(job-seeker)/*"]
+      "@/job-seeker/*": ["./src/app/(portal)/(job-seeker)/*"],
+      "@/constants/*": ["./src/configs/constants/*"]
     },
     "moduleResolution": "bundler",
     "resolveJsonModule": true,

@@ -3,22 +3,15 @@
 import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, Trophy, Briefcase, Code } from "lucide-react";
-import honeycombLogo from "@/assets/honeycomb_1753116372462.png";
-import platformScreenshot from "@/assets/image_1753357343185.png";
-import bbcLogo from "@/assets/image_1753303879889.png";
-import timesLogo from "@/assets/image_1753303894280.png";
-import fastCompanyLogo from "@/assets/image_1753303914295.png";
-import businessInsiderLogo from "@/assets/image_1753303943999.png";
-import stylistLogo from "@/assets/image_1753303963933.png";
-import nyPostLogo from "@/assets/image_1753303981878.png";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { LoginRoutes } from "./login/router";
 import { JobSeekerRoutes } from "./(portal)/(job-seeker)/router";
 import { AdminRoutes } from "./(portal)/admin/router";
+import { LandingImagePaths } from "@/configs/constants/image_paths";
 
-export default function Home() {
+export default function LandingPage() {
   const router = useRouter();
 
   const handleLogin = async () => {
@@ -53,7 +46,7 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center p-1 relative">
               <Image
-                src={honeycombLogo}
+                src={LandingImagePaths.honeycombLogo}
                 alt="Pollen"
                 className="object-contain"
                 height={24}
@@ -165,7 +158,9 @@ export default function Home() {
                       style={{ aspectRatio: "16/10" }}
                     >
                       <Image
-                        src={platformScreenshot}
+                        width={800}
+                        height={500}
+                        src={LandingImagePaths.platformScreenshot}
                         alt="Pollen Platform Demo"
                         className="w-full h-full object-cover object-top"
                       />
@@ -201,45 +196,52 @@ export default function Home() {
             </p>
             <div className="flex flex-nowrap justify-center items-center gap-6 md:gap-8 opacity-100 overflow-x-auto">
               <Image
-                src={bbcLogo}
-                alt="BBC"
                 width={100}
+                height={100}
+                src={LandingImagePaths.bbcLogo}
+                alt="BBC"
                 className="h-8 object-contain flex-shrink-0"
               />
               <Image
-                src={timesLogo}
+                src={LandingImagePaths.timesLogo}
                 alt="The Times"
                 width={100}
+                height={100}
                 className="h-20 object-contain flex-shrink-0"
               />
               <Image
-                src={honeycombLogo}
+                src={LandingImagePaths.honeycombLogo}
                 alt="Honeycomb"
                 width={100}
+                height={100}
                 className="h-20 object-contain flex-shrink-0"
               />
               <Image
-                src={fastCompanyLogo}
+                src={LandingImagePaths.fastCompanyLogo}
                 alt="FastCompany"
                 width={100}
+                height={100}
                 className="h-8 object-contain flex-shrink-0"
               />
               <Image
-                src={businessInsiderLogo}
+                src={LandingImagePaths.businessInsiderLogo}
                 alt="Business Insider"
                 width={100}
+                height={100}
                 className="h-8 object-contain flex-shrink-0"
               />
               <Image
-                src={stylistLogo}
+                src={LandingImagePaths.stylistLogo}
                 alt="Stylist"
                 width={100}
+                height={100}
                 className="h-8 object-contain flex-shrink-0"
               />
               <Image
-                src={nyPostLogo}
+                src={LandingImagePaths.nyPostLogo}
                 alt="New York Post"
                 width={100}
+                height={100}
                 className="h-8 object-contain flex-shrink-0"
               />
             </div>
@@ -537,9 +539,10 @@ export default function Home() {
             <div className="flex items-center gap-2 mb-4 md:mb-0">
               <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center p-1">
                 <Image
-                  src={honeycombLogo}
+                  src={LandingImagePaths.honeycombLogo}
                   alt="Pollen"
                   width={100}
+                  height={100}
                   className="w-full h-full object-contain"
                 />
               </div>

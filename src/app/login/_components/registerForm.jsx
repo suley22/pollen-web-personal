@@ -70,7 +70,7 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
                 <li
                   key={check.label}
                   className={`flex items-center gap-2 ${
-                    check.valid ? "text-green-600" : "text-red-500"
+                    check.valid ? "text-green-600" : "text-gray-500"
                   }`}
                 >
                   {check.valid
@@ -99,7 +99,7 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
                 <li
                   key={check.label}
                   className={`flex items-center gap-2 ${
-                    check.valid ? "text-green-600" : "text-red-500"
+                    check.valid ? "text-green-600" : "text-gray-500"
                   }`}
                 >
                   {check.valid ? "✔" : "✖"} {check.label}

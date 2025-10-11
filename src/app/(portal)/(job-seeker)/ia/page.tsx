@@ -36,7 +36,7 @@ export default function IA(): JSX.Element {
 
                   {message.image && (
                     <Image
-                      base64={message.image.base64Data}
+                      base64={message.image.base64}
                       uint8Array={new Uint8Array([])}
                       mediaType="image/jpeg"
                       alt="Imagen generada por IA"

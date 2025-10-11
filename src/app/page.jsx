@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { LoginRoutes } from "./login/router";
 import { JobSeekerRoutes } from "./(portal)/(job-seeker)/router";
 import { AdminRoutes } from "./(portal)/admin/router";
-import { ImagePaths } from "@/configs/constants/image_paths";
+import { LandingImagePaths } from "@/configs/constants/image_paths";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -46,7 +46,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center p-1 relative">
               <Image
-                src={ImagePaths.honeycombLogo}
+                src={LandingImagePaths.honeycombLogo}
                 alt="Pollen"
                 className="object-contain"
                 height={24}
@@ -160,7 +160,7 @@ export default function LandingPage() {
                       <Image
                         width={800}
                         height={500}
-                        src={ImagePaths.platformScreenshot}
+                        src={LandingImagePaths.platformScreenshot}
                         alt="Pollen Platform Demo"
                         className="w-full h-full object-cover object-top"
                       />
@@ -198,47 +198,47 @@ export default function LandingPage() {
               <Image
                 width={100}
                 height={100}
-                src={ImagePaths.bbcLogo}
+                src={LandingImagePaths.bbcLogo}
                 alt="BBC"
                 className="h-8 object-contain flex-shrink-0"
               />
               <Image
-                src={ImagePaths.timesLogo}
+                src={LandingImagePaths.timesLogo}
                 alt="The Times"
                 width={100}
                 height={100}
                 className="h-20 object-contain flex-shrink-0"
               />
               <Image
-                src={ImagePaths.honeycombLogo}
+                src={LandingImagePaths.honeycombLogo}
                 alt="Honeycomb"
                 width={100}
                 height={100}
                 className="h-20 object-contain flex-shrink-0"
               />
               <Image
-                src={ImagePaths.fastCompanyLogo}
+                src={LandingImagePaths.fastCompanyLogo}
                 alt="FastCompany"
                 width={100}
                 height={100}
                 className="h-8 object-contain flex-shrink-0"
               />
               <Image
-                src={ImagePaths.businessInsiderLogo}
+                src={LandingImagePaths.businessInsiderLogo}
                 alt="Business Insider"
                 width={100}
                 height={100}
                 className="h-8 object-contain flex-shrink-0"
               />
               <Image
-                src={ImagePaths.stylistLogo}
+                src={LandingImagePaths.stylistLogo}
                 alt="Stylist"
                 width={100}
                 height={100}
                 className="h-8 object-contain flex-shrink-0"
               />
               <Image
-                src={ImagePaths.nyPostLogo}
+                src={LandingImagePaths.nyPostLogo}
                 alt="New York Post"
                 width={100}
                 height={100}
@@ -539,7 +539,7 @@ export default function LandingPage() {
             <div className="flex items-center gap-2 mb-4 md:mb-0">
               <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center p-1">
                 <Image
-                  src={ImagePaths.honeycombLogo}
+                  src={LandingImagePaths.honeycombLogo}
                   alt="Pollen"
                   width={100}
                   height={100}

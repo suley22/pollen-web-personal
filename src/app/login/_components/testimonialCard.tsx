@@ -1,6 +1,7 @@
 import { Star } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { TestimonialComponentImagePaths } from "@/configs/constants/image_paths";
 
 interface TestimonialCardProps {
   name: string;
@@ -22,7 +23,7 @@ export function TestimonialCard({
       <div className="flex flex-col items-center text-center space-y-4">
         <Avatar className="w-16 h-16">
           <AvatarImage
-            src={avatar || "/placeholder.svg"}
+            src={avatar || TestimonialComponentImagePaths.placeholderAvatar}
             alt={name}
             className={cn("w-16 h-16")}
           />

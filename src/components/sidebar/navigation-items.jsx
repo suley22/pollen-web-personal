@@ -8,6 +8,7 @@ import {
   Users,
   User,
   LayoutDashboard,
+  Key,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -66,8 +67,15 @@ export function NavigationItems({ user }) {
       section: "Admin",
     },
     {
+      icon: Briefcase,
+      label: "Jobs",
+      path: "/admin/jobs-managment",
+      isActive: pathname === "/admin/jobs-managment",
+      section: "Admin",
+    },
+    {
       icon: User,
-      label: "Employers Managment",
+      label: "Employers",
       path: "/admin/employers-managment",
       isActive: pathname === "/admin/employers-managment",
       section: "Admin",
@@ -80,15 +88,8 @@ export function NavigationItems({ user }) {
       section: "Admin",
     },
     {
-      icon: Briefcase,
-      label: "Jobs Managment",
-      path: "/admin/jobs-managment",
-      isActive: pathname === "/admin/jobs-managment",
-      section: "Admin",
-    },
-    {
-      icon: Briefcase,
-      label: "Roles Managment",
+      icon: Key,
+      label: "Roles",
       path: "/admin/role-managment",
       isActive: pathname === "/admin/role-managment",
       section: "Admin",

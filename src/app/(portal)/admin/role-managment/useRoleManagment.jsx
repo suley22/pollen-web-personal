@@ -96,11 +96,11 @@ export function useRoleManagment() {
         );
       } else {
         console.error("❌ Error actualizando rol:", result.message);
-        setError(result.message || "Error actualizando el rol del usuario");
+        setError(result.message || "Error updating user role");
       }
     } catch (error) {
       console.error("💥 Error inesperado:", error);
-      setError("Error inesperado al actualizar el rol del usuario");
+      setError("Unexpected error updating user role");
     }
   }
 

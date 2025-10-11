@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/buttons/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 import { GoogleIcon } from "@/components/icons/icons";
 import { useActionState } from "react";
 import { useLogin } from "../_hooks/useLogin";
@@ -51,12 +52,12 @@ export function LoginForm({ className, loginAction, onChangeLogin, ...props }) {
           <div className="grid gap-3">
             <div className="flex items-center">
               <Label htmlFor="password">Password</Label>
-              <a
-                href="#"
-                className="ml-auto text-sm underline-offset-4 underline"
+              <Link
+                href="/login/forgot-password"
+                className="ml-auto text-sm underline-offset-4 underline hover:text-pink-600"
               >
                 Forgot your password?
-              </a>
+              </Link>
             </div>
             <Input
               id="password"

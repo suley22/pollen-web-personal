@@ -7,6 +7,9 @@ const publicRoutes = [
   LoginRoutes.authCallback,
   LoginRoutes.logout,
   LoginRoutes.confirm,
+  LoginRoutes.authResetPassword,
+  LoginRoutes.authConfirm,
+  LoginRoutes.forgotPassword,
   "/error",
   "/",
 ];

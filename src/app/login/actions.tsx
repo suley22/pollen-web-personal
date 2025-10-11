@@ -33,7 +33,7 @@ export async function login(_, formData) {
     await supabase.auth.signInWithPassword(credentials);
 
   if (authError) {
-    return { error: "Error al iniciar sesión" };
+    return { error: "Error signing in" };
   }
 
   // TODO: -> Mismo código en src/app/page.tsx
@@ -67,15 +67,15 @@ export async function signup(_, formData) {
 
   if (error) {
     return {
-      message: "Error al crear cuenta",
-      description: "Revise sus credenciales e intentelo nuevamente",
+      message: "Error creating account",
+      description: "Please check your credentials and try again",
       success: false,
     };
   }
 
   return {
-    message: "Cuenta creada con éxito",
-    description: "Revise su correo electrónico para activar su cuenta",
+    message: "Account created successfully",
+    description: "Please check your email to activate your account",
     success: true,
   };
 }
@@ -103,3 +103,102 @@ export async function signInWithGoogle(origin) {
 
   return { data, error: null };
 }
+
+export async function resetPassword(_, formData) {
+  const supabase = await createClient();
+  
+  const email = formData.get("email");
+  
+  if (!email) {
+    return { error: "Email is required", success: false };
+  }
+  
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/reset-password`,
+  });
+  
+  if (error) {
+    return { 
+      error: "Error sending reset email. Please check your email address.", 
+      success: false 
+    };
+  }
+  
+  return { 
+    message: "Password reset email sent. Please check your inbox.", 
+    success: true 
+  };
+}
+
+export async function updatePassword(_, formData) {
+  const supabase = await createClient();
+  
+  const password = formData.get("password");
+  const confirmPassword = formData.get("confirmPassword");
+  const code = formData.get("code");
+  const tokenHash = formData.get("token_hash");
+  const type = formData.get("type");
+  
+  if (!password || password.length < 8) {
+    return { error: "Password must be at least 8 characters long", success: false };
+  }
+  
+  if (password !== confirmPassword) {
+    return { error: "Passwords do not match", success: false };
+  }
+  
+  // Determinar qué token usar
+  const token = tokenHash || code;
+  const tokenType = type || 'recovery';
+  
+  if (!token) {
+    return { error: "Invalid reset code", success: false };
+  }
+  
+  console.log('Attempting to verify OTP with:', { token, tokenType });
+  
+  // Verificar el código de reset y actualizar la contraseña
+  const { error } = await supabase.auth.verifyOtp({
+    token_hash: token,
+    type: tokenType
+  });
+  
+  if (error) {
+    console.error('Error verifying OTP:', error);
+    
+    // Manejo específico de diferentes tipos de error
+    if (error.code === 'otp_expired') {
+      return { 
+        error: "This password reset link has expired. Reset links are valid for 1 hour.", 
+        expired: true,
+        success: false 
+      };
+    }
+    
+    if (error.code === 'token_not_found' || error.code === 'invalid_request') {
+      return { 
+        error: "This password reset link is invalid. Please request a new one.", 
+        invalid: true,
+        success: false 
+      };
+    }
+    
+    return { 
+      error: "Invalid or expired reset code. Please request a new reset link.", 
+      success: false 
+    };
+  }
+  
+  // Si la verificación es exitosa, actualizar la contraseña
+  const { error: updateError } = await supabase.auth.updateUser({
+    password: password
+  });
+  
+  if (updateError) {
+    return { error: "Error updating password. Please try again.", success: false };
+  }
+  
+  revalidatePath("/", "layout");
+  redirect("/login");
+}
+

@@ -54,7 +54,10 @@ export default function RoleManagmentPage() {
                   <th className="text-left py-3 px-4 font-medium text-gray-900">
                     Email
                   </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900 w-auto" style={{ width: "1%" }}>
+                  <th
+                    className="text-left py-3 px-4 font-medium text-gray-900 w-auto"
+                    style={{ width: "1%" }}
+                  >
                     Actions
                   </th>
                 </tr>

@@ -3,8 +3,9 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { UserInfoModel } from "./userInfoSchema";
+import { JobSeekerRoutes } from "@/job-seeker/router";
 
-export async function updateUserInfo(_,formData) {
+export async function updateUserInfo(_, formData) {
   const supabase = await createClient();
 
   const data = Object.fromEntries(formData.entries());
@@ -60,6 +61,6 @@ export async function updateUserInfo(_,formData) {
     console.error("Error actualizando profile:", errorProfileUpdate.message);
     return { message: "Error actualizando profile", success: false };
   } else {
-    redirect("/main/home");
+    redirect(JobSeekerRoutes.home);
   }
 }

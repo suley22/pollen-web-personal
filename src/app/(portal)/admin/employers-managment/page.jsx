@@ -196,11 +196,14 @@ export default function AdminEmployersManagment() {
             className="hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => router.push(`/admin/company-profiles/${company.id}`)}
           >
-            <CardContent className="pt-6">
+            <CardContent className="p-6">
               <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-4">
                   <Avatar className="h-16 w-16">
-                    <AvatarImage src={company.logo} alt={company.companyName} />
+                    <AvatarImage
+                      src={company.logo}
+                      alt={company.company_name}
+                    />
                     <AvatarFallback>
                       <Building2 className="h-8 w-8" />
                     </AvatarFallback>
@@ -208,7 +211,9 @@ export default function AdminEmployersManagment() {
 
                   <div className="space-y-2">
                     <div className="flex items-center space-x-3">
-                      <h3 className="text-lg font-semibold">{company.name}</h3>
+                      <h3 className="text-lg font-semibold">
+                        {company.company_name}
+                      </h3>
                       {getStatusBadge(company.approval_status)}
                     </div>
 
@@ -221,7 +226,7 @@ export default function AdminEmployersManagment() {
                       </span>
                       <span className="flex items-center">
                         <Users className="w-4 h-4 mr-1" />
-                        {company.companySize}
+                        {company.size}
                       </span>
                       <span className="flex items-center">
                         <Globe className="w-4 h-4 mr-1" />
@@ -232,15 +237,17 @@ export default function AdminEmployersManagment() {
                     <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                       <span className="flex items-center">
                         <Mail className="w-4 h-4 mr-1" />
-                        {company.contactEmail}
+                        {company.contact_email}
                       </span>
-                      {company.contactPhone && (
+                      {company.contact_phone && (
                         <span className="flex items-center">
                           <Phone className="w-4 h-4 mr-1" />
-                          {company.contactPhone}
+                          {company.contact_phone}
                         </span>
                       )}
                     </div>
+
+                    {/* TODO: revisar si esto es necesario */}
 
                     {company.assignedAdmin && (
                       <div className="text-sm">
@@ -260,15 +267,15 @@ export default function AdminEmployersManagment() {
                           variant="outline"
                           className="bg-green-50 text-green-700 border-green-200"
                         >
-                          {company.liveJobsCount} Live Jobs
+                          {company.live_jobs_count} Live Jobs
                         </Badge>
                       )}
-                      {(company.draftJobsCount || 0) > 0 && (
+                      {(company.draft_jobs_count || 0) > 0 && (
                         <Badge
                           variant="outline"
                           className="bg-orange-50 text-orange-700 border-orange-200"
                         >
-                          {company.draftJobsCount} Draft Jobs
+                          {company.draft_jobs_count} Draft Jobs
                         </Badge>
                       )}
                     </div>
@@ -277,7 +284,7 @@ export default function AdminEmployersManagment() {
 
                 <div className="flex items-center space-x-3">
                   {/* Set Live button for draft companies only */}
-                  {company.status === "draft" && (
+                  {company.approval_status === "draft" && (
                     <Button
                       variant="outline"
                       size="sm"

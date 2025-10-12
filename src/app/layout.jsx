@@ -1,5 +1,5 @@
 import { Sora, Poppins } from "next/font/google";
-import "./globals.css";
+import "@/styles/globals.css";
 
 import { Providers } from "./providers";
 import { Toaster } from "sonner";

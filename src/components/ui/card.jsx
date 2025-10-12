@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 
 function Card({ className, ...props }) {
@@ -62,11 +61,7 @@ function CardAction({ className, ...props }) {
 
 function CardContent({ className, ...props }) {
   return (
-    <div
-      data-slot="card-content"
-      className={cn("", className)}
-      {...props}
-    />
+    <div data-slot="card-content" className={cn("", className)} {...props} />
   );
 }
 

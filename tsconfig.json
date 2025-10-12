@@ -18,9 +18,15 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@/login/*": ["./src/app/login/*"],
-      "@/admin/*": ["./src/app/(portal)/admin/*"],
-      "@/job-seeker/*": ["./src/app/(portal)/(job-seeker)/*"]
+      "@/app/*": ["./src/app/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/login/*": ["./src/app/(pages)/login/*"],
+      "@/admin/*": ["./src/app/(pages)/(portal)/admin/*"],
+      "@/job-seeker/*": ["./src/app/(pages)/(portal)/(job-seeker)/*"],
+      "@/constants/*": ["./src/lib/configs/constants/*"],
+      "@/utils/*": ["./src/lib/utils/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/hooks/*": ["./src/hooks/*"]
     },
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
@@ -34,7 +40,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    "src/components/sidebar/navigation-items.jsx"
+    "src/app/components/sidebar/navigation-items.jsx"
   ],
   "exclude": ["node_modules"]
 }

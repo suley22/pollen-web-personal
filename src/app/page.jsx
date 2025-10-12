@@ -1,43 +1,16 @@
 "use client";
 
+import Image from "next/image";
+
 import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, Trophy, Briefcase, Code } from "lucide-react";
-import Image from "next/image";
-import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
-import { LoginRoutes } from "./login/router";
-import { JobSeekerRoutes } from "./(portal)/(job-seeker)/router";
-import { AdminRoutes } from "./(portal)/admin/router";
-import { LandingImagePaths } from "@/configs/constants/image_paths";
+import { LandingImagePaths } from "@/lib/configs/constants/image_paths";
+
+import { LoginStatusButton } from "@/app/LoginStatusButton";
+import { FindJobsButton } from "@/app/FindJobsButton";
 
 export default function LandingPage() {
-  const router = useRouter();
-
-  const handleLogin = async () => {
-    try {
-      const supabase = createClient();
-
-      const { data, error } = await supabase.auth.getSession();
-
-      if (error || !data.session) {
-        router.push(LoginRoutes.login);
-      } else {
-        // TODO: -> Mismo código en src/app/login/actions.tsx
-
-        console.log(data);
-
-        const isAdmin = data.session.user.user_metadata.role === "admin";
-        let redirectUrl = isAdmin ? AdminRoutes.home : JobSeekerRoutes.home;
-
-        router.push(redirectUrl);
-      }
-    } catch (error) {
-      console.error("Error al verificar la sesión:", error);
-      router.push(LoginRoutes.login);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
@@ -61,21 +34,7 @@ export default function LandingPage() {
               Pollen
             </span>
           </div>
-          <div className="flex items-center gap-4">
-            <a
-              href="/employers"
-              className="text-gray-600 hover:text-gray-900 text-sm hidden sm:inline"
-            >
-              Employers? <span className="text-pink-600">Learn More →</span>
-            </a>
-            <Button
-              onClick={handleLogin}
-              className="bg-pink-600 hover:bg-pink-700 text-white"
-              style={{ fontFamily: "Sora" }}
-            >
-              Login
-            </Button>
-          </div>
+          <LoginStatusButton />
         </div>
       </nav>
 
@@ -97,17 +56,6 @@ export default function LandingPage() {
             look beyond the CV. Pollen helps you get hired through real skills,
             behavioural insights, and community support.
           </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button
-              onClick={handleLogin}
-              size="lg"
-              className="bg-pink-600 hover:bg-pink-700 text-white px-12 py-4 text-lg"
-              style={{ fontFamily: "Sora" }}
-            >
-              Explore Demo
-            </Button>
-          </div>
 
           {/* Secondary CTA for employers */}
           <div className="bg-yellow-50 rounded-lg p-6 max-w-md mx-auto mb-16">
@@ -489,14 +437,7 @@ export default function LandingPage() {
             💡 No CVs. No pressure. Just your skills and potential.
           </p>
 
-          <Button
-            onClick={handleLogin}
-            size="lg"
-            className="bg-white text-pink-600 hover:bg-gray-100 px-12 py-4 text-lg"
-            style={{ fontFamily: "Sora" }}
-          >
-            Explore Demo
-          </Button>
+          <FindJobsButton />
         </div>
       </div>
 
@@ -507,7 +448,7 @@ export default function LandingPage() {
             className="text-3xl font-bold text-gray-900 mb-4"
             style={{ fontFamily: "Sora" }}
           >
-            Employers – Learn More
+            Employers
           </h2>
           <p
             className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto"
@@ -526,7 +467,7 @@ export default function LandingPage() {
               className="px-8 py-4 text-lg border-gray-300"
               style={{ fontFamily: "Sora" }}
             >
-              Go to Employer Page →
+              Learn More →
             </Button>
           </div>
         </div>

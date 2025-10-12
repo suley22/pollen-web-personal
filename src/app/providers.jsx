@@ -1,6 +1,8 @@
 "use client";
 
 import { createContext, useContext } from "react";
+import { JobSeekerRoutes } from "@/job-seeker/router";
+import { AdminRoutes } from "@/admin/router";
 
 const UserContext = createContext();
 
@@ -17,16 +19,23 @@ export function useUser() {
 
 export function Providers({ children, user }) {
   const session = user?.user || null;
+
+  const email = session?.email || defaultValues.email;
+
   const metadata = session?.user_metadata || {};
   const firstName = metadata.first_name || "";
   const lastName = metadata.last_name || "";
-  const fullName = firstName + " " + lastName;
+  const avatarUrl = metadata?.avatar_url || defaultValues.avatar;
+  const role = metadata?.role || defaultValues.role;
+  const isAdmin = role === "admin";
 
   const userData = {
-    name: fullName,
-    email: session?.email || defaultValues.email,
-    avatar: session?.user_metadata?.avatar_url || defaultValues.avatar,
-    role: session?.user_metadata?.role || defaultValues.role,
+    name: firstName + " " + lastName,
+    email: email,
+    avatar: avatarUrl,
+    role: role,
+    isAdmin: isAdmin,
+    redirectUrl: isAdmin ? AdminRoutes.home : JobSeekerRoutes.home,
   };
 
   return (

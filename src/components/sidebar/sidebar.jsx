@@ -4,7 +4,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
 
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/lib/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/buttons/button";
 import { Input } from "@/components/ui/input";
@@ -140,7 +140,6 @@ function Sidebar({
   ...props
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
-
 
   if (collapsible === "none") {
     return (
@@ -432,11 +431,10 @@ const sidebarMenuButtonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "hover:text-accent-foreground text-gray-700 hover:bg-gray-100",
+        default: "hover:text-accent-foreground text-gray-700 hover:bg-gray-100",
         outline:
           "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
-        },
+      },
       size: {
         default: "h-8 text-sm",
         sm: "h-7 text-xs",

@@ -9,6 +9,9 @@ import {
   User,
   LayoutDashboard,
   Key,
+  Heart,
+  FileText,
+  Calendar,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -55,6 +58,34 @@ export function NavigationItems({ user }) {
       path: "/community",
       isActive: pathname === "/community",
       section: "Main",
+    },
+    {
+      icon: User,
+      label: "My Profile",
+      path: "/profile",
+      isActive: pathname === "/profile",
+      section: "My Activity",
+    },
+    {
+      icon: Heart,
+      label: "Saved Items",
+      path: "/saved-items",
+      isActive: pathname === "/saved-items",
+      section: "My Activity",
+    },
+    {
+      icon: FileText,
+      label: "My Applications",
+      path: "/applications",
+      isActive: pathname === "/applications",
+      section: "My Activity",
+    },
+    {
+      icon: Calendar,
+      label: "Interview Schedule",
+      path: "/interview-schedule",
+      isActive: pathname === "/interview-schedule",
+      section: "My Activity",
     },
   ];
 
@@ -106,7 +137,9 @@ export function NavigationItems({ user }) {
         return (
           <React.Fragment key={item.path}>
             {showSectionLabel && state !== "collapsed" && (
-              <SidebarGroupLabel className="">{item.section}</SidebarGroupLabel>
+              <SidebarGroupLabel className="uppercase text-2xl font-medium mb-2">
+                {item.section}
+              </SidebarGroupLabel>
             )}
             <SidebarGroupContent className="">
               <SidebarMenu className="">

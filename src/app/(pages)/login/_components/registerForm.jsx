@@ -73,11 +73,7 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
                     check.valid ? "text-green-600" : "text-gray-500"
                   }`}
                 >
-<<<<<<< HEAD:src/app/login/_components/registerForm.jsx
                   ● {check.valid ? "Email is valid" : "Email is not valid"}
-=======
-                  {check.valid ? "✔ Email is valid" : "✖ Email is not valid"}
->>>>>>> dbb2bd7c0f29a00e0e924d8cfbac6e3b9580ceff:src/app/(pages)/login/_components/registerForm.jsx
                 </li>
               ))}
             </ul>

@@ -1,12 +1,8 @@
 "use client";
 
 import { NavUser } from "@/components/sidebar/nav-user";
-<<<<<<< HEAD
 import { useLogout } from "@/app/hooks/useLogout";
 import { SidebarTrigger } from "@/components/sidebar/sidebar";
-=======
-import { useLogout } from "@/hooks/useLogout";
->>>>>>> dbb2bd7c0f29a00e0e924d8cfbac6e3b9580ceff
 
 export function Header() {
   const { onLogout, isLogoutInProgress } = useLogout();

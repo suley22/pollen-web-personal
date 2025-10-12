@@ -7,37 +7,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Users, Trophy, Briefcase, Code } from "lucide-react";
 import { LandingImagePaths } from "@/lib/configs/constants/image_paths";
 
-<<<<<<< HEAD
-export default function Home() {
-  const router = useRouter();
-
-  const handleLogin = async () => {
-    try {
-      const supabase = createClient();
-
-      const { data, error } = await supabase.auth.getSession();
-
-      if (error || !data.session) {
-        router.push(LoginRoutes.login);
-      } else {
-        // TODO: -> Mismo código en src/app/login/actions.tsx
-
-        console.log(data);
-
-        const isAdmin = data.session.user.user_metadata.role === "admin";
-        let redirectUrl = isAdmin ? AdminRoutes.home : JobSeekerRoutes.home;
-
-        router.push(redirectUrl);
-      }
-    } catch (error) {
-      console.error("Error verifying session:", error);
-      router.push(LoginRoutes.login);
-    }
-  };
-=======
 import { LoginStatusButton } from "@/app/LoginStatusButton";
 import { FindJobsButton } from "@/app/FindJobsButton";
->>>>>>> dbb2bd7c0f29a00e0e924d8cfbac6e3b9580ceff
 
 export default function LandingPage() {
   return (

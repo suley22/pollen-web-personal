@@ -137,7 +137,9 @@ export function NavigationItems({ user }) {
         return (
           <React.Fragment key={item.path}>
             {showSectionLabel && state !== "collapsed" && (
-              <SidebarGroupLabel className="uppercase text-2xl font-medium mb-2">
+              <SidebarGroupLabel
+                className={`uppercase text-2xl font-medium mb-2 pt-4 ${showSectionLabel && idx !== 0 ? "mt-4" : ""}`}
+              >
                 {item.section}
               </SidebarGroupLabel>
             )}

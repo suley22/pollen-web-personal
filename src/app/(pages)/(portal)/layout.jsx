@@ -5,12 +5,10 @@ import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import { useUser } from "@/app/providers";
 
 export default function RootLayout({ children }) {
-  const user = useUser();
-
   return (
     <>
       <SidebarProvider className="testing-sidebar-layout">
-        <AppSidebar user={user} />
+        <AppSidebar />
         <SidebarInset className="bg-gray-50">{children}</SidebarInset>
       </SidebarProvider>
     </>

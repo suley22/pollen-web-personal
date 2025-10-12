@@ -17,7 +17,7 @@ export const LoginStatusButton = () => {
     <div className="flex flex-row items-center min-w-[150px]">
       {user.isCheckingSession && <Loader />}
 
-      {!user && !user.isCheckingSession && (
+      {!user.isLogged && !user.isCheckingSession && (
         <Button
           onClick={onClick}
           className="bg-pink-600 hover:bg-pink-700 text-white disabled:opacity-50"
@@ -28,7 +28,7 @@ export const LoginStatusButton = () => {
         </Button>
       )}
 
-      {user && !user.isCheckingSession && (
+      {user.isLogged && !user.isCheckingSession && (
         <div className="flex flex-row gap-2 cursor-pointer" onClick={onClick}>
           <Avatar className="h-8 w-8 rounded-lg">
             <AvatarImage
@@ -36,7 +36,9 @@ export const LoginStatusButton = () => {
               alt={user.name}
               className="rounded-lg"
             />
-            <AvatarFallback className="rounded-lg">{user.name}</AvatarFallback>
+            <AvatarFallback className="rounded-lg">
+              {user.name?.charAt(0)}
+            </AvatarFallback>
           </Avatar>
           <div className="grid flex-1 text-left text-sm leading-tight">
             <span className="truncate font-medium">{user.name}</span>

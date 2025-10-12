@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -7,7 +9,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ArrowLeft, Download, Home } from "lucide-react";
-import { setLocation } from "@/lib/utils/navigation";
 import { useState } from "react";
 
 export default function AdminCommunityAnalyticsPage() {
@@ -20,13 +21,13 @@ export default function AdminCommunityAnalyticsPage() {
           <div className="flex items-center gap-4">
             <Button
               variant="ghost"
-              onClick={() => setLocation("/admin")}
+              onClick={() => {}}
               className="text-gray-600 hover:text-gray-900"
               title="Go to Admin Dashboard"
             >
               <Home className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" onClick={() => setLocation("/admin")}>
+            <Button variant="ghost" onClick={() => {}}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div>

@@ -19,10 +19,13 @@ import {
   useSidebar,
 } from "@/components/sidebar/sidebar";
 import { CustomSidebarMenuButton } from "@/components/sidebar/custom-sidebar-menu-button";
+import { useUser } from "@/app/providers";
 
-export function NavigationItems({ user }) {
+export function NavigationItems() {
+  const user = useUser();
   const pathname = usePathname();
   const router = useRouter();
+
   const { state } = useSidebar();
 
   console.log("User in NavigationItems:", user);
@@ -96,7 +99,7 @@ export function NavigationItems({ user }) {
     },
   ];
 
-  const items = user?.role === "admin" ? itemsAdmin : itemsJobSeeker;
+  const items = user?.isAdmin ? itemsAdmin : itemsJobSeeker;
 
   return (
     <>

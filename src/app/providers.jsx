@@ -28,6 +28,7 @@ export function Providers({ children, user }) {
   const avatarUrl = metadata?.avatar_url || defaultValues.avatar;
   const role = metadata?.role || defaultValues.role;
   const isAdmin = role === "admin";
+  const isLogged = !!session;
 
   const userData = {
     name: firstName + " " + lastName,
@@ -36,6 +37,7 @@ export function Providers({ children, user }) {
     role: role,
     isAdmin: isAdmin,
     redirectUrl: isAdmin ? AdminRoutes.home : JobSeekerRoutes.home,
+    isLogged: isLogged,
   };
 
   return (

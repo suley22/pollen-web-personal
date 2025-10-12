@@ -3,11 +3,11 @@ const nextConfig = {
   // Deshabilitar source maps para evitar errores de ENOENT
   productionBrowserSourceMaps: false,
 
-  webpack: (config, { dev }) => {
-    if (dev) {
-      config.devtool = false; // Deshabilitar source maps en desarrollo
-    }
-    return config;
+  // Configuración para Turbopack (nueva sintaxis)
+  turbopack: {
+    resolveAlias: {
+      // Si necesitas alias adicionales, agrégalos aquí
+    },
   },
 };
 

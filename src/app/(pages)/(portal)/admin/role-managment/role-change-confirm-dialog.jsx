@@ -61,8 +61,8 @@ export function RoleChangeConfirmDialog({
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm font-medium">New Rol:</span>
-              <span className="text-sm font-bold text-blue-600">
+              <span className="text-sm font-medium">New role:</span>
+              <span className="text-sm font-bold text-pink-600">
                 {getRoleLabel(newRole)}
               </span>
             </div>
@@ -76,11 +76,7 @@ export function RoleChangeConfirmDialog({
           <Button variant="outline" onClick={onClose} disabled={isLoading}>
             No, Cancel
           </Button>
-          <Button
-            onClick={handleConfirm}
-            disabled={isLoading}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
+          <Button onClick={handleConfirm} disabled={isLoading}>
             {isLoading ? "Updating..." : "Yes, Change Role"}
           </Button>
         </DialogFooter>

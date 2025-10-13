@@ -1,46 +1,41 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { getJobList } from "@/app/(pages)/(portal)/admin/jobs-managment/actions";
 import { Badge } from "@/components/ui/badge";
 
 export function useJobManagement() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [jobs, setJobs] = useState([]);
   const [selectedAssignment, setSelectedAssignment] = useState("all");
   const [activeTab, setActiveTab] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const loadingRef = useRef(false);
 
-  useEffect(() => {
-    loadJobs();
-  }, [selectedStatus]);
-
-  // Usar debounce para la búsqueda
+  // Debounce search term
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (searchTerm !== "") {
-        loadJobs();
-      }
+      setDebouncedSearchTerm(searchTerm);
     }, 500);
 
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
 
-  // Cargar todas las aplicaciones cuando se borre la búsqueda
-  useEffect(() => {
-    if (searchTerm === "") {
-      loadJobs();
+  const loadJobs = useCallback(async () => {
+    // Evitar llamadas duplicadas
+    if (loadingRef.current) {
+      return;
     }
-  }, [searchTerm]);
 
-  async function loadJobs() {
+    loadingRef.current = true;
     setLoading(true);
     setError(null);
 
     try {
       const result = await getJobList({
         status: selectedStatus,
-        searchTerm: searchTerm.trim(),
+        searchTerm: debouncedSearchTerm.trim(),
       });
 
       if (result.success) {
@@ -70,10 +65,16 @@ export function useJobManagement() {
       setError("Failed to load employers: " + err.message);
     } finally {
       setLoading(false);
+      loadingRef.current = false;
     }
-  }
+  }, [selectedStatus, debouncedSearchTerm]);
 
-  const getStatusBadge = (status) => {
+  // Load jobs when loadJobs function changes
+  useEffect(() => {
+    loadJobs();
+  }, [loadJobs]);
+
+  const getStatusBadge = useCallback((status) => {
     switch (status) {
       case "live":
         return (
@@ -108,32 +109,46 @@ export function useJobManagement() {
           </Badge>
         );
     }
-  };
+  }, []);
 
-  const hasActionRequired = (job) => {
+  const hasActionRequired = useCallback((job) => {
     return (
       job.newApplicationsToReview > 0 ||
       job.pollenInterviewsBooked > 0 ||
       job.needsApproval
     );
-  };
+  }, []);
 
-  return {
-    form: {
-      selectedStatus: selectedStatus,
-      selectedAssignment: selectedAssignment,
-      activeTab: activeTab,
-      searchTerm: searchTerm,
-      jobs: jobs,
-      loading: loading,
-      error: error,
-      setSelectedStatus: setSelectedStatus,
-      setSearchTerm: setSearchTerm,
-      loadJobs: loadJobs,
-      getStatusBadge: getStatusBadge,
-      setSelectedAssignment: setSelectedAssignment,
-      setActiveTab: setActiveTab,
-      hasActionRequired: hasActionRequired,
-    },
-  };
+  return useMemo(
+    () => ({
+      form: {
+        selectedStatus: selectedStatus,
+        selectedAssignment: selectedAssignment,
+        activeTab: activeTab,
+        searchTerm: searchTerm,
+        jobs: jobs,
+        loading: loading,
+        error: error,
+        setSelectedStatus: setSelectedStatus,
+        setSearchTerm: setSearchTerm,
+        loadJobs: loadJobs,
+        getStatusBadge: getStatusBadge,
+        setSelectedAssignment: setSelectedAssignment,
+        setActiveTab: setActiveTab,
+        hasActionRequired: hasActionRequired,
+      },
+    }),
+    [
+      selectedStatus,
+      selectedAssignment,
+      activeTab,
+      searchTerm,
+      jobs,
+      loading,
+      error,
+      loadJobs,
+      getStatusBadge,
+      hasActionRequired,
+    ],
+  );
 }

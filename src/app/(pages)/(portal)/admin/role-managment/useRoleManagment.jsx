@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import {
   getUsers as getUsers,
   updateUserRole,
@@ -7,9 +7,11 @@ import {
 export function useRoleManagment() {
   const [selectedStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [profiles, setProfiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const loadingRef = useRef(false);
 
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -19,36 +21,29 @@ export function useRoleManagment() {
     newRole: "",
   });
 
-  useEffect(() => {
-    loadUsers();
-  }, [selectedStatus]);
-
-  // Usar debounce para la búsqueda
+  // Debounce search term
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (searchTerm !== "") {
-        loadUsers();
-      }
+      setDebouncedSearchTerm(searchTerm);
     }, 500);
 
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
 
-  // Cargar todas las aplicaciones cuando se borre la búsqueda
-  useEffect(() => {
-    if (searchTerm === "") {
-      loadUsers();
+  const loadUsers = useCallback(async () => {
+    // Evitar llamadas duplicadas
+    if (loadingRef.current) {
+      return;
     }
-  }, [searchTerm]);
 
-  async function loadUsers() {
+    loadingRef.current = true;
     setLoading(true);
     setError(null);
 
     try {
       const result = await getUsers({
         status: selectedStatus,
-        searchTerm: searchTerm.trim(),
+        searchTerm: debouncedSearchTerm.trim(),
       });
 
       if (result.success) {
@@ -63,25 +58,34 @@ export function useRoleManagment() {
       setError("Failed to load employers: " + err.message);
     } finally {
       setLoading(false);
+      loadingRef.current = false;
     }
-  }
+  }, [selectedStatus, debouncedSearchTerm]);
 
-  function onHandleRoleChange(userId, newRole) {
-    const user = profiles.find((profile) => profile.id === userId);
-    if (!user) return;
+  // Load users when loadUsers function changes
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
 
-    if (user.role === newRole) return;
+  const onHandleRoleChange = useCallback(
+    (userId, newRole) => {
+      const user = profiles.find((profile) => profile.id === userId);
+      if (!user) return;
 
-    setConfirmDialog({
-      isOpen: true,
-      userId: userId,
-      userName: `${user.first_name} ${user.last_name}`,
-      currentRole: user.role,
-      newRole: newRole,
-    });
-  }
+      if (user.role === newRole) return;
 
-  async function confirmRoleChange() {
+      setConfirmDialog({
+        isOpen: true,
+        userId: userId,
+        userName: `${user.first_name} ${user.last_name}`,
+        currentRole: user.role,
+        newRole: newRole,
+      });
+    },
+    [profiles],
+  );
+
+  const confirmRoleChange = useCallback(async () => {
     const { userId, newRole } = confirmDialog;
 
     try {
@@ -102,9 +106,9 @@ export function useRoleManagment() {
       console.error("💥 Error inesperado:", error);
       setError("Unexpected error updating user role");
     }
-  }
+  }, [confirmDialog]);
 
-  function closeConfirmDialog() {
+  const closeConfirmDialog = useCallback(() => {
     setConfirmDialog({
       isOpen: false,
       userId: null,
@@ -112,21 +116,35 @@ export function useRoleManagment() {
       currentRole: "",
       newRole: "",
     });
-  }
+  }, []);
 
-  return {
-    form: {
-      selectedStatus: selectedStatus,
-      searchTerm: searchTerm,
-      profiles: profiles,
-      loading: loading,
-      error: error,
-      confirmDialog: confirmDialog,
-      setSearchTerm: setSearchTerm,
-      loadApplications: loadUsers,
-      onHandleRoleChange: onHandleRoleChange,
-      confirmRoleChange: confirmRoleChange,
-      closeConfirmDialog: closeConfirmDialog,
-    },
-  };
+  return useMemo(
+    () => ({
+      form: {
+        selectedStatus: selectedStatus,
+        searchTerm: searchTerm,
+        profiles: profiles,
+        loading: loading,
+        error: error,
+        confirmDialog: confirmDialog,
+        setSearchTerm: setSearchTerm,
+        loadApplications: loadUsers,
+        onHandleRoleChange: onHandleRoleChange,
+        confirmRoleChange: confirmRoleChange,
+        closeConfirmDialog: closeConfirmDialog,
+      },
+    }),
+    [
+      selectedStatus,
+      searchTerm,
+      profiles,
+      loading,
+      error,
+      confirmDialog,
+      loadUsers,
+      onHandleRoleChange,
+      confirmRoleChange,
+      closeConfirmDialog,
+    ],
+  );
 }

@@ -3,20 +3,20 @@
 import { Clock, AlertCircle, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { StatusInfo } from "./(components)/status-info";
-import { Header } from "./(components)/header";
-import Details from "./(components)/details";
-import Description from "./(components)/description";
-import Mission from "./(components)/mission";
-import Culture from "./(components)/culture";
-import Diversity from "./(components)/diversity";
-import Values from "./(components)/values";
-import Benefits from "./(components)/benefits";
-import Contact from "./(components)/contact";
-import { TestimonialTab } from "./(components)/testimonial-tab";
-import RecognitionTab from "./(components)/recognition-tab";
-import InitiativesTab from "./(components)/initiatives-tab";
-import GalleryTab from "./(components)/gallery-tab";
+import { StatusInfo } from "./_components/status-info";
+import { Header } from "./_components/header";
+import Details from "./_components/details";
+import Description from "./_components/description";
+import Mission from "./_components/mission";
+import Culture from "./_components/culture";
+import Diversity from "./_components/diversity";
+import Values from "./_components/values";
+import Benefits from "./_components/benefits";
+import Contact from "./_components/contact";
+import { TestimonialTab } from "./_components/testimonial-tab";
+import RecognitionTab from "./_components/recognition-tab";
+import InitiativesTab from "./_components/initiatives-tab";
+import GalleryTab from "./_components/gallery-tab";
 
 export default function EmployerProfileConsolidated({ employerProfile }) {
   /** @type {{author:string, position:string, rating:number, date:string, feedbackQuality?:number, communicationSpeed?:number, interviewExperience?:number, processTransparency?:number} | null} */

@@ -16,7 +16,7 @@ import { useSidebar } from "@/components/sidebar/sidebar";
 import { Logo } from "../icons/icons";
 import { NavigationItems } from "@/components/sidebar/navigation-items";
 
-export function AppSidebar({ user, ...props }) {
+export function AppSidebar({ ...props }) {
   const { state } = useSidebar();
 
   return (
@@ -52,7 +52,7 @@ export function AppSidebar({ user, ...props }) {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <NavigationItems user={user} />
+          <NavigationItems />
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>

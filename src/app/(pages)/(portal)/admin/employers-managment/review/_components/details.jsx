@@ -2,6 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/buttons/button";
+import Image from "next/image";
 import {
   Camera,
   Edit,
@@ -53,10 +54,12 @@ export default function Details({
     <Card className="overflow-hidden mb-4">
       <div className="relative mb-0 rounded-t-xl overflow-hidden">
         {editValue ? (
-          <img
+          <Image
             src={editValue}
             alt="CreativeMinds Agency office"
-            className="w-full h-64"
+            width={800}
+            height={256}
+            className="w-full h-64 object-cover"
           />
         ) : (
           <div className="w-full h-64 bg-gray-200 flex items-center justify-center">

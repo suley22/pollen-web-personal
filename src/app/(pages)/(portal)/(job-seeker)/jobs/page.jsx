@@ -241,9 +241,10 @@ export default function JobsPage() {
               <div className="text-xs text-gray-600">
                 <p>
                   These jobs are from external websites. We thought they looked
-                  like a safe bet, but they aren't affiliated with Pollen, and
-                  we don't endorse the companies or positions listed, so please
-                  make sure to research each opportunity before applying.
+                  like a safe bet, but they aren&apos;t affiliated with Pollen,
+                  and we don&apos;t endorse the companies or positions listed,
+                  so please make sure to research each opportunity before
+                  applying.
                 </p>
               </div>
             </div>

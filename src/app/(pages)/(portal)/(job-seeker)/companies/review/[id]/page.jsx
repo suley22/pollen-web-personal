@@ -3,6 +3,7 @@
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import {
   GraduationCap,
@@ -288,9 +289,11 @@ export default function CompanyReviewPage() {
           <Card className="p-6">
             <CardContent className="pt-6">
               <div className="flex items-start gap-6">
-                <img
+                <Image
                   src={company.logo}
                   alt={`${company.name} logo`}
+                  width={80}
+                  height={80}
                   className="w-20 h-20 rounded-lg object-cover"
                 />
                 <div className="flex-1">
@@ -342,7 +345,7 @@ export default function CompanyReviewPage() {
 
                         return (
                           <Badge
-                            key={index}
+                            key={industry}
                             variant="outline"
                             className={`${getIndustryStyle(industry)} font-medium px-3 py-1 text-xs border hover:shadow-sm transition-all`}
                           >
@@ -503,7 +506,10 @@ export default function CompanyReviewPage() {
                   <ul className="space-y-2">
                     {company.pollenInsights.pollenObservations.map(
                       (observation, index) => (
-                        <li key={index} className="flex items-start gap-2">
+                        <li
+                          key={observation}
+                          className="flex items-start gap-2"
+                        >
                           <div className="w-2 h-2 rounded-full bg-pink-600 mt-2 flex-shrink-0" />
                           <span
                             className="text-gray-600"
@@ -559,7 +565,7 @@ export default function CompanyReviewPage() {
                   <div className="grid md:grid-cols-2 gap-3">
                     {company.accolades.map((accolade, index) => (
                       <div
-                        key={index}
+                        key={accolade}
                         className="flex items-center gap-3 p-3 border rounded-lg"
                       >
                         <Award className="w-5 h-5 text-yellow-500 flex-shrink-0" />
@@ -799,7 +805,7 @@ export default function CompanyReviewPage() {
                   <div className="space-y-4 my-4">
                     {company.candidateTestimonials.map((testimonial, index) => (
                       <div
-                        key={index}
+                        key={testimonial.name}
                         className="p-4 border rounded-lg bg-gray-50"
                       >
                         <div className="flex items-start justify-between mb-2">
@@ -822,7 +828,7 @@ export default function CompanyReviewPage() {
                           className="text-gray-700 leading-relaxed"
                           style={{ fontFamily: "Poppins" }}
                         >
-                          "{testimonial.quote}"
+                          &quot;{testimonial.quote}&quot;
                         </p>
                         <div className="mt-3">
                           <Badge

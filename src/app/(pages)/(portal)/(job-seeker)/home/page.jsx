@@ -108,7 +108,7 @@ export default function Home() {
           </h1>
           <div className="flex flex-row justify-between ">
             <p className="text-sm font-sora text-gray-600 inline-block align-middle">
-              Let's find you a job you love.
+              Let&apos;s find you a job you love.
             </p>
           </div>
         </div>
@@ -158,8 +158,9 @@ export default function Home() {
                     Complete Your Profile to Unlock Personalised Recommendations
                   </h3>
                   <p className="text-gray-600 text-sm mb-2">
-                    Once complete, you'll be able to apply for Pollen approved,
-                    CV-less jobs, where you receive guaranteed feedback
+                    Once complete, you&apos;ll be able to apply for Pollen
+                    approved, CV-less jobs, where you receive guaranteed
+                    feedback
                   </p>
                   <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
                     <span className="flex items-center gap-1">
@@ -206,7 +207,7 @@ export default function Home() {
           <CardHeader>
             <CardTitle className="flex items-center font-sora text-lg p-3">
               <Star className="h-5 w-5 text-gray-700" />
-              This Week's Featured Jobs
+              This Week&apos;s Featured Jobs
             </CardTitle>
             <CardContent style={{ padding: "0.75rem" }}>
               <div className="space-y-4">

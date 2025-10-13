@@ -7,8 +7,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Users, Trophy, Briefcase, Code } from "lucide-react";
 import { LandingImagePaths } from "@/lib/configs/constants/image_paths";
 
-import { LoginStatusButton } from "@/app/LoginStatusButton";
-import { FindJobsButton } from "@/app/FindJobsButton";
+import { LoginStatusButton } from "@/app/_components/LoginStatusButton";
+import { FindJobsButton } from "@/app/_components/FindJobsButton";
 
 export default function LandingPage() {
   return (
@@ -309,8 +309,8 @@ export default function LandingPage() {
                 Create Your Profile
               </h3>
               <p className="text-gray-600" style={{ fontFamily: "Poppins" }}>
-                Assess your strengths, tell us about your interests, and we'll
-                help you discover what makes you unique.
+                Assess your strengths, tell us about your interests, and
+                we&apos;ll help you discover what makes you unique.
               </p>
             </div>
 
@@ -327,7 +327,7 @@ export default function LandingPage() {
                 className="text-xl font-semibold mb-3"
                 style={{ fontFamily: "Sora" }}
               >
-                Prove What You're Great At
+                Prove What You&apos;re Great At
               </h3>
               <p className="text-gray-600" style={{ fontFamily: "Poppins" }}>
                 Complete skills-based challenges designed to help you learn,
@@ -378,13 +378,14 @@ export default function LandingPage() {
                   className="text-gray-700 mb-4"
                   style={{ fontFamily: "Poppins" }}
                 >
-                  "From the very first task-based assignment, I knew I had found
-                  something special. The team's feedback and communication were
-                  exceptional, and their friendliness and supportiveness made
-                  the experience even better. Thanks to Pollen, my confidence
-                  during my job search has significantly improved. In fact, I
-                  found my current job advertised through Pollen. I can't
-                  recommend Pollen enough – they truly are a game-changer."
+                  From the very first task-based assignment, I knew I had found
+                  something special. The team&apos;s feedback and communication
+                  were exceptional, and their friendliness and supportiveness
+                  made the experience even better. Thanks to Pollen, my
+                  confidence during my job search has significantly improved. In
+                  fact, I found my current job advertised through Pollen. I
+                  can&apos;t recommend Pollen enough – they truly are a
+                  game-changer.&quot;
                 </blockquote>
                 <cite
                   className="text-pink-600 font-medium"
@@ -401,13 +402,13 @@ export default function LandingPage() {
                   className="text-gray-700 mb-4"
                   style={{ fontFamily: "Poppins" }}
                 >
-                  "During an interview, I was once told that my CV poorly
+                  &quot;During an interview, I was once told that my CV poorly
                   reflected who I am as a person and the value I could bring to
-                  a role. It became clear that the issue wasn't my skills or the
-                  demand for someone like me – it was miscommunication. That's
-                  where Pollen made a difference for me. They gave me an
-                  opportunity to show my potential in real-life scenarios
-                  directly relevant to the role."
+                  a role. It became clear that the issue wasn&apos;t my skills
+                  or the demand for someone like me – it was miscommunication.
+                  That&apos;s where Pollen made a difference for me. They gave
+                  me an opportunity to show my potential in real-life scenarios
+                  directly relevant to the role.&quot;
                 </blockquote>
                 <cite
                   className="text-pink-600 font-medium"
@@ -428,7 +429,7 @@ export default function LandingPage() {
             className="text-3xl font-bold text-white mb-4"
             style={{ fontFamily: "Sora" }}
           >
-            Ready to explore what you're capable of?
+            Ready to explore what you&apos;re capable of?
           </h2>
           <p
             className="text-pink-100 mb-8 text-lg"

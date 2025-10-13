@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { getJobSeeker } from "@/app/(pages)/(portal)/admin/all-job-seekers/actions";
 import { Badge } from "@/components/ui/badge";
 
@@ -7,41 +7,35 @@ export function useJobSeeker() {
   const [profileFilter, setProfileFilter] = useState("all");
   const [applicationFilter, setApplicationFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [jobSeekers, setJobSeekers] = useState([]);
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const loadingRef = useRef(false);
 
-  useEffect(() => {
-    loadJobSeekers();
-  }, [statusFilter, profileFilter, applicationFilter]);
-
-  // Usar debounce para la búsqueda
+  // Debounce search term
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (searchTerm !== "") {
-        loadJobSeekers();
-      }
+      setDebouncedSearchTerm(searchTerm);
     }, 500);
 
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
 
-  // Cargar todas las aplicaciones cuando se borre la búsqueda
-  useEffect(() => {
-    if (searchTerm === "") {
-      loadJobSeekers();
+  const loadJobSeekers = useCallback(async () => {
+    // Evitar llamadas duplicadas
+    if (loadingRef.current) {
+      return;
     }
-  }, [searchTerm]);
 
-  async function loadJobSeekers() {
+    loadingRef.current = true;
     setLoading(true);
     setError(null);
 
     try {
       const result = await getJobSeeker({
         status: statusFilter,
-        searchTerm: searchTerm.trim(),
+        searchTerm: debouncedSearchTerm.trim(),
         profile: profileFilter,
         application: applicationFilter,
       });
@@ -58,10 +52,16 @@ export function useJobSeeker() {
       setError("Failed to load employers: " + err.message);
     } finally {
       setLoading(false);
+      loadingRef.current = false;
     }
-  }
+  }, [statusFilter, profileFilter, applicationFilter, debouncedSearchTerm]);
 
-  const getStatusBadge = (status) => {
+  // Load job seekers when loadJobSeekers function changes
+  useEffect(() => {
+    loadJobSeekers();
+  }, [loadJobSeekers]);
+
+  const getStatusBadge = useCallback((status) => {
     switch (status) {
       case "active":
         return (
@@ -82,9 +82,9 @@ export function useJobSeeker() {
           </Badge>
         );
     }
-  };
+  }, []);
 
-  const getProfileCompleteBadge = (isComplete) => {
+  const getProfileCompleteBadge = useCallback((isComplete) => {
     switch (isComplete) {
       case "complete":
         return (
@@ -105,23 +105,36 @@ export function useJobSeeker() {
           </Badge>
         );
     }
-  };
+  }, []);
 
-  return {
-    form: {
-      statusFilter: statusFilter,
-      profileFilter: profileFilter,
-      applicationFilter: applicationFilter,
-      jobSeekers: jobSeekers,
-      loading: loading,
-      error: error,
-      setSearchTerm: setSearchTerm,
-      setStatusFilter: setStatusFilter,
-      setProfileFilter: setProfileFilter,
-      setApplicationFilter: setApplicationFilter,
-      loadJobSeekers: loadJobSeekers,
-      getStatusBadge: getStatusBadge,
-      getProfileCompleteBadge: getProfileCompleteBadge,
-    },
-  };
+  return useMemo(
+    () => ({
+      form: {
+        statusFilter: statusFilter,
+        profileFilter: profileFilter,
+        applicationFilter: applicationFilter,
+        jobSeekers: jobSeekers,
+        loading: loading,
+        error: error,
+        setSearchTerm: setSearchTerm,
+        setStatusFilter: setStatusFilter,
+        setProfileFilter: setProfileFilter,
+        setApplicationFilter: setApplicationFilter,
+        loadJobSeekers: loadJobSeekers,
+        getStatusBadge: getStatusBadge,
+        getProfileCompleteBadge: getProfileCompleteBadge,
+      },
+    }),
+    [
+      statusFilter,
+      profileFilter,
+      applicationFilter,
+      jobSeekers,
+      loading,
+      error,
+      loadJobSeekers,
+      getStatusBadge,
+      getProfileCompleteBadge,
+    ],
+  );
 }

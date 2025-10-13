@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/buttons/button";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   PieChart,
   Pie,
@@ -30,6 +31,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { tr } from "zod/v4/locales";
 
 export default function AdminAllJobSeekersReviewPage() {
   const router = useRouter();
@@ -678,9 +680,11 @@ export default function AdminAllJobSeekersReviewPage() {
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0">
                     {candidate.profilePicture ? (
-                      <img
+                      <Image
                         src={candidate.profilePicture}
                         alt={candidate.name}
+                        width={64}
+                        height={64}
                         className="w-16 h-16 rounded-full object-cover"
                       />
                     ) : (
@@ -1009,10 +1013,7 @@ export default function AdminAllJobSeekersReviewPage() {
                               dataKey="value"
                             >
                               {behavioralData.discData.map((entry, index) => (
-                                <Cell
-                                  key={`cell-${index}`}
-                                  fill={entry.color}
-                                />
+                                <Cell key={entry.name} fill={entry.color} />
                               ))}
                             </Pie>
                             <RechartsTooltip
@@ -1102,7 +1103,7 @@ export default function AdminAllJobSeekersReviewPage() {
 
                           return (
                             <div
-                              key={index}
+                              key={item.name}
                               className={`p-3 rounded-lg border-2 ${classes.bg} ${classes.border}`}
                             >
                               <div className="text-center">
@@ -1168,7 +1169,7 @@ export default function AdminAllJobSeekersReviewPage() {
 
                         return (
                           <div
-                            key={index}
+                            key={strength.title}
                             className={`border-l-4 ${borderColors[strength.color]} pl-4`}
                           >
                             <h4 className="font-medium text-sm text-gray-900 mb-1">
@@ -1259,9 +1260,9 @@ export default function AdminAllJobSeekersReviewPage() {
                       </h4>
                       <div className="flex flex-wrap gap-2">
                         {behavioralData.personalInsights.friendsDescribe.map(
-                          (trait, index) => (
+                          (trait) => (
                             <Badge
-                              key={index}
+                              key={trait}
                               variant="outline"
                               className="text-xs bg-blue-50 text-blue-700"
                             >
@@ -1277,9 +1278,9 @@ export default function AdminAllJobSeekersReviewPage() {
                       </h4>
                       <div className="flex flex-wrap gap-2">
                         {behavioralData.personalInsights.teachersDescribe.map(
-                          (trait, index) => (
+                          (trait) => (
                             <Badge
-                              key={index}
+                              key={trait}
                               variant="outline"
                               className="text-xs bg-green-50 text-green-700"
                             >
@@ -1303,9 +1304,9 @@ export default function AdminAllJobSeekersReviewPage() {
                       </h4>
                       <div className="flex flex-wrap gap-2">
                         {behavioralData.personalInsights.rolesInterested.map(
-                          (role, index) => (
+                          (role) => (
                             <Badge
-                              key={index}
+                              key={role}
                               variant="outline"
                               className="text-xs bg-blue-50 text-blue-700"
                             >
@@ -1321,9 +1322,9 @@ export default function AdminAllJobSeekersReviewPage() {
                       </h4>
                       <div className="flex flex-wrap gap-2">
                         {behavioralData.personalInsights.industriesInterested.map(
-                          (industry, index) => (
+                          (industry) => (
                             <Badge
-                              key={index}
+                              key={industry}
                               variant="outline"
                               className="text-xs bg-amber-50 text-amber-700"
                             >
@@ -1345,9 +1346,9 @@ export default function AdminAllJobSeekersReviewPage() {
                             "Creative Writing",
                             "Digital Marketing",
                           ]
-                        ).map((subject, index) => (
+                        ).map((subject) => (
                           <Badge
-                            key={index}
+                            key={subject}
                             variant="outline"
                             className="text-xs bg-purple-50 text-purple-700"
                           >
@@ -1388,11 +1389,11 @@ export default function AdminAllJobSeekersReviewPage() {
                         </div>
                         <blockquote className="bg-gray-50 p-3 rounded-lg border-l-4 border-indigo-200">
                           <p className="text-sm text-gray-700 italic">
-                            "Sarah consistently demonstrated exceptional
+                            &quot;Sarah consistently demonstrated exceptional
                             creative thinking and analytical skills throughout
                             her studies. Her ability to combine creativity with
                             strategic thinking makes her an ideal candidate for
-                            any marketing role."
+                            any marketing role.&quot;
                           </p>
                         </blockquote>
                       </div>

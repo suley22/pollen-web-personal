@@ -38,9 +38,10 @@
   "include": [
     "next-env.d.ts",
     ".next/types/**/*.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "src/app/components/sidebar/navigation-items.jsx"
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.js",
+    "src/**/*.jsx"
   ],
   "exclude": ["node_modules"]
 }

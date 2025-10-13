@@ -246,8 +246,8 @@ export default function PersonaResultsPage() {
             </h3>
             <p className="text-green-800 text-sm">
               Our team will review your persona profile and create a tailored
-              job posting and assessment for your {jobTitle} role. We'll be in
-              touch within 2 business days with your customised hiring
+              job posting and assessment for your {jobTitle} role. We&apos;ll be
+              in touch within 2 business days with your customised hiring
               materials.
             </p>
           </div>

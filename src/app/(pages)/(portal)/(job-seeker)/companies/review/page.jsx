@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 import {
   ChevronLeft,
   MapPin,
@@ -76,9 +77,11 @@ export default function CompanyReviewPage() {
           <Card className={"p-6"}>
             <CardContent className="pt-6">
               <div className="flex items-start gap-6">
-                <img
+                <Image
                   src={company.logo}
                   alt={`${company.name} logo`}
+                  width={80}
+                  height={80}
                   className="w-20 h-20 rounded-lg object-cover"
                 />
                 <div className="flex-1">
@@ -614,7 +617,7 @@ export default function CompanyReviewPage() {
                             className="text-gray-700 leading-relaxed"
                             style={{ fontFamily: "Poppins" }}
                           >
-                            "{testimonial.quote}"
+                            {testimonial.quote}
                           </p>
                           <div className="mt-3">
                             <Badge

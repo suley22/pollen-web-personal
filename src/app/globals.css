@@ -1,3 +1,8 @@
+/* Tailwind layers: required for @layer usage below */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Overlays: solo reciben eventos si están abiertos y visibles */
 [data-slot="sheet-overlay"],
 [data-slot="dropdown-menu-content"],
@@ -17,56 +22,86 @@
   pointer-events: none !important;
   opacity: 0 !important;
 }
-/* Importamos archivos CSS adicionales primero */
-@import "../styles/pollen-style.css";
 
-/* Tailwind layers: required for @layer usage below */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* -----------------------------------------------
+   Pollen Platform Stylesheet: pollen-style.css
+   Fonts: Sora (headings, buttons), Poppins (body)
+   Brand Colors: Yellow, Bold Pink, Off-Black, Fixed DISC
+------------------------------------------------- */
+
+/* Global Typography - Using Next.js font variables */
+body {
+  font-family: var(--font-poppins), sans-serif;
+  color: #272727;
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: var(--font-sora), sans-serif;
+  font-weight: 600;
+  color: #272727;
+  margin: 0.5em 0;
+}
+
+/* Font Utility Classes */
+.font-sora {
+  font-family: var(--font-sora), sans-serif;
+}
+
+.font-poppins {
+  font-family: var(--font-poppins), sans-serif;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--pollen-yellow);
+  color: var(--pollen-pink);
+  font-family: "Sora", sans-serif;
+  font-weight: 600;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: #ffe766;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background-color: var(--pollen-pink);
+  color: var(--pollen-white);
+}
+
+/* Card Example */
+.card {
+  background-color: var(--pollen-white);
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin: 1em 0;
+}
+
+/* Logo Styling */
+.logo {
+  height: 40px;
+  width: auto;
+  background-color: var(--pollen-yellow);
+}
 
 /* Enhanced 3D perspective utilities for laptop mockup */
 .perspective-1000 {
   perspective: 1000px;
-}
-
-
-
-/* Sidebar Section Labels */
-.sidebar-section-label {
-  font-size: 11px !important;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: #6b7280; /* muted gray */
-  margin-bottom: 4px;
-  display: block;
-}
-
-/* Normal font size for employer names in messages */
-.employer-name-small {
-  font-size: 16px !important;
-  font-weight: 600 !important;
-  line-height: 1.2 !important;
-}
-
-/* Normal font size for leaderboard usernames */
-.leaderboard-username-small {
-  font-size: 16px !important;
-  font-weight: 500 !important;
-  line-height: 1.2 !important;
-}
-
-.leaderboard-username-small.current-user {
-  font-weight: 600 !important;
-}
-
-.preserve-3d {
-  transform-style: preserve-3d;
-}
-
-.-rotate-x-12 {
-  transform: rotateX(-12deg);
 }
 
 :root {
@@ -109,110 +144,27 @@
   --accent-500: #ffde59;
   --accent-600: #e6c750;
 
-  /* DISC Fixed Colors for consistency */
-  --disc-red: #ff4d4f;
-  --disc-yellow: #ffec3d;
-  --disc-green: #52c41a;
-  --disc-blue: #1890ff;
-
   /* Moved utility class rules out of :root (CSS nesting is invalid here) */
 
   /* Sidebar aliases to global theme tokens for consistency */
   --sidebar: var(--background);
   --sidebar-background: var(--background);
-
   --sidebar-foreground: var(--foreground);
-
   --sidebar-primary: var(--primary);
-
   --sidebar-primary-foreground: var(--primary-foreground);
-
   --sidebar-accent: var(--muted);
-
   --sidebar-accent-foreground: var(--muted-foreground);
-
   --sidebar-border: var(--border);
-
   --sidebar-ring: var(--ring);
-}
 
-/* Brand Cleanup CSS */
-.stat-box {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.stat-box-blue {
-  background: #ffffff;
-}
-.stat-box-green {
-  background: #ffffff;
-}
-.stat-box-purple {
-  background: #ffffff;
-}
-.stat-box-orange {
-  background: #ffffff;
-}
-.stat-box-pink {
-  background: #ffffff;
-}
-
-/* Flat Button Styling */
-.btn-primary {
-  background-color: #e2007a;
-  color: #ffffff;
-  font-weight: 600;
-  font-family: "Sora", sans-serif;
-  border: none;
-  border-radius: 8px;
-  box-shadow: none;
-}
-
-.btn-primary:hover {
-  background-color: #c6006b;
-}
-
-.btn-secondary {
-  background-color: #f9f9fb;
-  color: #272727;
-  font-weight: 600;
-  font-family: "Sora", sans-serif;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-}
-
-.btn-secondary:hover {
-  background-color: #f3f4f6;
-}
-
-/* Flat User Avatar */
-.user-avatar {
-  background-color: #e2007a;
-  color: #ffffff;
-  font-family: "Sora", sans-serif;
-  font-weight: 700;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Typography Reset */
-.heading-primary {
-  font-family: "Sora", sans-serif;
-  font-weight: 700;
-  color: #272727;
-}
-
-.body-text {
-  font-family: "Poppins", sans-serif;
-  font-weight: 400;
-  color: #272727;
-  font-size: 16px;
-  line-height: 1.6;
+  --pollen-yellow: #ffde59;
+  --pollen-pink: #e2007a;
+  --pollen-black: #272727;
+  --pollen-white: #ffffff;
+  --pollen-turquoise: #a0f8ee;
+  --pollen-soft-yellow: #fffce1;
+  --pollen-soft-pink: #fff0f6;
+  --pollen-gray-bg: #f9f9f9;
 }
 
 /* Mobile Responsive */

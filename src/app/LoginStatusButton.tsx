@@ -4,16 +4,26 @@ import { Button } from "@/components/ui/buttons/button";
 import { Loader } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUser } from "@/app/providers";
-import { useRouter } from "next/navigation";
 import { LoginRoutes } from "@/login/router";
+import { useCallback, memo, useMemo } from "react";
 
-export const LoginStatusButton = () => {
+export const LoginStatusButton = memo(() => {
   const user = useUser();
-  const router = useRouter();
 
-  const onClick = () => {
-    router.push(user?.redirectUrl || LoginRoutes.login);
-  };
+  const onClick = useCallback(() => {
+    // Use window.location for faster navigation
+    const targetUrl = user?.redirectUrl || LoginRoutes.login;
+    window.location.href = targetUrl;
+  }, [user?.redirectUrl]);
+
+  // Return early if user is not loaded
+  if (!user) {
+    return (
+      <div className="flex flex-row items-center min-w-[150px]">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-row items-center min-w-[150px]">
@@ -50,4 +60,4 @@ export const LoginStatusButton = () => {
       )}
     </div>
   );
-};
+});

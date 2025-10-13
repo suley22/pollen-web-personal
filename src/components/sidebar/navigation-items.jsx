@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useTransition } from "react";
 import {
   Home,
   Briefcase,
@@ -25,6 +25,7 @@ export function NavigationItems() {
   const user = useUser();
   const pathname = usePathname();
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
   const { state } = useSidebar();
 
@@ -117,7 +118,11 @@ export function NavigationItems() {
                   <CustomSidebarMenuButton
                     isActive={item.isActive}
                     tooltip={item.label}
-                    onClick={() => router.push(item.path)}
+                    onClick={() => {
+                      startTransition(() => {
+                        router.push(item.path);
+                      });
+                    }}
                   >
                     <item.icon className="w-4 h-4" />
                     <span>{item.label}</span>

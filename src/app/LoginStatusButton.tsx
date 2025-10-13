@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/buttons/button";
 import { Loader } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";

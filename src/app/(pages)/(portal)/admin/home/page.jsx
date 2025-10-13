@@ -22,6 +22,7 @@ import { useHome } from "./useHome";
 
 export default function AdminHomePage() {
   const { homeState } = useHome();
+
   const router = useRouter();
   const notifications = [];
   const stats = {

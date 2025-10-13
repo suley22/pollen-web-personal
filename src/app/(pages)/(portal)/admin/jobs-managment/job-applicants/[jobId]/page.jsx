@@ -1,8 +1,6 @@
 "use client";
 
-import { use } from "react";
 import { useRouter } from "next/navigation";
-import { useJobData } from "./hooks/useJobData";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +12,25 @@ import {
   ChevronUp,
   LayoutGrid,
   Kanban,
+  AlertTriangle,
+  User,
+  FileText,
+  MessageCircle,
+  TrendingUp,
+  Calendar,
+  MessageSquare,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Lightbulb,
+  BarChart3,
+  ThumbsUp,
+  Check,
+  Edit3,
+  Lock,
+  UserCheck,
 } from "lucide-react";
+import { useToast } from "@/lib/hooks/use-toast";
 import { useState } from "react";
 import {
   DropdownMenu,
@@ -25,48 +41,44 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Card, CardContent } from "@/components/ui/card";
+import { useJobData } from "./hooks/useJobData";
+import {
+  getUnifiedCandidateData,
+  getInteractionDisplayText,
+} from "./candidateUtils";
 
 export default function JobApplicantsPage({ params }) {
   const router = useRouter();
-  const unwrappedParams = use(params);
-  const { candidates, job } = useJobData(unwrappedParams.jobId);
+  const { candidates, job, loading, error, refetch } = useJobData(params.jobId);
 
   const [searchTerm, setSearchTerm] = useState(() => {
-    const saved = sessionStorage.getItem(`${unwrappedParams.jobId}-searchTerm`);
+    const saved = sessionStorage.getItem(`${params.jobId}-searchTerm`);
     return saved || "";
   });
   const [primaryStatusFilter, setPrimaryStatusFilter] = useState(() => {
     const saved = sessionStorage.getItem(
-      `job-${unwrappedParams.jobId}-primaryStatusFilter`,
+      `job-${params.jobId}-primaryStatusFilter`,
     );
     return saved ? JSON.parse(saved) : [];
   });
   const [subStatusFilter, setSubStatusFilter] = useState(() => {
-    const saved = sessionStorage.getItem(
-      `job-${unwrappedParams.jobId}-subStatusFilter`,
-    );
+    const saved = sessionStorage.getItem(`job-${params.jobId}-subStatusFilter`);
     return saved ? JSON.parse(saved) : [];
   });
   const [scoreFilter, setScoreFilter] = useState(() => {
-    const saved = sessionStorage.getItem(
-      `job-${unwrappedParams.jobId}-scoreFilter`,
-    );
+    const saved = sessionStorage.getItem(`job-${params.jobId}-scoreFilter`);
     return saved ? JSON.parse(saved) : [];
   });
   const [sortBy, setSortBy] = useState(() => {
-    const saved = sessionStorage.getItem(`job-${unwrappedParams.jobId}-sortBy`);
+    const saved = sessionStorage.getItem(`job-${params.jobId}-sortBy`);
     return saved || "default";
   });
   const [sortOrder, setSortOrder] = useState(() => {
-    const saved = sessionStorage.getItem(
-      `job-${unwrappedParams.jobId}-sortOrder`,
-    );
+    const saved = sessionStorage.getItem(`job-${params.jobId}-sortOrder`);
     return saved || "desc";
   });
   const [viewMode, setViewMode] = useState(() => {
-    const saved = sessionStorage.getItem(
-      `job-${unwrappedParams.jobId}-viewMode`,
-    );
+    const saved = sessionStorage.getItem(`job-${params.jobId}-viewMode`);
     return saved || "grid";
   });
   const [assessmentSplitViewOpen, setAssessmentSplitViewOpen] = useState(false);
@@ -92,21 +104,53 @@ export default function JobApplicantsPage({ params }) {
   });
   const [scoresLocked, setScoresLocked] = useState(() => {
     if (selectedAssessment) {
-      // Scores are locked if candidate has been actioned (beyond invited_to_pollen_interview)
-      const lockedStatuses = [
-        "pollen_interview_complete",
-        "awaiting_employer",
-        "interview_requested",
-        "interview_booked",
-        "interview_complete",
-        "offer_issued",
-        "hired",
-        "not_progressing",
-      ];
-      return lockedStatuses.includes(selectedAssessment.subStatus);
+      const isInterviewComplete =
+        selectedAssessment.subStatus === "pollen_interview_complete" ||
+        selectedAssessment.subStatus === "awaiting_employer" ||
+        selectedAssessment.subStatus === "interview_requested" ||
+        selectedAssessment.subStatus === "interview_booked" ||
+        selectedAssessment.subStatus === "interview_complete" ||
+        selectedAssessment.subStatus === "offer_issued" ||
+        selectedAssessment.subStatus === "hired";
+      return isInterviewComplete;
     }
     return false;
   });
+  const [editedScores, setEditedScores] = useState({
+    creative: 8,
+    dataAnalysis: 8,
+    communication: 7,
+    strategic: 8,
+  });
+
+  const { toast } = useToast();
+
+  // Estados adicionales faltantes
+  const [selectedFeedback, setSelectedFeedback] = useState(null);
+  const [showFeedbackReview, setShowFeedbackReview] = useState(false);
+
+  // Variable para jobId
+  const jobId = params.jobId;
+
+  const handleSaveScores = () => {
+    // In a real app, this would make an API call to save the scores
+    toast({
+      title: "Scores updated",
+      description: "Assessment scores have been saved successfully.",
+    });
+    setIsEditing(false);
+    setScoresApproved(false); // Reset approval status when scores are edited
+  };
+  const handleCandidateAction = (action) => {
+    if (action === "interview") {
+      // Skip confirmation dialog for interview invitations and proceed directly
+      candidateActionMutation.mutate(action);
+    } else {
+      // Show confirmation dialog for reject/match actions
+      setPendingAction(action);
+      setConfirmDialogOpen(true);
+    }
+  };
 
   const openAssessmentSplitView = (candidate) => {
     console.log("🔍 Opening assessment for candidate:", {
@@ -157,6 +201,14 @@ export default function JobApplicantsPage({ params }) {
     "Offer Issued": "matched_to_employer",
     Hired: "complete",
     "Not Progressing": "complete",
+  };
+
+  const closeAssessmentSplitView = () => {
+    setAssessmentSplitViewOpen(false);
+    setIsMobileFullPage(false);
+    setSelectedAssessment(null);
+    setScoresApproved(false); // Reset state when closing
+    setScoresLocked(false); // Reset state when closing
   };
 
   // Get available sub-statuses for selected primary statuses
@@ -366,7 +418,7 @@ export default function JobApplicantsPage({ params }) {
         case "score":
           comparison = a.overallSkillsScore - b.overallSkillsScore;
           break;
-        case "default":
+        case "default": {
           // Default sorting: primary status first, then application date within each status
           const statusPriority = {
             new_applicants: 1,
@@ -386,6 +438,7 @@ export default function JobApplicantsPage({ params }) {
               new Date(a.applicationDate).getTime();
           }
           break;
+        }
         default:
           comparison = 0;
       }
@@ -446,6 +499,81 @@ export default function JobApplicantsPage({ params }) {
       badgeColor: "bg-gray-100 text-gray-800",
     },
   ].filter((column) => column.count > 0);
+
+  // Calcular grid columns class basado en columnas visibles
+  const gridColsClass =
+    visibleColumns.length === 1
+      ? "grid-cols-1"
+      : visibleColumns.length === 2
+        ? "grid-cols-2"
+        : visibleColumns.length === 3
+          ? "grid-cols-3"
+          : "grid-cols-4";
+
+  // Funciones auxiliares que parecen estar faltando
+  const isScoreApproved = (candidate) => {
+    // Implementar lógica para determinar si el score está aprobado
+    return candidate.overallSkillsScore >= 70;
+  };
+
+  const getStoppedAtStage = (candidateId) => {
+    // Implementar lógica para obtener en qué etapa se detuvo
+    return null; // Por ahora retornar null
+  };
+
+  const hasUnreviewedEmployerFeedback = (candidateId) => {
+    // Implementar lógica para verificar feedback no revisado
+    return false; // Por ahora retornar false
+  };
+
+  const getCandidateData = (candidateId) => {
+    // Implementar lógica para obtener datos del candidato
+    return candidates.find((c) => c.id === candidateId);
+  };
+  const [isEditing, setIsEditing] = useState(false);
+
+  // Estados de loading
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4" />
+          <p className="text-gray-600">Loading job applicants...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Manejo de errores
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 mb-4">
+            <AlertTriangle className="h-12 w-12 mx-auto" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Error loading data
+          </h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <Button onClick={refetch} variant="outline">
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Si no hay datos
+  if (!candidates || !job) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">No data available</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 admin-compact-mode">
@@ -839,8 +967,10 @@ export default function JobApplicantsPage({ params }) {
                                   <h4 className="font-medium text-gray-900 flex items-center gap-2">
                                     {candidate.name}
                                     {(() => {
-                                      const candidateData = getCandidateData(
-                                        candidate.id,
+                                      const candidateData = candidates.map(
+                                        (c) => ({
+                                          id: c.id,
+                                        }),
                                       );
                                       return (
                                         candidateData.hasPollenInteraction && (
@@ -1219,6 +1349,797 @@ export default function JobApplicantsPage({ params }) {
             </div>
           )}
         </div>
+
+        {/* Assessment Split View - Overlay */}
+        {assessmentSplitViewOpen && selectedAssessment && (
+          <div className="fixed top-0 right-0 w-2/3 h-full border-l border-gray-200 bg-white z-50 shadow-xl flex flex-col min-w-[800px]">
+            <div
+              style={{
+                backgroundColor: "#f9fafb",
+                borderBottom: "1px solid #e5e7eb",
+                width: "100%",
+                margin: 0,
+                padding: "12px 16px",
+                boxSizing: "border-box",
+                flexShrink: 0,
+                position: "relative",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "100%",
+                  height: "auto",
+                  margin: 0,
+                  padding: 0,
+                  position: "relative",
+                }}
+              >
+                <div className="flex items-center gap-3 flex-shrink-0">
+                  <img
+                    src={selectedAssessment.avatar_url}
+                    alt={
+                      selectedAssessment.first_name +
+                      " " +
+                      selectedAssessment.last_name
+                    }
+                    className="w-10 h-10 rounded-full border"
+                  />
+                  <h3 className="font-semibold text-sm">
+                    {selectedAssessment.first_name +
+                      " " +
+                      selectedAssessment.last_name}{" "}
+                    - Assessment
+                  </h3>
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    position: "absolute",
+                    right: 0,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    flexShrink: 0,
+                  }}
+                >
+                  {/* Provide Update button for candidates who completed Pollen interviews */}
+                  {selectedAssessment.subStatus ===
+                    "Pollen Interview Complete" && (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      // TODO: Enable navigation when the page is ready
+                      // onClick={() =>
+                      //   setLocation(
+                      //     buildUrlWithCurrentState(
+                      //       `/admin/provide-update/${selectedAssessment.id}`,
+                      //     ),
+                      //   )
+                      // }
+                      className="text-xs px-1 py-1 bg-[#E2007A] hover:bg-[#E2007A]/90 text-white"
+                    >
+                      <FileText className="h-3 w-3 mr-1" />
+                      Provide Update
+                    </Button>
+                  )}
+
+                  {/* Review Feedback button for candidates who stopped at employer */}
+                  {(() => {
+                    const apiCandidate = candidates.find(
+                      (c) => c.id === selectedAssessment.id,
+                    );
+                    return (
+                      apiCandidate?.subStatus === "stopped_at_employer" &&
+                      hasUnreviewedEmployerFeedback(selectedAssessment.id)
+                    );
+                  })() && (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => {
+                        const apiCandidate = candidates.find(
+                          (c) => c.id === selectedAssessment.id,
+                        );
+                        const feedbackData =
+                          apiCandidate?.employerFeedback ||
+                          getCandidateData(selectedAssessment.id)
+                            .employerFeedback;
+                        setSelectedFeedback(feedbackData);
+                        setShowFeedbackReview(true);
+                      }}
+                      className="text-xs px-1 py-1 bg-orange-600 hover:bg-orange-700 text-white"
+                    >
+                      <MessageSquare className="h-3 w-3 mr-1" />
+                      Review Feedback
+                    </Button>
+                  )}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      // Store current page context for proper back navigation
+                      sessionStorage.setItem(
+                        "previousPage",
+                        `@/admin/job-applicants/${jobId}`,
+                      );
+                      router.push(
+                        `@/admin/job-applicants/candidate-profile/${selectedAssessment.id}`,
+                      );
+                    }}
+                    className="text-xs px-1 py-1"
+                  >
+                    <User className="h-3 w-3 mr-1" />
+                    Profile
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      sessionStorage.setItem(
+                        "previousPage",
+                        `@/admin/job-applicants/${jobId}`,
+                      );
+                      router.push(
+                        `@/admin/job-applicants/candidate-profile/${selectedAssessment.id}`,
+                      );
+                    }}
+                    className="text-xs px-1 py-1"
+                  >
+                    <MessageSquare className="h-3 w-3 mr-1" />
+                    Message
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const currentIndex = filteredCandidates.findIndex(
+                        (c) => c.id === selectedAssessment?.id,
+                      );
+                      const prevIndex = currentIndex - 1;
+                      if (prevIndex >= 0) {
+                        setSelectedAssessment(filteredCandidates[prevIndex]);
+                      }
+                    }}
+                    disabled={
+                      filteredCandidates.findIndex(
+                        (c) => c.id === selectedAssessment?.id,
+                      ) === 0
+                    }
+                    className="text-xs px-1 py-1"
+                  >
+                    <ChevronLeft className="h-3 w-3" />
+                  </Button>
+
+                  <span className="text-xs text-gray-600 px-1">
+                    {filteredCandidates.findIndex(
+                      (c) => c.id === selectedAssessment?.id,
+                    ) + 1}{" "}
+                    of {filteredCandidates.length}
+                  </span>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const currentIndex = filteredCandidates.findIndex(
+                        (c) => c.id === selectedAssessment?.id,
+                      );
+                      const nextIndex = currentIndex + 1;
+                      if (nextIndex < filteredCandidates.length) {
+                        setSelectedAssessment(filteredCandidates[nextIndex]);
+                      }
+                    }}
+                    disabled={
+                      filteredCandidates.findIndex(
+                        (c) => c.id === selectedAssessment?.id,
+                      ) ===
+                      filteredCandidates.length - 1
+                    }
+                    className="text-xs px-1 py-1"
+                  >
+                    <ChevronRight className="h-3 w-3" />
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      // Ensure we preserve the selected assessment when switching to full page
+                      if (selectedAssessment) {
+                        setAssessmentSplitViewOpen(false);
+                        setIsMobileFullPage(true);
+                        // Force a re-render by briefly clearing and setting the assessment
+                        setTimeout(() => {
+                          setSelectedAssessment(selectedAssessment);
+                        }, 10);
+                      }
+                    }}
+                    className="text-xs px-1 py-1"
+                  >
+                    <Eye className="h-3 w-3 mr-1" />
+                    Full Page
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={closeAssessmentSplitView}
+                    className="p-0 h-8 w-8"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div className="px-4 py-2 bg-white flex-shrink-0">
+              <div className="text-sm text-gray-600 flex items-center justify-between">
+                {getCandidateData(selectedAssessment.id)
+                  .hasPollenInteraction ? (
+                  <div className="flex items-center gap-2">
+                    <span className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center text-xs text-white font-bold">
+                      ✓
+                    </span>
+                    <span className="text-sm">
+                      Spoke to{" "}
+                      {
+                        getCandidateData(selectedAssessment.id)
+                          .lastPollenTeamMember
+                      }{" "}
+                      on{" "}
+                      {
+                        getCandidateData(selectedAssessment.id)
+                          .lastInteractionDate
+                      }
+                    </span>
+                  </div>
+                ) : (
+                  <span className="text-sm">
+                    {getInteractionDisplayText(
+                      getCandidateData(selectedAssessment.id),
+                    )}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Overall Score */}
+            <div className="bg-white border-b border-gray-200 px-4 py-3 flex-shrink-0">
+              <div className="flex items-center gap-6">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-[#E2007A] mb-1">
+                    {Math.round(
+                      ((editedScores.creative +
+                        editedScores.dataAnalysis +
+                        editedScores.communication +
+                        editedScores.strategic) /
+                        4) *
+                        10,
+                    )}
+                    %
+                  </div>
+                  <div className="text-sm font-medium text-gray-700">
+                    Overall Score
+                  </div>
+                </div>
+                <div className="w-6" />
+                <div>
+                  <span className="text-gray-600 text-sm">
+                    Submission Date:
+                  </span>
+                  <div className="font-medium text-gray-900">16/01/2025</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto min-h-0">
+              {/* Assessment Content Wrapper */}
+              <div className="p-3 space-y-4">
+                {/* Authentic Assessment Q&A Section - Using Real Assessment Data */}
+                <div className="space-y-4">
+                  {selectedAssessment.assessmentSubmission?.responses?.map(
+                    (response, index) => {
+                      // Remove duplicate numbering from question text (e.g., "Q1. Describe..." becomes "Describe...")
+                      const cleanQuestion = response.question.replace(
+                        /^Q\d+\.\s*/,
+                        "",
+                      );
+
+                      return (
+                        <div
+                          key={index}
+                          className="border rounded-lg p-4 bg-white"
+                        >
+                          <div className="font-medium text-sm mb-3 text-gray-700">
+                            Q{index + 1}: {cleanQuestion}
+                          </div>
+                          <div className="text-sm text-gray-600 mb-3 leading-relaxed">
+                            {response.response}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Word count: {response.wordCount}
+                          </div>
+                        </div>
+                      );
+                    },
+                  ) || (
+                    <div className="text-center py-8">
+                      <p className="text-gray-500">
+                        No assessment responses available
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Individual Scores Section - Moved below Q&A */}
+                <div className="border rounded-lg bg-gray-50">
+                  <div className="px-6 py-4 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Individual Assessment Scores
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Rate performance across key areas (1-10 scale)
+                    </p>
+                  </div>
+                  <div className="p-6 pb-8 space-y-6">
+                    {/* Creative Campaign Development */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Lightbulb className="h-4 w-4 text-gray-600" />
+                        <span className="font-medium text-sm">
+                          Creative Campaign Development
+                        </span>
+                        <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                          {editedScores.creative}/10
+                        </span>
+                      </div>
+                      {isEditing ? (
+                        <div className="px-2">
+                          <input
+                            type="range"
+                            min="1"
+                            max="10"
+                            value={editedScores.creative}
+                            onChange={(e) =>
+                              setEditedScores((prev) => ({
+                                ...prev,
+                                creative: parseInt(e.target.value),
+                              }))
+                            }
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                          />
+                          <div className="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>1</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span>4</span>
+                            <span>5</span>
+                            <span>6</span>
+                            <span>7</span>
+                            <span>8</span>
+                            <span>9</span>
+                            <span>10</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="px-2">
+                          <div className="w-full h-2 bg-gray-200 rounded-lg relative">
+                            <div
+                              className="h-full bg-[#E2007A] rounded-lg"
+                              style={{
+                                width: `${editedScores.creative * 10}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Data Analysis & Insights */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <BarChart3 className="h-4 w-4 text-gray-600" />
+                        <span className="font-medium text-sm">
+                          Data Analysis & Insights
+                        </span>
+                        <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                          {editedScores.dataAnalysis}/10
+                        </span>
+                      </div>
+                      {isEditing ? (
+                        <div className="px-2">
+                          <input
+                            type="range"
+                            min="1"
+                            max="10"
+                            value={editedScores.dataAnalysis}
+                            onChange={(e) =>
+                              setEditedScores((prev) => ({
+                                ...prev,
+                                dataAnalysis: parseInt(e.target.value),
+                              }))
+                            }
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                          />
+                          <div className="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>1</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span>4</span>
+                            <span>5</span>
+                            <span>6</span>
+                            <span>7</span>
+                            <span>8</span>
+                            <span>9</span>
+                            <span>10</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="px-2">
+                          <div className="w-full h-2 bg-gray-200 rounded-lg relative">
+                            <div
+                              className="h-full bg-[#E2007A] rounded-lg"
+                              style={{
+                                width: `${editedScores.dataAnalysis * 10}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Communication & Presentation */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="h-4 w-4 text-gray-600" />
+                        <span className="font-medium text-sm">
+                          Communication & Presentation
+                        </span>
+                        <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                          {editedScores.communication}/10
+                        </span>
+                      </div>
+                      {isEditing ? (
+                        <div className="px-2">
+                          <input
+                            type="range"
+                            min="1"
+                            max="10"
+                            value={editedScores.communication}
+                            onChange={(e) =>
+                              setEditedScores((prev) => ({
+                                ...prev,
+                                communication: parseInt(e.target.value),
+                              }))
+                            }
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                          />
+                          <div className="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>1</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span>4</span>
+                            <span>5</span>
+                            <span>6</span>
+                            <span>7</span>
+                            <span>8</span>
+                            <span>9</span>
+                            <span>10</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="px-2">
+                          <div className="w-full h-2 bg-gray-200 rounded-lg relative">
+                            <div
+                              className="h-full bg-[#E2007A] rounded-lg"
+                              style={{
+                                width: `${editedScores.communication * 10}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Strategic Thinking */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4 text-gray-600" />
+                        <span className="font-medium text-sm">
+                          Strategic Thinking
+                        </span>
+                        <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                          {editedScores.strategic}/10
+                        </span>
+                      </div>
+                      {isEditing ? (
+                        <div className="px-2">
+                          <input
+                            type="range"
+                            min="1"
+                            max="10"
+                            value={editedScores.strategic}
+                            onChange={(e) =>
+                              setEditedScores((prev) => ({
+                                ...prev,
+                                strategic: parseInt(e.target.value),
+                              }))
+                            }
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                          />
+                          <div className="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>1</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span>4</span>
+                            <span>5</span>
+                            <span>6</span>
+                            <span>7</span>
+                            <span>8</span>
+                            <span>9</span>
+                            <span>10</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="px-2">
+                          <div className="w-full h-2 bg-gray-200 rounded-lg relative">
+                            <div
+                              className="h-full bg-[#E2007A] rounded-lg"
+                              style={{
+                                width: `${editedScores.strategic * 10}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Next Steps Section */}
+                <div className="border rounded-lg bg-gray-50">
+                  <div className="px-6 py-4 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Next Steps
+                    </h3>
+                  </div>
+
+                  <div className="p-6 pb-8 space-y-6">
+                    {/* Step 1 - Score Review */}
+                    <div className="border rounded-lg p-6 bg-white">
+                      <div className="space-y-4">
+                        <h4 className="text-xs sm:text-sm font-medium text-gray-900">
+                          Step 1: Assessment Score Review
+                        </h4>
+                        <p className="text-xs text-gray-600 mb-4">
+                          Review AI-generated scores and make adjustments if
+                          needed before proceeding.
+                        </p>
+                        {!isScoreApproved(selectedAssessment) ? (
+                          <div className="flex flex-wrap gap-4 items-center">
+                            {!scoresApproved ? (
+                              <Button
+                                onClick={handleApproveAIScores}
+                                size="default"
+                                className="bg-green-600 hover:bg-green-700 h-12 px-6 text-base font-medium"
+                              >
+                                <ThumbsUp className="h-5 w-5 mr-2" />
+                                Approve Scores
+                              </Button>
+                            ) : (
+                              <div className="bg-green-100 border border-green-200 rounded-lg p-4 inline-flex items-center gap-3 text-green-700">
+                                <Check className="h-5 w-5" />
+                                <span className="font-medium text-base">
+                                  Scores Approved
+                                </span>
+                              </div>
+                            )}
+
+                            {isEditing ? (
+                              <>
+                                <Button
+                                  onClick={handleSaveScores}
+                                  size="default"
+                                  className="bg-green-600 hover:bg-green-700 h-12 px-6 text-base font-medium"
+                                >
+                                  <Check className="h-5 w-5 mr-2" />
+                                  Save Changes
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="default"
+                                  onClick={() => setIsEditing(false)}
+                                  className="h-12 px-6 text-base font-medium"
+                                >
+                                  Cancel
+                                </Button>
+                              </>
+                            ) : (
+                              <Button
+                                variant="outline"
+                                size="default"
+                                onClick={() => setIsEditing(true)}
+                                className="h-12 px-6 text-base font-medium"
+                              >
+                                <Edit3 className="h-5 w-5 mr-2" />
+                                Edit Scores
+                              </Button>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="bg-gray-100 border border-gray-200 rounded-lg p-6 text-center">
+                            <div className="flex items-center justify-center gap-2 text-gray-700">
+                              <Lock className="h-4 w-4" />
+                              <span className="font-medium">
+                                Scores Locked - Candidate Progressed
+                              </span>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {["Unopened", "Under Review"].includes(
+                      selectedAssessment.subStatus,
+                    ) &&
+                      !scoresApproved &&
+                      !isScoreApproved(selectedAssessment) && (
+                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                          <div className="flex items-center gap-2 text-amber-800">
+                            <AlertTriangle className="h-5 w-5" />
+                            <span className="text-base font-medium">
+                              Approve assessment scores before making candidate
+                              decision
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
+                    {/* Step 2 - Candidate Decision - Lock for completed statuses */}
+                    {["Unopened", "Under Review"].includes(
+                      selectedAssessment.subStatus,
+                    ) ? (
+                      <div className="border rounded-lg p-6 bg-white">
+                        <div className="space-y-4 pb-18">
+                          <h4 className="text-xs sm:text-sm font-medium text-gray-900 mb-2">
+                            Step 2: Candidate Decision
+                          </h4>
+                          <p className="text-xs text-gray-600 mb-3">
+                            Choose next action for this candidate. This will
+                            lock scores and update their status.
+                          </p>
+                          <div className="flex gap-4 flex-wrap">
+                            {/* Interview button only for unopened/under review */}
+                            <Button
+                              onClick={() => handleCandidateAction("interview")}
+                              disabled={
+                                !(
+                                  scoresApproved ||
+                                  isScoreApproved(selectedAssessment)
+                                ) || candidateActionMutation.isPending
+                              }
+                              size="default"
+                              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
+                            >
+                              <Calendar className="h-5 w-5 mr-2" />
+                              Invite to Pollen Interview
+                            </Button>
+
+                            <Button
+                              onClick={() => handleCandidateAction("match")}
+                              disabled={
+                                !(
+                                  scoresApproved ||
+                                  isScoreApproved(selectedAssessment)
+                                ) ||
+                                candidateActionMutation.isPending ||
+                                !canFastTrackToEmployer
+                              }
+                              size="default"
+                              className="bg-green-600 hover:bg-green-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
+                            >
+                              <UserCheck className="h-5 w-5 mr-2" />
+                              Match to Employer
+                            </Button>
+
+                            <Button
+                              onClick={() => handleCandidateAction("reject")}
+                              disabled={
+                                !(
+                                  scoresApproved ||
+                                  isScoreApproved(selectedAssessment)
+                                ) || candidateActionMutation.isPending
+                              }
+                              variant="outline"
+                              size="default"
+                              className="h-12 px-6 text-base font-medium"
+                            >
+                              <X className="h-5 w-5 mr-2" />
+                              Not Progressing
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="border rounded-lg p-6 bg-gray-100">
+                        <div className="flex items-center justify-center gap-3 text-gray-700 mb-2">
+                          <Lock className="h-5 w-5" />
+                          <span className="font-medium text-lg">
+                            Step 2: Candidate Decision Completed
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 text-center mb-4">
+                          This candidate has progressed beyond initial review
+                          stage. Use "Provide Update" for further actions.
+                        </p>
+
+                        {/* Show Provide Update button for completed Pollen interview candidates */}
+                        {selectedAssessment?.subStatus ===
+                          "Pollen Interview Complete" && (
+                          <div className="flex justify-center">
+                            <Button
+                              onClick={() => {
+                                setLocation(
+                                  buildUrlWithCurrentState(
+                                    `/admin/provide-update/${selectedAssessment.id}`,
+                                  ),
+                                );
+                              }}
+                              size="default"
+                              className="bg-[#E2007A] hover:bg-[#E2007A]/90 text-white h-12 px-6 text-base font-medium"
+                            >
+                              <MessageCircle className="h-5 w-5 mr-2" />
+                              Provide Update
+                            </Button>
+                          </div>
+                        )}
+
+                        {/* Show Review Feedback button for candidates who stopped at employer */}
+                        {(() => {
+                          const apiCandidate = candidates.find(
+                            (c) => c.id === selectedAssessment?.id,
+                          );
+                          return (
+                            apiCandidate?.subStatus === "stopped_at_employer" &&
+                            hasUnreviewedEmployerFeedback(selectedAssessment.id)
+                          );
+                        })() && (
+                          <div className="flex justify-center">
+                            <Button
+                              onClick={() => {
+                                const apiCandidate = candidates.find(
+                                  (c) => c.id === selectedAssessment.id,
+                                );
+                                const feedbackData =
+                                  apiCandidate?.employerFeedback ||
+                                  getCandidateData(selectedAssessment.id)
+                                    .employerFeedback;
+                                setSelectedFeedback(feedbackData);
+                                setShowFeedbackReview(true);
+                              }}
+                              size="default"
+                              className="bg-orange-600 hover:bg-orange-700 text-white h-12 px-6 text-base font-medium"
+                            >
+                              <MessageSquare className="h-5 w-5 mr-2" />
+                              Review Feedback
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

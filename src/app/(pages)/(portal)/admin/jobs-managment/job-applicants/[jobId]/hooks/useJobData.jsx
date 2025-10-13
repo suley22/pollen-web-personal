@@ -1,42 +1,78 @@
-"use server";
+"use client";
 
-import { createClient } from "@/utils/supabase/server";
+import { useState, useEffect } from "react";
+import { fetchJobApplicants, fetchJobDetails } from "../actions";
 
-export async function fetchJobApplicants(jobId) {
-  const supabase = await createClient();
+export function useJobData(jobId) {
+  const [candidates, setCandidates] = useState([]);
+  const [job, setJob] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Hacemos JOIN entre job_applications y job_seeker para obtener los datos completos
-  const { data: applicants, error } = await supabase
-    .from("job_applications")
-    .select(
-      `
-      *,
-      job_seeker:applicant_id (
-        *
-      )
-    `,
-    )
-    .eq("job_id", jobId);
+  useEffect(() => {
+    if (!jobId) return;
 
-  if (error) {
-    return { error: error, data: null };
-  } else {
-    return { error: null, data: applicants };
-  }
-}
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-export async function fetchJobDetails(jobId) {
-  const supabase = await createClient();
+        // Cargar datos de aplicantes y job en paralelo
+        const [applicantsResult, jobResult] = await Promise.all([
+          fetchJobApplicants(jobId),
+          fetchJobDetails(jobId),
+        ]);
 
-  const { data: job, error } = await supabase
-    .from("job")
-    .select("*")
-    .eq("id", jobId)
-    .single();
+        // Manejar errores
+        if (applicantsResult.error) {
+          throw new Error(applicantsResult.error.message);
+        }
+        if (jobResult.error) {
+          throw new Error(jobResult.error.message);
+        }
 
-  if (error) {
-    return { error: error, data: null };
-  } else {
-    return { error: null, data: job };
-  }
+        // Establecer datos
+        setCandidates(applicantsResult.data || []);
+        setJob(jobResult.data);
+      } catch (err) {
+        console.error("Error loading job data:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [jobId]);
+
+  // Función para refrescar los datos
+  const refetch = async () => {
+    if (!jobId) return;
+
+    try {
+      setLoading(true);
+      const [applicantsResult, jobResult] = await Promise.all([
+        fetchJobApplicants(jobId),
+        fetchJobDetails(jobId),
+      ]);
+
+      if (!applicantsResult.error && !jobResult.error) {
+        setCandidates(applicantsResult.data || []);
+        setJob(jobResult.data);
+      }
+    } catch (err) {
+      console.error("Error refetching job data:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return {
+    candidates,
+    job,
+    loading,
+    error,
+    refetch,
+  };
 }

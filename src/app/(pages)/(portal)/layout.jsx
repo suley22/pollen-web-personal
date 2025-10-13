@@ -10,7 +10,7 @@ export default function RootLayout({ children }) {
   return (
     <>
       <SidebarProvider className="testing-sidebar-layout">
-        <AppSidebar user={user} />
+        <AppSidebar />
         <SidebarInset className="bg-gray-50">{children}</SidebarInset>
       </SidebarProvider>
     </>

@@ -1,7 +1,7 @@
 "use client";
 
 import { NavUser } from "@/components/sidebar/nav-user";
-import { useLogout } from "@/app/hooks/useLogout";
+import { useLogout } from "@/hooks/useLogout";
 import { SidebarTrigger } from "@/components/sidebar/sidebar";
 
 export function Header() {

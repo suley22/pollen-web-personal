@@ -3,6 +3,7 @@
 import { createContext, useContext } from "react";
 import { JobSeekerRoutes } from "@/job-seeker/router";
 import { AdminRoutes } from "@/admin/router";
+import { LoginRoutes } from "@/login/router";
 
 const UserContext = createContext();
 
@@ -28,6 +29,12 @@ export function Providers({ children, user }) {
   const avatarUrl = metadata?.avatar_url || defaultValues.avatar;
   const role = metadata?.role || defaultValues.role;
   const isAdmin = role === "admin";
+  const isLogged = !!session;
+  const redirectUrl = isLogged
+    ? isAdmin
+      ? AdminRoutes.home
+      : JobSeekerRoutes.home
+    : LoginRoutes.login;
 
   const userData = {
     name: firstName + " " + lastName,
@@ -35,7 +42,8 @@ export function Providers({ children, user }) {
     avatar: avatarUrl,
     role: role,
     isAdmin: isAdmin,
-    redirectUrl: isAdmin ? AdminRoutes.home : JobSeekerRoutes.home,
+    redirectUrl: redirectUrl,
+    isLogged: isLogged,
   };
 
   return (

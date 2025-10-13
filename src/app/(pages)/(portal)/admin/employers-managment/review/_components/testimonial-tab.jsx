@@ -146,8 +146,8 @@ export function TestimonialTab({ employerProfile }) {
                   className="text-pink-800 text-sm"
                   style={{ fontFamily: "Poppins" }}
                 >
-                  We&apos;ll help you collect authentic testimonials from your team.
-                  Junior employee testimonials are especially valuable for
+                  We&apos;ll help you collect authentic testimonials from your
+                  team. Junior employee testimonials are especially valuable for
                   peer-led insights.
                 </p>
               </div>

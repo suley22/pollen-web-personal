@@ -1326,11 +1326,11 @@ export default function JobsManagmentReviewPage({
                             <span className="text-orange-700">
                               {" "}
                               AI platforms, like Chat GPT, can be helpful for
-                              job applications, but pretty please don&apos;t copy and
-                              paste an answer for your application. We have
-                              beady-eyes and will not accept anything that is
-                              obviously AI generated. We want to know the real
-                              you, not a robot. You&apos;ve got this!
+                              job applications, but pretty please don&apos;t
+                              copy and paste an answer for your application. We
+                              have beady-eyes and will not accept anything that
+                              is obviously AI generated. We want to know the
+                              real you, not a robot. You&apos;ve got this!
                             </span>
                           </div>
 

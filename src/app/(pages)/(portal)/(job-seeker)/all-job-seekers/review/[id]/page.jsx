@@ -1169,7 +1169,7 @@ export default function AdminAllJobSeekersReviewPage() {
 
                         return (
                           <div
-                            key={strength.title}
+                            key={index}
                             className={`border-l-4 ${borderColors[strength.color]} pl-4`}
                           >
                             <h4 className="font-medium text-sm text-gray-900 mb-1">

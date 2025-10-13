@@ -1,5 +1,7 @@
 "use client";
 
+import React from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +31,8 @@ import {
   Edit3,
   Lock,
   UserCheck,
+  UserX,
+  SplitSquareHorizontal,
 } from "lucide-react";
 import { useToast } from "@/lib/hooks/use-toast";
 import { useState } from "react";
@@ -46,39 +50,60 @@ import {
   getUnifiedCandidateData,
   getInteractionDisplayText,
 } from "./candidateUtils";
+import { apiRequest } from "@/lib/query-client";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@radix-ui/react-dialog";
 
 export default function JobApplicantsPage({ params }) {
+  const resolvedParams = React.use(params);
   const router = useRouter();
-  const { candidates, job, loading, error, refetch } = useJobData(params.jobId);
+  const queryClient = useQueryClient();
+  const { candidates, job, loading, error, refetch } = useJobData(
+    resolvedParams.jobId,
+  );
 
   const [searchTerm, setSearchTerm] = useState(() => {
-    const saved = sessionStorage.getItem(`${params.jobId}-searchTerm`);
+    const saved = sessionStorage.getItem(`${resolvedParams.jobId}-searchTerm`);
     return saved || "";
   });
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [primaryStatusFilter, setPrimaryStatusFilter] = useState(() => {
     const saved = sessionStorage.getItem(
-      `job-${params.jobId}-primaryStatusFilter`,
+      `job-${resolvedParams.jobId}-primaryStatusFilter`,
     );
     return saved ? JSON.parse(saved) : [];
   });
   const [subStatusFilter, setSubStatusFilter] = useState(() => {
-    const saved = sessionStorage.getItem(`job-${params.jobId}-subStatusFilter`);
+    const saved = sessionStorage.getItem(
+      `job-${resolvedParams.jobId}-subStatusFilter`,
+    );
     return saved ? JSON.parse(saved) : [];
   });
   const [scoreFilter, setScoreFilter] = useState(() => {
-    const saved = sessionStorage.getItem(`job-${params.jobId}-scoreFilter`);
+    const saved = sessionStorage.getItem(
+      `job-${resolvedParams.jobId}-scoreFilter`,
+    );
     return saved ? JSON.parse(saved) : [];
   });
   const [sortBy, setSortBy] = useState(() => {
-    const saved = sessionStorage.getItem(`job-${params.jobId}-sortBy`);
+    const saved = sessionStorage.getItem(`job-${resolvedParams.jobId}-sortBy`);
     return saved || "default";
   });
   const [sortOrder, setSortOrder] = useState(() => {
-    const saved = sessionStorage.getItem(`job-${params.jobId}-sortOrder`);
+    const saved = sessionStorage.getItem(
+      `job-${resolvedParams.jobId}-sortOrder`,
+    );
     return saved || "desc";
   });
   const [viewMode, setViewMode] = useState(() => {
-    const saved = sessionStorage.getItem(`job-${params.jobId}-viewMode`);
+    const saved = sessionStorage.getItem(
+      `job-${resolvedParams.jobId}-viewMode`,
+    );
     return saved || "grid";
   });
   const [assessmentSplitViewOpen, setAssessmentSplitViewOpen] = useState(false);
@@ -122,6 +147,7 @@ export default function JobApplicantsPage({ params }) {
     communication: 7,
     strategic: 8,
   });
+  const [pendingAction, setPendingAction] = useState();
 
   const { toast } = useToast();
 
@@ -130,7 +156,7 @@ export default function JobApplicantsPage({ params }) {
   const [showFeedbackReview, setShowFeedbackReview] = useState(false);
 
   // Variable para jobId
-  const jobId = params.jobId;
+  const jobId = resolvedParams.jobId;
 
   const handleSaveScores = () => {
     // In a real app, this would make an API call to save the scores
@@ -531,6 +557,98 @@ export default function JobApplicantsPage({ params }) {
     return candidates.find((c) => c.id === candidateId);
   };
   const [isEditing, setIsEditing] = useState(false);
+
+  const candidateActionMutation = useMutation({
+    mutationFn: async (action) => {
+      return await apiRequest(
+        "PUT",
+        `/api/admin/candidates/${selectedAssessment?.id}/status`,
+        {
+          action,
+          reviewedBy: "Holly",
+          reviewedAt: new Date().toISOString(),
+        },
+      );
+    },
+    onSuccess: (_, action) => {
+      queryClient.invalidateQueries({
+        queryKey: [`/api/admin/jobs/${jobId}/candidates`],
+      });
+
+      setConfirmDialogOpen(false);
+      setPendingAction(null);
+      setScoresLocked(true); // Lock scores after final action
+
+      // Route to interview availability page for interview invitations (no toast needed)
+      if (action === "interview" && selectedAssessment) {
+        // Directly navigate to interview availability without showing a toast
+        router.push(
+          buildUrlWithCurrentState(
+            `/admin/interview-availability/${selectedAssessment.id}`,
+          ),
+        );
+      } else {
+        // Show toast for other actions only
+        const actionLabels = {
+          reject: "marked as not progressing",
+          match: "matched to employer",
+          interview: "invited to interview",
+        };
+        toast({
+          title: "Candidate Updated",
+          description: `Candidate has been ${actionLabels[action]} successfully`,
+        });
+        closeAssessmentSplitView();
+      }
+    },
+  });
+
+  // Navigate between candidates within filtered view (respects all filters)
+  const navigateToCandidate = (direction) => {
+    if (!selectedAssessment) return;
+
+    // Use filtered candidates instead of status group - respects all current filters
+    const currentIndex = filteredCandidates.findIndex(
+      (c) => c.id === selectedAssessment.id,
+    );
+    let newIndex;
+
+    if (direction === "prev") {
+      newIndex =
+        currentIndex > 0 ? currentIndex - 1 : filteredCandidates.length - 1;
+    } else {
+      newIndex =
+        currentIndex < filteredCandidates.length - 1 ? currentIndex + 1 : 0;
+    }
+
+    const newCandidate = filteredCandidates[newIndex];
+    setSelectedAssessment(newCandidate);
+
+    // Dynamic locking based on new candidate status
+    const isInterviewComplete =
+      newCandidate.subStatus === "pollen_interview_complete" ||
+      newCandidate.subStatus === "awaiting_employer" ||
+      newCandidate.subStatus === "interview_requested" ||
+      newCandidate.subStatus === "interview_booked" ||
+      newCandidate.subStatus === "interview_complete" ||
+      newCandidate.subStatus === "offer_issued" ||
+      newCandidate.subStatus === "hired";
+
+    if (isInterviewComplete) {
+      setScoresApproved(true); // Scores are automatically approved for completed interviews
+      setScoresLocked(true); // Lock scores for completed interviews
+    } else {
+      setScoresApproved(false); // Reset approval state for new assessment
+      setScoresLocked(false); // Reset lock state for new assessment
+    }
+    setIsEditing(false);
+  };
+
+  const confirmCandidateAction = () => {
+    if (pendingAction) {
+      candidateActionMutation.mutate(pendingAction);
+    }
+  };
 
   // Estados de loading
   if (loading) {
@@ -2141,6 +2259,890 @@ export default function JobApplicantsPage({ params }) {
           </div>
         )}
       </div>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirm Action</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-gray-700">
+              {pendingAction === "interview" &&
+                "Are you sure you want to invite this candidate to a Pollen interview?"}
+              {pendingAction === "match" &&
+                "Are you sure you want to match this candidate to an employer?"}
+              {pendingAction === "reject" &&
+                "Are you sure you want to mark this candidate as not progressing?"}
+            </p>
+            <p className="text-sm text-gray-500 mt-2">
+              This action cannot be undone.
+            </p>
+          </div>
+          <DialogFooter className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setConfirmDialogOpen(false);
+                setPendingAction(null);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={confirmCandidateAction}
+              disabled={candidateActionMutation.isPending}
+              className={
+                pendingAction === "reject"
+                  ? "bg-red-600 hover:bg-red-700"
+                  : pendingAction === "interview"
+                    ? "bg-blue-600 hover:bg-blue-700"
+                    : "bg-green-600 hover:bg-green-700"
+              }
+            >
+              {candidateActionMutation.isPending ? "Processing..." : "Confirm"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Full Page Assessment Modal */}
+      {isMobileFullPage && selectedAssessment && (
+        <div className="fixed inset-0 z-50 bg-white overflow-y-auto">
+          <div className="sticky top-0 z-30 bg-white border-b border-gray-200">
+            {/* Header Section */}
+            <div className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-lg font-semibold text-gray-900">
+                      {selectedAssessment.name} - Assessment
+                    </h2>
+                    {/* Provide Update button for candidates who completed Pollen interviews */}
+                    {selectedAssessment.subStatus ===
+                      "Pollen Interview Complete" && (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        // TODO:
+                        // onClick={() =>
+                        //   setLocation(
+                        //     buildUrlWithCurrentState(
+                        //       `/admin/provide-update/${selectedAssessment.id}`,
+                        //     ),
+                        //   )
+                        //}
+                        className="text-xs px-2 py-1 bg-[#E2007A] hover:bg-[#E2007A]/90 text-white"
+                      >
+                        <FileText className="h-3 w-3 mr-1" />
+                        Provide Update
+                      </Button>
+                    )}
+
+                    {/* Review Feedback button for candidates who stopped at employer */}
+                    {(() => {
+                      const apiCandidate = candidates.find(
+                        (c) => c.id === selectedAssessment.id,
+                      );
+                      return (
+                        apiCandidate?.subStatus === "stopped_at_employer" &&
+                        hasUnreviewedEmployerFeedback(selectedAssessment.id)
+                      );
+                    })() && (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => {
+                          const apiCandidate = candidates.find(
+                            (c) => c.id === selectedAssessment.id,
+                          );
+                          const feedbackData =
+                            apiCandidate?.employerFeedback ||
+                            getCandidateData(selectedAssessment.id)
+                              .employerFeedback;
+                          setSelectedFeedback(feedbackData);
+                          setShowFeedbackReview(true);
+                        }}
+                        className="text-xs px-2 py-1 bg-orange-600 hover:bg-orange-700 text-white"
+                      >
+                        <MessageSquare className="h-3 w-3 mr-1" />
+                        Review Feedback
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {/* Profile and Message buttons moved to right side */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    //TODO:
+                    // onClick={() => {
+                    //   sessionStorage.setItem(
+                    //     "previousPage",
+                    //     `/admin/job-applicants-grid/${jobId}`,
+                    //   );
+                    //   setLocation(
+                    //     `/admin/consolidated-candidate-profile/${selectedAssessment.id}`,
+                    //   );
+                    // }}
+                    className="text-xs px-2 py-1"
+                  >
+                    <User className="h-3 w-3" />
+                    Profile
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    // TODO:
+                    // onClick={() => {
+                    //   sessionStorage.setItem(
+                    //     "previousPage",
+                    //     `/admin/job-applicants-grid/${jobId}`,
+                    //   );
+                    //   setLocation(
+                    //     `/admin/candidate-message/${selectedAssessment.id}`,
+                    //   );
+                    // }}
+                    className="text-xs px-2 py-1"
+                  >
+                    <MessageSquare className="h-3 w-3" />
+                    Message
+                  </Button>
+
+                  {/* Navigation buttons */}
+                  <div className="flex items-center gap-2 ml-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigateToCandidate("prev")}
+                      disabled={
+                        filteredCandidates.findIndex(
+                          (c) => c.id === selectedAssessment?.id,
+                        ) === 0
+                      }
+                      className="text-xs px-2 py-1"
+                    >
+                      <ChevronLeft className="h-3 w-3" />
+                    </Button>
+
+                    <span className="text-xs text-gray-600 px-2">
+                      {filteredCandidates.findIndex(
+                        (c) => c.id === selectedAssessment?.id,
+                      ) + 1}{" "}
+                      of {filteredCandidates.length}
+                    </span>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigateToCandidate("next")}
+                      disabled={
+                        filteredCandidates.findIndex(
+                          (c) => c.id === selectedAssessment?.id,
+                        ) ===
+                        filteredCandidates.length - 1
+                      }
+                      className="text-xs px-2 py-1"
+                    >
+                      <ChevronRight className="h-3 w-3" />
+                    </Button>
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setIsMobileFullPage(false);
+                      setAssessmentSplitViewOpen(true);
+                    }}
+                    className="text-xs px-2 py-1"
+                  >
+                    <SplitSquareHorizontal className="h-3 w-3 mr-1" />
+                    Split Screen
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setIsMobileFullPage(false);
+                      setAssessmentSplitViewOpen(false);
+                      setSelectedAssessment(null);
+                    }}
+                    className="p-2 hover:bg-gray-100 border border-gray-300"
+                    title="Close Assessment"
+                  >
+                    <X className="h-5 w-5 text-gray-600" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Overall Score Section - Part of same sticky container */}
+            <div className="border-t border-gray-200 px-4 py-3">
+              <div className="flex items-center gap-6">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-[#E2007A] mb-1">
+                    {Math.round(
+                      ((editedScores.creative +
+                        editedScores.dataAnalysis +
+                        editedScores.communication +
+                        editedScores.strategic) /
+                        4) *
+                        10,
+                    )}
+                    %
+                  </div>
+                  <div className="text-sm font-medium text-gray-700">
+                    Overall Score
+                  </div>
+                </div>
+                <div className="h-10 w-px bg-gray-300" />
+                <div>
+                  <span className="text-gray-600 text-sm">
+                    Submission Date:
+                  </span>
+                  <div className="font-medium text-gray-900">16/01/2025</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Interaction Info Section - Positioned beneath top panel like split screen */}
+            <div className="border-t border-gray-200 px-4 py-3 bg-gray-50">
+              {(() => {
+                const candidateData = getCandidateData(selectedAssessment.id);
+                return candidateData.hasPollenInteraction ? (
+                  <div className="flex items-center gap-2">
+                    <span className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center text-xs text-white font-bold">
+                      ✓
+                    </span>
+                    <span className="text-sm text-gray-600">
+                      Spoke to {candidateData.lastPollenTeamMember} on{" "}
+                      {candidateData.lastInteractionDate}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="text-sm text-gray-600">
+                    {candidateData.applicationCount} previous{" "}
+                    {candidateData.applicationCount === 1
+                      ? "application"
+                      : "applications"}
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+          <div className="p-4 space-y-6">
+            {/* Assessment Q&A Section */}
+            <div className="space-y-4">
+              {selectedAssessment.assessmentSubmission?.responses?.map(
+                (response, index) => {
+                  const cleanQuestion = response.question.replace(
+                    /^Q\d+\.\s*/,
+                    "",
+                  );
+
+                  return (
+                    <div key={index} className="border rounded-lg p-4 bg-white">
+                      <div className="font-medium text-sm mb-3 text-gray-700">
+                        Q{index + 1}: {cleanQuestion}
+                      </div>
+                      <div className="text-sm text-gray-600 mb-3 leading-relaxed">
+                        {response.response}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        Word count: {response.wordCount}
+                      </div>
+                    </div>
+                  );
+                },
+              ) || (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">
+                    No assessment responses available
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Individual Scores Section - Same as split screen */}
+            <div className="border rounded-lg bg-gray-50">
+              <div className="px-6 py-4 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Individual Assessment Scores
+                </h3>
+                <p className="text-sm text-gray-600 mt-1">
+                  Rate performance across key areas (1-10 scale)
+                </p>
+              </div>
+              <div className="p-6 pb-8 space-y-6">
+                {/* Creative Campaign Development */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Lightbulb className="h-4 w-4 text-gray-600" />
+                    <span className="font-medium text-sm">
+                      Creative Campaign Development
+                    </span>
+                    <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                      {editedScores.creative}/10
+                    </span>
+                  </div>
+                  {isEditing ? (
+                    <div className="px-2">
+                      <input
+                        type="range"
+                        min="1"
+                        max="10"
+                        value={editedScores.creative}
+                        onChange={(e) =>
+                          setEditedScores((prev) => ({
+                            ...prev,
+                            creative: parseInt(e.target.value),
+                          }))
+                        }
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                      />
+                      <div className="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>1</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4</span>
+                        <span>5</span>
+                        <span>6</span>
+                        <span>7</span>
+                        <span>8</span>
+                        <span>9</span>
+                        <span>10</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="px-2">
+                      <div className="w-full h-2 bg-gray-200 rounded-lg relative">
+                        <div
+                          className="h-full bg-[#E2007A] rounded-lg"
+                          style={{
+                            width: `${editedScores.creative * 10}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Data Analysis & Insights */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="h-4 w-4 text-gray-600" />
+                    <span className="font-medium text-sm">
+                      Data Analysis & Insights
+                    </span>
+                    <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                      {editedScores.dataAnalysis}/10
+                    </span>
+                  </div>
+                  {isEditing ? (
+                    <div className="px-2">
+                      <input
+                        type="range"
+                        min="1"
+                        max="10"
+                        value={editedScores.dataAnalysis}
+                        onChange={(e) =>
+                          setEditedScores((prev) => ({
+                            ...prev,
+                            dataAnalysis: parseInt(e.target.value),
+                          }))
+                        }
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                      />
+                      <div className="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>1</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4</span>
+                        <span>5</span>
+                        <span>6</span>
+                        <span>7</span>
+                        <span>8</span>
+                        <span>9</span>
+                        <span>10</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="px-2">
+                      <div className="w-full h-2 bg-gray-200 rounded-lg relative">
+                        <div
+                          className="h-full bg-[#E2007A] rounded-lg"
+                          style={{
+                            width: `${editedScores.dataAnalysis * 10}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Communication & Presentation */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4 text-gray-600" />
+                    <span className="font-medium text-sm">
+                      Communication & Presentation
+                    </span>
+                    <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                      {editedScores.communication}/10
+                    </span>
+                  </div>
+                  {isEditing ? (
+                    <div className="px-2">
+                      <input
+                        type="range"
+                        min="1"
+                        max="10"
+                        value={editedScores.communication}
+                        onChange={(e) =>
+                          setEditedScores((prev) => ({
+                            ...prev,
+                            communication: parseInt(e.target.value),
+                          }))
+                        }
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                      />
+                      <div className="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>1</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4</span>
+                        <span>5</span>
+                        <span>6</span>
+                        <span>7</span>
+                        <span>8</span>
+                        <span>9</span>
+                        <span>10</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="px-2">
+                      <div className="w-full h-2 bg-gray-200 rounded-lg relative">
+                        <div
+                          className="h-full bg-[#E2007A] rounded-lg"
+                          style={{
+                            width: `${editedScores.communication * 10}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Strategic Thinking */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-gray-600" />
+                    <span className="font-medium text-sm">
+                      Strategic Thinking
+                    </span>
+                    <span className="ml-auto text-lg font-bold text-[#E2007A]">
+                      {editedScores.strategic}/10
+                    </span>
+                  </div>
+                  {isEditing ? (
+                    <div className="px-2">
+                      <input
+                        type="range"
+                        min="1"
+                        max="10"
+                        value={editedScores.strategic}
+                        onChange={(e) =>
+                          setEditedScores((prev) => ({
+                            ...prev,
+                            strategic: parseInt(e.target.value),
+                          }))
+                        }
+                        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                      />
+                      <div className="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>1</span>
+                        <span>2</span>
+                        <span>3</span>
+                        <span>4</span>
+                        <span>5</span>
+                        <span>6</span>
+                        <span>7</span>
+                        <span>8</span>
+                        <span>9</span>
+                        <span>10</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="px-2">
+                      <div className="w-full h-2 bg-gray-200 rounded-lg relative">
+                        <div
+                          className="h-full bg-[#E2007A] rounded-lg"
+                          style={{
+                            width: `${editedScores.strategic * 10}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Next Steps Section for full page */}
+            <div className="border rounded-lg bg-gray-50">
+              <div className="px-6 py-4 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Next Steps
+                </h3>
+              </div>
+
+              <div className="p-6 pb-8 space-y-6">
+                {/* Step 1 - Score Review */}
+                {["Unopened", "Under Review"].includes(
+                  selectedAssessment.subStatus,
+                ) ? (
+                  <div className="border rounded-lg p-6 bg-white">
+                    <div className="space-y-4">
+                      <h4 className="text-xs sm:text-sm font-medium text-gray-900">
+                        Step 1: Assessment Score Review
+                      </h4>
+                      <p className="text-xs text-gray-600 mb-4">
+                        Review AI-generated scores and make adjustments if
+                        needed before proceeding.
+                      </p>
+                      <div className="flex flex-wrap gap-4 items-center">
+                        {!(
+                          scoresApproved || isScoreApproved(selectedAssessment)
+                        ) ? (
+                          <Button
+                            onClick={handleApproveAIScores}
+                            size="default"
+                            className="bg-green-600 hover:bg-green-700 h-12 px-6 text-base font-medium"
+                          >
+                            <ThumbsUp className="h-5 w-5 mr-2" />
+                            Approve Scores
+                          </Button>
+                        ) : (
+                          <div className="bg-green-100 border border-green-200 rounded-lg p-4 inline-flex items-center gap-3 text-green-700">
+                            <Check className="h-5 w-5" />
+                            <span className="font-medium text-base">
+                              Scores Approved
+                            </span>
+                          </div>
+                        )}
+
+                        {isEditing ? (
+                          <>
+                            <Button
+                              onClick={handleSaveScores}
+                              size="default"
+                              className="bg-green-600 hover:bg-green-700 h-12 px-6 text-base font-medium"
+                            >
+                              <Check className="h-5 w-5 mr-2" />
+                              Save Changes
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="default"
+                              onClick={() => setIsEditing(false)}
+                              className="h-12 px-6 text-base font-medium"
+                            >
+                              Cancel
+                            </Button>
+                          </>
+                        ) : (
+                          <Button
+                            variant="outline"
+                            size="default"
+                            onClick={() => setIsEditing(true)}
+                            className="h-12 px-6 text-base font-medium"
+                          >
+                            <Edit3 className="h-5 w-5 mr-2" />
+                            Edit Scores
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="border rounded-lg p-6 bg-gray-100">
+                    <div className="flex items-center justify-center gap-3 text-gray-700 mb-2">
+                      <Lock className="h-5 w-5" />
+                      <span className="font-medium text-lg">
+                        Assessment Scores Locked
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 text-center">
+                      Scores are automatically locked when candidates progress
+                      beyond the initial review stage.
+                    </p>
+                  </div>
+                )}
+
+                {["Unopened", "Under Review"].includes(
+                  selectedAssessment.subStatus,
+                ) &&
+                  !(scoresApproved || isScoreApproved(selectedAssessment)) && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                      <div className="flex items-center gap-2 text-amber-800">
+                        <AlertTriangle className="h-5 w-5" />
+                        <span className="text-base font-medium">
+                          Approve assessment scores before making candidate
+                          decision
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                {/* Step 2 - Candidate action buttons */}
+                <div className="border rounded-lg p-6 bg-white">
+                  <div className="space-y-4 pb-18">
+                    <h4 className="text-xs sm:text-sm font-medium text-gray-900 mb-2">
+                      Step 2: Candidate Decision
+                    </h4>
+                    <p className="text-xs text-gray-600 mb-3">
+                      Choose next action for this candidate. This will lock
+                      scores and update their status.
+                    </p>
+                    <div className="flex gap-4 flex-wrap">
+                      {/* Show different buttons based on status */}
+                      {["Unopened", "Under Review"].includes(
+                        selectedAssessment.subStatus,
+                      ) && (
+                        <>
+                          <Button
+                            onClick={() => handleCandidateAction("interview")}
+                            disabled={
+                              !(
+                                scoresApproved ||
+                                isScoreApproved(selectedAssessment)
+                              ) ||
+                              candidateActionMutation.isPending ||
+                              scoresLocked
+                            }
+                            size="default"
+                            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
+                          >
+                            <Calendar className="h-5 w-5 mr-2" />
+                            Invite to Pollen Interview
+                          </Button>
+
+                          {(() => {
+                            const candidateData = getCandidateData(
+                              selectedAssessment.id,
+                            );
+                            const canFastTrackToEmployer =
+                              candidateData.hasPollenInteraction &&
+                              candidateData.isFastTrack;
+
+                            return canFastTrackToEmployer ? (
+                              <Button
+                                onClick={() => handleCandidateAction("match")}
+                                disabled={
+                                  !(
+                                    scoresApproved ||
+                                    isScoreApproved(selectedAssessment)
+                                  ) ||
+                                  candidateActionMutation.isPending ||
+                                  scoresLocked ||
+                                  !canFastTrackToEmployer
+                                }
+                                size="default"
+                                className="bg-green-600 hover:bg-green-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
+                              >
+                                <UserCheck className="h-5 w-5 mr-2" />
+                                Match to Employer
+                              </Button>
+                            ) : null;
+                          })()}
+
+                          {/* Not progressing option always available */}
+                          <Button
+                            onClick={() => handleCandidateAction("reject")}
+                            disabled={
+                              !(
+                                scoresApproved ||
+                                isScoreApproved(selectedAssessment)
+                              ) ||
+                              candidateActionMutation.isPending ||
+                              scoresLocked
+                            }
+                            variant="outline"
+                            size="default"
+                            className="border-red-200 text-red-700 hover:bg-red-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 h-12 px-6 text-base font-medium"
+                          >
+                            <UserX className="h-5 w-5 mr-2" />
+                            Not Progressing
+                          </Button>
+                        </>
+                      )}
+
+                      {/* Provide Update button for candidates who completed Pollen interviews */}
+                      {selectedAssessment.subStatus ===
+                        "Pollen Interview Complete" && (
+                        <Button
+                          //TODO:
+                          // onClick={() =>
+                          //  setLocation(
+                          //    buildUrlWithCurrentState(
+                          //      `/admin/provide-update/${selectedAssessment.id}`,
+                          //    ),
+                          //  )
+                          //}
+                          size="default"
+                          className="bg-purple-600 hover:bg-purple-700 h-12 px-6 text-base font-medium"
+                        >
+                          <MessageCircle className="h-5 w-5 mr-2" />
+                          Provide Update
+                        </Button>
+                      )}
+
+                      {/* Review Feedback button for candidates who stopped at employer */}
+                      {(() => {
+                        const apiCandidate = candidates.find(
+                          (c) => c.id === selectedAssessment.id,
+                        );
+                        return (
+                          apiCandidate?.subStatus === "stopped_at_employer" &&
+                          hasUnreviewedEmployerFeedback(selectedAssessment.id)
+                        );
+                      })() && (
+                        <Button
+                          onClick={() => {
+                            const apiCandidate = candidates.find(
+                              (c) => c.id === selectedAssessment.id,
+                            );
+                            const feedbackData =
+                              apiCandidate?.employerFeedback ||
+                              getCandidateData(selectedAssessment.id)
+                                .employerFeedback;
+                            setSelectedFeedback(feedbackData);
+                            setShowFeedbackReview(true);
+                          }}
+                          size="default"
+                          className="bg-orange-600 hover:bg-orange-700 h-12 px-6 text-base font-medium"
+                        >
+                          <MessageSquare className="h-5 w-5 mr-2" />
+                          Review Feedback
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Feedback Review Dialog */}
+      <Dialog open={showFeedbackReview} onOpenChange={setShowFeedbackReview}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <MessageSquare className="h-5 w-5 text-pink-600" />
+              Feedback from Employer
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedFeedback && (
+            <div className="space-y-6">
+              {/* Header showing it's direct feedback */}
+              <div className="bg-pink-50 border border-pink-200 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <FileText className="h-4 w-4 text-pink-600" />
+                  <span className="font-medium text-pink-800">
+                    Direct feedback from the employer
+                  </span>
+                </div>
+                <p className="text-sm text-pink-700">
+                  This feedback has been provided by the employer and reviewed
+                  by our team. It includes their assessment of the candidate's
+                  interview performance and specific insights about their fit
+                  for the role.
+                </p>
+              </div>
+
+              {/* Interview Scores */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-purple-600" />
+                  Employer Interview Scores
+                </h3>
+
+                <div className="grid grid-cols-4 gap-4">
+                  <div className="text-center">
+                    <div className="text-sm text-gray-600">Overall</div>
+                    <div className="text-lg font-semibold text-purple-600">
+                      {selectedFeedback.overallScore}/10
+                    </div>
+                  </div>
+
+                  <div className="text-center">
+                    <div className="text-sm text-gray-600">Skills</div>
+                    <div className="text-lg font-semibold text-blue-600">
+                      {selectedFeedback.skillsScore}/10
+                    </div>
+                  </div>
+
+                  <div className="text-center">
+                    <div className="text-sm text-gray-600">Communication</div>
+                    <div className="text-lg font-semibold text-green-600">
+                      {selectedFeedback.communicationScore}/10
+                    </div>
+                  </div>
+
+                  <div className="text-center">
+                    <div className="text-sm text-gray-600">Values Fit</div>
+                    <div className="text-lg font-semibold text-pink-600">
+                      {selectedFeedback.culturalFitScore}/10
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Feedback Notes */}
+              <div className="space-y-3">
+                <h4 className="font-medium text-purple-600">Notes:</h4>
+                <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-purple-500">
+                  <p className="text-gray-700">{selectedFeedback.notes}</p>
+                </div>
+              </div>
+
+              {/* Approval Section */}
+              {selectedFeedback.reviewStatus === "pending" && (
+                <div className="flex justify-end gap-3 pt-4 border-t">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowFeedbackReview(false)}
+                  >
+                    Close
+                  </Button>
+                  <Button
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                    onClick={() => {
+                      // Here you would typically make an API call to approve the feedback
+                      toast({
+                        title: "Feedback Approved",
+                        description:
+                          "The employer feedback has been approved and will be sent to the candidate.",
+                      });
+                      setShowFeedbackReview(false);
+                    }}
+                  >
+                    <Check className="h-4 w-4 mr-2" />
+                    Approve Feedback
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -1,8 +1,10 @@
 "use client";
 
 import { createContext, useContext, useMemo, useState, useEffect } from "react";
-import { JobSeekerRoutes } from "@/job-seeker/router";
-import { AdminRoutes } from "@/admin/router";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/query-client";
+import { JobSeekerRoutes } from "./(pages)/(portal)/(job-seeker)/router";
+import { AdminRoutes } from "./(pages)/(portal)/admin/router";
 import { LoginRoutes } from "./(pages)/login/router";
 
 const UserContext = createContext();
@@ -65,6 +67,8 @@ export function Providers({ children, user }) {
   }, [user, isInitialLoad]);
 
   return (
-    <UserContext.Provider value={userData}>{children}</UserContext.Provider>
+    <QueryClientProvider client={queryClient}>
+      <UserContext.Provider value={userData}>{children}</UserContext.Provider>
+    </QueryClientProvider>
   );
 }

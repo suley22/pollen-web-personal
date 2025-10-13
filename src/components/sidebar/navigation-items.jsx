@@ -9,6 +9,9 @@ import {
   User,
   LayoutDashboard,
   Key,
+  Heart,
+  FileText,
+  Calendar,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import {

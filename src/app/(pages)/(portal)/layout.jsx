@@ -9,6 +9,8 @@ export default function RootLayout({ children }) {
     <>
       <SidebarProvider className="testing-sidebar-layout">
         <AppSidebar />
+        <SidebarInset className="bg-gray-50">{children}</SidebarInset>
+        <AppSidebar />
         <SidebarInset className="bg-gray-50">
           <Header />
           {children}

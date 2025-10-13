@@ -923,7 +923,7 @@ export default function JobsManagmentReviewPage({
                 {!isEditing ? (
                   <ul className="space-y-2">
                     {job.responsibilities.map((responsibility, index) => (
-                      <li key={index} className="flex items-start">
+                      <li key={responsibility} className="flex items-start">
                         <CheckCircle className="h-3 w-3 mr-2 mt-1 text-green-600 flex-shrink-0" />
                         <span className="text-gray-700">{responsibility}</span>
                       </li>
@@ -933,7 +933,10 @@ export default function JobsManagmentReviewPage({
                   <div className="space-y-3">
                     {editedJob?.responsibilities?.map(
                       (responsibility, index) => (
-                        <div key={index} className="flex items-center gap-2">
+                        <div
+                          key={responsibility}
+                          className="flex items-center gap-2"
+                        >
                           <Input
                             value={responsibility}
                             onChange={(e) =>
@@ -986,7 +989,7 @@ export default function JobsManagmentReviewPage({
                 {!isEditing ? (
                   <ul className="space-y-2">
                     {job.who_would_love.map((trait, index) => (
-                      <li key={index} className="flex items-start">
+                      <li key={trait} className="flex items-start">
                         <CheckCircle className="h-3 w-3 mr-2 mt-1 text-green-600 flex-shrink-0" />
                         <span className="text-gray-700">{trait}</span>
                       </li>
@@ -995,7 +998,7 @@ export default function JobsManagmentReviewPage({
                 ) : (
                   <div className="space-y-3">
                     {editedJob?.who_would_love?.map((trait, index) => (
-                      <div key={index} className="flex items-center gap-2">
+                      <div key={trait} className="flex items-center gap-2">
                         <Input
                           value={trait}
                           onChange={(e) =>
@@ -1068,20 +1071,21 @@ export default function JobsManagmentReviewPage({
               <CardContent>
                 {!isEditing ? (
                   <ul className="space-y-2">
-                    {job.pollen_approved_requirements?.map(
-                      (requirement, index) => (
-                        <li key={index} className="flex items-start">
-                          <CheckCircle className="h-3 w-3 mr-2 mt-1 text-green-600 flex-shrink-0" />
-                          <span className="text-gray-700">{requirement}</span>
-                        </li>
-                      ),
-                    )}
+                    {job.pollen_approved_requirements?.map((requirement) => (
+                      <li key={requirement} className="flex items-start">
+                        <CheckCircle className="h-3 w-3 mr-2 mt-1 text-green-600 flex-shrink-0" />
+                        <span className="text-gray-700">{requirement}</span>
+                      </li>
+                    ))}
                   </ul>
                 ) : (
                   <div className="space-y-3">
                     {editedJob?.pollen_approved_requirements?.map(
                       (requirement, index) => (
-                        <div key={index} className="flex items-center gap-2">
+                        <div
+                          key={requirement}
+                          className="flex items-center gap-2"
+                        >
                           <Input
                             value={requirement}
                             onChange={(e) =>
@@ -1197,9 +1201,9 @@ export default function JobsManagmentReviewPage({
                             Key Traits:
                           </span>
                           <div className="flex flex-wrap gap-1 mt-1">
-                            {persona.traits.map((trait, index) => (
+                            {persona.traits.map((trait) => (
                               <Badge
-                                key={index}
+                                key={trait}
                                 className="bg-blue-100 text-blue-800"
                               >
                                 {trait}
@@ -1367,7 +1371,7 @@ export default function JobsManagmentReviewPage({
                               <div className="space-y-8">
                                 {assessmentData.structuredQuestions.tasks.map(
                                   (task, index) => (
-                                    <div key={index} className="space-y-3">
+                                    <div key={task.id} className="space-y-3">
                                       <h3 className="text-base font-semibold text-gray-900">
                                         {index + 2}.{" "}
                                         {task.title || `Task ${index + 1}`}{" "}
@@ -1375,6 +1379,7 @@ export default function JobsManagmentReviewPage({
                                       </h3>
                                       <div className="text-gray-700 text-sm leading-relaxed space-y-2">
                                         <div
+                                          // eslint-disable-next-line react/no-danger
                                           dangerouslySetInnerHTML={{
                                             __html: task.content
                                               .replace(/\n\n/g, "</p><p>")
@@ -1416,6 +1421,7 @@ export default function JobsManagmentReviewPage({
                               <div className="prose max-w-none">
                                 <div
                                   className="whitespace-pre-wrap leading-relaxed text-gray-700"
+                                  // eslint-disable-next-line react/no-danger
                                   dangerouslySetInnerHTML={{
                                     __html: assessmentData.generatedContent
                                       .replace(/\n\n/g, "</p><p>")

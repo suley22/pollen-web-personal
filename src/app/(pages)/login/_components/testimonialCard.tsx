@@ -41,9 +41,9 @@ export function TestimonialCard({
         </div>
 
         <div className="flex space-x-1">
-          {[...Array(5)].map((_, i) => (
+          {[...Array(5)].map((value, i) => (
             <Star
-              key={i}
+              key={value}
               className={`w-5 h-5 ${i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
             />
           ))}

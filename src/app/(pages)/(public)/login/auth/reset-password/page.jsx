@@ -4,7 +4,7 @@ import { useActionState, useEffect, useState } from "react";
 import { Button } from "@/components/ui/buttons/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LoginRoutes } from "@/login/router";
+import { LoginRoutes } from "@/app/(pages)/(public)/login/router";
 import { updatePassword } from "../../actions";
 import { usePasswordReset } from "../../_hooks/usePasswordReset";
 import Link from "next/link";
@@ -176,10 +176,12 @@ export default function ResetPasswordPage() {
 
             {/* Password match indicator */}
             {confirmPassword.length > 0 && (
-              <div className={`mt-2 text-sm flex items-center gap-2 ${
-                passwordsMatch ? "text-green-600" : "text-red-500"
-              }`}>
-                {passwordsMatch ? "✔" : "✖"} 
+              <div
+                className={`mt-2 text-sm flex items-center gap-2 ${
+                  passwordsMatch ? "text-green-600" : "text-red-500"
+                }`}
+              >
+                {passwordsMatch ? "✔" : "✖"}
                 {passwordsMatch ? "Passwords match" : "Passwords do not match"}
               </div>
             )}
@@ -201,9 +203,9 @@ export default function ResetPasswordPage() {
             </div>
           )}
 
-          <Button 
-            type="submit" 
-            disabled={isLoading || !isPasswordValid || !passwordsMatch} 
+          <Button
+            type="submit"
+            disabled={isLoading || !isPasswordValid || !passwordsMatch}
             className="w-full"
           >
             {isLoading ? "Updating..." : "Update Password"}

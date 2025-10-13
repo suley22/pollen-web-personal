@@ -2,12 +2,12 @@ import { z } from "zod";
 
 export const firstNameErrorMessages = {
   MIN_FIRST_NAME_LENGTH: "El nombre debe tener al menos 3 caracteres",
-  INVALID_FIRST_NAME: "El nombre no puede contener números o caracteres especiales"
+  INVALID_FIRST_NAME: "The first name cannot contain numbers or special characters"
 };
 
 export const lastNameErrorMessages = {
   MIN_LAST_NAME_LENGTH: "El apellido debe tener al menos 3 caracteres",
-  INVALID_LAST_NAME: "El apellido no puede contener números o caracteres especiales"
+  INVALID_LAST_NAME: "The last name cannot contain numbers or special characters"
 };
 
 export const UserInfoModel = z.object({

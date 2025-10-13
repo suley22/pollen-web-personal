@@ -617,7 +617,7 @@ export const displayCandidates = candidates.length > 0 ? candidates.map(candidat
             {
               questionId: 3,
               question: "Q3. Describe a time when you had to work under pressure to meet a tight deadline. How did you manage your time and priorities?",
-              response: "During my part-time job at a local café, we had to prepare for a large catering order with only one day's notice when another staff member called in sick. I made a list of everything that needed to be done and tackled the most time-sensitive tasks first, like ordering extra supplies. I stayed organised by setting small goals throughout the day and checking them off as I completed them. I also communicated clearly with my manager about progress. We successfully delivered the order on time and received great feedback from the customer.",
+              response: "During my part-time job at a local coffe, we had to prepare for a large catering order with only one day's notice when another staff member called in sick. I made a list of everything that needed to be done and tackled the most time-sensitive tasks first, like ordering extra supplies. I stayed organised by setting small goals throughout the day and checking them off as I completed them. I also communicated clearly with my manager about progress. We successfully delivered the order on time and received great feedback from the customer.",
               wordCount: 298
             }
           ]

@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUser } from "@/app/providers";
 import { LoginRoutes } from "@/login/router";
 import { useCallback, memo, useMemo } from "react";
+import Link from "next/link";
 
 export const LoginStatusButton = memo(() => {
   const user = useUser();
@@ -41,7 +42,10 @@ export const LoginStatusButton = memo(() => {
       )}
 
       {user.isLogged && !user.isCheckingSession && (
-        <div className="flex flex-row gap-2 cursor-pointer" onClick={onClick}>
+        <Link
+          href={user.redirectUrl}
+          className="flex flex-row gap-2 cursor-pointer"
+        >
           <Avatar className="h-8 w-8 rounded-lg">
             <AvatarImage
               src={user.avatar}
@@ -56,7 +60,7 @@ export const LoginStatusButton = memo(() => {
             <span className="truncate font-medium">{user.name}</span>
             <span className="truncate text-xs">{user.email}</span>
           </div>
-        </div>
+        </Link>
       )}
     </div>
   );

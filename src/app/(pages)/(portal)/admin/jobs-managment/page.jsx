@@ -149,8 +149,8 @@ export default function JobsManagmentPage() {
           >
             <option value="all">All Jobs</option>
             <option value="mine">My Assigned Jobs</option>
-            <option value="karen">Karen&apos;s Jobs</option>
-            <option value="sophie">Sophie&apos;s Jobs</option>
+            <option value="karen">Karen's Jobs</option>
+            <option value="sophie">Sophie's Jobs</option>
           </select>
           <select
             value={form.selectedStatus}
@@ -334,12 +334,9 @@ export default function JobsManagmentPage() {
                             onClick={(e) => {
                               e.stopPropagation();
                               router.push(
-                                `/admin/jobs-managment/job-applicants`,
+                                `/admin/jobs-managment/job-applicants/${job.id}`,
                               );
                             }}
-                            //    e.stopPropagation();
-                            //    setLocation(`/admin/job-applicants-grid/${job.id}`);
-                            //  }}
                             className="border-pink-200 text-pink-700 hover:bg-pink-50"
                           >
                             <Eye className="h-4 w-4 mr-1" />

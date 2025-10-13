@@ -4,15 +4,15 @@ import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
-} from "@/componentsai-elements/conversation";
-import { Message, MessageContent } from "@/componentsai-elements/message";
+} from "@/components/ai-elements/conversation";
+import { Message, MessageContent } from "@/components/ai-elements/message";
 import { JSX } from "react";
-import { Image } from "@/componentsai-elements/image";
+import { Image } from "@/components/ai-elements/image";
 
 import EmptyState from "./(components)/empty-state";
 import ConversationInput from "./(components)/conversation-input";
 import { useChatMessages } from "./(hooks)/useChatMessages";
-import { Loader } from "@/componentsai-elements/loader";
+import { Loader } from "@/components/ai-elements/loader";
 import { Alert } from "@/components/ui/alert";
 
 export default function IA(): JSX.Element {

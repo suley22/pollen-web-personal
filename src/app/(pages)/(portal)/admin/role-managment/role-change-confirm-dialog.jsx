@@ -68,7 +68,7 @@ export function RoleChangeConfirmDialog({
             </div>
           </div>
           <p className="text-xs text-gray-500 mt-3">
-            This action will immediately change the user's permissions and
+            This action will immediately change the user&apos;s permissions and
             access level.
           </p>
         </div>

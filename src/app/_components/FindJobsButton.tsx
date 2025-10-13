@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/buttons/button";
-import { useUser } from "./providers";
+import { useUser } from "../providers";
 import { useRouter } from "next/navigation";
 
 export const FindJobsButton = () => {

@@ -1,43 +1,38 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { getEmployerProfile } from "@/app/(pages)/(portal)/admin/employers-managment/actions";
 
 export function useEmployerManagement() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [employers, setEmployers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const loadingRef = useRef(false);
 
-  useEffect(() => {
-    loadApplications();
-  }, [selectedStatus]);
-
-  // Usar debounce para la búsqueda
+  // Debounce search term
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (searchTerm !== "") {
-        loadApplications();
-      }
+      setDebouncedSearchTerm(searchTerm);
     }, 500);
 
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
 
-  // Cargar todas las aplicaciones cuando se borre la búsqueda
-  useEffect(() => {
-    if (searchTerm === "") {
-      loadApplications();
+  const loadApplications = useCallback(async () => {
+    // Evitar llamadas duplicadas
+    if (loadingRef.current) {
+      return;
     }
-  }, [searchTerm]);
 
-  async function loadApplications() {
+    loadingRef.current = true;
     setLoading(true);
     setError(null);
 
     try {
       const result = await getEmployerProfile({
         status: selectedStatus,
-        searchTerm: searchTerm.trim(),
+        searchTerm: debouncedSearchTerm.trim(),
       });
 
       const employersResult = result.data.map((employer) => ({
@@ -68,15 +63,21 @@ export function useEmployerManagement() {
       setError("Failed to load employers: " + err.message);
     } finally {
       setLoading(false);
+      loadingRef.current = false;
     }
-  }
+  }, [selectedStatus, debouncedSearchTerm]);
 
-  const addButtonOnClick = () => {
+  // Load employers when loadApplications function changes
+  useEffect(() => {
+    loadApplications();
+  }, [loadApplications]);
+
+  const addButtonOnClick = useCallback(() => {
     console.log("Funciona");
-  };
+  }, []);
 
   // Función para obtener el badge según el status
-  const getStatusBadge = (status) => {
+  const getStatusBadge = useCallback((status) => {
     switch (status) {
       case "pending":
         return (
@@ -99,20 +100,32 @@ export function useEmployerManagement() {
       default:
         return null;
     }
-  };
+  }, []);
 
-  return {
-    form: {
-      selectedStatus: selectedStatus,
-      searchTerm: searchTerm,
-      employers: employers,
-      loading: loading,
-      error: error,
-      setSelectedStatus: setSelectedStatus,
-      setSearchTerm: setSearchTerm,
-      loadApplications: loadApplications,
-      addButtonOnClick: addButtonOnClick,
-      getStatusBadge: getStatusBadge,
-    },
-  };
+  return useMemo(
+    () => ({
+      form: {
+        selectedStatus: selectedStatus,
+        searchTerm: searchTerm,
+        employers: employers,
+        loading: loading,
+        error: error,
+        setSelectedStatus: setSelectedStatus,
+        setSearchTerm: setSearchTerm,
+        loadApplications: loadApplications,
+        addButtonOnClick: addButtonOnClick,
+        getStatusBadge: getStatusBadge,
+      },
+    }),
+    [
+      selectedStatus,
+      searchTerm,
+      employers,
+      loading,
+      error,
+      loadApplications,
+      addButtonOnClick,
+      getStatusBadge,
+    ],
+  );
 }

@@ -104,7 +104,16 @@ function SidebarProvider({
       toggleSidebar,
       isCollapsedActive,
     }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
+    [
+      state,
+      open,
+      setOpen,
+      isMobile,
+      openMobile,
+      setOpenMobile,
+      toggleSidebar,
+      isCollapsedActive,
+    ],
   );
 
   return (

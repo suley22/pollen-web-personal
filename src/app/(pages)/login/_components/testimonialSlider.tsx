@@ -72,9 +72,9 @@ export function TestimonialSlider() {
         </button>
 
         <div className="flex space-x-2">
-          {testimonials.map((_, index) => (
+          {testimonials.map((testimonial, index) => (
             <button
-              key={index}
+              key={testimonial.name}
               onClick={() => setCurrentIndex(index)}
               className={`w-2 h-2 rounded-full transition-colors duration-200 ${
                 index === currentIndex ? "bg-gray-600" : "bg-gray-300"

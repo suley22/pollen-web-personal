@@ -1,0 +1,26 @@
+"use client";
+
+import { createContext, useContext, useState, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { JobSeekerRoutes } from "@/job-seeker/router";
+import { AdminRoutes } from "@/admin/router";
+import { LoginRoutes } from "./(pages)/login/router";
+
+const UserContext = createContext();
+
+const defaultValues = {
+  name: "Guest User",
+  email: "",
+  avatar: "https://www.gravatar.com/avatar/?d=mp",
+  role: "job_seeker",
+};
+
+export function useUser() {
+  return useContext(UserContext);
+}
+
+export const UserContextProvider = ({ children }) => {
+  const [userData, setUserData] = useState({ isCheckingSession: true });
+  const router = useRouter();
+
+  useEffect(() => {

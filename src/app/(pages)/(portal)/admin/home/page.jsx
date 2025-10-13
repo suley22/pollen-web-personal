@@ -15,13 +15,14 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Alert } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { useHome } from "./useHome";
 
 export default function AdminHomePage() {
   const { homeState } = useHome();
+
   const router = useRouter();
   const notifications = [];
   const stats = {
@@ -147,12 +148,12 @@ export default function AdminHomePage() {
                     // onClick={() => setLocation(notification.route)}
                   >
                     <Bell className="h-4 w-4" />
-                    <AlertDescription className="flex items-center justify-between">
+                    {/* <AlertDescription className="flex items-center justify-between">
                       <span>{notification.message}</span>
                       <Button variant="ghost" size="sm" className="text-xs">
                         Review →
                       </Button>
-                    </AlertDescription>
+                    </AlertDescription> */}
                   </Alert>
                 ))}
               </div>

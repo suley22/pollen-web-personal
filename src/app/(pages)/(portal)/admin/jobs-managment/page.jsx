@@ -334,12 +334,9 @@ export default function JobsManagmentPage() {
                             onClick={(e) => {
                               e.stopPropagation();
                               router.push(
-                                `/admin/jobs-managment/job-applicants`,
+                                `/admin/jobs-managment/job-applicants/${job.id}`,
                               );
                             }}
-                            //    e.stopPropagation();
-                            //    setLocation(`/admin/job-applicants-grid/${job.id}`);
-                            //  }}
                             className="border-pink-200 text-pink-700 hover:bg-pink-50"
                           >
                             <Eye className="h-4 w-4 mr-1" />

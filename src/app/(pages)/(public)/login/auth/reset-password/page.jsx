@@ -4,14 +4,24 @@ import { useActionState, useEffect, useState } from "react";
 import { Button } from "@/components/ui/buttons/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LoginRoutes } from "@/login/router";
+import { LoginRoutes } from "@/app/(pages)/(public)/login/router";
 import { updatePassword } from "../../actions";
+import { usePasswordReset } from "../../_hooks/usePasswordReset";
 import Link from "next/link";
 
 export default function ResetPasswordPage() {
   const [state, formAction, isLoading] = useActionState(updatePassword);
   const [isValidSession, setIsValidSession] = useState(false);
   const [loading, setLoading] = useState(true);
+  const {
+    password,
+    confirmPassword,
+    passwordChecks,
+    isPasswordValid,
+    passwordsMatch,
+    handlePasswordChange,
+    handleConfirmPasswordChange,
+  } = usePasswordReset();
 
   useEffect(() => {
     const initializeSession = async () => {
@@ -131,7 +141,23 @@ export default function ResetPasswordPage() {
               minLength={8}
               className="mt-1"
               placeholder="Enter new password"
+              value={password}
+              onChange={(e) => handlePasswordChange(e.target.value)}
             />
+
+            {/* Password requirements */}
+            <ul className="mt-2 text-sm space-y-1">
+              {passwordChecks.map((check) => (
+                <li
+                  key={check.label}
+                  className={`flex items-center gap-2 ${
+                    check.valid ? "text-green-600" : "text-gray-500"
+                  }`}
+                >
+                  {check.valid ? "✔" : "✖"} {check.label}
+                </li>
+              ))}
+            </ul>
           </div>
 
           <div>
@@ -144,7 +170,21 @@ export default function ResetPasswordPage() {
               minLength={8}
               className="mt-1"
               placeholder="Confirm new password"
+              value={confirmPassword}
+              onChange={(e) => handleConfirmPasswordChange(e.target.value)}
             />
+
+            {/* Password match indicator */}
+            {confirmPassword.length > 0 && (
+              <div
+                className={`mt-2 text-sm flex items-center gap-2 ${
+                  passwordsMatch ? "text-green-600" : "text-red-500"
+                }`}
+              >
+                {passwordsMatch ? "✔" : "✖"}
+                {passwordsMatch ? "Passwords match" : "Passwords do not match"}
+              </div>
+            )}
           </div>
 
           {state?.error && (
@@ -163,7 +203,11 @@ export default function ResetPasswordPage() {
             </div>
           )}
 
-          <Button type="submit" disabled={isLoading} className="w-full">
+          <Button
+            type="submit"
+            disabled={isLoading || !isPasswordValid || !passwordsMatch}
+            className="w-full"
+          >
             {isLoading ? "Updating..." : "Update Password"}
           </Button>
 

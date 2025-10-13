@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 
-export default function AdminEmployersManagment() {
+export default function AdminEmployersManagement() {
   const router = useRouter();
   const { form } = useEmployerManagement();
   const companies = form.employers;

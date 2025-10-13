@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { signInWithGoogle } from "@/login/actions";
+import { signInWithGoogle } from "@/app/(pages)/(public)/login/actions";
 
 export function useLogin() {
   const [email, setEmail] = useState("");

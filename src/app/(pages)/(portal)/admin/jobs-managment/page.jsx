@@ -55,6 +55,9 @@ export default function JobsManagmentPage() {
                 fontWeight: "500",
                 padding: "0 16px",
               }}
+              onClick={() => {
+                router.push(`/admin/jobs-managment/create`);
+              }}
             >
               <Plus className="w-4 h-4" />
               Create Job

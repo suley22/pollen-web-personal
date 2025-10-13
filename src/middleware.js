@@ -1,64 +1,31 @@
 import { NextResponse } from "next/server";
 import { updateSession } from "@/lib/utils/supabase/middleware";
-import { LoginRoutes } from "./app/(pages)/login/router";
-import { AdminRoutes } from "./app/(pages)/(portal)/admin/router";
-import { JobSeekerRoutes } from "./app/(pages)/(portal)/(job-seeker)/router";
-
-const publicRoutes = [
-  LoginRoutes.login,
-  LoginRoutes.logout,
-  LoginRoutes.forgotPassword,
-  LoginRoutes.authConfirm,
-  LoginRoutes.authResetPassword,
-  LoginRoutes.authCodeCallback,
-  "/error",
-  "/",
-];
-
-// Define role-based route access
-const adminRoutes = [
-  "/admin",
-  AdminRoutes.home,
-  AdminRoutes.dashboard,
-  AdminRoutes.applications,
-  AdminRoutes.profile,
-  "/admin/jobs-managment",
-  "/admin/employers-managment",
-  "/admin/all-job-seekers",
-  "/admin/role-managment",
-];
-
-const jobSeekerRoutes = [
-  JobSeekerRoutes.home,
-  JobSeekerRoutes.dashboard,
-  JobSeekerRoutes.applications,
-  JobSeekerRoutes.profile,
-  "/jobs",
-  "/companies",
-  "/community",
-];
+import { LoginRoutes } from "./app/(pages)/(public)/login/router";
+import { ADMIN_ROUTES, AdminRoutes } from "./app/(pages)/(portal)/admin/router";
+import { JOB_SEEKER_ROUTES, JobSeekerRoutes } from "@/job-seeker/router";
+import { PUBLIC_ROUTES } from "@/public/router";
 
 // Helper function to check if route requires specific role
 function isAdminRoute(pathname) {
-  return adminRoutes.some((route) => pathname.startsWith(route));
+  return ADMIN_ROUTES.some((route) => pathname == route);
 }
 
 function isJobSeekerRoute(pathname) {
-  return jobSeekerRoutes.some((route) => pathname.startsWith(route));
+  return JOB_SEEKER_ROUTES.some((route) => pathname == route);
 }
 
 export async function middleware(request) {
   const pathname = request.nextUrl.pathname;
 
   // Allow access to public routes
-  if (publicRoutes.includes(pathname)) {
+  if (PUBLIC_ROUTES.some((route) => pathname == route)) {
     return NextResponse.next();
   }
 
   const { response, user } = await updateSession(request, true);
 
   // Redirect to login if user is not authenticated
-  if (!user && !publicRoutes.includes(pathname)) {
+  if (!user && !PUBLIC_ROUTES.includes(pathname)) {
     console.log(`🔐 Unauthenticated access attempt to: ${pathname}`);
     const url = request.nextUrl.clone();
     url.pathname = "/";

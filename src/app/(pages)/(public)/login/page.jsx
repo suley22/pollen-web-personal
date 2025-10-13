@@ -2,10 +2,13 @@
 
 import { GalleryVerticalEnd } from "lucide-react";
 import { useState } from "react";
-import { LoginForm } from "@/login/_components/loginForm";
-import { RegisterForm } from "@/login/_components/registerForm";
-import { TestimonialSlider } from "@/login/_components/testimonialSlider";
-import { login as loginAction, signup as signupAction } from "@/login/actions";
+import { LoginForm } from "@/app/(pages)/(public)/login/_components/loginForm";
+import { RegisterForm } from "@/app/(pages)/(public)/login/_components/registerForm";
+import { TestimonialSlider } from "@/app/(pages)/(public)/login/_components/testimonialSlider";
+import {
+  login as loginAction,
+  signup as signupAction,
+} from "@/app/(pages)/(public)/login/actions";
 import Link from "next/link";
 
 export default function LoginPage() {

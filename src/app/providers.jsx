@@ -47,8 +47,6 @@ export function Providers({ children, user }) {
   };
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <UserContext.Provider value={userData}>{children}</UserContext.Provider>
-    </QueryClientProvider>
+    <UserContext.Provider value={userData}>{children}</UserContext.Provider>
   );
 }

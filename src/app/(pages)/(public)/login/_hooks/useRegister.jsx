@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { signInWithGoogle } from "@/login/actions";
+import { signInWithGoogle } from "@/app/(pages)/(public)/login/actions";
 
 import {
   emailErrorMessages,
   passwordErrorMessages,
   UserInfoModel,
-} from "@/login/_schema/registerSchema";
+} from "@/app/(pages)/(public)/login/_schema/registerSchema";
 
 export function useRegister() {
   const [isFormValid, setIsFormValid] = useState(false);

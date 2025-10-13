@@ -646,7 +646,7 @@ export default function CreateProfilePage() {
                   type="button"
                   onClick={() => {
                     if (formRef.current) formRef.current.requestSubmit();
-                    router.push("/admin/employers-managment");
+                    router.push("/admin/employers-management");
                   }}
                 >
                   Confirmar

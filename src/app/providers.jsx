@@ -3,7 +3,7 @@
 import { createContext, useContext } from "react";
 import { JobSeekerRoutes } from "@/job-seeker/router";
 import { AdminRoutes } from "@/admin/router";
-import { LoginRoutes } from "@/login/router";
+import { LoginRoutes } from "@/app/(pages)/(public)/login/router";
 
 const UserContext = createContext();
 

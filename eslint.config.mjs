@@ -9,7 +9,7 @@ const config = [
   ...compat.extends("next/core-web-vitals"),
   js.configs.recommended,
   {
-    files: ["**/*.{js,mjs,cjs,jsx,ts,tsx}"],
+    files: ["src/**/*.{js,mjs,cjs,jsx,ts,tsx}"],
     plugins: {
       react: pluginReact,
     },

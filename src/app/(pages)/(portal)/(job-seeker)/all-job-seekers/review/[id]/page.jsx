@@ -3,6 +3,8 @@
 import { Button } from "@/components/ui/buttons/button";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { AdminRoutes } from "@/admin/router";
+
 import {
   PieChart,
   Pie,
@@ -663,7 +665,7 @@ export default function AdminAllJobSeekersReviewPage() {
               if (returnUrl) {
                 router.push(decodeURIComponent(returnUrl));
               } else {
-                router.push("/admin/all-job-seekers"); // Default fallback
+                router.push(AdminRoutes.allJobSeekers); // Default fallback
               }
             }}
             className="text-gray-600 hover:text-gray-800"

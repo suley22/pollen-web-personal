@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useContext, useMemo, useState, useEffect } from "react";
 import { JobSeekerRoutes } from "@/job-seeker/router";
 import { AdminRoutes } from "@/admin/router";
 import { LoginRoutes } from "./(pages)/login/router";
@@ -19,6 +19,21 @@ export function useUser() {
 }
 
 export function Providers({ children, user }) {
+  // Internal state to manage initial loading and prevent avatar flickering
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  // Effect to handle the initial load state
+  useEffect(() => {
+    // Only set initial load to false once we have determined user state
+    if (user !== undefined) {
+      // Small delay to ensure smooth transition without flickering
+      const timer = setTimeout(() => {
+        setIsInitialLoad(false);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [user]);
+
   const userData = useMemo(() => {
     const session = user?.user || null;
     const email = session?.email || defaultValues.email;
@@ -29,7 +44,8 @@ export function Providers({ children, user }) {
     const role = metadata?.role || defaultValues.role;
     const isAdmin = role === "admin";
     const isLogged = !!session;
-    const isCheckingSession = user === undefined; // Checking if user data is still loading
+    // Use internal state for better control over loading states
+    const isCheckingSession = user === undefined || isInitialLoad;
     const redirectUrl = isLogged
       ? isAdmin
         ? AdminRoutes.home
@@ -46,7 +62,7 @@ export function Providers({ children, user }) {
       isLogged: isLogged,
       isCheckingSession: isCheckingSession,
     };
-  }, [user]);
+  }, [user, isInitialLoad]);
 
   return (
     <UserContext.Provider value={userData}>{children}</UserContext.Provider>

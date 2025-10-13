@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useTransition } from "react";
+import React, { useTransition, useCallback, useMemo } from "react";
 import {
   Home,
   Briefcase,
@@ -29,9 +29,18 @@ export function NavigationItems() {
 
   const { state } = useSidebar();
 
-  console.log("User in NavigationItems:", user);
+  // Optimized navigation handler
+  const handleNavigation = useCallback((path) => {
+    // For same-domain navigation, use Next.js router for better performance
+    if (pathname !== path) {
+      startTransition(() => {
+        router.push(path);
+      });
+    }
+  }, [router, pathname, startTransition]);
 
-  const itemsJobSeeker = [
+  // Memoize navigation items to avoid recreating on every render
+  const itemsJobSeeker = useMemo(() => [
     {
       icon: Home,
       label: "Home",
@@ -60,9 +69,9 @@ export function NavigationItems() {
       isActive: pathname === "/community",
       section: "Main",
     },
-  ];
+  ], [pathname]);
 
-  const itemsAdmin = [
+  const itemsAdmin = useMemo(() => [
     {
       icon: Home,
       label: "Home",
@@ -98,33 +107,35 @@ export function NavigationItems() {
       isActive: pathname === "/admin/role-managment",
       section: "Admin",
     },
-  ];
+  ], [pathname]);
 
-  const items = user?.isAdmin ? itemsAdmin : itemsJobSeeker;
+  const items = useMemo(() => 
+    user?.isAdmin ? itemsAdmin : itemsJobSeeker, 
+    [user?.isAdmin, itemsAdmin, itemsJobSeeker]
+  );
 
+  // Render items with optimized section handling
   return (
     <>
       {items.map((item, idx) => {
         const prev = items[idx - 1];
-        const showSectionLabel = idx === 0 || prev.section !== item.section;
+        const showSectionLabel = idx === 0 || prev?.section !== item.section;
+        const IconComponent = item.icon;
+        
         return (
           <React.Fragment key={item.path}>
             {showSectionLabel && state !== "collapsed" && (
-              <SidebarGroupLabel className="">{item.section}</SidebarGroupLabel>
+              <SidebarGroupLabel>{item.section}</SidebarGroupLabel>
             )}
-            <SidebarGroupContent className="">
-              <SidebarMenu className="">
-                <SidebarMenuItem className="">
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
                   <CustomSidebarMenuButton
                     isActive={item.isActive}
                     tooltip={item.label}
-                    onClick={() => {
-                      startTransition(() => {
-                        router.push(item.path);
-                      });
-                    }}
+                    onClick={() => handleNavigation(item.path)}
                   >
-                    <item.icon className="w-4 h-4" />
+                    <IconComponent className="w-4 h-4" />
                     <span>{item.label}</span>
                   </CustomSidebarMenuButton>
                 </SidebarMenuItem>

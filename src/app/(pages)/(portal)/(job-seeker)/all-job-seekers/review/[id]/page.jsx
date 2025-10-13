@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/buttons/button";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   PieChart,
   Pie,
@@ -678,9 +679,11 @@ export default function AdminAllJobSeekersReviewPage() {
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0">
                     {candidate.profilePicture ? (
-                      <img
+                      <Image
                         src={candidate.profilePicture}
                         alt={candidate.name}
+                        width={64}
+                        height={64}
                         className="w-16 h-16 rounded-full object-cover"
                       />
                     ) : (
@@ -1388,11 +1391,11 @@ export default function AdminAllJobSeekersReviewPage() {
                         </div>
                         <blockquote className="bg-gray-50 p-3 rounded-lg border-l-4 border-indigo-200">
                           <p className="text-sm text-gray-700 italic">
-                            "Sarah consistently demonstrated exceptional
+                            &quot;Sarah consistently demonstrated exceptional
                             creative thinking and analytical skills throughout
                             her studies. Her ability to combine creativity with
                             strategic thinking makes her an ideal candidate for
-                            any marketing role."
+                            any marketing role.&quot;
                           </p>
                         </blockquote>
                       </div>

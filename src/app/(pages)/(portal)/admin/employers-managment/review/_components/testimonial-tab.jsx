@@ -121,7 +121,7 @@ export function TestimonialTab({ employerProfile }) {
                     Use this as an opportunity to express in your own words what
                     makes your business special. Share your mission, values,
                     growth opportunities, and what sets you apart - whether
-                    you're an established team or just starting your hiring
+                    you&apos;re an established team or just starting your hiring
                     journey.
                   </p>
                 </div>
@@ -146,7 +146,7 @@ export function TestimonialTab({ employerProfile }) {
                   className="text-pink-800 text-sm"
                   style={{ fontFamily: "Poppins" }}
                 >
-                  We'll help you collect authentic testimonials from your team.
+                  We&apos;ll help you collect authentic testimonials from your team.
                   Junior employee testimonials are especially valuable for
                   peer-led insights.
                 </p>

@@ -50,7 +50,7 @@ export function TestimonialCard({
         </div>
 
         <blockquote className="text-gray-700 text-sm leading-relaxed italic">
-          "{testimonial}"
+          &quot;{testimonial}&quot;
         </blockquote>
       </div>
     </div>

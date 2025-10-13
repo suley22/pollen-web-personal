@@ -54,19 +54,16 @@ export function Logo(props) {
   const SQRT3 = 1.7320508075688772;
 
   // Axial (q,r) -> píxeles para hex "pointy-top"
-  const toPx = (q, r) => [
-    S * SQRT3 * (q + r / 2),
-    S * 1.5 * r,
-  ];
+  const toPx = (q, r) => [S * SQRT3 * (q + r / 2), S * 1.5 * r];
 
   // Puntos del hex pointy-top (vértice arriba)
   const hexPoints = (cx, cy, s = S) => {
     const w2 = (SQRT3 * s) / 2; // medio ancho
     return [
-      [cx, cy - s],         // top
+      [cx, cy - s], // top
       [cx + w2, cy - s / 2],
       [cx + w2, cy + s / 2],
-      [cx, cy + s],         // bottom
+      [cx, cy + s], // bottom
       [cx - w2, cy + s / 2],
       [cx - w2, cy - s / 2],
     ]
@@ -78,10 +75,10 @@ export function Logo(props) {
   // L (medio-izq), R (medio-der, comparte arista), B (abajo-centro),
   // T (arriba-derecha del medio-der)
   const axial = [
-    [0, 0],   // L
-    [1, 0],   // R
-    [0, 1],   // B  (SE de L y SW de R)
-    [2, -1],  // T  (NE de R)
+    [0, 0], // L
+    [1, 0], // R
+    [0, 1], // B  (SE de L y SW de R)
+    [2, -1], // T  (NE de R)
   ];
 
   const centers = axial.map(([q, r]) => toPx(q, r));
@@ -104,9 +101,14 @@ export function Logo(props) {
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <g stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-        {centers.map(([cx, cy], i) => (
-          <polygon key={i} points={hexPoints(cx, cy)} />
+      <g
+        stroke="currentColor"
+        strokeWidth="3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        {centers.map(([cx, cy]) => (
+          <polygon key={`${cx}-${cy}`} points={hexPoints(cx, cy)} />
         ))}
       </g>
     </svg>

@@ -518,7 +518,7 @@ export default function CreateProfilePage() {
                     {/* Previous hired */}
                     <div>
                       <Label className="mb-1 text-gray-800">
-                        How they've hired previously
+                        How they&apos;ve hired previously
                       </Label>
                       <Label className="text-xs mb-1 text-gray-600">
                         Select all methods they have used before

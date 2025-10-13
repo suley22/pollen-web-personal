@@ -57,7 +57,8 @@ export default function AdminEmployersManagment() {
 
   const handleSetLive = (company) => {
     const updatedCompany = { ...company, status: "live" };
-    updateCompanyMutation.mutate(updatedCompany);
+    // TODO: Implement updateCompanyMutation
+    console.log("Would update company:", updatedCompany);
   };
 
   const getStatusBadge = (status) => {

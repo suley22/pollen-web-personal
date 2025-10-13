@@ -149,8 +149,8 @@ export default function JobsManagmentPage() {
           >
             <option value="all">All Jobs</option>
             <option value="mine">My Assigned Jobs</option>
-            <option value="karen">Karen's Jobs</option>
-            <option value="sophie">Sophie's Jobs</option>
+            <option value="karen">Karen&apos;s Jobs</option>
+            <option value="sophie">Sophie&apos;s Jobs</option>
           </select>
           <select
             value={form.selectedStatus}

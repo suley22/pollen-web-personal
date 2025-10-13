@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   MapPin,
   Eye,
@@ -130,9 +131,11 @@ export default function JobsPage() {
                       <div className="flex items-center gap-1 space-x-3">
                         <div className="flex-shrink-0">
                           {jobSeeker.profile_picture ? (
-                            <img
+                            <Image
                               src={jobSeeker.profile_picture}
                               alt={jobSeeker.name}
+                              width={48}
+                              height={48}
                               className="h-12 w-12 rounded-full object-cover"
                             />
                           ) : (

@@ -68,43 +68,68 @@ export default function JobApplicantsPage({ params }) {
   );
 
   const [searchTerm, setSearchTerm] = useState(() => {
-    const saved = sessionStorage.getItem(`${resolvedParams.jobId}-searchTerm`);
-    return saved || "";
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem(
+        `${resolvedParams.jobId}-searchTerm`,
+      );
+      return saved || "";
+    }
+    return "";
   });
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
   const [primaryStatusFilter, setPrimaryStatusFilter] = useState(() => {
-    const saved = sessionStorage.getItem(
-      `job-${resolvedParams.jobId}-primaryStatusFilter`,
-    );
-    return saved ? JSON.parse(saved) : [];
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem(
+        `job-${resolvedParams.jobId}-primaryStatusFilter`,
+      );
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
   });
   const [subStatusFilter, setSubStatusFilter] = useState(() => {
-    const saved = sessionStorage.getItem(
-      `job-${resolvedParams.jobId}-subStatusFilter`,
-    );
-    return saved ? JSON.parse(saved) : [];
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem(
+        `job-${resolvedParams.jobId}-subStatusFilter`,
+      );
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
   });
   const [scoreFilter, setScoreFilter] = useState(() => {
-    const saved = sessionStorage.getItem(
-      `job-${resolvedParams.jobId}-scoreFilter`,
-    );
-    return saved ? JSON.parse(saved) : [];
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem(
+        `job-${resolvedParams.jobId}-scoreFilter`,
+      );
+      return saved ? JSON.parse(saved) : [];
+    }
+    return [];
   });
   const [sortBy, setSortBy] = useState(() => {
-    const saved = sessionStorage.getItem(`job-${resolvedParams.jobId}-sortBy`);
-    return saved || "default";
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem(
+        `job-${resolvedParams.jobId}-sortBy`,
+      );
+      return saved || "default";
+    }
+    return "default";
   });
   const [sortOrder, setSortOrder] = useState(() => {
-    const saved = sessionStorage.getItem(
-      `job-${resolvedParams.jobId}-sortOrder`,
-    );
-    return saved || "desc";
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem(
+        `job-${resolvedParams.jobId}-sortOrder`,
+      );
+      return saved || "desc";
+    }
+    return "desc";
   });
   const [viewMode, setViewMode] = useState(() => {
-    const saved = sessionStorage.getItem(
-      `job-${resolvedParams.jobId}-viewMode`,
-    );
-    return saved || "grid";
+    if (typeof window !== "undefined") {
+      const saved = sessionStorage.getItem(
+        `job-${resolvedParams.jobId}-viewMode`,
+      );
+      return saved || "grid";
+    }
+    return "grid";
   });
   const [assessmentSplitViewOpen, setAssessmentSplitViewOpen] = useState(false);
   const [selectedAssessment, setSelectedAssessment] = useState(null);
@@ -251,6 +276,11 @@ export default function JobApplicantsPage({ params }) {
   // Filter candidates
   // Status mapping functions
   const getStatusLabel = (status) => {
+    // Handle undefined, null, or empty status
+    if (!status || typeof status !== "string") {
+      return "Unknown";
+    }
+
     switch (status) {
       case "new_applicants":
         return "New";
@@ -265,6 +295,11 @@ export default function JobApplicantsPage({ params }) {
     }
   };
   const getSubStatusLabel = (subStatus) => {
+    // Handle undefined, null, or empty subStatus
+    if (!subStatus || typeof subStatus !== "string") {
+      return "Unknown Status";
+    }
+
     switch (subStatus) {
       case "under_review":
         return "Under Review";
@@ -382,6 +417,15 @@ export default function JobApplicantsPage({ params }) {
       },
     };
 
+    // Handle undefined, null, or empty subStatus
+    if (!subStatus || typeof subStatus !== "string") {
+      return {
+        label: "Unknown Status",
+        cta: "View",
+        color: "bg-gray-100 text-gray-800",
+      };
+    }
+
     // Fallback for any status not in the map - format it nicely
     const fallbackLabel = subStatus
       .replace(/_/g, " ")
@@ -397,17 +441,43 @@ export default function JobApplicantsPage({ params }) {
 
   const finalCandidates = candidates.map((candidate) => ({
     ...candidate,
-    statusLabel: getStatusLabel(candidate.status),
-    subStatusLabel: getSubStatusLabel(candidate.subStatus),
+    // Map job_seeker data to expected structure (based on actual DB schema)
+    name: candidate.job_seeker?.name || "Unknown",
+    email: candidate.job_seeker?.email || "",
+    location: candidate.job_seeker?.location || "",
+    experience_level: candidate.job_seeker?.experience_level || "",
+    overall_skills_score: candidate.job_seeker?.overall_skills_score || 0,
+    profile_picture: candidate.job_seeker?.profile_picture || "",
+    // Now use real status fields from job_applications (after migration)
+    status: candidate.status || "new_applicants",
+    subStatus: candidate.sub_status || "Unopened",
+    statusLabel: getStatusLabel(candidate.status || "new_applicants"),
+    subStatusLabel: getSubStatusLabel(candidate.sub_status || "Unopened"),
+    // Add application date for sorting
+    applied_at: candidate.created_at,
+    // Map additional fields from job_applications
+    overall_score: candidate.overall_score || 0,
+    scores_approved: candidate.scores_approved || false,
+    scores_locked: candidate.scores_locked || false,
+    last_interaction_date: candidate.last_interaction_date,
+    last_pollen_team_member: candidate.last_pollen_team_member,
+    is_fast_track: candidate.is_fast_track || false,
+    ai_scores: candidate.ai_scores || {},
+    assessment_data: candidate.assessment_data || null,
+    employer_feedback: candidate.employer_feedback || null,
   }));
 
   // Advanced filtering and sorting
   const filteredCandidates = finalCandidates
     .filter((candidate) => {
-      // Search filter
+      // Search filter (data is now safely mapped)
       const searchMatch =
-        candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        candidate.email.toLowerCase().includes(searchTerm.toLowerCase());
+        (candidate.name || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        (candidate.email || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
 
       // Primary status filter
       const primaryStatusMatch =
@@ -526,13 +596,13 @@ export default function JobApplicantsPage({ params }) {
     },
   ].filter((column) => column.count > 0);
 
-  // Calcular grid columns class basado en columnas visibles
+  const columnCount = Math.max(visibleColumns.length, 1); // Ensure at least 1 column
   const gridColsClass =
-    visibleColumns.length === 1
+    columnCount === 1
       ? "grid-cols-1"
-      : visibleColumns.length === 2
+      : columnCount === 2
         ? "grid-cols-2"
-        : visibleColumns.length === 3
+        : columnCount === 3
           ? "grid-cols-3"
           : "grid-cols-4";
 
@@ -1077,7 +1147,7 @@ export default function JobApplicantsPage({ params }) {
                             <CardContent className="p-4">
                               <div className="flex items-center space-x-3 mb-3">
                                 <img
-                                  src={candidate.profilePicture}
+                                  src={candidate.profile_picture}
                                   alt={candidate.name}
                                   className="w-10 h-10 rounded-full border border-gray-200"
                                 />
@@ -1323,7 +1393,7 @@ export default function JobApplicantsPage({ params }) {
                           <td className="p-3">
                             <div className="flex items-center gap-3">
                               <img
-                                src={candidate.profilePicture}
+                                src={candidate.profile_picture}
                                 alt={candidate.name}
                                 className="w-8 h-8 rounded-full border"
                               />
@@ -1497,19 +1567,12 @@ export default function JobApplicantsPage({ params }) {
               >
                 <div className="flex items-center gap-3 flex-shrink-0">
                   <img
-                    src={selectedAssessment.avatar_url}
-                    alt={
-                      selectedAssessment.first_name +
-                      " " +
-                      selectedAssessment.last_name
-                    }
+                    src={selectedAssessment.profile_picture}
+                    alt={selectedAssessment.name}
                     className="w-10 h-10 rounded-full border"
                   />
                   <h3 className="font-semibold text-sm">
-                    {selectedAssessment.first_name +
-                      " " +
-                      selectedAssessment.last_name}{" "}
-                    - Assessment
+                    {selectedAssessment.name} - Assessment
                   </h3>
                 </div>
 

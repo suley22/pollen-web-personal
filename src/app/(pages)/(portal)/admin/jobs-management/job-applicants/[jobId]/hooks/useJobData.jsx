@@ -17,11 +17,16 @@ export function useJobData(jobId) {
         setLoading(true);
         setError(null);
 
+        console.log("🔍 Loading data for jobId:", jobId);
+
         // Cargar datos de aplicantes y job en paralelo
         const [applicantsResult, jobResult] = await Promise.all([
           fetchJobApplicants(jobId),
           fetchJobDetails(jobId),
         ]);
+
+        console.log("📊 Applicants result:", applicantsResult);
+        console.log("💼 Job result:", jobResult);
 
         // Manejar errores
         if (applicantsResult.error) {

@@ -208,10 +208,10 @@ export default function JobsManagmentPage() {
               className="cursor-pointer hover:shadow-lg transition-shadow border border-gray-200 bg-white hover:bg-gray-50"
               //TODO: habilitar navegación a detalles del trabajo real
               onClick={() => {
-                router.push(AdminRoutes.jobReview(job.id));
+                router.push(AdminRoutes.jobView(job.id));
               }}
 
-              //   sessionStorage.setItem('previousPage', '/admin/assigned-jobs');
+              //   sessionStorage.setItem('previousPage', '/admin/assignesd-jobs');
               //   if (job.status === 'draft') {
               //     setLocation(`/admin/job-review/${job.id}?source=assigned-jobs`);
               //   } else {
@@ -313,15 +313,8 @@ export default function JobsManagmentPage() {
                         // TODO: habilitar navegación a detalles del trabajo
                         onClick={(e) => {
                           e.stopPropagation();
-                          router.push(AdminRoutes.jobReview(job.id));
+                          router.push(AdminRoutes.jobView(job.id));
                         }}
-                        //    sessionStorage.setItem('previousPage', '/admin/assigned-jobs');
-                        //    if (job.status === 'draft') {
-                        //      setLocation(`/admin/job-review/${job.id}?source=assigned-jobs`);
-                        //    } else {
-                        //      setLocation(`/admin/job-review/${job.id}?source=assigned-jobs`);
-                        //    }
-                        //  }}
                         className="bg-blue-600 hover:bg-blue-700"
                       >
                         <Eye className="h-4 w-4 mr-1" />

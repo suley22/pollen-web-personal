@@ -21,6 +21,15 @@ import { fetchJobsByEmployer } from "./actions";
 export default function EmployerProfileView({ employerProfile }) {
   const router = useRouter();
 
+  // Log the received data
+  useEffect(() => {
+    console.log("📋 EmployerProfileView received:", {
+      hasProfile: !!employerProfile,
+      profileId: employerProfile?.id,
+      profileData: employerProfile,
+    });
+  }, [employerProfile]);
+
   const {
     company,
     isEditing,
@@ -40,32 +49,53 @@ export default function EmployerProfileView({ employerProfile }) {
     handleDelete,
   } = useEmployerProfileForm(employerProfile);
 
+  // Log the company data from hook
+  useEffect(() => {
+    console.log("🏢 Company data from hook:", {
+      hasCompany: !!company,
+      companyId: company?.id,
+      companyData: company,
+    });
+  }, [company]);
+
   // Fetch jobs when component mounts or company.id changes
   useEffect(() => {
     const loadJobs = async () => {
-      if (company.id) {
+      if (company?.id) {
+        console.log("🔍 Loading jobs for company:", company.id);
         setIsLoadingJobs(true);
         try {
           const result = await fetchJobsByEmployer(company.id);
+          console.log("📦 Jobs fetch result:", result);
+
           if (result.error) {
-            console.error("Error fetching jobs:", result.error);
+            console.error("❌ Error fetching jobs:", result.error);
             setJobs([]);
           } else if (Array.isArray(result.data)) {
+            console.log(
+              "✅ Jobs loaded successfully:",
+              result.data.length,
+              "jobs",
+            );
             setJobs(result.data);
           } else {
+            console.warn("⚠️ Result data is not an array:", result.data);
             setJobs([]);
           }
         } catch (error) {
-          console.error("Error fetching jobs:", error);
+          console.error("❌ Exception fetching jobs:", error);
           setJobs([]);
         } finally {
           setIsLoadingJobs(false);
         }
+      } else {
+        console.warn("⚠️ No company.id available");
+        setIsLoadingJobs(false);
       }
     };
 
     loadJobs();
-  }, [company.id, setIsLoadingJobs, setJobs]);
+  }, [company?.id, setIsLoadingJobs, setJobs]);
 
   // Show skeleton while profile is loading
   if (!employerProfile) {

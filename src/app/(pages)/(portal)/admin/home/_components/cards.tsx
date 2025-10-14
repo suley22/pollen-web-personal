@@ -92,7 +92,7 @@ export function HomeCards() {
       {/* Company Profiles Card */}
       <Card
         className="cursor-pointer hover:shadow-lg transition-all duration-200 bg-orange-50 shadow-md p-6"
-        onClick={() => router.push("/admin/employers-managment")}
+        onClick={() => router.push(AdminRoutes.employers)}
       >
         <CardHeader className="pb-3">
           <CardTitle

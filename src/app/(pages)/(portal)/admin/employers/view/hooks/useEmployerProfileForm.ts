@@ -106,12 +106,8 @@ export function useEmployerProfileForm(
       }
     : ({} as CompanyData);
 
-  useEffect(() => {
-    if (employerProfile?.jobs) {
-      setJobs(employerProfile.jobs);
-      setIsLoadingJobs(false);
-    }
-  }, [employerProfile]);
+  // Note: Jobs are loaded in the component via useEffect, not here
+  // This keeps the data fetching logic in one place
 
   const handleInputChange = (field: string, value: string | string[]) => {
     if (editData) {

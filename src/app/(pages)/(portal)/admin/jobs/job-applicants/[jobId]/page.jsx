@@ -1,11 +1,12 @@
 "use client";
 
 import React from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { AdminRoutes } from "../../../router";
 import {
   ArrowLeft,
   Eye,
@@ -33,6 +34,7 @@ import {
   UserCheck,
   UserX,
   SplitSquareHorizontal,
+  Building2,
 } from "lucide-react";
 import { useToast } from "@/lib/hooks/use-toast";
 import { useState } from "react";
@@ -42,6 +44,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Card, CardContent } from "@/components/ui/card";
@@ -62,7 +65,6 @@ import {
 export default function JobApplicantsPage({ params }) {
   const resolvedParams = React.use(params);
   const router = useRouter();
-  const queryClient = useQueryClient();
   const { candidates, job, loading, error, refetch } = useJobData(
     resolvedParams.jobId,
   );
@@ -173,6 +175,7 @@ export default function JobApplicantsPage({ params }) {
     strategic: 8,
   });
   const [pendingAction, setPendingAction] = useState();
+  const [isExecutingAction, setIsExecutingAction] = useState(false);
 
   const { toast } = useToast();
 
@@ -195,7 +198,7 @@ export default function JobApplicantsPage({ params }) {
   const handleCandidateAction = (action) => {
     if (action === "interview") {
       // Skip confirmation dialog for interview invitations and proceed directly
-      candidateActionMutation.mutate(action);
+      executeCandidateAction(action);
     } else {
       // Show confirmation dialog for reject/match actions
       setPendingAction(action);
@@ -273,7 +276,7 @@ export default function JobApplicantsPage({ params }) {
       primaryStatusFilter.includes(subStatusToPrimaryStatus[subStatus]),
     );
   };
-  // Filter candidates
+
   // Status mapping functions
   const getStatusLabel = (status) => {
     // Handle undefined, null, or empty status
@@ -628,9 +631,11 @@ export default function JobApplicantsPage({ params }) {
   };
   const [isEditing, setIsEditing] = useState(false);
 
-  const candidateActionMutation = useMutation({
-    mutationFn: async (action) => {
-      return await apiRequest(
+  // TODO: REVISAR Función para ejecutar acciones sobre candidatos
+  const executeCandidateAction = async (action) => {
+    setIsExecutingAction(true);
+    try {
+      await apiRequest(
         "PUT",
         `/api/admin/candidates/${selectedAssessment?.id}/status`,
         {
@@ -639,11 +644,9 @@ export default function JobApplicantsPage({ params }) {
           reviewedAt: new Date().toISOString(),
         },
       );
-    },
-    onSuccess: (_, action) => {
-      queryClient.invalidateQueries({
-        queryKey: [`/api/admin/jobs/${jobId}/candidates`],
-      });
+
+      // Refrescar los datos después de la acción
+      await refetch();
 
       setConfirmDialogOpen(false);
       setPendingAction(null);
@@ -652,11 +655,7 @@ export default function JobApplicantsPage({ params }) {
       // Route to interview availability page for interview invitations (no toast needed)
       if (action === "interview" && selectedAssessment) {
         // Directly navigate to interview availability without showing a toast
-        router.push(
-          buildUrlWithCurrentState(
-            `/admin/interview-availability/${selectedAssessment.id}`,
-          ),
-        );
+        router.push(`/admin/interview-availability/${selectedAssessment.id}`);
       } else {
         // Show toast for other actions only
         const actionLabels = {
@@ -670,8 +669,17 @@ export default function JobApplicantsPage({ params }) {
         });
         closeAssessmentSplitView();
       }
-    },
-  });
+    } catch (error) {
+      console.error("Error executing candidate action:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update candidate status. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExecutingAction(false);
+    }
+  };
 
   // Navigate between candidates within filtered view (respects all filters)
   const navigateToCandidate = (direction) => {
@@ -716,7 +724,7 @@ export default function JobApplicantsPage({ params }) {
 
   const confirmCandidateAction = () => {
     if (pendingAction) {
-      candidateActionMutation.mutate(pendingAction);
+      executeCandidateAction(pendingAction);
     }
   };
 
@@ -792,7 +800,7 @@ export default function JobApplicantsPage({ params }) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => router.push(`/admin/jobs-managment/${job.id}`)}
+              onClick={() => router.push(AdminRoutes.jobReview(job.id))}
               className="flex items-center gap-2 text-gray-600 hover:text-gray-800 bg-white border-gray-200 text-sm"
             >
               <Eye className="h-4 w-4" />
@@ -810,6 +818,8 @@ export default function JobApplicantsPage({ params }) {
                 className="pl-10"
               />
             </div>
+
+            {/* TODO:check filters */}
 
             {/* Primary Status Filter */}
             <div className="relative">
@@ -1146,11 +1156,15 @@ export default function JobApplicantsPage({ params }) {
                           >
                             <CardContent className="p-4">
                               <div className="flex items-center space-x-3 mb-3">
-                                <img
-                                  src={candidate.profile_picture}
-                                  alt={candidate.name}
-                                  className="w-10 h-10 rounded-full border border-gray-200"
-                                />
+                                <Avatar className="h-16 w-16">
+                                  <AvatarImage
+                                    src={candidate.profile_picture}
+                                    alt={candidate.name}
+                                  />
+                                  <AvatarFallback>
+                                    <Building2 className="h-8 w-8" />
+                                  </AvatarFallback>
+                                </Avatar>
                                 <div>
                                   <h4 className="font-medium text-gray-900 flex items-center gap-2">
                                     {candidate.name}
@@ -1392,11 +1406,15 @@ export default function JobApplicantsPage({ params }) {
                         >
                           <td className="p-3">
                             <div className="flex items-center gap-3">
-                              <img
-                                src={candidate.profile_picture}
-                                alt={candidate.name}
-                                className="w-8 h-8 rounded-full border"
-                              />
+                              <Avatar className="h-16 w-16">
+                                <AvatarImage
+                                  src={candidate.profile_picture}
+                                  alt={candidate.name}
+                                />
+                                <AvatarFallback>
+                                  <Building2 className="h-8 w-8" />
+                                </AvatarFallback>
+                              </Avatar>
                               <div>
                                 <div className="font-medium text-gray-900 flex items-center gap-2">
                                   {candidate.name}
@@ -1566,9 +1584,11 @@ export default function JobApplicantsPage({ params }) {
                 }}
               >
                 <div className="flex items-center gap-3 flex-shrink-0">
-                  <img
+                  <Image
                     src={selectedAssessment.profile_picture}
                     alt={selectedAssessment.name}
+                    width={40}
+                    height={40}
                     className="w-10 h-10 rounded-full border"
                   />
                   <h3 className="font-semibold text-sm">
@@ -2204,7 +2224,7 @@ export default function JobApplicantsPage({ params }) {
                                 !(
                                   scoresApproved ||
                                   isScoreApproved(selectedAssessment)
-                                ) || candidateActionMutation.isPending
+                                ) || isExecutingAction
                               }
                               size="default"
                               className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
@@ -2220,7 +2240,7 @@ export default function JobApplicantsPage({ params }) {
                                   scoresApproved ||
                                   isScoreApproved(selectedAssessment)
                                 ) ||
-                                candidateActionMutation.isPending ||
+                                isExecutingAction ||
                                 !canFastTrackToEmployer
                               }
                               size="default"
@@ -2236,7 +2256,7 @@ export default function JobApplicantsPage({ params }) {
                                 !(
                                   scoresApproved ||
                                   isScoreApproved(selectedAssessment)
-                                ) || candidateActionMutation.isPending
+                                ) || isExecutingAction
                               }
                               variant="outline"
                               size="default"
@@ -2354,7 +2374,7 @@ export default function JobApplicantsPage({ params }) {
             </Button>
             <Button
               onClick={confirmCandidateAction}
-              disabled={candidateActionMutation.isPending}
+              disabled={isExecutingAction}
               className={
                 pendingAction === "reject"
                   ? "bg-red-600 hover:bg-red-700"
@@ -2363,7 +2383,7 @@ export default function JobApplicantsPage({ params }) {
                     : "bg-green-600 hover:bg-green-700"
               }
             >
-              {candidateActionMutation.isPending ? "Processing..." : "Confirm"}
+              {isExecutingAction ? "Processing..." : "Confirm"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -2985,7 +3005,7 @@ export default function JobApplicantsPage({ params }) {
                                 scoresApproved ||
                                 isScoreApproved(selectedAssessment)
                               ) ||
-                              candidateActionMutation.isPending ||
+                              isExecutingAction ||
                               scoresLocked
                             }
                             size="default"
@@ -3011,7 +3031,7 @@ export default function JobApplicantsPage({ params }) {
                                     scoresApproved ||
                                     isScoreApproved(selectedAssessment)
                                   ) ||
-                                  candidateActionMutation.isPending ||
+                                  isExecutingAction ||
                                   scoresLocked ||
                                   !canFastTrackToEmployer
                                 }
@@ -3032,7 +3052,7 @@ export default function JobApplicantsPage({ params }) {
                                 scoresApproved ||
                                 isScoreApproved(selectedAssessment)
                               ) ||
-                              candidateActionMutation.isPending ||
+                              isExecutingAction ||
                               scoresLocked
                             }
                             variant="outline"

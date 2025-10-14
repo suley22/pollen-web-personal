@@ -31,7 +31,7 @@
 
 /* Global Typography - Using Next.js font variables */
 body {
-  font-family: var(--font-poppins), sans-serif;
+  font-family: var(--font-sora), sans-serif;
   color: #272727;
   background-color: #ffffff;
   margin: 0;
@@ -43,11 +43,22 @@ h1,
 h2,
 h3,
 h4,
-h5 {
+h5,
+h6 {
   font-family: var(--font-sora), sans-serif;
   font-weight: 600;
   color: #272727;
   margin: 0.5em 0;
+}
+
+p,
+span,
+div,
+label,
+input,
+textarea,
+button {
+  font-family: var(--font-sora), sans-serif;
 }
 
 /* Font Utility Classes */
@@ -63,7 +74,7 @@ h5 {
 .btn-primary {
   background-color: var(--pollen-yellow);
   color: var(--pollen-pink);
-  font-family: "Sora", sans-serif;
+  font-family: var(--font-sora), sans-serif;
   font-weight: 600;
   border: none;
   padding: 12px 24px;

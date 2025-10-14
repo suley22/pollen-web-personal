@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { useHome } from "@/admin/home/useHome";
+import { AdminRoutes } from "@/admin/router";
 
 export function HomeJobs() {
   const router = useRouter();
@@ -21,7 +22,7 @@ export function HomeJobs() {
             variant="outline"
             className="justify-start h-12"
             size="sm"
-            onClick={() => router.push("/admin/jobs-managment")}
+            onClick={() => router.push(AdminRoutes.jobsManagement)}
           >
             View All Jobs
           </Button>
@@ -35,14 +36,8 @@ export function HomeJobs() {
             key={job.id}
             className="cursor-pointer hover:shadow-lg transition-shadow border border-gray-200 bg-white hover:bg-gray-50"
             onClick={() => {
-              router.push(`/admin/jobs-managment/review/${job.id}`);
+              router.push(AdminRoutes.jobReview(job.id));
             }}
-            //   if (job.status === 'draft') {
-            //     setLocation(`/admin/job-review/${job.id}?source=dashboard`);
-            //   } else {
-            //     setLocation(`/admin/job-review/${job.id}?source=dashboard`);
-            //   }
-            // }}
           >
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
@@ -108,9 +103,7 @@ export function HomeJobs() {
                       size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
-                        router.push(
-                          `/admin/jobs-managment/job-applicants/${job.id}`,
-                        );
+                        router.push(AdminRoutes.jobApplicants(job.id));
                       }}
                       className="bg-pink-600 hover:bg-pink-700 text-white"
                     >
@@ -123,9 +116,7 @@ export function HomeJobs() {
                     variant={job.status === "draft" ? "default" : "outline"}
                     onClick={(e) => {
                       e.stopPropagation();
-
-                      // /admin/jobs-managment/review/ffb9511f-48ce-4272-87bd-cbb90ddb40f2
-                      router.push(`/admin/jobs-managment/review/${job.id}`);
+                      router.push(AdminRoutes.jobReview(job.id));
                     }}
                     className={
                       job.status === "draft"

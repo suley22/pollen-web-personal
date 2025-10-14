@@ -4,12 +4,13 @@ const basePath = "/admin";
 
 export const AdminRoutes = {
   home: `${basePath}/home`,
-  applications: `${basePath}/applications`,
   profile: `${basePath}/profile`,
   jobs: `${basePath}/jobs`,
   employers: `${basePath}/employers`,
   employersCreate: `${basePath}/employers/create`,
-  employersView: `${basePath}/employers/view`,
+  employersView: (id) => `${basePath}/employers/view/${id}`,
+  jobView: (id) => `${basePath}/jobs/view/${id}`,
+  employersEdit: (id) => `${basePath}/employers/edit/${id}`,
   allJobSeekers: `${basePath}/job-seekers`,
   roles: `${basePath}/roles`,
 };

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import { AdminRoutes } from "../router";
 
 export default function JobsManagmentPage() {
   const router = useRouter();
@@ -56,7 +57,7 @@ export default function JobsManagmentPage() {
                 padding: "0 16px",
               }}
               onClick={() => {
-                router.push(`/admin/jobs-managment/create`);
+                router.push(`/admin/jobs-management/create`);
               }}
             >
               <Plus className="w-4 h-4" />
@@ -207,10 +208,10 @@ export default function JobsManagmentPage() {
               className="cursor-pointer hover:shadow-lg transition-shadow border border-gray-200 bg-white hover:bg-gray-50"
               //TODO: habilitar navegación a detalles del trabajo real
               onClick={() => {
-                router.push(`/admin/jobs-managment/review/${job.id}`);
+                router.push(AdminRoutes.jobView(job.id));
               }}
 
-              //   sessionStorage.setItem('previousPage', '/admin/assigned-jobs');
+              //   sessionStorage.setItem('previousPage', '/admin/assignesd-jobs');
               //   if (job.status === 'draft') {
               //     setLocation(`/admin/job-review/${job.id}?source=assigned-jobs`);
               //   } else {
@@ -312,15 +313,8 @@ export default function JobsManagmentPage() {
                         // TODO: habilitar navegación a detalles del trabajo
                         onClick={(e) => {
                           e.stopPropagation();
-                          router.push(`/admin/jobs-managment/review/${job.id}`);
+                          router.push(AdminRoutes.jobView(job.id));
                         }}
-                        //    sessionStorage.setItem('previousPage', '/admin/assigned-jobs');
-                        //    if (job.status === 'draft') {
-                        //      setLocation(`/admin/job-review/${job.id}?source=assigned-jobs`);
-                        //    } else {
-                        //      setLocation(`/admin/job-review/${job.id}?source=assigned-jobs`);
-                        //    }
-                        //  }}
                         className="bg-blue-600 hover:bg-blue-700"
                       >
                         <Eye className="h-4 w-4 mr-1" />
@@ -336,9 +330,7 @@ export default function JobsManagmentPage() {
                             // TODO: habilitar navegación a candidatos del trabajo
                             onClick={(e) => {
                               e.stopPropagation();
-                              router.push(
-                                `/admin/jobs-managment/job-applicants/${job.id}`,
-                              );
+                              router.push(AdminRoutes.jobApplicants(job.id));
                             }}
                             className="border-pink-200 text-pink-700 hover:bg-pink-50"
                           >

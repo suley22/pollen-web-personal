@@ -2,11 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
 import {
   MapPin,
   Eye,
-  User,
   Mail,
   Trophy,
   Clock,

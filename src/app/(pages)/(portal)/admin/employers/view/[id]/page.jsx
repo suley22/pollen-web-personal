@@ -1,16 +1,11 @@
-import EmployerProfileConsolidated from "../employer-profile-consolidated";
+import EmployerProfileView from "../employer-profile-view";
 import { fetchEmployerProfile } from "../actions";
 
 export default async function EmployerReviewPage({ params }) {
   const { id } = await params;
-  console.log("Employer ID from URL:", id);
-
   const { data, error } = await fetchEmployerProfile(id);
-
-  console.log("Fetched data:", data);
-  console.log("Error:", error);
 
   const employerData = data && !error ? data : null;
 
-  return <EmployerProfileConsolidated employerProfile={employerData} />;
+  return <EmployerProfileView employerProfile={employerData} />;
 }

@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Card, CardContent } from "@/components/ui/card";
-import { useEmployerManagement } from "../useEmployerManagement";
+import { useEmployerManagement } from "../_hooks/useEmployerManagement";
 import {
   Building2,
   Edit,

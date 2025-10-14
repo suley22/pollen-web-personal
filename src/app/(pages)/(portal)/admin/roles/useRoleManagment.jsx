@@ -1,8 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import {
-  getUsers as getUsers,
-  updateUserRole,
-} from "@/app/(pages)/(portal)/admin/role-management/actions";
+import { getUsers as getUsers, updateUserRole } from "@/admin/roles/actions";
 
 export function useRoleManagment() {
   const [selectedStatus] = useState("all");

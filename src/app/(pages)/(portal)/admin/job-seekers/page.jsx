@@ -10,6 +10,7 @@ import {
   Trophy,
   Clock,
   Briefcase,
+  Building2,
   Search,
   Building2,
 } from "lucide-react";
@@ -131,6 +132,7 @@ export default function JobsPage() {
                     <td className="py-2 px-4">
                       <div className="flex items-center gap-1 space-x-3">
                         <div className="flex-shrink-0">
+<<<<<<< HEAD:src/app/(pages)/(portal)/admin/all-job-seekers/page.jsx
                           {jobSeeker.profile_picture ? (
                             <Avatar className="h-16 w-16">
                               <AvatarImage
@@ -146,6 +148,17 @@ export default function JobsPage() {
                               <User className="h-6 w-6  text-gray-500" />
                             </div>
                           )}
+=======
+                          <Avatar className="h-16 w-16">
+                            <AvatarImage
+                              src={jobSeeker.profile_picture}
+                              alt={jobSeeker.name}
+                            />
+                            <AvatarFallback>
+                              <Building2 className="h-8 w-8" />
+                            </AvatarFallback>
+                          </Avatar>
+>>>>>>> 462c1e4701b8e68173ff5eec134a1a0252886dbc:src/app/(pages)/(portal)/admin/job-seekers/page.jsx
                         </div>
                         <div>
                           <div className="font-medium text-base">

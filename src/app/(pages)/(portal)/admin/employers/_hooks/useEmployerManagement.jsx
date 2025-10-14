@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { getEmployerProfile } from "@/app/(pages)/(portal)/admin/employers-management/actions";
+import { getEmployerProfile } from "@/admin/employers/actions";
 
 export function useEmployerManagement() {
   const [selectedStatus, setSelectedStatus] = useState("all");
@@ -106,18 +106,16 @@ export function useEmployerManagement() {
 
   return useMemo(
     () => ({
-      form: {
-        selectedStatus: selectedStatus,
-        searchTerm: searchTerm,
-        employers: employers,
-        loading: loading,
-        error: error,
-        setSelectedStatus: setSelectedStatus,
-        setSearchTerm: setSearchTerm,
-        loadApplications: loadApplications,
-        addButtonOnClick: addButtonOnClick,
-        getStatusBadge: getStatusBadge,
-      },
+      selectedStatus: selectedStatus,
+      searchTerm: searchTerm,
+      employers: employers,
+      loading: loading,
+      error: error,
+      setSelectedStatus: setSelectedStatus,
+      setSearchTerm: setSearchTerm,
+      loadApplications: loadApplications,
+      addButtonOnClick: addButtonOnClick,
+      getStatusBadge: getStatusBadge,
     }),
     [
       selectedStatus,

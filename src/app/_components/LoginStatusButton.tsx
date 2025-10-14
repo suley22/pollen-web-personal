@@ -49,7 +49,7 @@ export const LoginStatusButton = memo(() => {
           <div className="h-8 w-8 rounded-lg">
             <NextImage
               src={user.avatar}
-              alt={user.name}
+              alt={user.f}
               width={32}
               height={32}
               className="rounded-lg object-cover"
@@ -58,7 +58,7 @@ export const LoginStatusButton = memo(() => {
           </div>
 
           <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-medium">{user.name}</span>
+            <span className="truncate font-medium">{user.fullName}</span>
             <span className="truncate text-xs">{user.email}</span>
           </div>
         </Link>

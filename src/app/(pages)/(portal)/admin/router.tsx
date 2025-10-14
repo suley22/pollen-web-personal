@@ -7,6 +7,9 @@ export const AdminRoutes = {
   applications: `${basePath}/applications`,
   profile: `${basePath}/profile`,
   jobsManagement: `${basePath}/jobs-management`,
+  jobReview: (jobId: string) => `${basePath}/jobs-management/review/${jobId}`,
+  jobApplicants: (jobId: string) =>
+    `${basePath}/jobs-management/job-applicants/${jobId}`,
   employersManagement: `${basePath}/employers-management`,
   allJobSeekers: `${basePath}/all-job-seekers`,
   roleManagement: `${basePath}/role-management`,

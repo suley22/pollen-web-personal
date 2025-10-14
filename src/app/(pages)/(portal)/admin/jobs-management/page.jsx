@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import { AdminRoutes } from "../router";
 
 export default function JobsManagmentPage() {
   const router = useRouter();
@@ -56,7 +57,7 @@ export default function JobsManagmentPage() {
                 padding: "0 16px",
               }}
               onClick={() => {
-                router.push(`/admin/jobs-managment/create`);
+                router.push(`/admin/jobs-management/create`);
               }}
             >
               <Plus className="w-4 h-4" />
@@ -207,7 +208,7 @@ export default function JobsManagmentPage() {
               className="cursor-pointer hover:shadow-lg transition-shadow border border-gray-200 bg-white hover:bg-gray-50"
               //TODO: habilitar navegación a detalles del trabajo real
               onClick={() => {
-                router.push(`/admin/jobs-managment/review/${job.id}`);
+                router.push(AdminRoutes.jobReview(job.id));
               }}
 
               //   sessionStorage.setItem('previousPage', '/admin/assigned-jobs');
@@ -312,7 +313,7 @@ export default function JobsManagmentPage() {
                         // TODO: habilitar navegación a detalles del trabajo
                         onClick={(e) => {
                           e.stopPropagation();
-                          router.push(`/admin/jobs-managment/review/${job.id}`);
+                          router.push(AdminRoutes.jobReview(job.id));
                         }}
                         //    sessionStorage.setItem('previousPage', '/admin/assigned-jobs');
                         //    if (job.status === 'draft') {
@@ -336,9 +337,7 @@ export default function JobsManagmentPage() {
                             // TODO: habilitar navegación a candidatos del trabajo
                             onClick={(e) => {
                               e.stopPropagation();
-                              router.push(
-                                `/admin/jobs-managment/job-applicants/${job.id}`,
-                              );
+                              router.push(AdminRoutes.jobApplicants(job.id));
                             }}
                             className="border-pink-200 text-pink-700 hover:bg-pink-50"
                           >

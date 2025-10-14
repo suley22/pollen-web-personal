@@ -1,10 +1,12 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { AdminRoutes } from "../../../router";
 import {
   ArrowLeft,
   Eye,
@@ -32,6 +34,7 @@ import {
   UserCheck,
   UserX,
   SplitSquareHorizontal,
+  Building2,
 } from "lucide-react";
 import { useToast } from "@/lib/hooks/use-toast";
 import { useState } from "react";
@@ -41,6 +44,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Card, CardContent } from "@/components/ui/card";
@@ -272,7 +276,7 @@ export default function JobApplicantsPage({ params }) {
       primaryStatusFilter.includes(subStatusToPrimaryStatus[subStatus]),
     );
   };
-  // Filter candidates
+
   // Status mapping functions
   const getStatusLabel = (status) => {
     // Handle undefined, null, or empty status
@@ -627,7 +631,7 @@ export default function JobApplicantsPage({ params }) {
   };
   const [isEditing, setIsEditing] = useState(false);
 
-  // Función para ejecutar acciones sobre candidatos
+  // TODO: REVISAR Función para ejecutar acciones sobre candidatos
   const executeCandidateAction = async (action) => {
     setIsExecutingAction(true);
     try {
@@ -796,7 +800,7 @@ export default function JobApplicantsPage({ params }) {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => router.push(`/admin/jobs-managment/${job.id}`)}
+              onClick={() => router.push(AdminRoutes.jobReview(job.id))}
               className="flex items-center gap-2 text-gray-600 hover:text-gray-800 bg-white border-gray-200 text-sm"
             >
               <Eye className="h-4 w-4" />
@@ -814,6 +818,8 @@ export default function JobApplicantsPage({ params }) {
                 className="pl-10"
               />
             </div>
+
+            {/* TODO:check filters */}
 
             {/* Primary Status Filter */}
             <div className="relative">
@@ -1150,11 +1156,15 @@ export default function JobApplicantsPage({ params }) {
                           >
                             <CardContent className="p-4">
                               <div className="flex items-center space-x-3 mb-3">
-                                <img
-                                  src={candidate.profile_picture}
-                                  alt={candidate.name}
-                                  className="w-10 h-10 rounded-full border border-gray-200"
-                                />
+                                <Avatar className="h-16 w-16">
+                                  <AvatarImage
+                                    src={candidate.profile_picture}
+                                    alt={candidate.name}
+                                  />
+                                  <AvatarFallback>
+                                    <Building2 className="h-8 w-8" />
+                                  </AvatarFallback>
+                                </Avatar>
                                 <div>
                                   <h4 className="font-medium text-gray-900 flex items-center gap-2">
                                     {candidate.name}
@@ -1396,11 +1406,15 @@ export default function JobApplicantsPage({ params }) {
                         >
                           <td className="p-3">
                             <div className="flex items-center gap-3">
-                              <img
-                                src={candidate.profile_picture}
-                                alt={candidate.name}
-                                className="w-8 h-8 rounded-full border"
-                              />
+                              <Avatar className="h-16 w-16">
+                                <AvatarImage
+                                  src={candidate.profile_picture}
+                                  alt={candidate.name}
+                                />
+                                <AvatarFallback>
+                                  <Building2 className="h-8 w-8" />
+                                </AvatarFallback>
+                              </Avatar>
                               <div>
                                 <div className="font-medium text-gray-900 flex items-center gap-2">
                                   {candidate.name}
@@ -1570,9 +1584,11 @@ export default function JobApplicantsPage({ params }) {
                 }}
               >
                 <div className="flex items-center gap-3 flex-shrink-0">
-                  <img
+                  <Image
                     src={selectedAssessment.profile_picture}
                     alt={selectedAssessment.name}
+                    width={40}
+                    height={40}
                     className="w-10 h-10 rounded-full border"
                   />
                   <h3 className="font-semibold text-sm">

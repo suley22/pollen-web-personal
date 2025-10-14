@@ -1,8 +1,9 @@
 "use client";
 
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -16,6 +17,10 @@ export function Filters() {
   const { searchTerm, setSearchTerm, selectedStatus, setSelectedStatus } =
     useEmployerManagementContext();
 
+  const handleClearSearch = () => {
+    setSearchTerm("");
+  };
+
   return (
     <Card className="w-full">
       <CardContent className="p-6">
@@ -27,8 +32,18 @@ export function Filters() {
               placeholder="Search companies, industries, or locations..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 pr-10"
             />
+            {searchTerm && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="absolute right-1 top-1 h-7 w-7 p-0 hover:bg-muted"
+                onClick={handleClearSearch}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
           <div className="flex gap-2 items-center">
             <Select value={selectedStatus} onValueChange={setSelectedStatus}>

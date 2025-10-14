@@ -47,8 +47,11 @@ export default function EmployerProfileView({ employerProfile }) {
         setIsLoadingJobs(true);
         try {
           const result = await fetchJobsByEmployer(company.id);
-          if (Array.isArray(result)) {
-            setJobs(result);
+          if (result.error) {
+            console.error("Error fetching jobs:", result.error);
+            setJobs([]);
+          } else if (Array.isArray(result.data)) {
+            setJobs(result.data);
           } else {
             setJobs([]);
           }

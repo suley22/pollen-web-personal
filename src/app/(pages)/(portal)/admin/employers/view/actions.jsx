@@ -23,9 +23,9 @@ export async function fetchJobsByEmployer(employerId) {
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from("jobs")
+    .from("job")
     .select("*")
-    .eq("employer_id", employerId)
+    .eq("company_id", employerId)
     .order("created_at", { ascending: false });
 
   if (error) {

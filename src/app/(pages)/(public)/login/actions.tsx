@@ -6,7 +6,7 @@ import { UserInfoModel } from "@/app/(pages)/(public)/login/_schema/registerSche
 import { createClient } from "@/lib/utils/supabase/server";
 import { AdminRoutes } from "@/app/(pages)/(portal)/admin/router";
 import { JobSeekerRoutes } from "@/app/(pages)/(portal)/(job-seeker)/router";
-import { LoginRoutes } from "./router";
+import { LoginRoutes } from "@/public/router";
 
 // TODO: Agregar validaciones de servidor.
 

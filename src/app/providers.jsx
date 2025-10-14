@@ -3,7 +3,7 @@
 import { createContext, useContext } from "react";
 import { JobSeekerRoutes } from "@/job-seeker/router";
 import { AdminRoutes } from "@/admin/router";
-import { LoginRoutes } from "@/app/(pages)/(public)/login/router";
+import { LoginRoutes } from "@/public/router";
 
 const UserContext = createContext();
 
@@ -37,7 +37,9 @@ export function Providers({ children, user }) {
     : LoginRoutes.login;
 
   const userData = {
-    name: firstName + " " + lastName,
+    firstName: firstName,
+    lastName: lastName,
+    fullName: firstName + " " + lastName,
     email: email,
     avatar: avatarUrl,
     role: role,

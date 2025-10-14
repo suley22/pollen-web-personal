@@ -2,9 +2,8 @@
 
 import { Button } from "@/components/ui/buttons/button";
 import { Loader } from "lucide-react";
-import { Avatar } from "@/components/ui/avatar";
 import { useUser } from "@/app/providers";
-import { LoginRoutes } from "@/app/(pages)/(public)/login/router";
+import { LoginRoutes } from "@/public/router";
 import { useCallback, memo } from "react";
 import Link from "next/link";
 import NextImage from "next/image";

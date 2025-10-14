@@ -1,4 +1,4 @@
-import EmployerProfileConsolidated from "../employer-profile-consolidated";
+import EmployerProfileView from "../employer-profile-view";
 import { fetchEmployerProfile } from "../actions";
 
 export default async function EmployerReviewPage({ params }) {
@@ -7,5 +7,5 @@ export default async function EmployerReviewPage({ params }) {
 
   const employerData = data && !error ? data : null;
 
-  return <EmployerProfileConsolidated employerProfile={employerData} />;
+  return <EmployerProfileView employerProfile={employerData} />;
 }

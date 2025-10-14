@@ -17,7 +17,7 @@ import { EmployerProfileHeader } from "@/employers/view/_components/view/employe
 import { useEmployerProfileForm } from "./hooks/useEmployerProfileForm";
 import { fetchJobsByEmployer } from "./actions";
 
-export default function EmployerProfileConsolidated({ employerProfile }) {
+export default function EmployerProfileView({ employerProfile }) {
   const router = useRouter();
 
   const {

@@ -30,8 +30,8 @@ export function CustomIndustriesSection({
           {customIndustries.map((industry) => (
             <Badge
               key={industry}
-              variant="secondary"
-              className="flex items-center gap-1"
+              variant="outline"
+              className="bg-gray-50 text-gray-600 border-gray-200 font-medium px-2 py-1"
             >
               {industry}
               <button

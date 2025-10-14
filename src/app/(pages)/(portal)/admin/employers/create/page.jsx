@@ -12,20 +12,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, EyeOff, User, UploadIcon } from "lucide-react";
+import { EyeOff, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { Building2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { AccoladesSection } from "./_components/accolades-section";
-import { CustomIndustriesSection } from "./_components/custom-industries-section";
 import { Progress } from "./_components/progress";
 import { useActionState } from "react";
-import { PrimaryButton } from "@/components/ui/buttons/primary-button";
 import { createCompanyData } from "./actions";
-import { IndustryCategoriesSection } from "./_components/industry-categories";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -33,7 +30,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select/select";
-import { Textarea } from "@/components/ui/textarea";
+import { Header } from "./_components/header";
+import { CompanyInformation } from "./_components/company-information";
 
 export default function CreateProfilePage() {
   const formRef = useRef(null);
@@ -46,190 +44,27 @@ export default function CreateProfilePage() {
   const [accolades, setAccolades] = useState([]);
   const [customIndustries, setCustomIndustries] = useState([]);
   const [industryValue, setIndustryValue] = useState("");
+  const [logoUrl, setLogoUrl] = useState("");
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
-      <div className="flex flex-row">
-        <div className="flex flex-row items-center mb-6">
-          <Button variant="ghost" size="icon" onClick={() => router.back()}>
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          <h1 className="!mb-0 text-4xl px-4 font-bold text-gray-900">
-            Create a New Employer Profile
-          </h1>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div>
-        <Progress value={50} />
-        <p className="text-sm text-gray-600 mt-1 mb-6 flex justify-between">
-          <span>Profile completeness:</span>
-          <span>50%</span>
-        </p>
-      </div>
+    <div className="flex flex-col mx-auto py-6 gap-6">
+      <Header />
 
       {/* Formulario original */}
       <form ref={formRef} className="flex flex-col gap-6" action={CompanyData}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2 space-y-6">
-            {/* Employer Information */}
-            <Card className="bg-white">
-              <CardContent className="">
-                <div className="flex items-center space-y-1.5 p-6">
-                  <Building2 />
-                  <h3 className="!mb-0 ml-1 text-lg font-semibold text-gray-900">
-                    Employer Details
-                  </h3>
-                </div>
-
-                <div className="p-6 pt-0 space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Company Name */}
-                    <div className="md:col-span-2">
-                      <Label
-                        htmlFor="company_name"
-                        className="mb-1 text-gray-800"
-                      >
-                        Company Name
-                      </Label>
-                      <Input
-                        type="text"
-                        name="company_name"
-                        className="w-full border p-2 rounded"
-                        placeholder="Company Name"
-                      />
-                    </div>
-
-                    {/* Industry */}
-                    <div className="md:col-span-2">
-                      <Label
-                        htmlFor="industries"
-                        className="mb-1 text-gray-800"
-                      >
-                        Industry
-                      </Label>
-
-                      <IndustryCategoriesSection
-                        value={industryValue}
-                        onValueChange={setIndustryValue}
-                      />
-                    </div>
-                    {checked && (
-                      <div className="md:col-span-2">
-                        <CustomIndustriesSection
-                          customIndustries={customIndustries}
-                          setCustomIndustries={setCustomIndustries}
-                          placeholder={
-                            "Add your custom industry types and press Enter"
-                          }
-                        />
-                      </div>
-                    )}
-                    {/* No renderizar AccoladesSection aquí, solo en la sección principal */}
-                    <div className="md:col-span-2" />
-
-                    {/* Company Logo */}
-                    <div className="md:col-span-2">
-                      <Label className="mb-1 text-gray-800">Company Logo</Label>
-                      <div className="flex flex-row items-center space-x-4">
-                        <Input
-                          type="text"
-                          name="logo_url"
-                          className="w-full border p-2 rounded"
-                          placeholder="Logo URL"
-                        />
-                        <PrimaryButton
-                          icon={<UploadIcon />}
-                          text="Upload Logo"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Company Size */}
-                    <div>
-                      <Label
-                        htmlFor="company_size"
-                        className="mb-1 text-gray-800"
-                      >
-                        Company Size
-                      </Label>
-                      <Select
-                        name="company_size"
-                        placeholder="Select company size"
-                      >
-                        <SelectTrigger className="h-9 px-3 py-1 text-sm">
-                          <SelectValue placeholder="Select company size" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="1-10">1-10 employees</SelectItem>
-                          <SelectItem value="11-50">11-50 employees</SelectItem>
-                          <SelectItem value="51-200">
-                            51-200 employees
-                          </SelectItem>
-                          <SelectItem value="201-500">
-                            201-500 employees
-                          </SelectItem>
-                          <SelectItem value="501-1000">
-                            501-1000 employees
-                          </SelectItem>
-                          <SelectItem value="1000+">1000+ employees</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Location */}
-                    <div>
-                      <Label
-                        htmlFor="company_location"
-                        className="mb-1 text-gray-800"
-                      >
-                        Location
-                      </Label>
-                      <Input
-                        type="text"
-                        name="company_location"
-                        className="w-full border p-2 rounded"
-                        placeholder="Location"
-                      />
-                    </div>
-
-                    {/* Founded Year */}
-                    <div>
-                      <Label
-                        htmlFor="founded_year"
-                        className="mb-1 text-gray-800"
-                      >
-                        Founded Year
-                      </Label>
-                      <Input
-                        type="text"
-                        name="founded_year"
-                        className="w-full border p-2 rounded"
-                        placeholder="Founded"
-                      />
-                    </div>
-
-                    {/* Website */}
-                    <div>
-                      <Label
-                        htmlFor="website_url"
-                        className="mb-1 text-gray-800"
-                      >
-                        Website
-                      </Label>
-                      <Input
-                        type="text"
-                        name="website_url"
-                        className="w-full border p-2 rounded"
-                        placeholder="Website"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Company Information */}
+            <CompanyInformation
+              industryValue={industryValue}
+              onIndustryValueChange={setIndustryValue}
+              customIndustries={customIndustries}
+              onCustomIndustriesChange={setCustomIndustries}
+              showCustomIndustries={checked}
+              onShowCustomIndustriesChange={setChecked}
+              logoUrl={logoUrl}
+              onLogoUrlChange={setLogoUrl}
+            />
 
             {/* About the Employer */}
             <Card className="bg-white">

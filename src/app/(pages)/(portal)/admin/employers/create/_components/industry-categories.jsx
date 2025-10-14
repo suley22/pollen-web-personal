@@ -50,7 +50,7 @@ export function IndustryCategoriesSection() {
           const isOther = item.value === "other";
           return (
             <div className="flex flex-col space-y-2" key={item.value}>
-              <div className="flex items-center space-x-2">
+              <label className="flex items-center space-x-2 cursor-pointer">
                 <Checkbox
                   name={`industries.${item.value}`}
                   value={item.value}
@@ -60,7 +60,7 @@ export function IndustryCategoriesSection() {
                   }
                 />
                 <span>{item.label}</span>
-              </div>
+              </label>
             </div>
           );
         })}

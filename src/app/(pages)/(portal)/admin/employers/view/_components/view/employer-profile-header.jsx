@@ -60,7 +60,7 @@ export function EmployerProfileHeader({
               className="text-3xl font-bold bg-transparent border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           ) : (
-            <div className="text-3xl font-bold">{companyName}</div>
+            <div className="text-2xl font-bold">{companyName}</div>
           )}
         </div>
       </div>

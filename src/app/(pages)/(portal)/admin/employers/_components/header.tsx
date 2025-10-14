@@ -1,10 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/buttons/button";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { AdminRoutes } from "@/admin/router";
 import { useTransition } from "react";
+import { PrimaryButton } from "@/components/ui/buttons/primary-button";
 
 export function Header() {
   const router = useRouter();
@@ -20,19 +20,18 @@ export function Header() {
           </p>
         </div>
       </div>
-      <Button
-        variant="default"
+
+      <PrimaryButton
+        className="max-w-xs font-sora"
+        text="Create"
         size="default"
         onClick={() =>
           startTransition(() => {
             router.push(AdminRoutes.employersCreate);
           })
         }
-        className="flex items-center gap-2 font-sora"
-      >
-        <Plus className="w-4 h-4" />
-        Create
-      </Button>
+        icon={<Plus className="w-4 h-4" />}
+      />
     </div>
   );
 }

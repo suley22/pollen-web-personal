@@ -10,11 +10,7 @@ import fastCompanyLogo from "@/assets/image_1753303914295.png";
 import businessInsiderLogo from "@/assets/image_1753303943999.png";
 import stylistLogo from "@/assets/image_1753303963933.png";
 import nyPostLogo from "@/assets/image_1753303981878.png";
-import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { LoginRoutes } from "./login/router";
-import { JobSeekerRoutes } from "./(portal)/(job-seeker)/router";
-import { AdminRoutes } from "./(portal)/admin/router";
 import { CheckCircle, Target, Heart } from "lucide-react";
 import davidGrahamPhoto from "@/assets/david_graham_1753528668280.jpg";
 import pollenEventPhoto from "@/assets/pollen_event_1753530422042.jpg";
@@ -591,7 +587,7 @@ export default function Home() {
                 data-mode="shadow"
                 data-lazyload="false"
                 style={{ display: "block", width: "100%", minHeight: "400px" }}
-              ></div>
+              />
             </div>
           </div>
         </div>
@@ -642,7 +638,7 @@ export default function Home() {
                   alt="Pollen community event with panel discussion and engaged audience"
                   className="w-full h-auto rounded-2xl shadow-xl object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl" />
               </div>
             </div>
           </div>

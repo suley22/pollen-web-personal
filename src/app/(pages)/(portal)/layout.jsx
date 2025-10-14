@@ -11,7 +11,9 @@ export default function RootLayout({ children }) {
         <AppSidebar />
         <SidebarInset className="bg-gray-50">
           <Header />
-          {children}
+          <div className="flex flex-col items-center justify-items-center px-8">
+            {children}
+          </div>
         </SidebarInset>
       </SidebarProvider>
     </>

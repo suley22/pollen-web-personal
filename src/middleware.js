@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { updateSession } from "@/lib/utils/supabase/middleware";
-import { LoginRoutes } from "./app/(pages)/(public)/login/router";
+import { LoginRoutes } from "@/public/router";
 import { ADMIN_ROUTES, AdminRoutes } from "./app/(pages)/(portal)/admin/router";
 import { JOB_SEEKER_ROUTES, JobSeekerRoutes } from "@/job-seeker/router";
 import { PUBLIC_ROUTES } from "@/public/router";

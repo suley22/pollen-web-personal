@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import {
   getUsers as getUsers,
   updateUserRole,
-} from "@/app/(pages)/(portal)/admin/role-managment/actions";
+} from "@/app/(pages)/(portal)/admin/role-management/actions";
 
 export function useRoleManagment() {
   const [selectedStatus] = useState("all");

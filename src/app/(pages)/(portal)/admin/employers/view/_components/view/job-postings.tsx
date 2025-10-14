@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 interface Job {
   id: string;
   job_title: string;
-  status: "live" | "draft" | "hidden";
+  status: "live" | "draft" | "hidden" | "paused";
   location: string;
   applicationsCount?: number;
   salary_range?: string;
@@ -35,6 +35,7 @@ export function JobPostings({
   const liveJobsCount = jobs.filter((job) => job.status === "live").length;
   const draftJobsCount = jobs.filter((job) => job.status === "draft").length;
   const hiddenJobsCount = jobs.filter((job) => job.status === "hidden").length;
+  const pausedJobsCount = jobs.filter((job) => job.status === "paused").length;
 
   return (
     <Card className="overflow-hidden py-6">
@@ -56,7 +57,7 @@ export function JobPostings({
                 {draftJobsCount > 0 && (
                   <Badge
                     variant="outline"
-                    className="bg-orange-50 text-orange-700 border-orange-200"
+                    className="bg-yellow-50 text-yellow-700 border-yellow-200"
                   >
                     {draftJobsCount} Draft
                   </Badge>
@@ -67,6 +68,14 @@ export function JobPostings({
                     className="bg-gray-50 text-gray-700 border-gray-200"
                   >
                     {hiddenJobsCount} Hidden
+                  </Badge>
+                )}
+                {pausedJobsCount > 0 && (
+                  <Badge
+                    variant="outline"
+                    className="bg-orange-50 text-orange-700 border-orange-200"
+                  >
+                    {pausedJobsCount} Paused
                   </Badge>
                 )}
               </div>

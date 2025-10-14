@@ -74,42 +74,47 @@ export default function CreateProfilePage() {
           </div>
         </div>
 
-        {/* Botón de submit original debajo del formulario */}
+        {/* Divider and Save Button */}
+        <div className="flex flex-col gap-4 mt-6">
+          <div className="w-full h-[1px] bg-gray-200" />
+          <div className="flex justify-end">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button type="button" size="lg">
+                  Create company profile
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Confirm company creation?</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to create the company? This action
+                    will not affect current logic.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="secondary" type="button">
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                  <DialogClose asChild>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        if (formRef.current) formRef.current.requestSubmit();
+                        router.push("/admin/employers-management");
+                      }}
+                    >
+                      Confirm
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
       </form>
-      <div className="flex justify-end mt-8">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button type="button">Create company profile</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirm company creation?</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to create the company? This action will
-                not affect current logic.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="secondary" type="button">
-                  Cancelar
-                </Button>
-              </DialogClose>
-              <DialogClose asChild>
-                <Button
-                  type="button"
-                  onClick={() => {
-                    if (formRef.current) formRef.current.requestSubmit();
-                    router.push("/admin/employers-management");
-                  }}
-                >
-                  Confirmar
-                </Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
     </div>
   );
 }

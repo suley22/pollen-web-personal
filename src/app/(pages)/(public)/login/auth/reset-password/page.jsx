@@ -4,7 +4,7 @@ import { useActionState, useEffect, useState } from "react";
 import { Button } from "@/components/ui/buttons/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LoginRoutes } from "@/app/(pages)/(public)/login/router";
+import { LoginRoutes } from "@/public/router";
 import { updatePassword } from "../../actions";
 import { usePasswordReset } from "../../_hooks/usePasswordReset";
 import Link from "next/link";

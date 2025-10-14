@@ -7,11 +7,16 @@ export const PublicRoutes = {
   privacy: `/privacy`,
 };
 
+const basePath = "/login";
+
 export const LoginRoutes = {
-  login: `/login`,
-  register: `/register`,
-  forgotPassword: `/forgot-password`,
-  resetPassword: `/reset-password`,
+  login: `${basePath}`,
+  logout: `/logout`,
+  userInfo: `${basePath}/user-info`, //TODO: Mover al perfil del usuario
+  forgotPassword: `${basePath}/forgot-password`,
+  authConfirm: `${basePath}/auth/confirm`,
+  authResetPassword: `${basePath}/auth/reset-password`,
+  authCodeCallback: `${basePath}/auth/code-callback`,
 };
 
 export const PUBLIC_ROUTES = Object.values(PublicRoutes).concat(

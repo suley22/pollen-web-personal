@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { getEmployerProfile } from "@/app/(pages)/(portal)/admin/employers-management/actions";
 

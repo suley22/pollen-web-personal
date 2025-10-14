@@ -26,7 +26,7 @@ import {
   Users,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -49,58 +49,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import { CompanyInformation } from "@/employers/view/_components/view/company-information";
+import { useEmployerProfileForm } from "./hooks/useEmployerProfileForm";
+import { fetchJobsByEmployer } from "./actions";
 
 export default function EmployerProfileConsolidated({ employerProfile }) {
   const router = useRouter();
 
-  const fetchJobsByEmployer = async (employerId) => {
-    return [];
-  };
+  const {
+    company,
+    isEditing,
+    setIsEditing,
+    editData,
+    setEditData,
+    jobs,
+    isLoadingJobs,
+    setJobs,
+    setIsLoadingJobs,
+    handleInputChange,
+    handleEdit,
+    handleCancel,
+    handleSave,
+    handleSetLive,
+    handleHideProfile,
+    handleDelete,
+  } = useEmployerProfileForm(employerProfile);
 
-  const company = {
-    ...employerProfile,
-    profileCompleteness: 70,
-    logo: employerProfile.logo_url,
-    size: employerProfile.company_size,
-    location: employerProfile.company_location,
-    foundedYear: employerProfile.founded_year,
-    website: employerProfile.website_url,
-    industries: employerProfile.industries || ["Technology"],
-    about: employerProfile.company_about || "No description provided.",
-    workEnvironment: employerProfile.work_environment || "Not specified.",
-    pollenLove: employerProfile.company_loves || "Not specified.",
-    accolades: employerProfile.company_accolades || [
-      "Great Place to Work 2023",
-    ],
-    socialMediaLinks: [
-      { id: 1, platform: "Twitter", url: employerProfile.twitter_url },
-      { id: 2, platform: "LinkedIn", url: employerProfile.linkedin_url },
-      { id: 3, platform: "Glassdoor", url: employerProfile.glassdoor_url },
-    ],
-    contactName: employerProfile.contact_name || "Not specified",
-    contactJobTitle: employerProfile.contact_job_title || "Not specified",
-    contactEmail: employerProfile.contact_email || "Not specified",
-    contactPhone: employerProfile.contact_phone || "Not specified",
-    createdDate: employerProfile.created_at || "19 Aug 2025",
-    lastUpdated: employerProfile.updated_at || "19 Aug 2025",
-    status: employerProfile.approval_status || "draft",
-    howDidTheyHearAboutUs:
-      employerProfile.how_did_you_hear_about_us || "Not specified",
-    howDidTheyHearMoreInfo: employerProfile.more_info || "Not specified",
-    entryLevelHiringFrequency:
-      employerProfile.hiring_frequency || "Not specified",
-    previousHiringMethods: employerProfile.previous_hiring_methods || [""],
-    additionalNotes: employerProfile.additional_notes || "Not specified",
-  };
-
-  const jobsData = employerProfile.jobs || [];
-
-  const [jobs, setJobs] = useState(jobsData);
-  const [isLoadingJobs, setIsLoadingJobs] = useState(true);
-  const [isEditing, setIsEditing] = useState();
-  const [editData, setEditData] = useState(null);
   const getJobStatusBadge = (status) => {
     if (status === "live") {
       return (
@@ -131,11 +105,10 @@ export default function EmployerProfileConsolidated({ employerProfile }) {
         setIsLoadingJobs(true);
         try {
           const result = await fetchJobsByEmployer(company.id);
-          if (result.error) {
-            console.error("Error fetching jobs:", result.error);
-            setJobs([]);
+          if (Array.isArray(result)) {
+            setJobs(result);
           } else {
-            setJobs(result.data || []);
+            setJobs([]);
           }
         } catch (error) {
           console.error("Error fetching jobs:", error);
@@ -147,18 +120,7 @@ export default function EmployerProfileConsolidated({ employerProfile }) {
     };
 
     loadJobs();
-  }, [company.id]);
-
-  const handleInputChange = (field, value) => {
-    if (editData) {
-      setEditData({ ...editData, [field]: value });
-    }
-  };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-    setEditData(null);
-  };
+  }, [company.id, setIsLoadingJobs, setJobs]);
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -189,9 +151,9 @@ export default function EmployerProfileConsolidated({ employerProfile }) {
   };
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="flex flex-col w-full mx-auto py-6 gap-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Button
             variant="ghost"
@@ -201,72 +163,19 @@ export default function EmployerProfileConsolidated({ employerProfile }) {
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              {company.logo || editData?.logo ? (
-                <img
-                  src={editData?.logo || company.logo}
-                  alt={`${company.company_name} logo`}
-                  className="h-12 w-12 rounded-lg object-cover cursor-pointer hover:opacity-80 transition-opacity"
-                  onClick={() =>
-                    isEditing && document.getElementById("logo-upload")?.click()
-                  }
-                />
-              ) : (
-                <div
-                  className="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center cursor-pointer hover:bg-gray-300 transition-colors"
-                  onClick={() =>
-                    isEditing && document.getElementById("logo-upload")?.click()
-                  }
-                >
-                  <Building2 className="h-6 w-6 text-gray-500" />
-                </div>
-              )}
-              {isEditing && (
-                <>
-                  <input
-                    id="logo-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (event) => {
-                          const result = event.target?.result;
-                          handleInputChange("logo", result);
-                        };
-                        reader.readAsDataURL(file);
-                      }
-                    }}
-                  />
-                  <div className="absolute -bottom-1 -right-1 bg-blue-500 text-white rounded-full p-1 text-xs">
-                    <Edit className="h-3 w-3" />
-                  </div>
-                </>
-              )}
-            </div>
-            <div>
-              {isEditing ? (
-                <Input
-                  value={editData?.company_name || ""}
-                  onChange={(e) =>
-                    handleInputChange("company_name", e.target.value)
-                  }
-                  placeholder="Company name"
-                  className="text-3xl font-bold bg-transparent border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              ) : (
-                <h1 className="text-3xl font-bold">{company.company_name}</h1>
-              )}
-              <div className="flex items-center space-x-4 mt-2">
-                {getStatusBadge(company.status)}
-                <span className="text-sm text-muted-foreground">
-                  {company.profileCompleteness || 70}% complete
-                </span>
-              </div>
-            </div>
+          <div>
+            {isEditing ? (
+              <Input
+                value={editData?.company_name || ""}
+                onChange={(e) =>
+                  handleInputChange("company_name", e.target.value)
+                }
+                placeholder="Company name"
+                className="text-3xl font-bold bg-transparent border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            ) : (
+              <div className="text-3xl font-bold">{company.company_name}</div>
+            )}
           </div>
         </div>
 

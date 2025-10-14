@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Building2, MapPin, Globe } from "lucide-react";
+import { Building2, MapPin, Globe, Edit } from "lucide-react";
 
 export function CompanyInformation({
   company,
@@ -28,6 +28,55 @@ export function CompanyInformation({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Company Logo */}
+        <div className="flex justify-center mb-6">
+          <div className="relative">
+            {company.logo || editData?.logo ? (
+              <img
+                src={editData?.logo || company.logo}
+                alt={`${company.company_name} logo`}
+                className="h-24 w-24 rounded-lg object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() =>
+                  isEditing && document.getElementById("logo-upload")?.click()
+                }
+              />
+            ) : (
+              <div
+                className="h-24 w-24 rounded-lg bg-gray-200 flex items-center justify-center cursor-pointer hover:bg-gray-300 transition-colors"
+                onClick={() =>
+                  isEditing && document.getElementById("logo-upload")?.click()
+                }
+              >
+                <Building2 className="h-12 w-12 text-gray-500" />
+              </div>
+            )}
+            {isEditing && (
+              <>
+                <input
+                  id="logo-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (event) => {
+                        const result = event.target?.result;
+                        onInputChange("logo", result);
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+                <div className="absolute -bottom-1 -right-1 bg-blue-500 text-white rounded-full p-1.5 text-xs">
+                  <Edit className="h-4 w-4" />
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label className="text-sm font-medium text-muted-foreground">

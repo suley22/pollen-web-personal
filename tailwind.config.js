@@ -5,8 +5,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sora: ["Sora", "sans-serif"],
-        poppins: ["Poppins", "sans-serif"],
+        sans: ["var(--font-sora)", "sans-serif"],
+        sora: ["var(--font-sora)", "sans-serif"],
+        poppins: ["var(--font-poppins)", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

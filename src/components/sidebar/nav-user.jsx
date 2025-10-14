@@ -9,7 +9,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SidebarMenuButton } from "@/components/sidebar/sidebar";
 import { useUser } from "@/app/providers";
 
 export function NavUser({ onLogout }) {

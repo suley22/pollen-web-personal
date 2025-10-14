@@ -19,13 +19,13 @@ import { Building2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { AccoladesSection } from "./(components)/accolades-section";
-import { CustomIndustriesSection } from "./(components)/custom-industries-section";
-import { Progress } from "./(components)/progress";
+import { AccoladesSection } from "./_components/accolades-section";
+import { CustomIndustriesSection } from "./_components/custom-industries-section";
+import { Progress } from "./_components/progress";
 import { useActionState } from "react";
 import { PrimaryButton } from "@/components/ui/buttons/primary-button";
 import { createCompanyData } from "./actions";
-import { IndustryCategoriesSection } from "./(components)/industry-categories";
+import { IndustryCategoriesSection } from "./_components/industry-categories";
 import {
   Select,
   SelectContent,

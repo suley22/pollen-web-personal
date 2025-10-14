@@ -3,14 +3,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Briefcase,
-  Plus,
-  MapPin,
-  Users,
-  CheckCircle,
-  Clock,
-} from "lucide-react";
+import { useJobManagement } from "@/admin/jobs/useJobManagement";
+import { Briefcase, Plus, MapPin, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface Job {
@@ -36,39 +30,7 @@ export function JobPostings({
 }: JobPostingsProps) {
   const router = useRouter();
 
-  const getJobStatusBadge = (status: "live" | "draft" | "hidden") => {
-    if (status === "live") {
-      return (
-        <Badge
-          variant="outline"
-          className="bg-green-50 text-green-700 border-green-200"
-        >
-          <CheckCircle className="w-3 h-3 mr-1" />
-          Live
-        </Badge>
-      );
-    }
-    if (status === "hidden") {
-      return (
-        <Badge
-          variant="outline"
-          className="bg-gray-50 text-gray-700 border-gray-200"
-        >
-          <Clock className="w-3 h-3 mr-1" />
-          Hidden
-        </Badge>
-      );
-    }
-    return (
-      <Badge
-        variant="outline"
-        className="bg-orange-50 text-orange-700 border-orange-200"
-      >
-        <Clock className="w-3 h-3 mr-1" />
-        Draft
-      </Badge>
-    );
-  };
+  const { form } = useJobManagement();
 
   const liveJobsCount = jobs.filter((job) => job.status === "live").length;
   const draftJobsCount = jobs.filter((job) => job.status === "draft").length;
@@ -168,7 +130,7 @@ export function JobPostings({
                       <h4 className="text-base font-semibold text-gray-900">
                         {job.job_title}
                       </h4>
-                      {getJobStatusBadge(job.status)}
+                      {form.getStatusBadge(job.status)}
                     </div>
 
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-600">

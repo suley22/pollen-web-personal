@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { Search } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useEmployerManagementContext } from "@/admin/employers/_context/EmployerManagementContext";
 
 export function Filters() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const { searchTerm, setSearchTerm, selectedStatus, setSelectedStatus } =
+    useEmployerManagementContext();
 
   return (
     <Card className="w-full">
@@ -25,13 +25,14 @@ export function Filters() {
           </div>
           <div className="flex gap-2">
             <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
               className="px-3 py-2 border rounded-md"
             >
               <option value="all">All Statuses</option>
-              <option value="live">Live</option>
-              <option value="draft">Draft</option>
+              <option value="approved">Approved</option>
+              <option value="pending">Pending</option>
+              <option value="rejected">Rejected</option>
             </select>
           </div>
         </div>

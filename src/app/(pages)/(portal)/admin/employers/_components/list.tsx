@@ -1,6 +1,6 @@
 "use client";
 
-import { useEmployerManagement } from "@/admin/employers/_hooks/useEmployerManagement";
+import { useEmployerManagementContext } from "@/admin/employers/_context/EmployerManagementContext";
 import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Building2, CheckCircle } from "lucide-react";
@@ -30,7 +30,7 @@ import { ListSkeleton } from "./list-skeleton";
 
 export function List() {
   const router = useRouter();
-  const { employers, getStatusBadge, loading } = useEmployerManagement();
+  const { employers, getStatusBadge, loading } = useEmployerManagementContext();
   const [isPending, startTransition] = useTransition();
 
   const handleSetLive = (company) => {

@@ -37,10 +37,7 @@ export function SocialMedia({
           {socialMediaLinks
             ?.filter((link) => link.url)
             .map((link) => (
-              <div
-                key={link.id}
-                className="flex items-center justify-between"
-              >
+              <div key={link.id} className="flex items-center justify-between">
                 <span className="text-sm font-medium">{link.platform}</span>
                 <a
                   href={link.url}

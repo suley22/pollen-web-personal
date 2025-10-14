@@ -28,7 +28,7 @@
       "@/utils/*": ["./src/lib/utils/*"],
       "@/components/*": ["./src/components/*"],
       "@/hooks/*": ["./src/hooks/*"],
-      "@/employers/*": ["./src/app/(pages)/(portal)/(employers)/*"]
+      "@/employers/*": ["./src/app/(pages)/(portal)/admin/employers/*"]
     },
     "moduleResolution": "bundler",
     "resolveJsonModule": true,

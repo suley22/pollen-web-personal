@@ -50,6 +50,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CompanyInformation } from "@/employers/view/_components/view/company-information";
+import { AboutCompany } from "@/employers/view/_components/view/about-company";
+import { WorkEnvironment } from "@/employers/view/_components/view/work-environment";
+import { PollenLoves } from "@/employers/view/_components/view/pollen-loves";
+import { EntryLevelSupport } from "@/employers/view/_components/view/entry-level-support";
+import { AccoladesAccreditations } from "@/employers/view/_components/view/accolades-accreditations";
+import { SocialMedia } from "@/employers/view/_components/view/social-media";
 import { useEmployerProfileForm } from "./hooks/useEmployerProfileForm";
 import { fetchJobsByEmployer } from "./actions";
 
@@ -305,226 +311,25 @@ export default function EmployerProfileConsolidated({ employerProfile }) {
           />
 
           {/* About Company */}
-          <Card className="p-6">
-            <CardHeader>
-              <CardTitle>About the Company</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isEditing ? (
-                <Textarea
-                  value={editData?.about || ""}
-                  onChange={(e) => handleInputChange("about", e.target.value)}
-                  placeholder="Tell the story of what makes this company tick - what do they do, who do they serve, and what drives them forward?"
-                  rows={4}
-                />
-              ) : (
-                <p className="text-sm leading-relaxed">{company.about}</p>
-              )}
-            </CardContent>
-          </Card>
+          <AboutCompany about={company.about} />
 
           {/* Work Environment */}
-          <Card className="p-6">
-            <CardHeader>
-              <CardTitle>Work Environment</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isEditing ? (
-                <Textarea
-                  value={editData?.workEnvironment || ""}
-                  onChange={(e) =>
-                    handleInputChange("workEnvironment", e.target.value)
-                  }
-                  placeholder="Paint a picture of daily life here - what's the vibe like? How do people collaborate? What makes employees excited to come to work?"
-                  rows={4}
-                />
-              ) : (
-                <p className="text-sm leading-relaxed">
-                  {company.workEnvironment}
-                </p>
-              )}
-            </CardContent>
-          </Card>
+          <WorkEnvironment workEnvironment={company.workEnvironment} />
 
           {/* Why does Pollen love this company */}
-          {(company.pollenLove || isEditing) && (
-            <Card className="p-6">
-              <CardHeader>
-                <CardTitle>Pollen loves...</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {isEditing ? (
-                  <Textarea
-                    value={editData?.pollenLove || ""}
-                    onChange={(e) =>
-                      handleInputChange("pollenLove", e.target.value)
-                    }
-                    placeholder="• They genuinely care about growing their people - career development isn't just a buzzword here&#10;• Work-life balance actually means something - flexibility that works for real humans&#10;• Diversity and inclusion is lived, not just talked about - you can see it in action"
-                    rows={4}
-                  />
-                ) : (
-                  <div className="text-sm leading-relaxed">
-                    {company.pollenLove?.split("\n").map((line, idx) => (
-                      <p key={`pollen-love-${idx}`} className="mb-1">
-                        {line}
-                      </p>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
+          <PollenLoves pollenLove={company.pollenLove} />
 
           {/* Entry-Level Support */}
-          {(company.entryLevelSupport || isEditing) && (
-            <Card className="p-6">
-              <CardHeader>
-                <CardTitle>Entry-Level Support</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {isEditing ? (
-                  <Textarea
-                    value={editData?.entryLevelSupport || ""}
-                    onChange={(e) =>
-                      handleInputChange("entryLevelSupport", e.target.value)
-                    }
-                    placeholder="How does this company nurture fresh talent? Think mentoring magic, training programmes, or that amazing buddy system that helps new starters find their feet..."
-                    rows={4}
-                  />
-                ) : (
-                  <p className="text-sm leading-relaxed">
-                    {company.entryLevelSupport}
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          )}
+          <EntryLevelSupport entryLevelSupport={company.entryLevelSupport} />
 
           {/* Accolades & Accreditations */}
-          {company.accolades && company.accolades.length > 0 && (
-            <Card className="p-6">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Award className="h-5 w-5" />
-                  <span>Accolades & Accreditations</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {isEditing ? (
-                  <div className="space-y-3">
-                    {/* Selected accolades */}
-                    {editData?.accolades && editData.accolades.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {editData.accolades.map((accolade, idx) => (
-                          <Badge
-                            key={`accolade-${idx}`}
-                            variant="secondary"
-                            className="flex items-center gap-1"
-                          >
-                            {accolade}
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const newAccolades =
-                                  editData.accolades?.filter(
-                                    (a) => a !== accolade,
-                                  ) || [];
-                                handleInputChange("accolades", newAccolades);
-                              }}
-                              className="ml-1 hover:bg-gray-300 rounded-full w-4 h-4 flex items-center justify-center text-xs"
-                            >
-                              ×
-                            </button>
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
-                    {/* Add new accolades */}
-                    <div className="flex space-x-2">
-                      <Input
-                        placeholder="Add accolade..."
-                        onKeyPress={(e) => {
-                          if (e.key === "Enter") {
-                            const value = e.currentTarget.value.trim();
-                            if (
-                              value &&
-                              !editData?.accolades?.includes(value)
-                            ) {
-                              const newAccolades = [
-                                ...(editData?.accolades || []),
-                                value,
-                              ];
-                              handleInputChange("accolades", newAccolades);
-                              e.currentTarget.value = "";
-                            }
-                          }
-                        }}
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-wrap gap-2">
-                    {company.accolades.map((accolade, idx) => (
-                      <Badge
-                        key={`view-accolade-${idx}`}
-                        variant="outline"
-                        className="bg-green-50 text-green-700 border-green-200"
-                      >
-                        {accolade}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
+          <AccoladesAccreditations accolades={company.accolades} />
 
           {/* Social Media Links */}
-          {company.socialMediaLinks && company.socialMediaLinks.length > 0 && (
-            <Card className="p-6">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Globe className="h-5 w-5" />
-                  <span>Social Media</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {company.socialMediaLinks
-                  .filter((link) => link.url)
-                  .map((link) => (
-                    <div
-                      key={link.id}
-                      className="flex items-center justify-between"
-                    >
-                      <span className="text-sm font-medium">
-                        {link.platform}
-                      </span>
-                      <a
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline text-sm truncate max-w-xs"
-                      >
-                        {link.url.replace(/^https?:\/\//, "")}
-                      </a>
-                    </div>
-                  ))}
-                {company.glassdoorPage && (
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Glassdoor</span>
-                    <a
-                      href={company.glassdoorPage}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline text-sm truncate max-w-xs"
-                    >
-                      {company.glassdoorPage.replace(/^https?:\/\//, "")}
-                    </a>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
+          <SocialMedia
+            socialMediaLinks={company.socialMediaLinks}
+            glassdoorPage={company.glassdoorPage}
+          />
         </div>
 
         {/* Right Column - Contact & Meta Information */}

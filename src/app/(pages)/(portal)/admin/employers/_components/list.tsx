@@ -184,9 +184,7 @@ export function List() {
                           className="h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
                           onClick={(e) => {
                             e.stopPropagation();
-                            router.push(
-                              `/admin/company-profiles/${company.id}`,
-                            );
+                            router.push(AdminRoutes.employersView(company.id));
                           }}
                         >
                           <Eye className="h-4 w-4 mr-1" />
@@ -198,9 +196,7 @@ export function List() {
                           className="h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
                           onClick={(e) => {
                             e.stopPropagation();
-                            router.push(
-                              `/admin/company-profiles/${company.id}?edit=true`,
-                            );
+                            router.push(AdminRoutes.employersEdit(company.id));
                           }}
                         >
                           <Edit className="h-4 w-4 mr-1" />

@@ -14,6 +14,7 @@ import { ProfileStatus } from "@/employers/view/_components/view/profile-status"
 import { InternalPollenData } from "@/employers/view/_components/view/internal-pollen-data";
 import { JobPostings } from "@/employers/view/_components/view/job-postings";
 import { EmployerProfileHeader } from "@/employers/view/_components/view/employer-profile-header";
+import { EmployerProfileSkeleton } from "@/employers/view/_components/employer-profile-skeleton";
 import { useEmployerProfileForm } from "./hooks/useEmployerProfileForm";
 import { fetchJobsByEmployer } from "./actions";
 
@@ -62,6 +63,11 @@ export default function EmployerProfileView({ employerProfile }) {
 
     loadJobs();
   }, [company.id, setIsLoadingJobs, setJobs]);
+
+  // Show skeleton while profile is loading
+  if (!employerProfile) {
+    return <EmployerProfileSkeleton />;
+  }
 
   return (
     <div className="flex flex-col w-full mx-auto py-6 gap-6">

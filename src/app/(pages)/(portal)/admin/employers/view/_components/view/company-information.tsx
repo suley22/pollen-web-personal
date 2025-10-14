@@ -37,20 +37,18 @@ export function CompanyInformation({ company }) {
           <div className="flex-1 p-6">
             <div className="grid grid-cols-2 gap-x-8 gap-y-6">
               {/* Industry */}
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-muted-foreground">
-                  Industry
-                </Label>
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {company.industries && Array.isArray(company.industries)
+              <InfoField
+                label="Industry"
+                value={
+                  company.industries.length > 0
                     ? company.industries.map((industry) => (
                         <Badge key={industry} variant="outline">
                           {industry}
                         </Badge>
                       ))
-                    : "Not specified"}
-                </div>
-              </div>
+                    : "Not specified"
+                }
+              />
 
               {/* Company Size */}
               <InfoField label="Company Size" value={company.size} />

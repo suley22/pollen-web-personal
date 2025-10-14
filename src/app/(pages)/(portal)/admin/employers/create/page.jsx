@@ -32,6 +32,11 @@ import {
 } from "@/components/ui/select/select";
 import { Header } from "./_components/header";
 import { CompanyInformation } from "./_components/company-information";
+import { AboutEmployer } from "./_components/about-employer";
+import { WorkEnvironment } from "./_components/work-environment";
+import { PollenLoves } from "./_components/pollen-loves";
+import { AccoladesAccreditations } from "./_components/accolades-accreditations";
+import { EntryLevelSupport } from "./_components/entry-level-support";
 
 export default function CreateProfilePage() {
   const formRef = useRef(null);
@@ -50,11 +55,9 @@ export default function CreateProfilePage() {
     <div className="flex flex-col mx-auto py-6 gap-6">
       <Header />
 
-      {/* Formulario original */}
       <form ref={formRef} className="flex flex-col gap-6" action={CompanyData}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2 space-y-6">
-            {/* Company Information */}
             <CompanyInformation
               industryValue={industryValue}
               onIndustryValueChange={setIndustryValue}
@@ -67,57 +70,22 @@ export default function CreateProfilePage() {
             />
 
             {/* About the Employer */}
-            <Card className="bg-white">
-              <CardContent className="p-6 space-y-6">
-                <h3 className="!mb-0 text-lg font-semibold text-gray-900">
-                  About the Employer
-                </h3>
-                <Textarea name="company_about" />
-              </CardContent>
-            </Card>
+            <AboutEmployer />
 
             {/* Work Environment */}
-            <Card className="bg-white">
-              <CardContent className="p-6 space-y-6">
-                <h3 className="!mb-0 text-lg font-semibold text-gray-900">
-                  Work Environment
-                </h3>
-                <Textarea name="work_environment" />
-              </CardContent>
-            </Card>
+            <WorkEnvironment />
 
             {/* Pollen loves */}
-            <Card className="bg-white">
-              <CardContent className="p-6 space-y-6">
-                <h3 className="!mb-0 text-lg font-semibold text-gray-900">
-                  Pollen loves
-                </h3>
-                <Textarea name="company_loves" />
-              </CardContent>
-            </Card>
+            <PollenLoves />
 
             {/* Accolades & Acreditations */}
-            <Card className="bg-white">
-              <CardContent className="p-6 space-y-6">
-                <h3 className="!mb-0 text-lg font-semibold text-gray-900">
-                  Accolades & Acreditations
-                </h3>
-                <AccoladesSection
-                  accolades={accolades}
-                  setAccolades={setAccolades}
-                />
-              </CardContent>
-            </Card>
+            <AccoladesAccreditations
+              accolades={accolades}
+              setAccolades={setAccolades}
+            />
 
-            {/* entry-level */}
-            <Card className="bg-white">
-              <CardContent className="p-6 space-y-6">
-                <h3 className="!mb-0 text-lg font-semibold text-gray-900">
-                  Entry-Level Support
-                </h3>
-                <Textarea name="company_entry_level" />
-              </CardContent>
-            </Card>
+            {/* Entry-Level Support */}
+            <EntryLevelSupport />
           </div>
 
           <div className="space-y-6">

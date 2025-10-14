@@ -41,13 +41,13 @@ export function IndustryCategoriesSection() {
     { label: "Arts & Culture", value: "arts_culture" },
     { label: "Environmental Services", value: "environmental_services" },
     { label: "Security Services", value: "security_services" },
-    { label: "Other", value: "other" },
   ];
   return (
     <>
       <div className="grid grid-cols-3 gap-4 text-sm">
         {items.map((item) => {
           const isOther = item.value === "other";
+
           return (
             <div className="flex flex-col space-y-2" key={item.value}>
               <label className="flex items-center space-x-2 cursor-pointer">
@@ -65,16 +65,6 @@ export function IndustryCategoriesSection() {
           );
         })}
       </div>
-
-      {checked && (
-        <div className="md:col-span-2">
-          <CustomIndustriesSection
-            customIndustries={customIndustries}
-            setCustomIndustries={setCustomIndustries}
-            placeholder={"Add your custom industry types and press Enter"}
-          />
-        </div>
-      )}
     </>
   );
 }

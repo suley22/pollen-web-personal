@@ -24,6 +24,22 @@ export function CustomIndustriesSection({
         name="custom_industries"
         value={customIndustries?.join(",")}
       />
+
+      {/* Add new custom industry */}
+      <div className="flex space-x-2">
+        <Input
+          placeholder={placeholder || "Add a custom industry and press Enter"}
+          onKeyPress={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              e.stopPropagation();
+              const value = e.currentTarget.value.trim();
+              handleAddIndustry(value);
+              e.currentTarget.value = "";
+            }
+          }}
+        />
+      </div>
       {/* Selected custom industries */}
       {customIndustries?.length > 0 && (
         <div className="flex flex-wrap gap-2">
@@ -45,21 +61,6 @@ export function CustomIndustriesSection({
           ))}
         </div>
       )}
-      {/* Add new custom industry */}
-      <div className="flex space-x-2">
-        <Input
-          placeholder={placeholder || "Add a custom industry and press Enter"}
-          onKeyPress={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              e.stopPropagation();
-              const value = e.currentTarget.value.trim();
-              handleAddIndustry(value);
-              e.currentTarget.value = "";
-            }
-          }}
-        />
-      </div>
     </div>
   );
 }

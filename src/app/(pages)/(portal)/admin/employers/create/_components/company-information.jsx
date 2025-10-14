@@ -204,18 +204,15 @@ export function CompanyInformation({
                 Add custom industry
               </Label>
             </div>
-          </div>
-
-          {/* Custom Industries */}
-          {showCustomIndustries && (
-            <div className="col-span-2">
+            {/* Custom Industries */}
+            {showCustomIndustries && (
               <CustomIndustriesSection
                 customIndustries={customIndustries}
                 setCustomIndustries={onCustomIndustriesChange}
                 placeholder="Add your custom industry types and press Enter"
               />
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -67,7 +67,7 @@ export default function JobsManagmentPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto">
         {/* Tab Toggle Bar */}
         <div className="bg-white rounded-lg border border-gray-200 p-1 mb-6">
           <div className="flex">

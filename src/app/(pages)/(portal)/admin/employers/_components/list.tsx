@@ -49,6 +49,23 @@ export function List() {
     return <ListSkeleton />;
   }
 
+  if (employers.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+        <div className="rounded-full bg-gray-100 p-4 mb-4">
+          <Building2 className="h-12 w-12 text-gray-400" />
+        </div>
+        <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          No employers found
+        </h3>
+        <p className="text-sm text-muted-foreground max-w-md mb-6">
+          No employers match your current filters. Try adjusting your search
+          criteria or clear filters to see all employers.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-3">
       {employers.map((company) => (

@@ -28,9 +28,10 @@ export async function fetchJobsByEmployer(employerId) {
     .eq("company_id", employerId)
     .order("created_at", { ascending: false });
 
+  const jobs = { ...data, salary_range: data?.salary_range || [] };
   if (error) {
     return { error: error.message, data: null };
   } else {
-    return { error: null, data };
+    return { error: null, data: jobs };
   }
 }

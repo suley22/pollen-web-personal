@@ -19,7 +19,7 @@ interface Job {
   status: "live" | "draft" | "hidden";
   location: string;
   applicationsCount?: number;
-  salaryRange?: string;
+  salary_range?: string;
   createdAt: string;
 }
 
@@ -180,8 +180,10 @@ export function JobPostings({
                         <Users className="w-4 h-4 mr-1.5 text-gray-400" />
                         {job.applicationsCount || 0} applications
                       </span>
-                      {job.salaryRange && (
-                        <span className="text-gray-600">{job.salaryRange}</span>
+                      {job.salary_range && (
+                        <span className="text-gray-600">
+                          {job.salary_range}
+                        </span>
                       )}
                     </div>
 

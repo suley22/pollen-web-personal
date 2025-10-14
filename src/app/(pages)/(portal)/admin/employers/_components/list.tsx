@@ -3,7 +3,7 @@
 import { useEmployerManagementContext } from "@/admin/employers/_context/EmployerManagementContext";
 import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Building2, CheckCircle } from "lucide-react";
+import { Building2 } from "lucide-react";
 
 import {
   User,
@@ -11,17 +11,10 @@ import {
   Globe,
   Mail,
   Phone,
-  MoreHorizontal,
   Eye,
   Edit,
   Trash2,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";

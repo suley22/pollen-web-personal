@@ -110,15 +110,7 @@ export function EmployerProfileHeader({
                 Set Live
               </Button>
             )}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onOpenEmployerPortal}
-              className="text-purple-600 border-purple-300 hover:bg-purple-50"
-            >
-              <Globe className="h-4 w-4 mr-2" />
-              Employer Portal
-            </Button>
+
             <Button variant="outline" size="sm" onClick={onEdit}>
               <Edit className="h-4 w-4 mr-2" />
               Edit Profile

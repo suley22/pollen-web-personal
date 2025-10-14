@@ -4,7 +4,7 @@ import { useEmployerManagement } from "@/admin/employers/_hooks/useEmployerManag
 import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Building2, CheckCircle } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import {
   Users,
   Globe,
@@ -25,10 +25,12 @@ import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { AdminRoutes } from "../../router";
+import { ListAvatar } from "./list-avatar";
+import { ListSkeleton } from "./list-skeleton";
 
 export function List() {
   const router = useRouter();
-  const { employers, getStatusBadge } = useEmployerManagement();
+  const { employers, getStatusBadge, loading } = useEmployerManagement();
   const [isPending, startTransition] = useTransition();
 
   const handleSetLive = (company) => {
@@ -43,31 +45,28 @@ export function List() {
     console.log("Would update company");
   };
 
+  function onEmployerClick(company) {
+    startTransition(() => {
+      router.push(AdminRoutes.employersView(company.id));
+    });
+  }
+
+  if (loading) {
+    return <ListSkeleton />;
+  }
+
   return (
     <div className="space-y-4">
       {employers.map((company) => (
         <Card
           key={company.id}
           className="hover:shadow-md transition-shadow cursor-pointer"
-          onClick={() =>
-            startTransition(() => {
-              router.push(`${AdminRoutes.employersView}/${company.id}`);
-            })
-          }
+          onClick={() => onEmployerClick(company)}
         >
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
-              <div className="flex items-start space-x-4">
-                <Avatar className="h-16 w-16">
-                  <AvatarImage
-                    className="rounded-md"
-                    src={company.logo}
-                    alt={company.company_name}
-                  />
-                  <AvatarFallback className="bg-muted text-muted-foreground">
-                    <Building2 className="h-8 w-8" />
-                  </AvatarFallback>
-                </Avatar>
+              <div className="flex flex-row items-center space-x-6">
+                <ListAvatar company={company} />
 
                 <div className="space-y-2">
                   <div className="flex items-center space-x-3">
@@ -77,7 +76,7 @@ export function List() {
                     {getStatusBadge(company.approval_status)}
                   </div>
 
-                  <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                  <div className="flex items-center space-x-4 space-y-2 text-sm text-muted-foreground">
                     <span className="flex items-center">
                       <Building2 className="w-4 h-4 mr-1" />
                       {Array.isArray(company.industries)
@@ -109,19 +108,15 @@ export function List() {
 
                   {/* TODO: revisar si esto es necesario */}
 
-                  {company.assignedAdmin && (
-                    <div className="text-sm">
-                      <span className="text-muted-foreground">
-                        Assigned to:{" "}
-                      </span>
-                      <span className="font-medium">
-                        {company.assignedAdmin}
-                      </span>
-                    </div>
-                  )}
+                  <div className="text-sm">
+                    <span className="text-muted-foreground">Assigned to: </span>
+                    <span className="font-medium">
+                      {company.assignedAdmin ?? "Unassigned"}
+                    </span>
+                  </div>
 
                   {/* Job Counts */}
-                  <div className="flex items-center space-x-3 text-sm mt-2">
+                  <div className="flex items-center space-x-3 text-sm mt-4 pt-2">
                     {(company.liveJobsCount || 0) > 0 && (
                       <Badge
                         variant="outline"

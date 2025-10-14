@@ -5,14 +5,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   MapPin,
   Eye,
-  User,
   Mail,
   Trophy,
   Clock,
   Briefcase,
   Building2,
   Search,
-
 } from "lucide-react";
 import { Button } from "@/components/ui/buttons/button";
 import { Input } from "@/components/ui/input";
@@ -132,23 +130,6 @@ export default function JobsPage() {
                     <td className="py-2 px-4">
                       <div className="flex items-center gap-1 space-x-3">
                         <div className="flex-shrink-0">
-<<<<<<< HEAD:src/app/(pages)/(portal)/admin/all-job-seekers/page.jsx
-                          {jobSeeker.profile_picture ? (
-                            <Avatar className="h-16 w-16">
-                              <AvatarImage
-                                src={jobSeeker.profile_picture}
-                                alt={jobSeeker.name}
-                              />
-                              <AvatarFallback>
-                                <Building2 className="h-8 w-8" />
-                              </AvatarFallback>
-                            </Avatar>
-                          ) : (
-                            <div className="h-12 w-12 bg-gray-200 rounded-full flex items-center justify-center">
-                              <User className="h-6 w-6  text-gray-500" />
-                            </div>
-                          )}
-=======
                           <Avatar className="h-16 w-16">
                             <AvatarImage
                               src={jobSeeker.profile_picture}
@@ -158,7 +139,6 @@ export default function JobsPage() {
                               <Building2 className="h-8 w-8" />
                             </AvatarFallback>
                           </Avatar>
->>>>>>> 462c1e4701b8e68173ff5eec134a1a0252886dbc:src/app/(pages)/(portal)/admin/job-seekers/page.jsx
                         </div>
                         <div>
                           <div className="font-medium text-base">

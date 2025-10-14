@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,7 +61,6 @@ import {
 export default function JobApplicantsPage({ params }) {
   const resolvedParams = React.use(params);
   const router = useRouter();
-  const queryClient = useQueryClient();
   const { candidates, job, loading, error, refetch } = useJobData(
     resolvedParams.jobId,
   );
@@ -173,6 +171,7 @@ export default function JobApplicantsPage({ params }) {
     strategic: 8,
   });
   const [pendingAction, setPendingAction] = useState();
+  const [isExecutingAction, setIsExecutingAction] = useState(false);
 
   const { toast } = useToast();
 
@@ -195,7 +194,7 @@ export default function JobApplicantsPage({ params }) {
   const handleCandidateAction = (action) => {
     if (action === "interview") {
       // Skip confirmation dialog for interview invitations and proceed directly
-      candidateActionMutation.mutate(action);
+      executeCandidateAction(action);
     } else {
       // Show confirmation dialog for reject/match actions
       setPendingAction(action);
@@ -628,9 +627,11 @@ export default function JobApplicantsPage({ params }) {
   };
   const [isEditing, setIsEditing] = useState(false);
 
-  const candidateActionMutation = useMutation({
-    mutationFn: async (action) => {
-      return await apiRequest(
+  // Función para ejecutar acciones sobre candidatos
+  const executeCandidateAction = async (action) => {
+    setIsExecutingAction(true);
+    try {
+      await apiRequest(
         "PUT",
         `/api/admin/candidates/${selectedAssessment?.id}/status`,
         {
@@ -639,11 +640,9 @@ export default function JobApplicantsPage({ params }) {
           reviewedAt: new Date().toISOString(),
         },
       );
-    },
-    onSuccess: (_, action) => {
-      queryClient.invalidateQueries({
-        queryKey: [`/api/admin/jobs/${jobId}/candidates`],
-      });
+
+      // Refrescar los datos después de la acción
+      await refetch();
 
       setConfirmDialogOpen(false);
       setPendingAction(null);
@@ -652,11 +651,7 @@ export default function JobApplicantsPage({ params }) {
       // Route to interview availability page for interview invitations (no toast needed)
       if (action === "interview" && selectedAssessment) {
         // Directly navigate to interview availability without showing a toast
-        router.push(
-          buildUrlWithCurrentState(
-            `/admin/interview-availability/${selectedAssessment.id}`,
-          ),
-        );
+        router.push(`/admin/interview-availability/${selectedAssessment.id}`);
       } else {
         // Show toast for other actions only
         const actionLabels = {
@@ -670,8 +665,17 @@ export default function JobApplicantsPage({ params }) {
         });
         closeAssessmentSplitView();
       }
-    },
-  });
+    } catch (error) {
+      console.error("Error executing candidate action:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update candidate status. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExecutingAction(false);
+    }
+  };
 
   // Navigate between candidates within filtered view (respects all filters)
   const navigateToCandidate = (direction) => {
@@ -716,7 +720,7 @@ export default function JobApplicantsPage({ params }) {
 
   const confirmCandidateAction = () => {
     if (pendingAction) {
-      candidateActionMutation.mutate(pendingAction);
+      executeCandidateAction(pendingAction);
     }
   };
 
@@ -2204,7 +2208,7 @@ export default function JobApplicantsPage({ params }) {
                                 !(
                                   scoresApproved ||
                                   isScoreApproved(selectedAssessment)
-                                ) || candidateActionMutation.isPending
+                                ) || isExecutingAction
                               }
                               size="default"
                               className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 h-12 px-6 text-base font-medium"
@@ -2220,7 +2224,7 @@ export default function JobApplicantsPage({ params }) {
                                   scoresApproved ||
                                   isScoreApproved(selectedAssessment)
                                 ) ||
-                                candidateActionMutation.isPending ||
+                                isExecutingAction ||
                                 !canFastTrackToEmployer
                               }
                               size="default"
@@ -2236,7 +2240,7 @@ export default function JobApplicantsPage({ params }) {
                                 !(
                                   scoresApproved ||
                                   isScoreApproved(selectedAssessment)
-                                ) || candidateActionMutation.isPending
+                                ) || isExecutingAction
                               }
                               variant="outline"
                               size="default"
@@ -2354,7 +2358,7 @@ export default function JobApplicantsPage({ params }) {
             </Button>
             <Button
               onClick={confirmCandidateAction}
-              disabled={candidateActionMutation.isPending}
+              disabled={isExecutingAction}
               className={
                 pendingAction === "reject"
                   ? "bg-red-600 hover:bg-red-700"
@@ -2363,7 +2367,7 @@ export default function JobApplicantsPage({ params }) {
                     : "bg-green-600 hover:bg-green-700"
               }
             >
-              {candidateActionMutation.isPending ? "Processing..." : "Confirm"}
+              {isExecutingAction ? "Processing..." : "Confirm"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -2985,7 +2989,7 @@ export default function JobApplicantsPage({ params }) {
                                 scoresApproved ||
                                 isScoreApproved(selectedAssessment)
                               ) ||
-                              candidateActionMutation.isPending ||
+                              isExecutingAction ||
                               scoresLocked
                             }
                             size="default"
@@ -3011,7 +3015,7 @@ export default function JobApplicantsPage({ params }) {
                                     scoresApproved ||
                                     isScoreApproved(selectedAssessment)
                                   ) ||
-                                  candidateActionMutation.isPending ||
+                                  isExecutingAction ||
                                   scoresLocked ||
                                   !canFastTrackToEmployer
                                 }
@@ -3032,7 +3036,7 @@ export default function JobApplicantsPage({ params }) {
                                 scoresApproved ||
                                 isScoreApproved(selectedAssessment)
                               ) ||
-                              candidateActionMutation.isPending ||
+                              isExecutingAction ||
                               scoresLocked
                             }
                             variant="outline"

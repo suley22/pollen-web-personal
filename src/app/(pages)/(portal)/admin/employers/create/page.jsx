@@ -75,7 +75,7 @@ export default function CreateProfilePage() {
         </div>
 
         {/* Divider and Save Button */}
-        <div className="flex flex-col gap-4 mt-6">
+        <div className="flex flex-col gap-4">
           <div className="w-full h-[1px] bg-gray-200" />
           <div className="flex justify-end">
             <Dialog>

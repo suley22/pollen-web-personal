@@ -54,11 +54,9 @@ export default function Details({
     <Card className="overflow-hidden mb-4">
       <div className="relative mb-0 rounded-t-xl overflow-hidden">
         {editValue ? (
-          <Image
+          <img
             src={editValue}
             alt="CreativeMinds Agency office"
-            width={800}
-            height={256}
             className="w-full h-64 object-cover"
           />
         ) : (

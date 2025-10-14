@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { TestimonialCard } from "@/app/(pages)/(public)/login/_components/testimonialCard";
+import { TestimonialCard } from "@/login/_components/testimonialCard";
 
 const testimonials = [
   {

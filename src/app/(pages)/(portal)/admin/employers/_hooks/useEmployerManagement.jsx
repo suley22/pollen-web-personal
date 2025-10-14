@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { getEmployerProfile } from "@/app/(pages)/(portal)/admin/employers/actions";
+import { getEmployerProfile } from "@/admin/employers/actions";
 
 export function useEmployerManagement() {
   const [selectedStatus, setSelectedStatus] = useState("all");

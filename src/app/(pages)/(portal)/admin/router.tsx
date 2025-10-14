@@ -6,10 +6,12 @@ export const AdminRoutes = {
   home: `${basePath}/home`,
   applications: `${basePath}/applications`,
   profile: `${basePath}/profile`,
-  jobsManagement: `${basePath}/jobs`,
-  employersManagement: `${basePath}/employers`,
+  jobs: `${basePath}/jobs`,
+  employers: `${basePath}/employers`,
+  employersCreate: `${basePath}/employers/create`,
+  employersView: `${basePath}/employers/view`,
   allJobSeekers: `${basePath}/job-seekers`,
-  roleManagement: `${basePath}/roles`,
+  roles: `${basePath}/roles`,
 };
 
 export const ADMIN_ROUTES = Object.values(AdminRoutes);
@@ -24,13 +26,13 @@ export const ADMIN_NAVIGATION = [
   {
     icon: Briefcase,
     label: "Jobs",
-    path: AdminRoutes.jobsManagement,
+    path: AdminRoutes.jobs,
     section: "Admin",
   },
   {
     icon: User,
     label: "Employers",
-    path: AdminRoutes.employersManagement,
+    path: AdminRoutes.employers,
     section: "Admin",
   },
   {
@@ -42,7 +44,7 @@ export const ADMIN_NAVIGATION = [
   {
     icon: Key,
     label: "Roles",
-    path: AdminRoutes.roleManagement,
+    path: AdminRoutes.roles,
     section: "Admin",
   },
 ];

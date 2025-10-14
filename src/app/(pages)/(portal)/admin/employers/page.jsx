@@ -1,7 +1,7 @@
-import { Header } from "@/app/(pages)/(portal)/admin/employers/_components/header";
-import { Filters } from "@/app/(pages)/(portal)/admin/employers/_components/filters";
-import { StatisticsCards } from "@/app/(pages)/(portal)/admin/employers/_components/cards";
-import { List } from "@/app/(pages)/(portal)/admin/employers/_components/list";
+import { Header } from "@/admin/employers/_components/header";
+import { Filters } from "@/admin/employers/_components/filters";
+import { StatisticsCards } from "@/admin/employers/_components/cards";
+import { List } from "@/admin/employers/_components/list";
 
 export default function AdminEmployersManagement() {
   return (

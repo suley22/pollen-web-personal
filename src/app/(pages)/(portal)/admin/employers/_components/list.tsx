@@ -23,10 +23,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { AdminRoutes } from "../../router";
 
 export function List() {
   const router = useRouter();
   const { employers, getStatusBadge } = useEmployerManagement();
+  const [isPending, startTransition] = useTransition();
 
   const handleSetLive = (company) => {
     const updatedCompany = { ...company, status: "live" };
@@ -46,7 +49,11 @@ export function List() {
         <Card
           key={company.id}
           className="hover:shadow-md transition-shadow cursor-pointer"
-          onClick={() => router.push(`/admin/company-profiles/${company.id}`)}
+          onClick={() =>
+            startTransition(() => {
+              router.push(`${AdminRoutes.employersView}/${company.id}`);
+            })
+          }
         >
           <CardContent className="p-6">
             <div className="flex items-start justify-between">

@@ -32,7 +32,32 @@ export async function getEmployerProfile(filters = {}) {
       return { success: false, error: error.message };
     }
 
-    return { success: true, data: data };
+    // Obtener contadores de trabajos para cada employer
+    const employersWithJobCounts = await Promise.all(
+      data.map(async (employer) => {
+        // Contar trabajos live
+        const { count: liveCount } = await supabase
+          .from("job")
+          .select("*", { count: "exact", head: true })
+          .eq("company_id", employer.id)
+          .eq("status", "live");
+
+        // Contar trabajos draft
+        const { count: draftCount } = await supabase
+          .from("job")
+          .select("*", { count: "exact", head: true })
+          .eq("company_id", employer.id)
+          .eq("status", "draft");
+
+        return {
+          ...employer,
+          live_jobs_count: liveCount || 0,
+          draft_jobs_count: draftCount || 0,
+        };
+      }),
+    );
+
+    return { success: true, data: employersWithJobCounts };
   } catch (error) {
     console.error("Unexpected error:", error);
     return { success: false, error: "Failed to fetch applications" };

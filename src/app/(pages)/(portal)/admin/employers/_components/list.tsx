@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Building2, CheckCircle } from "lucide-react";
 
 import {
+  User,
   Users,
   Globe,
   Mail,
@@ -85,11 +86,7 @@ export function List() {
                     {/* Primera fila: Industria */}
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Building2 className="w-4 h-4 flex-shrink-0" />
-                      <span className="truncate">
-                        {Array.isArray(company.industries)
-                          ? company.industries.join(", ")
-                          : company.industries}
-                      </span>
+                      <span className="truncate">{company.industries}</span>
                     </div>
 
                     {/* Segunda fila: Localización y Cantidad de personas */}
@@ -106,6 +103,10 @@ export function List() {
 
                     {/* Tercera fila: Email y Teléfono */}
                     <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <User className="w-4 h-4 flex-shrink-0" />
+                        <span className="truncate">{company.contact_name}</span>
+                      </div>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Mail className="w-4 h-4 flex-shrink-0" />
                         <span className="truncate">

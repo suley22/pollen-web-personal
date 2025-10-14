@@ -56,7 +56,9 @@ export function useEmployerManagement() {
         company_name: employer.company_name || "Unknown Company",
         approval_status: employer.approval_status || "pending",
         logo: employer.logo_url,
-        industries: employer.industries || "Not specified",
+        industries: employer.industries.length
+          ? employer.industries.join(", ")
+          : "Not specified",
         contact_email: employer.contact_email || "No email provided",
         contact_phone: employer.contact_phone || "No phone provided",
         live_jobs_count: 10,
@@ -65,6 +67,7 @@ export function useEmployerManagement() {
         lastUpdated: employer.updated_at || "N/A",
         location: employer.company_location || "Location not specified",
         size: employer.company_size || "Size not specified",
+        contact_name: employer.contact_name || "No contact name provided",
       }));
 
       if (result.success) {

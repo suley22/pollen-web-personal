@@ -19,12 +19,13 @@ export function NavUser({ onLogout }) {
     <div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <SidebarMenuButton
-            size="lg"
-            className="hover:text-accent-foreground data-[state=open]:text-accent-foreground focus:ring-0 focus:outline-none"
-          >
+          <div className="hover:text-accent-foreground data-[state=open]:text-accent-foreground cursor-pointer flex flex-row items-center gap-2 focus:ring-0 focus:outline-none">
             <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarImage
+                className="rounded-lg"
+                src={user.avatar}
+                alt={user.name}
+              />
               <AvatarFallback className="rounded-lg">
                 {user.name}
               </AvatarFallback>
@@ -34,7 +35,7 @@ export function NavUser({ onLogout }) {
               <span className="truncate text-xs">{user.email}</span>
             </div>
             <ChevronDown className="ml-auto size-4" />
-          </SidebarMenuButton>
+          </div>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent
@@ -43,16 +44,23 @@ export function NavUser({ onLogout }) {
           align="center"
           sideOffset={4}
         >
-          <DropdownMenuItem className="cursor-pointer text-gray-600 focus-visible:ring-0 focus:ring-0 focus:outline-none">
+          <DropdownMenuItem
+            inset={<User2 className="hover:text-accent-foreground" />}
+            className="cursor-pointer text-gray-600 focus-visible:ring-0 focus:ring-0 focus:outline-none"
+          >
             <User2 className="hover:text-accent-foreground" />
             View Profile
           </DropdownMenuItem>
-          <DropdownMenuItem className="cursor-pointer text-gray-600 focus-visible:ring-0 focus:ring-0 focus:outline-none">
+          <DropdownMenuItem
+            inset={<Settings className="hover:text-accent-foreground" />}
+            className="cursor-pointer text-gray-600 focus-visible:ring-0 focus:ring-0 focus:outline-none"
+          >
             <Settings className="hover:text-accent-foreground" />
             Settings
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator className="my-1" />
           <DropdownMenuItem
+            inset={<LogOut className="text-red-500" />}
             onClick={onLogout}
             className="cursor-pointer text-red-500 focus-visible:ring-0 focus:ring-0 focus:outline-none"
           >

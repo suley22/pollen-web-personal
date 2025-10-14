@@ -2,10 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { UserInfoModel } from "@/app/(pages)/(public)/login/_schema/registerSchema";
+import { UserInfoModel } from "@/login/_schema/registerSchema";
 import { createClient } from "@/lib/utils/supabase/server";
-import { AdminRoutes } from "@/app/(pages)/(portal)/admin/router";
-import { JobSeekerRoutes } from "@/app/(pages)/(portal)/(job-seeker)/router";
+import { AdminRoutes } from "@/admin/router";
+import { JobSeekerRoutes } from "@/job-seeker/router";
 import { LoginRoutes } from "@/public/router";
 
 // TODO: Agregar validaciones de servidor.

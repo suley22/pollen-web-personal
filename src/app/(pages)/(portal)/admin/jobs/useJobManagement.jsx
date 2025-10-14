@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { getJobList } from "@/admin/jobs/actions";
 import { Badge } from "@/components/ui/badge";
 
-export function useHome() {
+export function useJobManagement() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -13,7 +13,7 @@ export function useHome() {
   const [error, setError] = useState(null);
   const loadingRef = useRef(false);
 
-  // Debounce del searchTerm
+  // Debounce search term
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
@@ -39,7 +39,7 @@ export function useHome() {
       });
 
       if (result.success) {
-        const assignedJobs = result.data.map((job) => ({
+        const jobsResult = result.data.map((job) => ({
           ...job,
           assigned_date: job.published_at || job.created_at,
           total_applications: 2,
@@ -54,7 +54,7 @@ export function useHome() {
           offersExtended: 2,
           hiresMade: 1,
         }));
-        setJobs(assignedJobs || []);
+        setJobs(jobsResult || []);
         setError(null);
       } else {
         console.error("❌ Error from server:", result.error);
@@ -69,7 +69,7 @@ export function useHome() {
     }
   }, [selectedStatus, debouncedSearchTerm]);
 
-  // Efecto unificado para cargar datos iniciales y cambios
+  // Load jobs when loadJobs function changes
   useEffect(() => {
     loadJobs();
   }, [loadJobs]);
@@ -101,11 +101,7 @@ export function useHome() {
           </Badge>
         );
       case "draft":
-        return (
-          <Badge className="bg-yellow-100 text-yellow-800 status-badge-compact">
-            Draft
-          </Badge>
-        );
+        return <Badge className="bg-yellow-100 text-yellow-800 ">Draft</Badge>;
       default:
         return (
           <Badge variant="outline" className="status-badge-compact">
@@ -123,22 +119,24 @@ export function useHome() {
     );
   }, []);
 
-  const homeState = useMemo(
+  return useMemo(
     () => ({
-      selectedStatus,
-      selectedAssignment,
-      activeTab,
-      searchTerm,
-      jobs,
-      loading,
-      error,
-      setSelectedStatus,
-      setSearchTerm,
-      loadJobs,
-      getStatusBadge,
-      setSelectedAssignment,
-      setActiveTab,
-      hasActionRequired,
+      form: {
+        selectedStatus: selectedStatus,
+        selectedAssignment: selectedAssignment,
+        activeTab: activeTab,
+        searchTerm: searchTerm,
+        jobs: jobs,
+        loading: loading,
+        error: error,
+        setSelectedStatus: setSelectedStatus,
+        setSearchTerm: setSearchTerm,
+        loadJobs: loadJobs,
+        getStatusBadge: getStatusBadge,
+        setSelectedAssignment: setSelectedAssignment,
+        setActiveTab: setActiveTab,
+        hasActionRequired: hasActionRequired,
+      },
     }),
     [
       selectedStatus,
@@ -153,6 +151,4 @@ export function useHome() {
       hasActionRequired,
     ],
   );
-
-  return { homeState };
 }

@@ -3,7 +3,7 @@ import { Building2 } from "lucide-react";
 
 export function ListAvatar({ company }) {
   return (
-    <Avatar className="h-16 w-16">
+    <Avatar className="h-24 w-24">
       <AvatarImage
         className="rounded-md"
         src={company.logo}

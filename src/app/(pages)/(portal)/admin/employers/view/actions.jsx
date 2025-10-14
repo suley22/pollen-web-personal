@@ -26,7 +26,8 @@ export async function fetchJobsByEmployer(employerId) {
     .from("job")
     .select("*")
     .eq("company_id", employerId)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(4);
 
   if (error) {
     return { error: error.message, data: null };

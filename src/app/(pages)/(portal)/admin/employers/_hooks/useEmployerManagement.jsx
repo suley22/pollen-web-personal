@@ -8,14 +8,25 @@ export function useEmployerManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [employers, setEmployers] = useState([]);
+  const [allEmployers, setAllEmployers] = useState([]);
+  const [statistics, setStatistics] = useState({
+    total: 0,
+    approved: 0,
+    pending: 0,
+    rejected: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const loadingRef = useRef(false);
 
-  // Debounce search term
+  // Debounce search term y resetear filtros cuando se busca
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
+      // Si hay término de búsqueda, resetear el filtro de status
+      if (searchTerm.trim()) {
+        setSelectedStatus("all");
+      }
     }, 500);
 
     return () => clearTimeout(timeoutId);
@@ -32,8 +43,11 @@ export function useEmployerManagement() {
     setError(null);
 
     try {
+      // Si hay búsqueda activa, ignorar el filtro de status y buscar en todos
+      const statusToUse = debouncedSearchTerm.trim() ? "all" : selectedStatus;
+
       const result = await getEmployerProfile({
-        status: selectedStatus,
+        status: statusToUse,
         searchTerm: debouncedSearchTerm.trim(),
       });
 
@@ -55,6 +69,25 @@ export function useEmployerManagement() {
 
       if (result.success) {
         setEmployers(employersResult);
+
+        // Si no hay filtros activos, guardar todos los empleadores y calcular estadísticas
+        if (selectedStatus === "all" && !debouncedSearchTerm.trim()) {
+          setAllEmployers(employersResult);
+          const stats = {
+            total: employersResult.length,
+            approved: employersResult.filter(
+              (e) => e.approval_status === "approved",
+            ).length,
+            pending: employersResult.filter(
+              (e) => e.approval_status === "pending",
+            ).length,
+            rejected: employersResult.filter(
+              (e) => e.approval_status === "rejected",
+            ).length,
+          };
+          setStatistics(stats);
+        }
+
         setError(null);
       } else {
         console.error("❌ Error from server:", result.error);
@@ -76,6 +109,13 @@ export function useEmployerManagement() {
 
   const addButtonOnClick = useCallback(() => {
     console.log("Funciona");
+  }, []);
+
+  // Función personalizada para cambiar el status y limpiar el buscador
+  const handleStatusChange = useCallback((status) => {
+    setSelectedStatus(status);
+    setSearchTerm("");
+    setDebouncedSearchTerm("");
   }, []);
 
   // Función para obtener el badge según el status
@@ -109,9 +149,11 @@ export function useEmployerManagement() {
       selectedStatus: selectedStatus,
       searchTerm: searchTerm,
       employers: employers,
+      allEmployers: allEmployers,
+      statistics: statistics,
       loading: loading,
       error: error,
-      setSelectedStatus: setSelectedStatus,
+      setSelectedStatus: handleStatusChange,
       setSearchTerm: setSearchTerm,
       loadApplications: loadApplications,
       addButtonOnClick: addButtonOnClick,
@@ -121,8 +163,11 @@ export function useEmployerManagement() {
       selectedStatus,
       searchTerm,
       employers,
+      allEmployers,
+      statistics,
       loading,
       error,
+      handleStatusChange,
       loadApplications,
       addButtonOnClick,
       getStatusBadge,

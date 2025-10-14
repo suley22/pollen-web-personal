@@ -1,8 +1,15 @@
 "use client";
 
-import { Search } from "lucide-react";
+import { Search, Filter } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useEmployerManagementContext } from "@/admin/employers/_context/EmployerManagementContext";
 
 export function Filters() {
@@ -23,17 +30,35 @@ export function Filters() {
               className="pl-10"
             />
           </div>
-          <div className="flex gap-2">
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="px-3 py-2 border rounded-md"
-            >
-              <option value="all">All Statuses</option>
-              <option value="approved">Approved</option>
-              <option value="pending">Pending</option>
-              <option value="rejected">Rejected</option>
-            </select>
+          <div className="flex gap-2 items-center">
+            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent className="">
+                <SelectItem value="all" className="">
+                  All Statuses
+                </SelectItem>
+                <SelectItem value="approved" className="">
+                  <span className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-green-500" />
+                    Approved
+                  </span>
+                </SelectItem>
+                <SelectItem value="pending" className="">
+                  <span className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-yellow-500" />
+                    Pending
+                  </span>
+                </SelectItem>
+                <SelectItem value="rejected" className="">
+                  <span className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-red-500" />
+                    Rejected
+                  </span>
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </CardContent>

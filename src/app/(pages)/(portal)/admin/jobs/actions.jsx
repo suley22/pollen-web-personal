@@ -2,6 +2,64 @@
 
 import { createClient } from "@/lib/utils/supabase/server";
 
+/**
+ * Fetches application counts for a specific job
+ */
+async function fetchJobApplicationCounts(supabase, jobId) {
+  try {
+    // Count new applications to review
+    const { count: newApplicationsCount } = await supabase
+      .from("job_applications")
+      .select("*", { count: "exact", head: true })
+      .eq("job_id", jobId)
+      .eq("status", "pending");
+
+    // Count Pollen interviews booked (applications in interview stage)
+    const { count: pollenInterviewsCount } = await supabase
+      .from("job_applications")
+      .select("*", { count: "exact", head: true })
+      .eq("job_id", jobId)
+      .eq("status", "interview_scheduled");
+
+    // Count candidates matched to employer (applications approved/matched)
+    const { count: candidatesMatchedCount } = await supabase
+      .from("job_applications")
+      .select("*", { count: "exact", head: true })
+      .eq("job_id", jobId)
+      .eq("status", "matched");
+
+    // Count feedback sent (applications completed with feedback)
+    const { count: feedbackSentCount } = await supabase
+      .from("job_applications")
+      .select("*", { count: "exact", head: true })
+      .eq("job_id", jobId)
+      .eq("status", "completed");
+
+    // Count total applications
+    const { count: totalApplicationsCount } = await supabase
+      .from("job_applications")
+      .select("*", { count: "exact", head: true })
+      .eq("job_id", jobId);
+
+    return {
+      newApplicationsToReview: newApplicationsCount || 0,
+      pollenInterviewsBooked: pollenInterviewsCount || 0,
+      candidatesMatchedToEmployer: candidatesMatchedCount || 0,
+      feedbackSent: feedbackSentCount || 0,
+      total_applications: totalApplicationsCount || 0,
+    };
+  } catch (error) {
+    console.error(`Error fetching application counts for job ${jobId}:`, error);
+    return {
+      newApplicationsToReview: 0,
+      pollenInterviewsBooked: 0,
+      candidatesMatchedToEmployer: 0,
+      feedbackSent: 0,
+      total_applications: 0,
+    };
+  }
+}
+
 export async function getJobList(filters = {}) {
   try {
     console.log("Fetching jobs with filters:", filters);
@@ -32,7 +90,22 @@ export async function getJobList(filters = {}) {
       return { success: false, error: error.message };
     }
 
-    return { success: true, data: data };
+    // Fetch application counts for each job
+    const jobsWithApplicationCounts = await Promise.all(
+      data.map(async (job) => {
+        const applicationCounts = await fetchJobApplicationCounts(
+          supabase,
+          job.id,
+        );
+
+        return {
+          ...job,
+          ...applicationCounts,
+        };
+      }),
+    );
+
+    return { success: true, data: jobsWithApplicationCounts };
   } catch (error) {
     console.error("Unexpected error:", error);
     return { success: false, error: "Failed to fetch jobs" };

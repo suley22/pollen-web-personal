@@ -13,6 +13,7 @@ import {
   Users,
   TrendingUp,
 } from "lucide-react";
+import { AdminRoutes } from "../../router";
 
 export function HomeCards() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export function HomeCards() {
     newSignupsToday: 8,
     totalEmployers: 184,
     newEmployersRequiringApproval: 11,
-    liveJobs: 23,
+    liveJobs: 25,
     pendingJobApprovals: 7,
   };
 
@@ -31,7 +32,7 @@ export function HomeCards() {
       {/* Job Seekers Card */}
       <Card className="border-2 border-purple-200 bg-purple-50 hover:shadow-lg transition-shadow">
         <CardContent className="p-6">
-          <div className="flex items-start justify-between mb-2">
+          <div className="flex items-start justify-between pointer-events-none mb-2">
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">
                 Community
@@ -44,7 +45,7 @@ export function HomeCards() {
               <Users className="h-8 w-8 text-purple-600" />
             </div>
           </div>
-          <div className="flex items-center gap-2 mb-2 text-sm text-green-600 font-medium">
+          <div className="flex items-center gap-2 pointer-events-none mb-2 text-sm text-green-600 font-medium">
             <TrendingUp className="h-4 w-4" />
             <span>+{stats?.newSignupsToday} today</span>
           </div>
@@ -80,7 +81,7 @@ export function HomeCards() {
       {/* Company Profiles Card */}
       <Card className="border-2 border-orange-200 bg-orange-50 hover:shadow-lg transition-shadow">
         <CardContent className="p-6">
-          <div className="flex items-start justify-between mb-6">
+          <div className="flex items-start justify-between pointer-events-none mb-6">
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">
                 Company Profiles
@@ -98,7 +99,7 @@ export function HomeCards() {
               className="flex-1 bg-orange-50 hover:bg-orange-100"
               onClick={(e) => {
                 e.stopPropagation();
-                router.push("/admin/employers-managment");
+                router.push(AdminRoutes.employers);
               }}
             >
               <Eye className="mr-2 h-4 w-4" />
@@ -108,11 +109,10 @@ export function HomeCards() {
               variant="outline"
               size="sm"
               className="flex-1 bg-orange-50 hover:bg-orange-100"
-              //TODO:
-              // onClick={(e) => {
-              //   e.stopPropagation();
-              //   router.push();
-              // }}
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push(AdminRoutes.employersCreate);
+              }}
             >
               <Plus className="mr-2 h-4 w-4" />
               Create
@@ -124,7 +124,7 @@ export function HomeCards() {
       {/* Jobs Card */}
       <Card className="border-2 border-pink-200 bg-pink-50 hover:shadow-lg transition-shadow">
         <CardContent className="p-6">
-          <div className="flex items-start justify-between mb-6">
+          <div className="flex items-start justify-between pointer-events-none mb-6">
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">Jobs</p>
               <p className="text-3xl font-semibold">{stats?.liveJobs}</p>
@@ -140,7 +140,7 @@ export function HomeCards() {
               className="flex-1 bg-pink-50 hover:bg-pink-100"
               onClick={(e) => {
                 e.stopPropagation();
-                router.push("/admin/jobs-managment");
+                router.push(AdminRoutes.jobs);
               }}
             >
               <Eye className="mr-2 h-4 w-4" />

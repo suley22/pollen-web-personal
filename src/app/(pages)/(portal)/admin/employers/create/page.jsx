@@ -1,12 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-
 import { TextAreaCard } from "@/components/design-system";
-import { Heart } from "lucide-react";
+import { Heart, FileText, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { useActionState } from "react";
 import { PageHeader } from "@/components/design-system/page-header";
 import { PageContainer } from "@/components/design-system/page-container";
 import { FormContainer } from "@/components/design-system/form-container";
@@ -18,60 +14,28 @@ import { AccoladesAccreditations } from "./_components/accolades-accreditations"
 import { ContactInformation } from "./_components/contact-information";
 import { SocialMedia } from "./_components/social-media";
 import { InternalPollenData } from "./_components/internal-pollen-data";
-import { useToast } from "@/lib/hooks/use-toast";
-import { AdminRoutes } from "../../router";
-import { FileText, Building } from "lucide-react";
-import { FormCard } from "@/components/design-system/form-card";
-import { Textarea } from "@/components/ui/textarea";
+import { useCreateEmployer } from "./useCreateEmployer";
 
 export default function CreateProfilePage() {
-  const formRef = useRef(null);
-  const router = useRouter();
-  const { toast } = useToast();
-
-  const onBack = () => {
-    router.push(AdminRoutes.employers);
-  };
-  const [state, createCompany, isPending] = useActionState(
-    createCompanyData,
-    null,
-  );
-  const [checked, setChecked] = useState(false);
-  const [accolades, setAccolades] = useState([]);
-  const [customIndustries, setCustomIndustries] = useState([]);
-  const [industryValue, setIndustryValue] = useState("");
-  const [logoUrl, setLogoUrl] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const lastProcessedState = useRef(null);
-
-  // Handle action state changes
-  useEffect(() => {
-    // Skip if state hasn't changed or is null
-    if (!state || state === lastProcessedState.current) {
-      return;
-    }
-
-    lastProcessedState.current = state;
-
-    if (state?.success) {
-      toast({
-        title: "Success!",
-        description: state.message || "Company profile created successfully",
-        variant: "success",
-      });
-      // Redirect after success
-      setTimeout(() => {
-        router.push(AdminRoutes.employersView(state.companyId));
-      }, 1500);
-    } else if (state?.error) {
-      toast({
-        title: "Error",
-        description: state.error,
-        variant: "error",
-      });
-      setIsDialogOpen(false);
-    }
-  }, [state, router, toast]);
+  const {
+    formRef,
+    createCompany,
+    isPending,
+    checked,
+    setChecked,
+    accolades,
+    setAccolades,
+    customIndustries,
+    setCustomIndustries,
+    industryValue,
+    setIndustryValue,
+    logoUrl,
+    setLogoUrl,
+    isDialogOpen,
+    setIsDialogOpen,
+    handleBack,
+    handleSubmit,
+  } = useCreateEmployer(createCompanyData);
 
   return (
     <PageContainer>
@@ -79,7 +43,7 @@ export default function CreateProfilePage() {
         title="Create Employer"
         description="Complete the form below to create a new employer profile"
         showBackButton={true}
-        onBack={onBack}
+        onBack={handleBack}
       />
 
       <FormContainer ref={formRef} action={createCompany}>
@@ -152,9 +116,7 @@ export default function CreateProfilePage() {
             description="Are you sure you want to create the company profile? This will create a new employer profile in the system."
             confirmText="Confirm"
             cancelText="Cancel"
-            onConfirm={() => {
-              if (formRef.current) formRef.current.requestSubmit();
-            }}
+            onConfirm={handleSubmit}
             isLoading={isPending}
             loadingText="Creating..."
             open={isDialogOpen}

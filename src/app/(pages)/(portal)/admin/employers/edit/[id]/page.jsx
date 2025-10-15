@@ -1,9 +1,18 @@
-import { fetchEmployerProfile } from "./actions";
-import EditEmployerPage from "./edit-page";
+import {
+  fetchEmployerByIdAction,
+  updateEmployerAction,
+} from "@/employers/actions";
+import { ProfileForm } from "@/employers/form";
+import { notFound } from "next/navigation";
 
 export default async function Page({ params }) {
   const { id } = await params;
-  const { data, error } = await fetchEmployerProfile(id);
+
+  if (!id) {
+    return notFound();
+  }
+
+  const { data, error } = await fetchEmployerByIdAction(id);
 
   if (error || !data) {
     return (
@@ -16,5 +25,8 @@ export default async function Page({ params }) {
     );
   }
 
-  return <EditEmployerPage employerData={data} />;
+  const employer = data;
+  const updateWithId = updateEmployerAction.bind(null, employer.id);
+
+  return <ProfileForm employer={employer} action={updateWithId} />;
 }

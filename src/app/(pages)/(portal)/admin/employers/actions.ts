@@ -39,7 +39,11 @@ export async function fetchEmployerProfileAction(id: string) {
   }
 }
 
-export async function updateEmployerAction(id: string, formData: FormData) {
+export async function updateEmployerAction(
+  id: string,
+  prevState: any,
+  formData: FormData,
+) {
   try {
     const supabase = await createClient();
 

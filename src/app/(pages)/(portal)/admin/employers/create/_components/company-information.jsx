@@ -10,10 +10,10 @@ import { COMPANY_SIZE_OPTIONS } from "@/lib/configs/constants/company-size";
 import { InputCheckboxGroup } from "@/ds/input-checkbox-group";
 
 export function CompanyInformation({
-  onIndustryValueChange,
+  initialData = null,
   logoUrl,
   onLogoUrlChange,
-  initialData = {},
+  onIndustryValueChange,
 }) {
   return (
     <FormCard
@@ -26,8 +26,8 @@ export function CompanyInformation({
           {/* Company Logo - Left Side */}
           <div className="flex-shrink-0">
             <CompanyAvatar
-              logoUrl={logoUrl || initialData.logo_url}
-              companyName={initialData.company_name || "Company"}
+              logoUrl={logoUrl || initialData?.logo_url}
+              companyName={initialData?.company_name || "?"}
               size="xl"
             />
           </div>
@@ -40,7 +40,7 @@ export function CompanyInformation({
               name="company_name"
               id="company_name"
               placeholder="Enter company name"
-              defaultValue={initialData.company_name || ""}
+              defaultValue={initialData?.company_name || ""}
             />
 
             {/* Company Logo URL - Right Side */}
@@ -51,7 +51,7 @@ export function CompanyInformation({
                 name="logo_url"
                 id="logo_url"
                 placeholder="Logo URL"
-                value={logoUrl || initialData.logo_url || ""}
+                value={logoUrl || initialData?.logo_url || ""}
                 onChange={(e) => onLogoUrlChange?.(e.target.value)}
               />
               <PrimaryButton
@@ -72,7 +72,7 @@ export function CompanyInformation({
             name="company_size"
             id="company_size"
             placeholder="Select company size"
-            defaultValue={initialData.company_size}
+            defaultValue={initialData?.company_size}
             options={COMPANY_SIZE_OPTIONS}
           />
 
@@ -83,7 +83,7 @@ export function CompanyInformation({
             name="founded_year"
             id="founded_year"
             placeholder="e.g., 2020"
-            defaultValue={initialData.founded_year || ""}
+            defaultValue={initialData?.founded_year || ""}
           />
 
           {/* Location */}
@@ -93,7 +93,7 @@ export function CompanyInformation({
             name="location"
             id="location"
             placeholder="City, State/Country"
-            defaultValue={initialData.location || ""}
+            defaultValue={initialData?.company_location || ""}
           />
 
           {/* Website */}
@@ -102,7 +102,7 @@ export function CompanyInformation({
             name="website"
             id="website"
             placeholder="https://example.com"
-            defaultValue={initialData.website || ""}
+            defaultValue={initialData?.website_url || ""}
           />
         </div>
 
@@ -112,7 +112,7 @@ export function CompanyInformation({
           id="industries"
           name="industries"
           items={INDUSTRY_OPTIONS}
-          initialSelectedItems={initialData.industries || []}
+          initialSelectedItems={initialData?.industries || []}
           onChange={onIndustryValueChange}
           allowCustomItems={true}
           customItemsPlaceholder="Add your custom industry and press Enter"

@@ -212,16 +212,23 @@ export class EmployerService {
    */
   private transformFormDataToDatabase(formData: FormData, userId: string) {
     const formCompanyData = Object.fromEntries(formData.entries());
-    const standardIndustries = formData.getAll("industries");
-    const customIndustries = formCompanyData.custom_industries
-      ? (formCompanyData.custom_industries as string)
-          .split(",")
-          .map((i: string) => i.trim())
-          .filter(Boolean)
-      : [];
-    const allIndustries = [...standardIndustries, ...customIndustries];
+
+    // Get all industries (includes both predefined and custom items from CheckboxGroup)
+    // Remove duplicates using Set and filter empty strings
+    const industriesArray = formData.getAll("industries") as string[];
+    const uniqueIndustries = Array.from(
+      new Set(industriesArray.map((i) => i.trim()).filter(Boolean)),
+    );
+
     const accolades = formCompanyData.company_accolades as string;
-    const howHiredPreviously = formData.getAll("how_hired_previously");
+
+    // Get previous hiring methods and remove duplicates
+    const hiringMethodsArray = formData.getAll(
+      "previous_hiring_methods",
+    ) as string[];
+    const uniqueHiringMethods = Array.from(
+      new Set(hiringMethodsArray.map((m) => m.trim()).filter(Boolean)),
+    );
 
     // Parse social_medias JSON
     const socialMedias = formCompanyData.social_medias
@@ -236,17 +243,17 @@ export class EmployerService {
       company_location: formCompanyData.location,
       website_url: formCompanyData.website,
       logo_url: formCompanyData.logo_url,
-      industries: allIndustries,
+      industries: uniqueIndustries,
 
       // About & Culture
       company_about: formCompanyData.company_about,
       work_environment: formCompanyData.work_environment,
       company_loves: formCompanyData.company_loves,
-      company_entry_level: formCompanyData.company_entry_level,
+      company_entry_level: formCompanyData.entry_level_support,
 
       // Accolades
       company_accolades: accolades
-        ? accolades.split(",").map((a) => a.trim())
+        ? JSON.parse(accolades).map((item: any) => item.name || item)
         : [],
 
       // Contact Information
@@ -263,7 +270,7 @@ export class EmployerService {
       more_info: formCompanyData.more_info,
       hiring_frequency: formCompanyData.hiring_frequency,
       additional_notes: formCompanyData.additional_notes,
-      how_hired_previously: howHiredPreviously,
+      previous_hiring_methods: uniqueHiringMethods,
 
       // System Fields
       user_id: userId,
@@ -337,6 +344,11 @@ export class EmployerService {
       const transformedData = this.transformFormDataToDatabase(
         formData,
         userId,
+      );
+
+      console.log(
+        "EmployerService: Update - Transformed data:",
+        transformedData,
       );
 
       // Validate required fields

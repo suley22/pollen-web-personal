@@ -50,6 +50,7 @@ export function DynamicListInput({
   initialItems = [],
   addButtonText = "Add Item",
   renderItem,
+  renderListAsCustom,
 }) {
   // Initialize items with unique IDs
   const [items, setItems] = useState(
@@ -187,24 +188,32 @@ export function DynamicListInput({
 
       {/* List of added items */}
       {items.length > 0 && (
-        <div className="space-y-2">
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg px-4 py-2"
-            >
-              {itemRenderer(item)}
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => handleRemoveItem(item.id)}
-                className="ml-2 h-8 w-8 p-0 text-gray-500 hover:text-red-600"
-              >
-                <X className="h-4 w-4" />
-              </Button>
+        <div>
+          {renderListAsCustom ? (
+            // Custom list rendering (e.g., badges) - passes items and remove handler
+            renderListAsCustom(items, handleRemoveItem)
+          ) : (
+            // Default list rendering
+            <div className="space-y-2">
+              {items.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg px-4 py-2"
+                >
+                  {itemRenderer(item)}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRemoveItem(item.id)}
+                    className="ml-2 h-8 w-8 p-0 text-gray-500 hover:text-red-600"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
       )}
     </div>

@@ -4,7 +4,7 @@ import { DynamicListInput } from "@/components/design-system";
 import { FormCard } from "@/components/design-system/form-card";
 import { Share2 } from "lucide-react";
 
-export function SocialMedia({ social_media_links = [] }) {
+export function SocialMedia({ employer = null }) {
   return (
     <FormCard title="Social Media" icon={<Share2 className="h-5 w-5" />}>
       <DynamicListInput
@@ -26,7 +26,7 @@ export function SocialMedia({ social_media_links = [] }) {
             required: true,
           },
         ]}
-        initialItems={social_media_links}
+        initialItems={employer?.social_medias || employer?.social_media || []}
       />
     </FormCard>
   );

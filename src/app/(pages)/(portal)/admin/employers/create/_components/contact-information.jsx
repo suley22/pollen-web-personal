@@ -4,12 +4,7 @@ import { Input } from "@/components/design-system";
 import { User } from "lucide-react";
 import { FormCard } from "@/components/design-system/form-card";
 
-export function ContactInformation({
-  contact_name,
-  job_title,
-  contact_email,
-  contact_phone,
-}) {
+export function ContactInformation({ employer = null }) {
   return (
     <FormCard
       title="Contact Information"
@@ -24,7 +19,7 @@ export function ContactInformation({
           name="contact_name"
           id="contact_name"
           placeholder="Contact Name"
-          defaultValue={contact_name}
+          defaultValue={employer?.contact_name || ""}
         />
 
         {/* Job Title */}
@@ -34,7 +29,7 @@ export function ContactInformation({
           name="job_title"
           id="job_title"
           placeholder="Job Title"
-          defaultValue={job_title}
+          defaultValue={employer?.job_title || ""}
         />
 
         {/* Email */}
@@ -44,7 +39,7 @@ export function ContactInformation({
           name="contact_email"
           id="contact_email"
           placeholder="hr@yourcompany.com"
-          defaultValue={contact_email}
+          defaultValue={employer?.contact_email || ""}
         />
 
         {/* Phone */}
@@ -54,7 +49,7 @@ export function ContactInformation({
           name="contact_phone"
           id="contact_phone"
           placeholder="+44 20 1234 5678"
-          defaultValue={contact_phone}
+          defaultValue={employer?.contact_phone || ""}
         />
       </div>
     </FormCard>

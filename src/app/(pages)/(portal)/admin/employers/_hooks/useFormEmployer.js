@@ -7,26 +7,27 @@ import { useNavigation } from "@/hooks/useNavigation";
 import { AdminRoutes } from "../../router";
 
 /**
- * Custom hook to manage the create employer form state and logic
+ * Custom hook to manage the employer form state and logic (create/edit)
  */
-export function useCreateEmployer(createCompanyAction) {
+export function useFormEmployer({ action, employer = null }) {
   const formRef = useRef(null);
   const { navigateTo, navigateWithDelay } = useNavigation();
   const { showSuccess, showError } = useToastNotifications();
   const lastProcessedState = useRef(null);
 
   // Form action state
-  const [state, createCompany, isPending] = useActionState(
-    createCompanyAction,
-    null,
-  );
+  const [state, formAction, isPending] = useActionState(action, null);
 
-  // Form field states
+  // Form field states - Initialize with employer data if in edit mode
   const [checked, setChecked] = useState(false);
-  const [accolades, setAccolades] = useState([]);
-  const [customIndustries, setCustomIndustries] = useState([]);
+  const [customIndustries, setCustomIndustries] = useState(() => {
+    if (employer?.industries) {
+      return employer.industries;
+    }
+    return [];
+  });
   const [industryValue, setIndustryValue] = useState("");
-  const [logoUrl, setLogoUrl] = useState("");
+  const [logoUrl, setLogoUrl] = useState(() => employer?.logo_url || "");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Handle navigation
@@ -45,7 +46,7 @@ export function useCreateEmployer(createCompanyAction) {
 
     if (state?.success) {
       showSuccess("Success!", state.message);
-      navigateWithDelay(AdminRoutes.employersView(state.companyId));
+      navigateWithDelay(AdminRoutes.employers);
     } else if (state?.error) {
       showError("Error", state.error);
       setIsDialogOpen(false);
@@ -64,13 +65,11 @@ export function useCreateEmployer(createCompanyAction) {
     formRef,
     // Form state
     state,
-    createCompany,
+    formAction,
     isPending,
     // Field states
     checked,
     setChecked,
-    accolades,
-    setAccolades,
     customIndustries,
     setCustomIndustries,
     industryValue,

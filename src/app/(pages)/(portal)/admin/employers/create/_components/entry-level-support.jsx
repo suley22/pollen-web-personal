@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { GraduationCap } from "lucide-react";
 
-export function EntryLevelSupport() {
+export function EntryLevelSupport({ initialValue }) {
   return (
     <Card className="overflow-hidden py-6">
       <CardHeader className="pb-3 px-6">
@@ -19,6 +19,7 @@ export function EntryLevelSupport() {
           name="company_entry_level"
           placeholder="Describe the support and resources provided for entry-level employees, such as training programs, mentorship, onboarding..."
           className="min-h-[150px] resize-y"
+          defaultValue={initialValue}
         />
       </CardContent>
     </Card>

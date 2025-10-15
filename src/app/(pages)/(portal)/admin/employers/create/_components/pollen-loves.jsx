@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Heart } from "lucide-react";
 
-export function PollenLoves() {
+export function PollenLoves({ initialValue }) {
   return (
     <Card className="overflow-hidden py-6">
       <CardHeader className="pb-3 px-6">
@@ -19,6 +19,7 @@ export function PollenLoves() {
           name="company_loves"
           placeholder="What does Pollen love about this company? Highlight unique benefits, values, or opportunities..."
           className="min-h-[150px] resize-y"
+          defaultValue={initialValue}
         />
       </CardContent>
     </Card>

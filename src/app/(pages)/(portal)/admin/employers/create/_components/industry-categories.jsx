@@ -2,7 +2,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { CustomIndustriesSection } from "./custom-industries-section";
 import { useState } from "react";
 
-export function IndustryCategoriesSection() {
+export function IndustryCategoriesSection({ initialSelectedIndustries = [] }) {
   const [checked, setChecked] = useState(false);
   const [customIndustries, setCustomIndustries] = useState([]);
 
@@ -47,13 +47,17 @@ export function IndustryCategoriesSection() {
       <div className="grid grid-cols-3 gap-4 text-sm">
         {items.map((item) => {
           const isOther = item.value === "other";
+          const isInitiallySelected = initialSelectedIndustries.includes(
+            item.value,
+          );
 
           return (
             <div className="flex flex-col space-y-2" key={item.value}>
               <label className="flex items-center space-x-2 cursor-pointer">
                 <Checkbox
-                  name={`industries.${item.value}`}
+                  name="industries"
                   value={item.value}
+                  defaultChecked={isInitiallySelected}
                   checked={isOther ? !!checked : undefined}
                   onCheckedChange={
                     isOther ? handleOtherCheckedChange : undefined

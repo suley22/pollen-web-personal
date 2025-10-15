@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { FileText } from "lucide-react";
 
-export function AboutEmployer() {
+export function AboutEmployer({ initialValue }) {
   return (
     <Card className="overflow-hidden py-6">
       <CardHeader className="pb-3 px-6">
@@ -19,6 +19,7 @@ export function AboutEmployer() {
           name="company_about"
           placeholder="Describe the company, its mission, values, and what makes it unique..."
           className="min-h-[150px] resize-y"
+          defaultValue={initialValue}
         />
       </CardContent>
     </Card>

@@ -32,18 +32,11 @@ export default function EmployerProfileView({ employerProfile }) {
 
   const {
     company,
-    isEditing,
-    setIsEditing,
-    editData,
-    setEditData,
     jobs,
     isLoadingJobs,
     setJobs,
     setIsLoadingJobs,
-    handleInputChange,
     handleEdit,
-    handleCancel,
-    handleSave,
     handleSetLive,
     handleHideProfile,
     handleDelete,
@@ -108,12 +101,7 @@ export default function EmployerProfileView({ employerProfile }) {
       <EmployerProfileHeader
         companyName={company.company_name}
         companyStatus={company.status}
-        isEditing={isEditing}
-        editData={editData}
         onBack={() => router.back()}
-        onInputChange={handleInputChange}
-        onSave={handleSave}
-        onCancel={handleCancel}
         onEdit={handleEdit}
         onSetLive={handleSetLive}
         onHideProfile={handleHideProfile}
@@ -126,12 +114,7 @@ export default function EmployerProfileView({ employerProfile }) {
         {/* Left Column - Main Information */}
         <div className="lg:col-span-2 space-y-6">
           {/* Company Information */}
-          <CompanyInformation
-            company={company}
-            isEditing={isEditing}
-            editData={editData}
-            onInputChange={handleInputChange}
-          />
+          <CompanyInformation company={company} />
 
           {/* About Company */}
           <AboutCompany about={company.about} />

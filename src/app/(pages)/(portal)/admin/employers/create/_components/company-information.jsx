@@ -26,7 +26,12 @@ export function CompanyInformation({
   onShowCustomIndustriesChange,
   logoUrl,
   onLogoUrlChange,
+  initialData = {},
 }) {
+  // Debug: Log the initial company size value
+  console.log("CompanyInformation initialData:", initialData);
+  console.log("Company size value:", initialData.company_size);
+
   return (
     <Card className="overflow-hidden py-6">
       <CardHeader className="pb-3 px-6">
@@ -70,6 +75,7 @@ export function CompanyInformation({
                     id="company_name"
                     placeholder="Enter company name"
                     className="w-full"
+                    defaultValue={initialData.company_name || ""}
                   />
                 </div>
               </div>
@@ -89,7 +95,7 @@ export function CompanyInformation({
                     id="logo_url"
                     placeholder="Logo URL"
                     className="w-full"
-                    value={logoUrl || ""}
+                    value={logoUrl || initialData.logo_url || ""}
                     onChange={(e) => onLogoUrlChange?.(e.target.value)}
                   />
                   <PrimaryButton
@@ -113,7 +119,11 @@ export function CompanyInformation({
               >
                 Company Size
               </Label>
-              <Select name="company_size" id="company_size">
+              <Select
+                name="company_size"
+                id="company_size"
+                defaultValue={initialData.company_size || undefined}
+              >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select company size" />
                 </SelectTrigger>
@@ -142,6 +152,7 @@ export function CompanyInformation({
                 id="founded_year"
                 placeholder="e.g., 2020"
                 className="w-full"
+                defaultValue={initialData.founded_year || ""}
               />
             </div>
 
@@ -159,6 +170,7 @@ export function CompanyInformation({
                 id="location"
                 placeholder="City, State/Country"
                 className="w-full"
+                defaultValue={initialData.location || ""}
               />
             </div>
 
@@ -176,6 +188,7 @@ export function CompanyInformation({
                 id="website"
                 placeholder="https://example.com"
                 className="w-full"
+                defaultValue={initialData.website || ""}
               />
             </div>
           </div>
@@ -190,6 +203,7 @@ export function CompanyInformation({
             <IndustryCategoriesSection
               value={industryValue}
               onValueChange={onIndustryValueChange}
+              initialSelectedIndustries={initialData.industries || []}
             />
             <div className="flex items-center space-x-2 mt-2">
               <Checkbox

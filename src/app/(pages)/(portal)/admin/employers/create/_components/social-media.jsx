@@ -8,8 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Share2, Plus, X } from "lucide-react";
 
-export function SocialMedia() {
-  const [socialMedias, setSocialMedias] = useState([]);
+export function SocialMedia({ initialValue = [] }) {
+  // Initialize with existing data, ensuring each has an id
+  const [socialMedias, setSocialMedias] = useState(
+    initialValue.map((item) => ({
+      ...item,
+      id:
+        item.id ||
+        Date.now().toString() + Math.random().toString(36).substr(2, 9),
+    })),
+  );
   const [platform, setPlatform] = useState("");
   const [url, setUrl] = useState("");
 

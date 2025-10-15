@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Building } from "lucide-react";
 
-export function WorkEnvironment() {
+export function WorkEnvironment({ initialValue }) {
   return (
     <Card className="overflow-hidden py-6">
       <CardHeader className="pb-3 px-6">
@@ -19,6 +19,7 @@ export function WorkEnvironment() {
           name="work_environment"
           placeholder="Describe the work environment, office culture, team dynamics, and atmosphere..."
           className="min-h-[150px] resize-y"
+          defaultValue={initialValue}
         />
       </CardContent>
     </Card>

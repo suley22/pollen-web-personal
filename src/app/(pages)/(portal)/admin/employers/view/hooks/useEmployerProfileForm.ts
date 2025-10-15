@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { AdminRoutes } from "../../../router";
 
 export interface EmployerProfile {
   id: string;
@@ -66,9 +68,8 @@ export interface CompanyData extends EmployerProfile {
 export function useEmployerProfileForm(
   employerProfile: EmployerProfile | null,
 ) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editData, setEditData] = useState<CompanyData | null>(null);
   const [jobs, setJobs] = useState<any[]>([]);
+  const router = useRouter();
   const [isLoadingJobs, setIsLoadingJobs] = useState(true);
 
   // Transform employer profile to company data format
@@ -106,30 +107,8 @@ export function useEmployerProfileForm(
       }
     : ({} as CompanyData);
 
-  // Note: Jobs are loaded in the component via useEffect, not here
-  // This keeps the data fetching logic in one place
-
-  const handleInputChange = (field: string, value: string | string[]) => {
-    if (editData) {
-      setEditData({ ...editData, [field]: value });
-    }
-  };
-
   const handleEdit = () => {
-    setIsEditing(true);
-    setEditData(company);
-  };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-    setEditData(null);
-  };
-
-  const handleSave = () => {
-    // TODO: Implement save functionality with API call
-    console.log("Saving changes:", editData);
-    setIsEditing(false);
-    // Here you would typically call an API to save the data
+    router.push(AdminRoutes.employersEdit(company.id));
   };
 
   const handleSetLive = () => {
@@ -149,18 +128,11 @@ export function useEmployerProfileForm(
 
   return {
     company,
-    isEditing,
-    setIsEditing,
-    editData,
-    setEditData,
     jobs,
     isLoadingJobs,
     setJobs,
     setIsLoadingJobs,
-    handleInputChange,
     handleEdit,
-    handleCancel,
-    handleSave,
     handleSetLive,
     handleHideProfile,
     handleDelete,

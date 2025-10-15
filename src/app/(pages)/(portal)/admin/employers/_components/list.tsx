@@ -34,8 +34,9 @@ export function List() {
   };
 
   const handleDeleteClick = (company, e) => {
-    // TODO: Implement updateCompanyMutation
+    e.preventDefault();
     e.stopPropagation();
+    // TODO: Implement updateCompanyMutation
     console.log("Would update company");
   };
 
@@ -210,6 +211,7 @@ export function List() {
                             size="sm"
                             className="h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
                             onClick={(e) => {
+                              e.preventDefault();
                               e.stopPropagation();
                               router.push(
                                 AdminRoutes.employersView(company.id),
@@ -224,6 +226,7 @@ export function List() {
                             size="sm"
                             className="h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
                             onClick={(e) => {
+                              e.preventDefault();
                               e.stopPropagation();
                               router.push(
                                 AdminRoutes.employersEdit(company.id),

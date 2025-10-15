@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { User } from "lucide-react";
 
-export function ContactInformation() {
+export function ContactInformation({ initialData = {} }) {
   return (
     <Card className="w-full py-6">
       <CardHeader className="pb-3 px-6">
@@ -31,6 +31,7 @@ export function ContactInformation() {
               id="contact_name"
               placeholder="Contact Name"
               className="w-full"
+              defaultValue={initialData.contact_name}
             />
           </div>
 
@@ -48,6 +49,7 @@ export function ContactInformation() {
               id="job_title"
               placeholder="Job Title"
               className="w-full"
+              defaultValue={initialData.job_title}
             />
           </div>
 
@@ -65,6 +67,7 @@ export function ContactInformation() {
               id="contact_email"
               placeholder="hr@yourcompany.com"
               className="w-full"
+              defaultValue={initialData.contact_email}
             />
           </div>
 
@@ -82,6 +85,7 @@ export function ContactInformation() {
               id="contact_phone"
               placeholder="+44 20 1234 5678"
               className="w-full"
+              defaultValue={initialData.contact_phone}
             />
           </div>
         </div>

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select/select";
 import { EyeOff } from "lucide-react";
 
-export function InternalPollenData() {
+export function InternalPollenData({ initialData = {} }) {
   return (
     <Card className="overflow-hidden py-6">
       <CardHeader className="pb-3 px-6">
@@ -36,6 +36,7 @@ export function InternalPollenData() {
             <Select
               name="how_did_you_hear_about_us"
               id="how_did_you_hear_about_us"
+              defaultValue={initialData.how_did_you_hear_about_us}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select an option" />
@@ -65,6 +66,7 @@ export function InternalPollenData() {
               id="more_info"
               placeholder="e.g Name of referrer, specific event, etc."
               className="min-h-[80px] resize-y"
+              defaultValue={initialData.more_info}
             />
           </div>
 
@@ -76,7 +78,11 @@ export function InternalPollenData() {
             >
               Frequency of hiring at entry level
             </Label>
-            <Select name="hiring_frequency" id="hiring_frequency">
+            <Select
+              name="hiring_frequency"
+              id="hiring_frequency"
+              defaultValue={initialData.hiring_frequency}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select an option" />
               </SelectTrigger>
@@ -101,50 +107,67 @@ export function InternalPollenData() {
 
             <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
               <label className="flex items-center space-x-2 cursor-pointer">
-                <Checkbox name="previous_hired" value="recruitment_agencies" />
-                <span>Recruitment agencies</span>
+                <Checkbox
+                  name="paid_advertising"
+                  defaultChecked={initialData.paid_advertising}
+                />
+                <span>Paid advertising</span>
               </label>
               <label className="flex items-center space-x-2 cursor-pointer">
-                <Checkbox name="previous_hired" value="job_boards" />
+                <Checkbox
+                  name="job_boards"
+                  defaultChecked={initialData.job_boards}
+                />
                 <span>Job boards (LinkedIn, Indeed, etc.)</span>
               </label>
               <label className="flex items-center space-x-2 cursor-pointer">
                 <Checkbox
-                  name="previous_hired"
-                  value="university_partnerships"
+                  name="campus_recruiting"
+                  defaultChecked={initialData.campus_recruiting}
                 />
-                <span>University partnerships</span>
-              </label>
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <Checkbox name="previous_hired" value="internal_referrals" />
-                <span>Internal referrals</span>
+                <span>Campus recruiting</span>
               </label>
               <label className="flex items-center space-x-2 cursor-pointer">
                 <Checkbox
-                  name="previous_hired"
-                  value="social_media_recruiting"
+                  name="employee_referrals"
+                  defaultChecked={initialData.employee_referrals}
+                />
+                <span>Employee referrals</span>
+              </label>
+              <label className="flex items-center space-x-2 cursor-pointer">
+                <Checkbox
+                  name="social_media_recruiting"
+                  defaultChecked={initialData.social_media_recruiting}
                 />
                 <span>Social media recruiting</span>
               </label>
               <label className="flex items-center space-x-2 cursor-pointer">
-                <Checkbox name="previous_hired" value="headhunters" />
-                <span>Headhunters</span>
+                <Checkbox
+                  name="headhunters_agencies"
+                  defaultChecked={initialData.headhunters_agencies}
+                />
+                <span>Headhunters & agencies</span>
               </label>
               <label className="flex items-center space-x-2 cursor-pointer">
-                <Checkbox name="previous_hired" value="career_fairs" />
+                <Checkbox
+                  name="career_fairs"
+                  defaultChecked={initialData.career_fairs}
+                />
                 <span>Career fairs</span>
               </label>
               <label className="flex items-center space-x-2 cursor-pointer">
-                <Checkbox name="previous_hired" value="direct_applications" />
-                <span>Direct applications</span>
+                <Checkbox
+                  name="networking_events"
+                  defaultChecked={initialData.networking_events}
+                />
+                <span>Networking events</span>
               </label>
               <label className="flex items-center space-x-2 cursor-pointer">
-                <Checkbox name="previous_hired" value="freelance_platforms" />
-                <span>Freelance platforms</span>
-              </label>
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <Checkbox name="previous_hired" value="never_hired" />
-                <span>Never hired before</span>
+                <Checkbox
+                  name="other_recruiting"
+                  defaultChecked={initialData.other_recruiting}
+                />
+                <span>Other methods</span>
               </label>
             </div>
           </div>
@@ -162,6 +185,7 @@ export function InternalPollenData() {
               id="additional_notes"
               placeholder="Add any additional notes or comments..."
               className="min-h-[100px] resize-y"
+              defaultValue={initialData.additional_notes}
             />
           </div>
         </div>

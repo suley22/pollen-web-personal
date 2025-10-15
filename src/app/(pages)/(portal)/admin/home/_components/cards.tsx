@@ -31,17 +31,17 @@ export function HomeCards() {
       {/* Job Seekers Card */}
       <Card className="border-2 border-purple-200 bg-purple-50 hover:shadow-lg transition-shadow">
         <CardContent className="p-6">
-          <div className="flex items-start mb-2">
-            <div className="rounded-full bg-purple-100 p-4">
-              <Users className="h-8 w-8 text-purple-600" />
-            </div>
-            <div className="space-y-1 ml-6">
+          <div className="flex items-start justify-between mb-2">
+            <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">
                 Community
               </p>
-              <p className="text-4xl font-bold">
+              <p className="text-3xl font-semibold">
                 {stats?.totalCommunityMembers.toLocaleString()}
               </p>
+            </div>
+            <div className="rounded-full bg-purple-100 p-4">
+              <Users className="h-8 w-8 text-purple-600" />
             </div>
           </div>
           <div className="flex items-center gap-2 mb-2 text-sm text-green-600 font-medium">
@@ -80,15 +80,15 @@ export function HomeCards() {
       {/* Company Profiles Card */}
       <Card className="border-2 border-orange-200 bg-orange-50 hover:shadow-lg transition-shadow">
         <CardContent className="p-6">
-          <div className="flex items-start mb-6">
-            <div className="rounded-full bg-orange-100 p-4">
-              <Building2 className="h-8 w-8 text-orange-600" />
-            </div>
-            <div className="space-y-1 ml-6">
+          <div className="flex items-start justify-between mb-6">
+            <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">
                 Company Profiles
               </p>
-              <p className="text-4xl font-bold">3</p>
+              <p className="text-3xl font-semibold">3</p>
+            </div>
+            <div className="rounded-full bg-orange-100 p-4">
+              <Building2 className="h-8 w-8 text-orange-600" />
             </div>
           </div>
           <div className="flex gap-2">
@@ -124,13 +124,13 @@ export function HomeCards() {
       {/* Jobs Card */}
       <Card className="border-2 border-pink-200 bg-pink-50 hover:shadow-lg transition-shadow">
         <CardContent className="p-6">
-          <div className="flex items-start mb-6">
+          <div className="flex items-start justify-between mb-6">
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-muted-foreground">Jobs</p>
+              <p className="text-3xl font-semibold">{stats?.liveJobs}</p>
+            </div>
             <div className="rounded-full bg-pink-100 p-4">
               <FileText className="h-8 w-8 text-pink-600" />
-            </div>
-            <div className="space-y-1 ml-6">
-              <p className="text-sm font-medium text-muted-foreground">Jobs</p>
-              <p className="text-4xl font-bold">{stats?.liveJobs}</p>
             </div>
           </div>
           <div className="flex gap-2">

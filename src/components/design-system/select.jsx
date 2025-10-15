@@ -70,11 +70,19 @@ export function Select({
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
+          {options.map((option) => {
+            // Support both string arrays and object arrays
+            const optionValue =
+              typeof option === "string" ? option : option.value;
+            const optionLabel =
+              typeof option === "string" ? option : option.label;
+
+            return (
+              <SelectItem key={optionValue} value={optionValue}>
+                {optionLabel}
+              </SelectItem>
+            );
+          })}
         </SelectContent>
       </SelectRoot>
 

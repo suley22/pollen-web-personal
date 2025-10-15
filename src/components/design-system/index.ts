@@ -18,3 +18,4 @@ export { Input } from "./input";
 export { Select } from "./select";
 export { CheckboxGroup } from "./checkbox-group";
 export { InputCheckboxGroup } from "./input-checkbox-group";
+export { TextAreaCard } from "./textarea-card";

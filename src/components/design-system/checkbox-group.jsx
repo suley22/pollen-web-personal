@@ -123,7 +123,7 @@ export function CheckboxGroup({
     <div className={cn("w-full space-y-4", className)}>
       {/* Grid de checkboxes */}
       <div
-        className={cn("grid gap-4 text-sm", `grid-cols-${columns}`)}
+        className={cn("grid gap-3 text-sm", `grid-cols-${columns}`)}
         style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
       >
         {allAvailableItems.map((item) => {
@@ -140,11 +140,18 @@ export function CheckboxGroup({
                 }
               />
               <label
-                htmlFor={`${name}-${item.label}`}
                 className={cn(
                   "flex-1 select-none flex items-center gap-2",
                   "cursor-pointer",
                 )}
+                onClick={(e) => {
+                  // Prevenir si es custom o si se hace clic en el botón de eliminar
+                  if (item.isCustom || e.target.closest("button")) {
+                    return;
+                  }
+                  // Toggle el estado del checkbox
+                  handleCheckboxChange(item.label, !isSelected, item.isCustom);
+                }}
               >
                 <span
                   className={item.isCustom ? "text-gray-700 font-medium" : ""}
@@ -156,6 +163,7 @@ export function CheckboxGroup({
                     type="button"
                     onClick={(e) => {
                       e.preventDefault();
+                      e.stopPropagation();
                       handleRemoveCustomItem(item.label);
                     }}
                     className="text-gray-400 hover:text-red-500 transition-colors"
@@ -208,13 +216,14 @@ function CustomItemInput({ placeholder, onAdd }) {
   };
 
   return (
-    <Input
-      type="text"
-      placeholder={placeholder}
-      value={inputValue}
-      onChange={(e) => setInputValue(e.target.value)}
-      onKeyDown={handleKeyDown}
-      helperText="Press Enter to add"
-    />
+    <div className="w-full pt-1">
+      <Input
+        type="text"
+        placeholder={placeholder}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        onKeyDown={handleKeyDown}
+      />
+    </div>
   );
 }

@@ -33,7 +33,7 @@ export function InputCheckboxGroup({
         <Label
           htmlFor={fieldId}
           className={cn(
-            "text-sm font-medium text-gray-700 mb-1.5 block",
+            "text-sm font-medium text-gray-700 pb-2 mb-1.5 block",
             error && "text-destructive",
           )}
         >

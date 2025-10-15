@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 
+import { TextAreaCard } from "@/components/design-system";
+import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useActionState } from "react";
@@ -12,16 +14,13 @@ import { FormActions } from "@/components/design-system/form-actions";
 import { ConfirmationDialog } from "@/components/design-system/confirmation-dialog";
 import { createCompanyData } from "./actions";
 import { CompanyInformation } from "./_components/company-information";
-import { WorkEnvironment } from "./_components/work-environment";
-import { PollenLoves } from "./_components/pollen-loves";
 import { AccoladesAccreditations } from "./_components/accolades-accreditations";
-import { EntryLevelSupport } from "./_components/entry-level-support";
 import { ContactInformation } from "./_components/contact-information";
 import { SocialMedia } from "./_components/social-media";
 import { InternalPollenData } from "./_components/internal-pollen-data";
 import { useToast } from "@/lib/hooks/use-toast";
 import { AdminRoutes } from "../../router";
-import { FileText } from "lucide-react";
+import { FileText, Building } from "lucide-react";
 import { FormCard } from "@/components/design-system/form-card";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -96,22 +95,39 @@ export default function CreateProfilePage() {
               logoUrl={logoUrl}
               onLogoUrlChange={setLogoUrl}
             />
-            <FormCard
-              title="About the Employer"
+
+            <TextAreaCard
+              title="About the employer"
               icon={<FileText className="h-5 w-5" />}
-            >
-              <Textarea
-                name="company_about"
-                placeholder="Describe the company, its mission, values, and what makes it unique..."
-                className="min-h-[150px] resize-y"
-                defaultValue={"industryValue?.company_abou"}
-              />
-            </FormCard>
+              name="company_about"
+              placeholder="Describe the company, its mission, values, and what makes it unique..."
+              minHeight="150px"
+            />
 
-            <WorkEnvironment />
-            <PollenLoves />
+            <TextAreaCard
+              title="Work Environment"
+              icon={<Building className="h-5 w-5" />}
+              name="work_environment"
+              placeholder="Describe the work environment, office culture, team dynamics, and atmosphere..."
+              minHeight="150px"
+            />
 
-            <EntryLevelSupport />
+            <TextAreaCard
+              title="Pollen Loves"
+              icon={<Heart className="h-5 w-5" />}
+              name="company_loves"
+              placeholder="What does Pollen love about this company? Highlight unique benefits, values, or opportunities..."
+              minHeight="150px"
+            />
+
+            <TextAreaCard
+              title="Entry-Level Support"
+              icon={<Building className="h-5 w-5" />}
+              name="entry_level_support"
+              placeholder="Describe the support and resources provided for entry-level employees, such as training programs, mentorship, onboarding..."
+              minHeight="150px"
+            />
+
             <InternalPollenData />
           </div>
 

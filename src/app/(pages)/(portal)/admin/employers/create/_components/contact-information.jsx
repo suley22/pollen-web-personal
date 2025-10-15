@@ -1,11 +1,15 @@
 "use client";
 
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/design-system";
 import { User } from "lucide-react";
 import { FormCard } from "@/components/design-system/form-card";
 
-export function ContactInformation({ initialData = {} }) {
+export function ContactInformation({
+  contact_name,
+  job_title,
+  contact_email,
+  contact_phone,
+}) {
   return (
     <FormCard
       title="Contact Information"
@@ -14,76 +18,44 @@ export function ContactInformation({ initialData = {} }) {
     >
       <div className="space-y-4">
         {/* Contact Name */}
-        <div>
-          <Label
-            htmlFor="contact_name"
-            className="text-sm font-medium text-gray-700 mb-1.5 block"
-          >
-            Contact Name
-          </Label>
-          <Input
-            type="text"
-            name="contact_name"
-            id="contact_name"
-            placeholder="Contact Name"
-            className="w-full"
-            defaultValue={initialData.contact_name}
-          />
-        </div>
+        <Input
+          label="Contact Name"
+          type="text"
+          name="contact_name"
+          id="contact_name"
+          placeholder="Contact Name"
+          defaultValue={contact_name}
+        />
 
         {/* Job Title */}
-        <div>
-          <Label
-            htmlFor="job_title"
-            className="text-sm font-medium text-gray-700 mb-1.5 block"
-          >
-            Job Title
-          </Label>
-          <Input
-            type="text"
-            name="job_title"
-            id="job_title"
-            placeholder="Job Title"
-            className="w-full"
-            defaultValue={initialData.job_title}
-          />
-        </div>
+        <Input
+          label="Job Title"
+          type="text"
+          name="job_title"
+          id="job_title"
+          placeholder="Job Title"
+          defaultValue={job_title}
+        />
 
         {/* Email */}
-        <div>
-          <Label
-            htmlFor="contact_email"
-            className="text-sm font-medium text-gray-700 mb-1.5 block"
-          >
-            Email
-          </Label>
-          <Input
-            type="email"
-            name="contact_email"
-            id="contact_email"
-            placeholder="hr@yourcompany.com"
-            className="w-full"
-            defaultValue={initialData.contact_email}
-          />
-        </div>
+        <Input
+          label="Email"
+          type="email"
+          name="contact_email"
+          id="contact_email"
+          placeholder="hr@yourcompany.com"
+          defaultValue={contact_email}
+        />
 
         {/* Phone */}
-        <div>
-          <Label
-            htmlFor="contact_phone"
-            className="text-sm font-medium text-gray-700 mb-1.5 block"
-          >
-            Phone
-          </Label>
-          <Input
-            type="text"
-            name="contact_phone"
-            id="contact_phone"
-            placeholder="+44 20 1234 5678"
-            className="w-full"
-            defaultValue={initialData.contact_phone}
-          />
-        </div>
+        <Input
+          label="Phone"
+          type="text"
+          name="contact_phone"
+          id="contact_phone"
+          placeholder="+44 20 1234 5678"
+          defaultValue={contact_phone}
+        />
       </div>
     </FormCard>
   );

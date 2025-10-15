@@ -3,11 +3,11 @@ import { Filters } from "@/admin/employers/_components/filters";
 import { StatisticsCards } from "@/admin/employers/_components/cards";
 import { ResultsCount } from "@/admin/employers/_components/results-count";
 import { List } from "@/admin/employers/_components/list";
-import { EmployerManagementProvider } from "@/admin/employers/_context/EmployerManagementContext";
+import { AmdinEmployersProvider } from "@/admin/employers/_context/admin-employers-context";
 
-export default function AdminEmployersManagement() {
+export default function AdminEmployers() {
   return (
-    <EmployerManagementProvider>
+    <AmdinEmployersProvider>
       <div className="flex flex-col w-full mx-auto py-6 gap-6">
         <Header />
         <StatisticsCards />
@@ -15,6 +15,6 @@ export default function AdminEmployersManagement() {
         <ResultsCount />
         <List />
       </div>
-    </EmployerManagementProvider>
+    </AmdinEmployersProvider>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEmployerManagementContext } from "@/admin/employers/_context/EmployerManagementContext";
+import { useEmployerManagementContext } from "@/app/(pages)/(portal)/admin/employers/_context/admin-employers-context";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function ResultsCount() {

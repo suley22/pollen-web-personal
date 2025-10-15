@@ -24,6 +24,7 @@ export async function createCompanyData(_, formData) {
     : [];
   const allIndustries = [...standardIndustries, ...customIndustries];
   const accolades = formCompanyData.company_accolades; // será un string separado por comas
+  const howHiredPreviously = formData.getAll("how_hired_previously");
 
   // Parse social_medias JSON
   const socialMedias = formCompanyData.social_medias
@@ -75,6 +76,7 @@ export async function createCompanyData(_, formData) {
       more_info: formCompanyData.more_info,
       hiring_frequency: formCompanyData.hiring_frequency,
       additional_notes: formCompanyData.additional_notes,
+      how_hired_previously: howHiredPreviously,
 
       // System Fields
       approval_status: "pending",

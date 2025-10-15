@@ -171,15 +171,7 @@ export default function EditEmployerPage({ employerData }) {
                 more_info: employerData.more_info,
                 hiring_frequency: employerData.hiring_frequency,
                 additional_notes: employerData.additional_notes,
-                paid_advertising: employerData.paid_advertising,
-                social_media_recruiting: employerData.social_media_recruiting,
-                job_boards: employerData.job_boards,
-                employee_referrals: employerData.employee_referrals,
-                campus_recruiting: employerData.campus_recruiting,
-                networking_events: employerData.networking_events,
-                headhunters_agencies: employerData.headhunters_agencies,
-                career_fairs: employerData.career_fairs,
-                other_recruiting: employerData.other_recruiting,
+                how_hired_previously: employerData.how_hired_previously || [],
               }}
             />
           </div>

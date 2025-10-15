@@ -3,18 +3,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Building2, MapPin, Globe } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { CompanyAvatar } from "@/components/ui/company-avatar";
 import { InfoField } from "./info-field";
-
-// Helper function to ensure URL has proper protocol
-function formatUrl(url) {
-  if (!url) return null;
-  // If URL doesn't start with http:// or https://, add https://
-  if (!url.match(/^https?:\/\//i)) {
-    return `https://${url}`;
-  }
-  return url;
-}
+import { UrlHelper } from "@/helpers/url-helper";
 
 export function CompanyInformation({ company }) {
   return (
@@ -30,16 +21,11 @@ export function CompanyInformation({ company }) {
         <div className="flex flex-row">
           {/* Company Logo - Left Side (Full Height) */}
           <div className="flex flex-col justify-center pr-6">
-            <Avatar className="h-48 w-48">
-              <AvatarImage
-                className="rounded-md"
-                src={company.logo}
-                alt={company.company_name}
-              />
-              <AvatarFallback className="bg-muted text-muted-foreground">
-                <Building2 className="h-8 w-8" />
-              </AvatarFallback>
-            </Avatar>
+            <CompanyAvatar
+              logoUrl={company.logo_url}
+              companyName={company.company_name}
+              size="xl"
+            />
           </div>
 
           {/* Company Information - Right Side (Two Columns) */}
@@ -65,30 +51,30 @@ export function CompanyInformation({ company }) {
               {/* Location */}
               <InfoField
                 label="Location"
-                value={company.location}
+                value={company.company_location}
                 icon={<MapPin className="h-4 w-4 text-muted-foreground" />}
               />
 
               {/* Founded */}
-              <InfoField label="Founded" value={company.foundedYear} />
+              <InfoField label="Founded" value={company.founded_year} />
 
               {/* Website */}
               <InfoField
                 label="Website"
                 value={
-                  company.website ? (
+                  company.website_url ? (
                     <a
-                      href={formatUrl(company.website)}
+                      href={UrlHelper.formatUrl(company.website_url)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:underline truncate"
                     >
-                      {company.website}
+                      {company.website_url.replace(/^https?:\/\//, "")}
                     </a>
                   ) : null
                 }
                 icon={
-                  company.website ? (
+                  company.website_url ? (
                     <Globe className="h-4 w-4 text-muted-foreground" />
                   ) : undefined
                 }

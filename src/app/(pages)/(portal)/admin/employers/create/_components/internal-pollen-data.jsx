@@ -13,6 +13,45 @@ import {
 } from "@/components/ui/select/select";
 import { EyeOff } from "lucide-react";
 
+// Component for handling hiring methods selection
+function HowHiredPreviouslySection({ initialSelectedMethods = [] }) {
+  const hiringMethods = [
+    { label: "Paid advertising", value: "paid_advertising" },
+    { label: "Job boards (LinkedIn, Indeed, etc.)", value: "job_boards" },
+    { label: "Campus recruiting", value: "campus_recruiting" },
+    { label: "Employee referrals", value: "employee_referrals" },
+    { label: "Social media recruiting", value: "social_media_recruiting" },
+    { label: "Headhunters & agencies", value: "headhunters_agencies" },
+    { label: "Career fairs", value: "career_fairs" },
+    { label: "Networking events", value: "networking_events" },
+    { label: "Other methods", value: "other_recruiting" },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+      {hiringMethods.map((method) => {
+        const isInitiallySelected = initialSelectedMethods.includes(
+          method.value,
+        );
+
+        return (
+          <label
+            key={method.value}
+            className="flex items-center space-x-2 cursor-pointer"
+          >
+            <Checkbox
+              name="how_hired_previously"
+              value={method.value}
+              defaultChecked={isInitiallySelected}
+            />
+            <span>{method.label}</span>
+          </label>
+        );
+      })}
+    </div>
+  );
+}
+
 export function InternalPollenData({ initialData = {} }) {
   return (
     <Card className="overflow-hidden py-6">
@@ -105,71 +144,9 @@ export function InternalPollenData({ initialData = {} }) {
               Select all methods they have used before
             </Label>
 
-            <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <Checkbox
-                  name="paid_advertising"
-                  defaultChecked={initialData.paid_advertising}
-                />
-                <span>Paid advertising</span>
-              </label>
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <Checkbox
-                  name="job_boards"
-                  defaultChecked={initialData.job_boards}
-                />
-                <span>Job boards (LinkedIn, Indeed, etc.)</span>
-              </label>
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <Checkbox
-                  name="campus_recruiting"
-                  defaultChecked={initialData.campus_recruiting}
-                />
-                <span>Campus recruiting</span>
-              </label>
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <Checkbox
-                  name="employee_referrals"
-                  defaultChecked={initialData.employee_referrals}
-                />
-                <span>Employee referrals</span>
-              </label>
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <Checkbox
-                  name="social_media_recruiting"
-                  defaultChecked={initialData.social_media_recruiting}
-                />
-                <span>Social media recruiting</span>
-              </label>
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <Checkbox
-                  name="headhunters_agencies"
-                  defaultChecked={initialData.headhunters_agencies}
-                />
-                <span>Headhunters & agencies</span>
-              </label>
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <Checkbox
-                  name="career_fairs"
-                  defaultChecked={initialData.career_fairs}
-                />
-                <span>Career fairs</span>
-              </label>
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <Checkbox
-                  name="networking_events"
-                  defaultChecked={initialData.networking_events}
-                />
-                <span>Networking events</span>
-              </label>
-              <label className="flex items-center space-x-2 cursor-pointer">
-                <Checkbox
-                  name="other_recruiting"
-                  defaultChecked={initialData.other_recruiting}
-                />
-                <span>Other methods</span>
-              </label>
-            </div>
+            <HowHiredPreviouslySection
+              initialSelectedMethods={initialData.how_hired_previously || []}
+            />
           </div>
 
           {/* Additional notes */}

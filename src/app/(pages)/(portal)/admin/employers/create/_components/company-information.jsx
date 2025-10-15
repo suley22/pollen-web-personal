@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Building2, UploadIcon } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { CompanyAvatar } from "@/components/ui/company-avatar";
 import { PrimaryButton } from "@/components/ui/buttons/primary-button";
 import {
   Select,
@@ -47,16 +47,11 @@ export function CompanyInformation({
           <div className="flex flex-row items-center gap-6">
             {/* Company Logo - Left Side */}
             <div className="flex-shrink-0">
-              <Avatar className="h-48 w-48">
-                <AvatarImage
-                  className="rounded-md"
-                  src={logoUrl || ""}
-                  alt="Company Logo"
-                />
-                <AvatarFallback className="bg-muted text-muted-foreground rounded-md">
-                  <Building2 className="h-12 w-12" />
-                </AvatarFallback>
-              </Avatar>
+              <CompanyAvatar
+                logoUrl={logoUrl || initialData.logo_url}
+                companyName={initialData.company_name || "Company"}
+                size="xl"
+              />
             </div>
 
             <div className="w-full flex flex-col gap-3">

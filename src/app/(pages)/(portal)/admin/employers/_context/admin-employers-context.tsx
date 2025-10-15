@@ -3,28 +3,24 @@
 import { createContext, useContext, ReactNode } from "react";
 import { useEmployerManagement } from "@/admin/employers/_hooks/useEmployerManagement";
 
-type EmployerManagementContextType = ReturnType<typeof useEmployerManagement>;
+type AdminEmployersContextType = ReturnType<typeof useEmployerManagement>;
 
-const EmployerManagementContext = createContext<
-  EmployerManagementContextType | undefined
+const AdminEmployersContext = createContext<
+  AdminEmployersContextType | undefined
 >(undefined);
 
-export function EmployerManagementProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export function AmdinEmployersProvider({ children }: { children: ReactNode }) {
   const employerManagement = useEmployerManagement();
 
   return (
-    <EmployerManagementContext.Provider value={employerManagement}>
+    <AdminEmployersContext.Provider value={employerManagement}>
       {children}
-    </EmployerManagementContext.Provider>
+    </AdminEmployersContext.Provider>
   );
 }
 
 export function useEmployerManagementContext() {
-  const context = useContext(EmployerManagementContext);
+  const context = useContext(AdminEmployersContext);
   if (context === undefined) {
     throw new Error(
       "useEmployerManagementContext must be used within an EmployerManagementProvider",

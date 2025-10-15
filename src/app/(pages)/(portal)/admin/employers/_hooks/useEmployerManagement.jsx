@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { getEmployerProfile } from "@/admin/employers/actions";
+import { fetchEmployersAction } from "@/admin/employers/actions";
 
 export function useEmployerManagement() {
   const [selectedStatus, setSelectedStatus] = useState("all");
@@ -46,29 +46,12 @@ export function useEmployerManagement() {
       // Si hay búsqueda activa, ignorar el filtro de status y buscar en todos
       const statusToUse = debouncedSearchTerm.trim() ? "all" : selectedStatus;
 
-      const result = await getEmployerProfile({
+      const result = await fetchEmployersAction({
         status: statusToUse,
         searchTerm: debouncedSearchTerm.trim(),
       });
 
-      const employersResult = result.data.map((employer) => ({
-        ...employer,
-        company_name: employer.company_name || "Unknown Company",
-        approval_status: employer.approval_status || "pending",
-        logo: employer.logo_url,
-        industries: employer.industries.length
-          ? employer.industries.join(", ")
-          : "Not specified",
-        contact_email: employer.contact_email || "No email provided",
-        contact_phone: employer.contact_phone || "No phone provided",
-        live_jobs_count: employer.live_jobs_count || 0,
-        draft_jobs_count: employer.draft_jobs_count || 0,
-        profileCompleteness: 45,
-        lastUpdated: employer.updated_at || "N/A",
-        location: employer.company_location || "Location not specified",
-        size: employer.company_size || "Size not specified",
-        contact_name: employer.contact_name || "No contact name provided",
-      }));
+      const employersResult = result.data || [];
 
       if (result.success) {
         setEmployers(employersResult);

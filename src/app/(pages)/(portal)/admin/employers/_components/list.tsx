@@ -1,8 +1,9 @@
 "use client";
 
-import { useEmployerManagementContext } from "@/admin/employers/_context/EmployerManagementContext";
+import { useEmployerManagementContext } from "@/app/(pages)/(portal)/admin/employers/_context/admin-employers-context";
 import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { EmployerProfileHelper } from "@/types/employer-profile";
 import { Building2 } from "lucide-react";
 
 import {
@@ -21,6 +22,7 @@ import { useTransition } from "react";
 import { AdminRoutes } from "../../router";
 import { ListAvatar } from "./list-avatar";
 import { ListSkeleton } from "./list-skeleton";
+import { CompanyAvatar } from "@/components/ui/company-avatar";
 
 export function List() {
   const router = useRouter();
@@ -86,7 +88,11 @@ export function List() {
                 {/* Left Section - Avatar and Info */}
                 <div className="flex gap-4 flex-1 min-w-0">
                   <div className="flex flex-col justify-center pr-2">
-                    <ListAvatar company={company} />
+                    <CompanyAvatar
+                      logoUrl={company.logo_url}
+                      companyName={company.company_name}
+                      size="md"
+                    />
                   </div>
 
                   <div className="flex-1 min-w-0 space-y-3">
@@ -106,7 +112,9 @@ export function List() {
                           <div className="flex items-center gap-2 text-muted-foreground">
                             <Building2 className="w-4 h-4 flex-shrink-0" />
                             <span className="truncate">
-                              {company.industries}
+                              {EmployerProfileHelper.getIndustriesDisplay(
+                                company.industries,
+                              )}
                             </span>
                           </div>
 
@@ -115,12 +123,14 @@ export function List() {
                             <div className="flex items-center gap-2 text-muted-foreground">
                               <Globe className="w-4 h-4 flex-shrink-0" />
                               <span className="truncate">
-                                {company.location}
+                                {company.company_location}
                               </span>
                             </div>
                             <div className="flex items-center gap-2 text-muted-foreground">
                               <Users className="w-4 h-4 flex-shrink-0" />
-                              <span className="truncate">{company.size}</span>
+                              <span className="truncate">
+                                {company.company_size}
+                              </span>
                             </div>
                           </div>
 
@@ -157,11 +167,13 @@ export function List() {
                             Profile Complete
                           </div>
                           <div className="text-xl font-bold text-foreground">
-                            {company.profileCompleteness}%
+                            {company.profile_completeness || 0}%
                           </div>
                           <div className="text-xs text-muted-foreground">
                             Updated{" "}
-                            {new Date(company.lastUpdated).toLocaleDateString()}
+                            {EmployerProfileHelper.getFormattedUpdatedAt(
+                              company.updated_at,
+                            )}
                           </div>
                         </div>
                       </div>

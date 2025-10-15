@@ -40,6 +40,7 @@ export async function updateCompanyData(id, _, formData) {
     : [];
   const allIndustries = [...standardIndustries, ...customIndustries];
   const accolades = formCompanyData.company_accolades;
+  const howHiredPreviously = formData.getAll("how_hired_previously");
 
   // Parse social_medias JSON
   const socialMedias = formCompanyData.social_medias
@@ -91,6 +92,7 @@ export async function updateCompanyData(id, _, formData) {
       more_info: formCompanyData.more_info,
       hiring_frequency: formCompanyData.hiring_frequency,
       additional_notes: formCompanyData.additional_notes,
+      how_hired_previously: howHiredPreviously,
 
       // System Fields
       updated_at: new Date().toISOString(),

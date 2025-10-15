@@ -2,24 +2,14 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Globe } from "lucide-react";
-
-export interface SocialMediaLink {
-  id: string;
-  platform: string;
-  url: string;
-}
-
-interface SocialMediaProps {
-  socialMediaLinks?: SocialMediaLink[];
-  glassdoorPage?: string;
-}
+import { SocialMediaLink } from "@/types/social-media-links";
 
 export function SocialMedia({
   socialMediaLinks,
-  glassdoorPage,
-}: SocialMediaProps) {
-  const hasLinks =
-    (socialMediaLinks && socialMediaLinks.length > 0) || glassdoorPage;
+}: {
+  socialMediaLinks: SocialMediaLink[];
+}) {
+  const hasLinks = socialMediaLinks && socialMediaLinks.length > 0;
 
   return (
     <Card className="overflow-hidden py-6">
@@ -53,19 +43,6 @@ export function SocialMedia({
                   </a>
                 </div>
               ))}
-            {glassdoorPage && (
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Glassdoor</span>
-                <a
-                  href={glassdoorPage}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline text-sm truncate max-w-xs"
-                >
-                  {glassdoorPage.replace(/^https?:\/\//, "")}
-                </a>
-              </div>
-            )}
           </div>
         )}
       </CardContent>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { CompanyInformation } from "@/employers/view/_components/view/company-information";
 import { AboutCompany } from "@/employers/view/_components/view/about-company";
 import { WorkEnvironment } from "@/employers/view/_components/view/work-environment";
@@ -15,83 +14,22 @@ import { InternalPollenData } from "@/employers/view/_components/view/internal-p
 import { JobPostings } from "@/employers/view/_components/view/job-postings";
 import { EmployerProfileHeader } from "@/employers/view/_components/view/employer-profile-header";
 import { EmployerProfileSkeleton } from "@/employers/view/_components/employer-profile-skeleton";
-import { useEmployerProfileForm } from "./hooks/useEmployerProfileForm";
-import { fetchJobsByEmployer } from "./actions";
+import { useEmployerProfileForm } from "@/employers/view/hooks/useEmployerProfileForm";
 
 export default function EmployerProfileView({ employerProfile }) {
   const router = useRouter();
 
-  // Log the received data
-  useEffect(() => {
-    console.log("📋 EmployerProfileView received:", {
-      hasProfile: !!employerProfile,
-      profileId: employerProfile?.id,
-      profileData: employerProfile,
-    });
-  }, [employerProfile]);
-
   const {
-    company,
+    profile,
     jobs,
     isLoadingJobs,
-    setJobs,
-    setIsLoadingJobs,
     handleEdit,
     handleSetLive,
     handleHideProfile,
     handleDelete,
   } = useEmployerProfileForm(employerProfile);
 
-  // Log the company data from hook
-  useEffect(() => {
-    console.log("🏢 Company data from hook:", {
-      hasCompany: !!company,
-      companyId: company?.id,
-      companyData: company,
-    });
-  }, [company]);
-
-  // Fetch jobs when component mounts or company.id changes
-  useEffect(() => {
-    const loadJobs = async () => {
-      if (company?.id) {
-        console.log("🔍 Loading jobs for company:", company.id);
-        setIsLoadingJobs(true);
-        try {
-          const result = await fetchJobsByEmployer(company.id);
-          console.log("📦 Jobs fetch result:", result);
-
-          if (result.error) {
-            console.error("❌ Error fetching jobs:", result.error);
-            setJobs([]);
-          } else if (Array.isArray(result.data)) {
-            console.log(
-              "✅ Jobs loaded successfully:",
-              result.data.length,
-              "jobs",
-            );
-            setJobs(result.data);
-          } else {
-            console.warn("⚠️ Result data is not an array:", result.data);
-            setJobs([]);
-          }
-        } catch (error) {
-          console.error("❌ Exception fetching jobs:", error);
-          setJobs([]);
-        } finally {
-          setIsLoadingJobs(false);
-        }
-      } else {
-        console.warn("⚠️ No company.id available");
-        setIsLoadingJobs(false);
-      }
-    };
-
-    loadJobs();
-  }, [company?.id, setIsLoadingJobs, setJobs]);
-
-  // Show skeleton while profile is loading
-  if (!employerProfile) {
+  if (!profile) {
     return <EmployerProfileSkeleton />;
   }
 
@@ -99,8 +37,8 @@ export default function EmployerProfileView({ employerProfile }) {
     <div className="flex flex-col w-full mx-auto py-6 gap-6">
       {/* Header */}
       <EmployerProfileHeader
-        companyName={company.company_name}
-        companyStatus={company.status}
+        companyName={profile.company_name}
+        companyStatus={profile.status}
         onBack={() => router.back()}
         onEdit={handleEdit}
         onSetLive={handleSetLive}
@@ -113,56 +51,37 @@ export default function EmployerProfileView({ employerProfile }) {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Main Information */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Company Information */}
-          <CompanyInformation company={company} />
-
-          {/* About Company */}
-          <AboutCompany about={company.about} />
-
-          {/* Work Environment */}
-          <WorkEnvironment workEnvironment={company.workEnvironment} />
-
-          {/* Why does Pollen love this company */}
-          <PollenLoves pollenLove={company.pollenLove} />
-
-          {/* Entry-Level Support */}
-          <EntryLevelSupport entryLevelSupport={company.entryLevelSupport} />
-
-          {/* Accolades & Accreditations */}
-          <AccoladesAccreditations accolades={company.accolades} />
-
-          {/* Social Media Links */}
-          <SocialMedia
-            socialMediaLinks={company.social_media_links}
-            glassdoorPage={company.glassdoorPage}
-          />
+          <CompanyInformation company={profile} />
+          <AboutCompany about={profile.company_about} />
+          <WorkEnvironment workEnvironment={profile.work_environment} />
+          <PollenLoves pollenLove={profile.company_loves} />
+          <EntryLevelSupport entryLevelSupport={profile.entry_level_support} />
+          <AccoladesAccreditations accolades={profile.accolades} />
+          <SocialMedia socialMediaLinks={profile.social_media_links} />
         </div>
 
         {/* Right Column - Contact & Meta Information */}
         <div className="space-y-6">
-          {/* Contact Information */}
           <ContactInformation
-            contactName={company.contactName}
-            contactJobTitle={company.contactJobTitle}
-            contactEmail={company.contactEmail}
-            contactPhone={company.contactPhone}
+            contactName={profile.contact_name}
+            contactJobTitle={profile.job_title}
+            contactEmail={profile.contact_email}
+            contactPhone={profile.contact_phone}
           />
 
-          {/* Profile Metadata */}
           <ProfileStatus
-            status={company.status}
-            createdDate={company.createdDate}
-            lastUpdated={company.lastUpdated}
-            profileCompleteness={company.profileCompleteness}
+            status={profile.approval_status}
+            createdDate={profile.created_at}
+            lastUpdated={profile.updated_at}
+            profileCompleteness={profile.profile_completeness}
           />
 
-          {/* Internal Pollen Data */}
           <InternalPollenData
-            howDidTheyHearAboutUs={company.howDidTheyHearAboutUs}
-            howDidTheyHearMoreInfo={company.howDidTheyHearMoreInfo}
-            entryLevelHiringFrequency={company.entryLevelHiringFrequency}
-            previousHiringMethods={company.previousHiringMethods}
-            additionalNotes={company.additionalNotes}
+            howDidTheyHearAboutUs={profile.how_did_you_hear_about_us}
+            howDidTheyHearMoreInfo={profile.more_info}
+            entryLevelHiringFrequency={profile.hiring_frequency}
+            previousHiringMethods={profile.how_hired_previously}
+            additionalNotes={profile.additional_notes}
           />
         </div>
       </div>
@@ -171,7 +90,7 @@ export default function EmployerProfileView({ employerProfile }) {
       <JobPostings
         jobs={jobs}
         isLoading={isLoadingJobs}
-        companyId={company.id}
+        companyId={profile.id}
       />
     </div>
   );

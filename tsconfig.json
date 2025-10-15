@@ -26,9 +26,12 @@
       "@/job-seeker/*": ["./src/app/(pages)/(portal)/(job-seeker)/*"],
       "@/constants/*": ["./src/lib/configs/constants/*"],
       "@/utils/*": ["./src/lib/utils/*"],
+      "@/helpers/*": ["./src/lib/helpers/*"],
       "@/components/*": ["./src/components/*"],
       "@/hooks/*": ["./src/hooks/*"],
-      "@/employers/*": ["./src/app/(pages)/(portal)/admin/employers/*"]
+      "@/employers/*": ["./src/app/(pages)/(portal)/admin/employers/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/ds/*": ["./src/components/design-system/*"]
     },
     "moduleResolution": "bundler",
     "resolveJsonModule": true,

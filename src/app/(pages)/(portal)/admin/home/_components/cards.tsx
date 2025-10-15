@@ -15,6 +15,7 @@ import {
   Users,
   TrendingUp,
 } from "lucide-react";
+import { AdminRoutes } from "../../router";
 
 export function HomeCards() {
   const router = useRouter();
@@ -114,7 +115,7 @@ export function HomeCards() {
               className="flex-1 bg-orange-50 hover:bg-orange-100"
               onClick={(e) => {
                 e.stopPropagation();
-                router.push("/admin/employers-managment");
+                router.push(AdminRoutes.employers);
               }}
             >
               <Eye className="mr-2 h-4 w-4" />
@@ -124,11 +125,10 @@ export function HomeCards() {
               variant="outline"
               size="sm"
               className="flex-1 bg-orange-50 hover:bg-orange-100"
-              //TODO:
-              // onClick={(e) => {
-              //   e.stopPropagation();
-              //   router.push();
-              // }}
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push(AdminRoutes.employersCreate);
+              }}
             >
               <Plus className="mr-2 h-4 w-4" />
               Create
@@ -156,7 +156,7 @@ export function HomeCards() {
               className="flex-1 bg-pink-50 hover:bg-pink-100"
               onClick={(e) => {
                 e.stopPropagation();
-                router.push("/admin/jobs-managment");
+                router.push(AdminRoutes.jobs);
               }}
             >
               <Eye className="mr-2 h-4 w-4" />

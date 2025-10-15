@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useEmployerManagementContext } from "@/app/(pages)/(portal)/admin/employers/_context/admin-employers-context";
+import { useEmployerManagementContext } from "@/employers/_context/admin-employers-context";
 
 export function Filters() {
   const { searchTerm, setSearchTerm, selectedStatus, setSelectedStatus } =

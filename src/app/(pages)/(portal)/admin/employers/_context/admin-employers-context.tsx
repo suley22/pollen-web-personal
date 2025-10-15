@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, ReactNode } from "react";
-import { useEmployersContext } from "@/app/(pages)/(portal)/admin/employers/_hooks/useEmployersContext";
+import { useEmployersContext } from "@/employers/_hooks/useEmployersContext";
 
 type AdminEmployersContextType = ReturnType<typeof useEmployersContext>;
 

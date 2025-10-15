@@ -1,6 +1,6 @@
 "use client";
 
-import { useEmployerManagementContext } from "@/app/(pages)/(portal)/admin/employers/_context/admin-employers-context";
+import { useEmployerManagementContext } from "@/employers/_context/admin-employers-context";
 import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmployerProfileHelper } from "@/types/employer-profile";

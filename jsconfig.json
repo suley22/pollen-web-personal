@@ -13,7 +13,7 @@
       "@/helpers/*": ["./src/lib/helpers/*"],
       "@/components/*": ["./src/components/*"],
       "@/hooks/*": ["./src/hooks/*"],
-      "@/employers/*": ["./src/app/(pages)/(portal)/admin/employers/*"],
+      "@/employers/*": ["./src@/employers/*"],
       "@/types/*": ["./src/types/*"],
       "@/ds/*": ["./src/components/design-system/*"],
       "@/services/*": ["./src/services/*"]

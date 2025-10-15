@@ -1,16 +1,16 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { CompanyInformation } from "@/app/(pages)/(portal)/admin/employers/view/_components/company-information";
-import { AccoladesAccreditations } from "@/app/(pages)/(portal)/admin/employers/view/_components/accolades-accreditations";
-import { SocialMedia } from "@/app/(pages)/(portal)/admin/employers/view/_components/social-media";
-import { ContactInformation } from "@/app/(pages)/(portal)/admin/employers/view/_components/contact-information";
-import { ProfileStatus } from "@/app/(pages)/(portal)/admin/employers/view/_components/profile-status";
-import { InternalPollenData } from "@/app/(pages)/(portal)/admin/employers/view/_components/internal-pollen-data";
-import { JobPostings } from "@/app/(pages)/(portal)/admin/employers/view/_components/job-postings";
-import { EmployerProfileHeader } from "@/app/(pages)/(portal)/admin/employers/view/_components/employer-profile-header";
-import { EmployerProfileSkeleton } from "@/app/(pages)/(portal)/admin/employers/view/view-skeleton";
-import { useEmployerView } from "@/app/(pages)/(portal)/admin/employers/view/hooks/useEmployerView";
+import { CompanyInformation } from "@/employers/view/_components/company-information";
+import { AccoladesAccreditations } from "@/employers/view/_components/accolades-accreditations";
+import { SocialMedia } from "@/employers/view/_components/social-media";
+import { ContactInformation } from "@/employers/view/_components/contact-information";
+import { ProfileStatus } from "@/employers/view/_components/profile-status";
+import { InternalPollenData } from "@/employers/view/_components/internal-pollen-data";
+import { JobPostings } from "@/employers/view/_components/job-postings";
+import { EmployerProfileHeader } from "@/employers/view/_components/header";
+import { EmployerProfileSkeleton } from "@/employers/view/view-skeleton";
+import { useEmployerView } from "@/employers/view/hooks/useEmployerView";
 import { DescriptionCard } from "@/components/design-system";
 import { FileText, Users, Heart, GraduationCap } from "lucide-react";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -25,11 +25,14 @@ import { EntryLevelSupport } from "./_components/entry-level-support";
 import { ContactInformation } from "./_components/contact-information";
 import { SocialMedia } from "./_components/social-media";
 import { InternalPollenData } from "./_components/internal-pollen-data";
+import { useToast } from "@/lib/hooks/use-toast";
+import { AdminRoutes } from "../../router";
 
 export default function CreateProfilePage() {
   const formRef = useRef(null);
   const router = useRouter();
-  const [state, CompanyData, isPending] = useActionState(
+  const { toast } = useToast();
+  const [state, createCompany, isPending] = useActionState(
     createCompanyData,
     null,
   );
@@ -38,12 +41,39 @@ export default function CreateProfilePage() {
   const [customIndustries, setCustomIndustries] = useState([]);
   const [industryValue, setIndustryValue] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Handle action state changes
+  useEffect(() => {
+    if (state?.success) {
+      toast({
+        title: "Success!",
+        description: state.message || "Company profile created successfully",
+        variant: "default",
+      });
+      // Redirect after success
+      setTimeout(() => {
+        router.push(AdminRoutes.employers);
+      }, 1500);
+    } else if (state?.error) {
+      toast({
+        title: "Error",
+        description: state.error,
+        variant: "destructive",
+      });
+      setIsDialogOpen(false);
+    }
+  }, [state, router, toast]);
 
   return (
     <div className="w-full flex flex-col mx-auto py-6 gap-6">
       <Header />
 
-      <form ref={formRef} className="flex flex-col gap-6" action={CompanyData}>
+      <form
+        ref={formRef}
+        className="flex flex-col gap-6"
+        action={createCompany}
+      >
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2 space-y-6">
             <CompanyInformation
@@ -78,37 +108,39 @@ export default function CreateProfilePage() {
         <div className="flex flex-col gap-4">
           <div className="w-full h-[1px] bg-gray-200" />
           <div className="flex justify-end">
-            <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button type="button" size="lg">
-                  Create company profile
+                <Button type="button" size="lg" disabled={isPending}>
+                  {isPending ? "Creating..." : "Create company profile"}
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Confirm company creation?</DialogTitle>
                   <DialogDescription>
-                    Are you sure you want to create the company? This action
-                    will not affect current logic.
+                    Are you sure you want to create the company profile? This
+                    will create a new employer profile in the system.
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button variant="secondary" type="button">
+                    <Button
+                      variant="secondary"
+                      type="button"
+                      disabled={isPending}
+                    >
                       Cancel
                     </Button>
                   </DialogClose>
-                  <DialogClose asChild>
-                    <Button
-                      type="button"
-                      onClick={() => {
-                        if (formRef.current) formRef.current.requestSubmit();
-                        router.push("/admin/employers-management");
-                      }}
-                    >
-                      Confirm
-                    </Button>
-                  </DialogClose>
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      if (formRef.current) formRef.current.requestSubmit();
+                    }}
+                    disabled={isPending}
+                  >
+                    {isPending ? "Creating..." : "Confirm"}
+                  </Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>

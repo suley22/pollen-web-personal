@@ -3,6 +3,7 @@
 import { Building2, Eye, Users, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { useHome } from "@/admin/home/useHome";
 import { AdminRoutes } from "@/admin/router";
@@ -22,113 +23,144 @@ export function HomeJobs() {
             variant="outline"
             className="justify-start h-12"
             size="sm"
-            onClick={() => router.push(AdminRoutes.jobsManagement)}
+            onClick={() => router.push(AdminRoutes.jobs)}
           >
             View All Jobs
           </Button>
         </div>
       </div>
 
-      <div className="p-6 space-y-4">
+      <div className="p-6 space-y-3">
         {/* TODO: */}
         {homeState.jobs?.map((job) => (
           <Card
             key={job.id}
-            className="cursor-pointer hover:shadow-lg transition-shadow border border-gray-200 bg-white hover:bg-gray-50"
+            className="hover:shadow-lg hover:border-primary/20 transition-all duration-200 cursor-pointer border-border/40"
             onClick={() => {
-              router.push(AdminRoutes.jobReview(job.id));
+              router.push(AdminRoutes.jobView(job.id));
             }}
           >
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <h3 className="font-medium text-gray-900">
-                      {job.job_title}
-                    </h3>
-                    {homeState.getStatusBadge(job.status)}
-                  </div>
+            <CardContent className="px-5 py-3">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0 space-y-3">
+                  <div className="flex flex-row justify-between">
+                    <div className="flex flex-col flex-1">
+                      {/* Job Title and Status */}
+                      <div className="flex items-center gap-3 flex-wrap mb-2">
+                        <h3 className="text-lg font-semibold text-foreground truncate">
+                          {job.job_title}
+                        </h3>
+                        {homeState.getStatusBadge(job.status)}
+                      </div>
 
-                  <div className="flex items-center text-sm text-gray-600 mb-3">
-                    <Building2 className="h-4 w-4 mr-1 text-pink-600" />
-                    {job.company_name}
-                    <span className="mx-2">•</span>
-                    <Calendar className="h-4 w-4 mr-1 text-pink-600" />
-                    {job.status === "draft"
-                      ? `Created ${new Date(job.assigned_date).toLocaleDateString()}`
-                      : `Published ${new Date(job.assigned_date).toLocaleDateString()}`}
-                  </div>
+                      {/* Job Details */}
+                      <div className="space-y-2 text-sm">
+                        {/* Company and Date */}
+                        <div className="flex flex-row items-start gap-4">
+                          <div className="flex justfy-center gap-2 text-muted-foreground">
+                            <Building2 className="w-4 h-4 text-pink-600 mt-0.5" />
+                            <span className="truncate">{job.company_name}</span>
+                          </div>
+                          <div className="flex justfy-center gap-2 text-muted-foreground mt-0.5">
+                            <Calendar className="w-4 h-4 text-pink-600 " />
+                            <span className="truncate">
+                              {job.status === "draft"
+                                ? `Created ${new Date(job.assigned_date).toLocaleDateString()}`
+                                : `Published ${new Date(job.assigned_date).toLocaleDateString()}`}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-                  {/* Application Summary - Total Count */}
-                  <div className="mb-2">
-                    <div className="inline-block px-3 py-1 bg-pink-50 text-pink-900 rounded-md font-semibold text-sm border border-pink-200">
-                      {/* TODO: Summary */}
-                      {job.total_applications} Total Applications
+                    {/* Right Section - Total Applications */}
+                    <div className="flex flex-col justify-start">
+                      <div className="text-right space-y-1 bg-pink-50 px-4 py-2 rounded-lg border border-pink-200">
+                        <div className="text-xs text-pink-700 font-medium">
+                          Total Applications
+                        </div>
+                        <div className="text-2xl font-bold text-pink-900">
+                          {job.total_applications}
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Status Breakdown */}
-                  <div className="flex gap-2 text-sm mb-3">
-                    {job.newApplicationsToReview > 0 && (
-                      <span className="flex items-center gap-1 text-sm text-gray-600">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                        {job.newApplicationsToReview} New
-                      </span>
-                    )}
-                    {job.pollenInterviewsBooked > 0 && (
-                      <span className="flex items-center gap-1 text-sm text-gray-600">
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full" />
-                        {job.pollenInterviewsBooked} In Progress
-                      </span>
-                    )}
-                    {job.candidatesMatchedToEmployer > 0 && (
-                      <span className="flex items-center gap-1 text-sm text-gray-600">
-                        <div className="w-2 h-2 bg-green-500 rounded-full" />
-                        {job.candidatesMatchedToEmployer} Matched
-                      </span>
-                    )}
-                    {job.feedbackSent > 0 && (
-                      <span className="flex items-center gap-1 text-sm text-gray-600">
-                        <div className="w-2 h-2 bg-gray-500 rounded-full" />
-                        {job.feedbackSent} Complete
-                      </span>
-                    )}
-                  </div>
-                </div>
+                  {/* Divider */}
+                  <div className="border-t border-border/50 pt-3 mt-3">
+                    {/* Status Breakdown and Actions */}
+                    <div className="flex flex-row justify-between items-center">
+                      {/* Status Badges */}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Badge
+                          variant="outline"
+                          className="bg-blue-50 text-blue-700 border-blue-200 font-medium gap-1.5"
+                        >
+                          <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                          {job.newApplicationsToReview} New
+                        </Badge>
+                        <Badge
+                          variant="outline"
+                          className="bg-yellow-50 text-yellow-700 border-yellow-200 font-medium gap-1.5"
+                        >
+                          <div className="w-2 h-2 bg-yellow-500 rounded-full" />
+                          {job.pollenInterviewsBooked} In Progress
+                        </Badge>
+                        <Badge
+                          variant="outline"
+                          className="bg-green-50 text-green-700 border-green-200 font-medium gap-1.5"
+                        >
+                          <div className="w-2 h-2 bg-green-500 rounded-full" />
+                          {job.candidatesMatchedToEmployer} Matched
+                        </Badge>
+                        <Badge
+                          variant="outline"
+                          className="bg-gray-50 text-gray-700 border-gray-200 font-medium gap-1.5"
+                        >
+                          <div className="w-2 h-2 bg-gray-500 rounded-full" />
+                          {job.feedbackSent} Complete
+                        </Badge>
+                      </div>
 
-                <div className="flex flex-col space-y-2 ml-4">
-                  {job.status !== "draft" && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(AdminRoutes.jobApplicants(job.id));
-                      }}
-                      className="bg-pink-600 hover:bg-pink-700 text-white"
-                    >
-                      <Users className="h-4 w-4 mr-1" />
-                      View Candidates
-                    </Button>
-                  )}
-                  <Button
-                    size="sm"
-                    variant={job.status === "draft" ? "default" : "outline"}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(AdminRoutes.jobReview(job.id));
-                    }}
-                    className={
-                      job.status === "draft"
-                        ? "bg-pink-600 hover:bg-pink-700 text-white"
-                        : "border-pink-200 text-pink-700 hover:bg-pink-50"
-                    }
-                  >
-                    <Eye className="h-4 w-4 mr-1" />
-                    {job.status === "draft"
-                      ? "Review & Approve"
-                      : "Job Details"}
-                  </Button>
+                      {/* Action Buttons */}
+                      <div className="flex items-center gap-1">
+                        {job.status !== "draft" && (
+                          <Button
+                            variant="pollen"
+                            size="sm"
+                            className="h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push(AdminRoutes.applicants(job.id));
+                            }}
+                          >
+                            <Users className="h-4 w-4 mr-1" />
+                            <span className="text-xs">View Candidates</span>
+                          </Button>
+                        )}
+                        <Button
+                          variant="pollen"
+                          size="sm"
+                          className={
+                            job.status === "draft"
+                              ? "h-8 px-2 bg-pink-600 hover:bg-pink-700 text-white"
+                              : "h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
+                          }
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(AdminRoutes.jobView(job.id));
+                          }}
+                        >
+                          <Eye className="h-4 w-4 mr-1" />
+                          <span className="text-xs">
+                            {job.status === "draft"
+                              ? "Review & Approve"
+                              : "Job Details"}
+                          </span>
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>

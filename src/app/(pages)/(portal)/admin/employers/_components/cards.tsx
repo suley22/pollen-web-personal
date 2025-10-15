@@ -2,7 +2,7 @@
 import { Building2, CheckCircle, Clock, XCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEmployerManagementContext } from "@/admin/employers/_context/EmployerManagementContext";
+import { useEmployerManagementContext } from "@/employers/_context/admin-employers-context";
 import { cn } from "@/lib/utils";
 
 export function StatisticsCards() {

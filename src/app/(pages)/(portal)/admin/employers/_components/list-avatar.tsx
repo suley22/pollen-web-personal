@@ -6,7 +6,7 @@ export function ListAvatar({ company }) {
     <Avatar className="h-24 w-24">
       <AvatarImage
         className="rounded-md"
-        src={company.logo}
+        src={company.logo_url}
         alt={company.company_name}
       />
       <AvatarFallback className="bg-muted text-muted-foreground">

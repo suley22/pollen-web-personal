@@ -42,7 +42,7 @@ export function NavigationItems() {
       (user?.isAdmin ? ADMIN_NAVIGATION : JOB_SEEKER_NAVIGATION).map(
         (item) => ({
           ...item,
-          isActive: pathname === item.path,
+          isActive: pathname.startsWith(item.path),
         }),
       ),
     [user?.isAdmin, pathname],

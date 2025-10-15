@@ -1,7 +1,22 @@
 {
   "compilerOptions": {
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/app/*": ["./src/app/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/public/*": ["./src/app/(pages)/(public)/*"],
+      "@/login/*": ["./src/app/(pages)/(public)/login/*"],
+      "@/admin/*": ["./src/app/(pages)/(portal)/admin/*"],
+      "@/job-seeker/*": ["./src/app/(pages)/(portal)/(job-seeker)/*"],
+      "@/constants/*": ["./src/lib/configs/constants/*"],
+      "@/utils/*": ["./src/lib/utils/*"],
+      "@/helpers/*": ["./src/lib/helpers/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/employers/*": ["./src@/employers/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/ds/*": ["./src/components/design-system/*"],
+      "@/services/*": ["./src/services/*"]
     },
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": false,
@@ -19,8 +34,10 @@
     "isolatedModules": true,
     "verbatimModuleSyntax": false,
     "allowJs": true,
-    "checkJs": false
+    "checkJs": false,
+    "jsx": "preserve",
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules"]
 }

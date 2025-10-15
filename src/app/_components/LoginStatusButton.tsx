@@ -1,15 +1,37 @@
 "use client";
 
 import { Button } from "@/components/ui/buttons/button";
-import { Loader } from "lucide-react";
+import { LayoutTemplate, Loader } from "lucide-react";
 import { useUser } from "@/app/providers";
 import { LoginRoutes } from "@/public/router";
 import { useCallback, memo } from "react";
 import Link from "next/link";
 import NextImage from "next/image";
+import { useLogout } from "@/hooks/useLogout";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ChevronDown, LogOut, Settings, User2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export const LoginStatusButton = memo(() => {
   const user = useUser();
+  const { onLogout, isLogoutInProgress } = useLogout();
+  const router = useRouter();
+
+  function formatString(str) {
+    return str
+      .replace(/_/g, " ")
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  }
 
   const onClick = useCallback(() => {
     // Use window.location for faster navigation
@@ -42,26 +64,64 @@ export const LoginStatusButton = memo(() => {
 
       {/* Show avatar and user info when user is logged in */}
       {user.isLogged && (
-        <Link
-          href={user.redirectUrl}
-          className="flex flex-row gap-2 cursor-pointer"
-        >
-          <div className="h-8 w-8 rounded-lg">
-            <NextImage
-              src={user.avatar}
-              alt={user.f}
-              width={32}
-              height={32}
-              className="rounded-lg object-cover"
-              priority
-            />
-          </div>
+        <div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="hover:text-accent-foreground data-[state=open]:text-accent-foreground cursor-pointer flex flex-row items-center gap-2 focus:ring-0 focus:outline-none">
+                <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarImage
+                    className="rounded-lg"
+                    src={user.avatar}
+                    alt={user.name}
+                  />
+                  <AvatarFallback className="rounded-lg">
+                    {user.name}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-medium">{user.fullName}</span>
+                  <span className="truncate text-xs">{user.email}</span>
+                </div>
+                <ChevronDown className="ml-auto size-4" />
+              </div>
+            </DropdownMenuTrigger>
 
-          <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-medium">{user.fullName}</span>
-            <span className="truncate text-xs">{user.email}</span>
-          </div>
-        </Link>
+            <DropdownMenuContent
+              className="w-(--radix-dropdown-menu-trigger-width) min-w-64 rounded-lg"
+              side="bottom"
+              align="center"
+              sideOffset={4}
+            >
+              <DropdownMenuItem
+                inset={<User2 className="hover:text-accent-foreground" />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(user.redirectUrl);
+                }}
+                className="cursor-pointer text-gray-600 focus-visible:ring-0 focus:ring-0 focus:outline-none"
+              >
+                <LayoutTemplate className="hover:text-accent-foreground" />
+                Go to {formatString(user.role)} Portal
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                inset={<Settings className="hover:text-accent-foreground" />}
+                className="cursor-pointer text-gray-600 focus-visible:ring-0 focus:ring-0 focus:outline-none"
+              >
+                <Settings className="hover:text-accent-foreground" />
+                Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator className="my-1" />
+              <DropdownMenuItem
+                inset={<LogOut className="text-red-500" />}
+                onClick={onLogout}
+                className="cursor-pointer text-red-500 focus-visible:ring-0 focus:ring-0 focus:outline-none"
+              >
+                <LogOut className="text-red-500" />
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       )}
     </div>
   );

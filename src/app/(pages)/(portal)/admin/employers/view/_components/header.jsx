@@ -1,91 +1,58 @@
-import { Button } from "@/components/ui/buttons/button";
-import { Eye } from "lucide-react";
+"use client";
 
-export function Header({ employerProfile }) {
+import { PageHeader } from "@/components/design-system/page-header";
+import {
+  SuccessButton,
+  WarningButton,
+  DangerButton,
+  EditButton,
+} from "@/components/design-system/status-buttons";
+import { DeleteConfirmationDialog } from "@/components/design-system/delete-confirmation-dialog";
+import { Edit, CheckCircle, EyeOff, Trash2 } from "lucide-react";
+
+export function EmployerProfileHeader({
+  companyName,
+  companyStatus,
+  onBack,
+  onEdit,
+  onSetLive,
+  onHideProfile,
+  onDelete,
+}) {
+  const isHidden = companyStatus === "hidden" || companyStatus === "draft";
+
   return (
-    <div className="bg-white border-b mb-4">
-      <div className="px-6 py-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold" style={{ fontFamily: "Sora" }}>
-              Company Profile
-            </h1>
-            <p className="text-gray-600 mt-1" style={{ fontFamily: "Poppins" }}>
-              Manage the information shared with our talent community
-            </p>
-          </div>
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              onClick={() => window.open("/company-profile/2", "_blank")}
-              style={{ fontFamily: "Sora" }}
-            >
-              <Eye className="w-4 h-4 mr-2" />
-              Public View
-            </Button>
-            <div className="flex gap-2">
-              {/* Development Status Switch (remove in production) */}
-              {employerProfile.approval_status === "pending" && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    // Simulate status change for demo purposes
-                    window.location.href =
-                      window.location.href + "?status=approved";
-                  }}
-                  className="text-xs"
-                >
-                  Demo: Set Live
-                </Button>
-              )}
-              {employerProfile.approval_status === "approved" &&
-                !employerProfile.hasUnapprovedChanges && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      // Simulate status change for demo purposes
-                      window.location.href =
-                        window.location.href.split("?")[0] +
-                        "?status=changes_pending";
-                    }}
-                    className="text-xs"
-                  >
-                    Demo: Edit & Pending
-                  </Button>
-                )}
-              {employerProfile.hasUnapprovedChanges && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    // Simulate status change for demo purposes
-                    window.location.href =
-                      window.location.href.split("?")[0] + "?status=approved";
-                  }}
-                  className="text-xs"
-                >
-                  Demo: Approve Changes
-                </Button>
-              )}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  // Simulate status change for demo purposes
-                  window.location.href =
-                    window.location.href.split("?")[0] +
-                    "?status=requires_changes";
-                }}
-                className="text-xs"
-              >
-                Demo: Requires Changes
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <PageHeader title={companyName} showBackButton={true} onBack={onBack}>
+      {/* Status Actions */}
+
+      {isHidden && (
+        <SuccessButton
+          text="Set Live"
+          icon={<CheckCircle />}
+          onClick={onSetLive}
+        />
+      )}
+
+      {companyStatus === "live" && (
+        <WarningButton
+          text="Hide Profile"
+          icon={<EyeOff />}
+          onClick={onHideProfile}
+        />
+      )}
+
+      {/* Edit Button */}
+      <EditButton text="Edit Profile" icon={<Edit />} onClick={onEdit} />
+
+      {/* Delete Button with Confirmation */}
+      <DeleteConfirmationDialog
+        trigger={<DangerButton text="Delete" icon={<Trash2 />} />}
+        title="Delete Company Profile"
+        description="Are you sure you want to delete {itemName}? This action cannot be undone."
+        itemName={companyName}
+        onConfirm={onDelete}
+        confirmText="Delete Profile"
+      />
+    </PageHeader>
   );
 }

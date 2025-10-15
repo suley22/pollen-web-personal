@@ -100,7 +100,7 @@ export function HomeCards() {
               className="flex-1 bg-purple-50 hover:bg-purple-100"
               onClick={(e) => {
                 e.stopPropagation();
-                router.push("/admin/community/analytics/");
+                router.push(AdminRoutes.communityAnalytics);
               }}
             >
               <BarChart3 className="mr-2 h-4 w-4" />

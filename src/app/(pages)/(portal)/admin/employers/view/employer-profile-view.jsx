@@ -133,7 +133,7 @@ export default function EmployerProfileView({ employerProfile }) {
 
           {/* Social Media Links */}
           <SocialMedia
-            socialMediaLinks={company.socialMediaLinks}
+            socialMediaLinks={company.social_media_links}
             glassdoorPage={company.glassdoorPage}
           />
         </div>

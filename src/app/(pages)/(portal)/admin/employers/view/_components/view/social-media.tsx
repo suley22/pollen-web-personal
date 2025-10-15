@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Globe } from "lucide-react";
 
-interface SocialMediaLink {
+export interface SocialMediaLink {
   id: string;
   platform: string;
   url: string;

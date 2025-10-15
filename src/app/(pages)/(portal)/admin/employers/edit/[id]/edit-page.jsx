@@ -87,24 +87,35 @@ export default function EditEmployerPage({ employerData }) {
       toast({
         title: "Success!",
         description: state.message || "Company profile updated successfully",
-        variant: "success",
+        variant: "default",
+        className: "bg-green-50 border-green-200 text-green-800",
       });
-      // Redirect after success
-      setTimeout(() => {
-        router.push(AdminRoutes.employers);
-      }, 1500);
+
+      router.push(AdminRoutes.employersView(employerData.id));
     } else if (state?.error) {
       toast({
         title: "Error",
         description: state.error,
-        variant: "error",
+        variant: "destructive",
       });
       setIsDialogOpen(false);
     }
-  }, [state, router, toast]);
+  }, [state, router, toast, employerData.id]);
 
   return (
-    <div className="w-full flex flex-col mx-auto py-6 gap-6">
+    <div className="w-full flex flex-col mx-auto py-6 gap-6 relative">
+      {/* Loading Overlay */}
+      {isPending && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 flex items-center space-x-3 shadow-xl">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600" />
+            <span className="text-gray-700 font-medium">
+              Updating employer profile...
+            </span>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center space-x-4">
         <Button
           variant="ghost"
@@ -221,6 +232,7 @@ export default function EditEmployerPage({ employerData }) {
                   <Button
                     type="button"
                     onClick={() => {
+                      setIsDialogOpen(false);
                       if (formRef.current) formRef.current.requestSubmit();
                     }}
                     disabled={isPending}

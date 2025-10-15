@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AdminRoutes } from "../../../router";
+import { SocialMediaLink } from "@/employers/view/_components/view/social-media";
 
 export interface EmployerProfile {
-  id: string;
+  id: number;
   company_name: string;
   logo_url?: string;
   company_size?: string;
@@ -19,7 +20,7 @@ export interface EmployerProfile {
   linkedin_url?: string;
   glassdoor_url?: string;
   contact_name?: string;
-  contact_job_title?: string;
+  job_title?: string;
   contact_email?: string;
   contact_phone?: string;
   created_at?: string;
@@ -31,11 +32,13 @@ export interface EmployerProfile {
   previous_hiring_methods?: string[];
   additional_notes?: string;
   jobs?: any[];
+  entry_level_support?: string;
+  social_media?: Array<SocialMediaLink>;
 }
 
 export interface CompanyData extends EmployerProfile {
-  profileCompleteness?: number;
   logo?: string;
+  profileCompleteness?: number;
   size?: string;
   location?: string;
   foundedYear?: string;
@@ -44,6 +47,7 @@ export interface CompanyData extends EmployerProfile {
   workEnvironment?: string;
   pollenLove?: string;
   accolades?: string[];
+  industries?: string[];
   socialMediaLinks?: Array<{
     id: number;
     platform: string;
@@ -62,7 +66,6 @@ export interface CompanyData extends EmployerProfile {
   previousHiringMethods?: string[];
   additionalNotes?: string;
   entryLevelSupport?: string;
-  glassdoorPage?: string;
 }
 
 export function useEmployerProfileForm(
@@ -76,8 +79,8 @@ export function useEmployerProfileForm(
   const company: CompanyData = employerProfile
     ? {
         ...employerProfile,
-        profileCompleteness: 70,
         logo: employerProfile.logo_url,
+        profileCompleteness: 70,
         size: employerProfile.company_size,
         location: employerProfile.company_location,
         foundedYear: employerProfile.founded_year,
@@ -86,12 +89,10 @@ export function useEmployerProfileForm(
         about: employerProfile.company_about || "No description provided.",
         workEnvironment: employerProfile.work_environment || "Not specified.",
         pollenLove: employerProfile.company_loves || "Not specified.",
-        accolades: employerProfile.company_accolades || [
-          "Great Place to Work 2023",
-        ],
-        socialMediaLinks: [],
+        accolades: employerProfile.company_accolades || [],
+        socialMediaLinks: employerProfile.social_media_links,
         contactName: employerProfile.contact_name || "Not specified",
-        contactJobTitle: employerProfile.contact_job_title || "Not specified",
+        contactJobTitle: employerProfile.job_title || "Not specified",
         contactEmail: employerProfile.contact_email || "Not specified",
         contactPhone: employerProfile.contact_phone || "Not specified",
         createdDate: employerProfile.created_at || "19 Aug 2025",
@@ -104,6 +105,8 @@ export function useEmployerProfileForm(
           employerProfile.hiring_frequency || "Not specified",
         previousHiringMethods: employerProfile.previous_hiring_methods || [],
         additionalNotes: employerProfile.additional_notes || "Not specified",
+        entryLevelSupport:
+          employerProfile.entry_level_support || "Not specified",
       }
     : ({} as CompanyData);
 

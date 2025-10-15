@@ -42,14 +42,22 @@ export default function CreateProfilePage() {
   const [industryValue, setIndustryValue] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const lastProcessedState = useRef(null);
 
   // Handle action state changes
   useEffect(() => {
+    // Skip if state hasn't changed or is null
+    if (!state || state === lastProcessedState.current) {
+      return;
+    }
+
+    lastProcessedState.current = state;
+
     if (state?.success) {
       toast({
         title: "Success!",
         description: state.message || "Company profile created successfully",
-        variant: "default",
+        variant: "success",
       });
       // Redirect after success
       setTimeout(() => {
@@ -59,7 +67,7 @@ export default function CreateProfilePage() {
       toast({
         title: "Error",
         description: state.error,
-        variant: "destructive",
+        variant: "error",
       });
       setIsDialogOpen(false);
     }

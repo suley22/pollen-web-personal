@@ -13,7 +13,7 @@ import { AccoladesAccreditations } from "./create/_components/accolades-accredit
 import { ContactInformation } from "./create/_components/contact-information";
 import { SocialMedia } from "./create/_components/social-media";
 import { InternalPollenData } from "./create/_components/internal-pollen-data";
-import { useFormEmployer } from "./_hooks/useFormEmployer";
+import { useEmployersPage } from "./_hooks/useEmployersPage";
 
 export function ProfileForm({ employer = null, action }) {
   // Detect edit mode automatically based on employer presence
@@ -35,7 +35,7 @@ export function ProfileForm({ employer = null, action }) {
     setIsDialogOpen,
     handleBack,
     handleSubmit,
-  } = useFormEmployer({ action, employer });
+  } = useEmployersPage({ action, employer });
 
   return (
     <PageContainer>

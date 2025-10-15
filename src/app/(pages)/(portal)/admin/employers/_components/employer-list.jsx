@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Card, CardContent } from "@/components/ui/card";
-import { useEmployerManagement } from "../_hooks/useEmployerManagement";
+import { useEmployersContext } from "../_hooks/useEmployersContext";
 import {
   Building2,
   Edit,
@@ -25,7 +25,7 @@ import {
 import { useRouter } from "next/navigation";
 
 export function EmployerList() {
-  const { form } = useEmployerManagement();
+  const { form } = useEmployersContext();
   const router = useRouter();
 
   return (

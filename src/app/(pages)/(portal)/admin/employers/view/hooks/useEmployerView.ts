@@ -2,9 +2,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AdminRoutes } from "@/admin/router";
 import { EmployerProfile } from "@/types/employer-profile";
-import { fetchJobsByEmployer } from "../actions";
+import { fetchJobsByEmployer } from "@/employers/actions";
 
-export function useEmployerProfileForm(profile: EmployerProfile | null) {
+export function useEmployerView(profile: EmployerProfile | null) {
   const router = useRouter();
   const [jobs, setJobs] = useState([]);
   const [isLoadingJobs, setIsLoadingJobs] = useState(false);
@@ -17,6 +17,7 @@ export function useEmployerProfileForm(profile: EmployerProfile | null) {
           const result = await fetchJobsByEmployer(profile.id);
           setJobs(result.error ? [] : result.data);
         } catch (error) {
+          console.error("Error fetching jobs:", error);
           setJobs([]);
         } finally {
           setIsLoadingJobs(false);

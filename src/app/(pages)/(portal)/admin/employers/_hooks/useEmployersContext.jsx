@@ -8,7 +8,7 @@ import {
   RejectedBadge,
 } from "@/components/design-system/badge";
 
-export function useEmployerManagement() {
+export function useEmployersContext() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");

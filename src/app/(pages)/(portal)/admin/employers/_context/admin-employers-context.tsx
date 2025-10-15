@@ -1,16 +1,16 @@
 "use client";
 
 import { createContext, useContext, ReactNode } from "react";
-import { useEmployerManagement } from "@/admin/employers/_hooks/useEmployerManagement";
+import { useEmployersContext } from "@/app/(pages)/(portal)/admin/employers/_hooks/useEmployersContext";
 
-type AdminEmployersContextType = ReturnType<typeof useEmployerManagement>;
+type AdminEmployersContextType = ReturnType<typeof useEmployersContext>;
 
 const AdminEmployersContext = createContext<
   AdminEmployersContextType | undefined
 >(undefined);
 
 export function AmdinEmployersProvider({ children }: { children: ReactNode }) {
-  const employerManagement = useEmployerManagement();
+  const employerManagement = useEmployersContext();
 
   return (
     <AdminEmployersContext.Provider value={employerManagement}>

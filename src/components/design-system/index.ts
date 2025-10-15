@@ -21,3 +21,4 @@ export { CheckboxGroup } from "./checkbox-group";
 export { InputCheckboxGroup } from "./input-checkbox-group";
 export { TextAreaCard } from "./textarea-card";
 export { DynamicListInput } from "./dynamic-list-input";
+export { DescriptionCard } from "./description-card";

@@ -9,7 +9,7 @@ import { AdminRoutes } from "../../router";
 /**
  * Custom hook to manage the employer form state and logic (create/edit)
  */
-export function useFormEmployer({ action, employer = null }) {
+export function useEmployersPage({ action, employer = null }) {
   const formRef = useRef(null);
   const { navigateTo, navigateWithDelay } = useNavigation();
   const { showSuccess, showError } = useToastNotifications();

@@ -1,20 +1,18 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { CompanyInformation } from "@/employers/view/_components/view/company-information";
-import { AboutCompany } from "@/employers/view/_components/view/about-company";
-import { WorkEnvironment } from "@/employers/view/_components/view/work-environment";
-import { PollenLoves } from "@/employers/view/_components/view/pollen-loves";
-import { EntryLevelSupport } from "@/employers/view/_components/view/entry-level-support";
-import { AccoladesAccreditations } from "@/employers/view/_components/view/accolades-accreditations";
-import { SocialMedia } from "@/employers/view/_components/view/social-media";
-import { ContactInformation } from "@/employers/view/_components/view/contact-information";
-import { ProfileStatus } from "@/employers/view/_components/view/profile-status";
-import { InternalPollenData } from "@/employers/view/_components/view/internal-pollen-data";
-import { JobPostings } from "@/employers/view/_components/view/job-postings";
-import { EmployerProfileHeader } from "@/employers/view/_components/view/employer-profile-header";
-import { EmployerProfileSkeleton } from "@/employers/view/_components/employer-profile-skeleton";
-import { useEmployerProfileForm } from "@/employers/view/hooks/useEmployerProfileForm";
+import { CompanyInformation } from "@/app/(pages)/(portal)/admin/employers/view/_components/company-information";
+import { AccoladesAccreditations } from "@/app/(pages)/(portal)/admin/employers/view/_components/accolades-accreditations";
+import { SocialMedia } from "@/app/(pages)/(portal)/admin/employers/view/_components/social-media";
+import { ContactInformation } from "@/app/(pages)/(portal)/admin/employers/view/_components/contact-information";
+import { ProfileStatus } from "@/app/(pages)/(portal)/admin/employers/view/_components/profile-status";
+import { InternalPollenData } from "@/app/(pages)/(portal)/admin/employers/view/_components/internal-pollen-data";
+import { JobPostings } from "@/app/(pages)/(portal)/admin/employers/view/_components/job-postings";
+import { EmployerProfileHeader } from "@/app/(pages)/(portal)/admin/employers/view/_components/employer-profile-header";
+import { EmployerProfileSkeleton } from "@/app/(pages)/(portal)/admin/employers/view/view-skeleton";
+import { useEmployerView } from "@/app/(pages)/(portal)/admin/employers/view/hooks/useEmployerView";
+import { DescriptionCard } from "@/components/design-system";
+import { FileText, Users, Heart, GraduationCap } from "lucide-react";
 
 export default function EmployerProfileView({ employerProfile }) {
   const router = useRouter();
@@ -27,7 +25,7 @@ export default function EmployerProfileView({ employerProfile }) {
     handleSetLive,
     handleHideProfile,
     handleDelete,
-  } = useEmployerProfileForm(employerProfile);
+  } = useEmployerView(employerProfile);
 
   if (!profile) {
     return <EmployerProfileSkeleton />;
@@ -44,7 +42,6 @@ export default function EmployerProfileView({ employerProfile }) {
         onSetLive={handleSetLive}
         onHideProfile={handleHideProfile}
         onDelete={handleDelete}
-        onOpenEmployerPortal={() => window.open("/employer-portal", "_blank")}
       />
 
       {/* Main Content */}
@@ -52,10 +49,31 @@ export default function EmployerProfileView({ employerProfile }) {
         {/* Left Column - Main Information */}
         <div className="lg:col-span-2 space-y-6">
           <CompanyInformation company={profile} />
-          <AboutCompany about={profile.company_about} />
-          <WorkEnvironment workEnvironment={profile.work_environment} />
-          <PollenLoves pollenLove={profile.company_loves} />
-          <EntryLevelSupport entryLevelSupport={profile.entry_level_support} />
+
+          <DescriptionCard
+            title="About the Company"
+            icon={<FileText className="h-5 w-5" />}
+            value={profile.company_about}
+          />
+
+          <DescriptionCard
+            title="Work Environment"
+            icon={<Users className="h-5 w-5" />}
+            value={profile.work_environment}
+          />
+
+          <DescriptionCard
+            title="Pollen Loves"
+            icon={<Heart className="h-5 w-5" />}
+            value={profile.company_loves}
+          />
+
+          <DescriptionCard
+            title="Entry Level Support"
+            icon={<GraduationCap className="h-5 w-5" />}
+            value={profile.entry_level_support}
+          />
+
           <AccoladesAccreditations accolades={profile.accolades} />
           <SocialMedia socialMediaLinks={profile.social_media_links} />
         </div>

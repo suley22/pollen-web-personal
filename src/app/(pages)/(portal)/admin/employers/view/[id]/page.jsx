@@ -1,4 +1,4 @@
-import EmployerProfileView from "../employer-profile-view";
+import EmployerProfileView from "@/employers/view/view";
 import { fetchEmployerByIdAction } from "@/employers/actions";
 
 export default async function EmployerReviewPage({ params }) {

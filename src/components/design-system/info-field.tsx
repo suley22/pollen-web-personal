@@ -21,7 +21,7 @@ export function InfoField({
         {label}
       </Label>
       {icon ? (
-        <div className="flex items-center space-x-1 mt-1">
+        <div className="flex items-center space-x-2 mt-1">
           {icon}
           <span className="text-sm">{value || "Not specified"}</span>
         </div>

@@ -86,12 +86,14 @@ export function HomeCards() {
               className="flex-1 bg-purple-50 hover:bg-purple-100"
               onClick={(e) => {
                 e.stopPropagation();
-                router.push("/admin/community/members");
+                router.push(AdminRoutes.allJobSeekers);
               }}
             >
               <Eye className="mr-2 h-4 w-4" />
               View All
             </Button>
+
+            {/* TODO: */}
             <Button
               variant="outline"
               size="sm"
@@ -183,7 +185,7 @@ export function HomeCards() {
               variant="outline"
               size="sm"
               className="flex-1 bg-pink-50 hover:bg-pink-100"
-              //TODO:
+              //TODO: implementar create job
               // onClick={(e) => {
               //   e.stopPropagation();
               //   router.push();

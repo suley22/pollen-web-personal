@@ -60,7 +60,7 @@ export function HomeCards() {
       {/* Job Seekers Card */}
       <Card className="border-2 border-purple-200 bg-purple-50 hover:shadow-lg transition-shadow">
         <CardContent className="p-6">
-          <div className="flex items-start justify-between ">
+          <div className="flex items-start justify-between pointer-events-none">
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">
                 Community
@@ -73,10 +73,12 @@ export function HomeCards() {
               <Users className="h-8 w-8 text-purple-600" />
             </div>
           </div>
-          <div className="flex items-center gap-2 mb-2 text-sm text-green-600 font-medium">
+
+          <div className="flex items-center gap-2 mb-2 text-sm text-green-600 font-medium pointer-events-none">
             <TrendingUp className="h-4 w-4" />
             <span>+{stats?.newSignupsToday} today</span>
           </div>
+
           <div className="flex gap-2">
             <Button
               variant="outline"
@@ -109,7 +111,7 @@ export function HomeCards() {
       {/* Company Profiles Card */}
       <Card className="border-2 border-orange-200 bg-orange-50 hover:shadow-lg transition-shadow">
         <CardContent className="p-6">
-          <div className="flex items-start justify-between mb-6">
+          <div className="flex items-start justify-between mb-6 pointer-events-none">
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">
                 Employers
@@ -122,6 +124,7 @@ export function HomeCards() {
               <Building2 className="h-8 w-8 text-orange-600" />
             </div>
           </div>
+
           <div className="flex gap-2">
             <Button
               variant="outline"
@@ -154,7 +157,7 @@ export function HomeCards() {
       {/* Jobs Card */}
       <Card className="border-2 border-pink-200 bg-pink-50 hover:shadow-lg transition-shadow">
         <CardContent className="p-6">
-          <div className="flex items-start justify-between mb-6">
+          <div className="flex items-start justify-between mb-6 pointer-events-none">
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">Jobs</p>
               <p className="text-2xl font-bold">{stats?.liveJobs}</p>

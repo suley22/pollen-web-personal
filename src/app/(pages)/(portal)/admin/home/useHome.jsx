@@ -42,14 +42,10 @@ export function useHome() {
         const assignedJobs = result.data.map((job) => ({
           ...job,
           assigned_date: job.published_at || job.created_at,
-          total_applications: 2,
-          newApplicationsToReview: 10,
-          pollenInterviewsBooked: 5,
+          // Application counts now come from the database via fetchJobApplicationCounts
           needsApproval: job.needs_approval || false,
           company_name: job.company_name || "Unknown Company",
           responsibilities: job.responsibilities || [],
-          candidatesMatchedToEmployer: 15,
-          feedbackSent: 8,
           interviewsScheduled: 4,
           offersExtended: 2,
           hiresMade: 1,

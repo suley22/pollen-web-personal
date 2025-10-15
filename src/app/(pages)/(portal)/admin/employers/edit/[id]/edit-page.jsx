@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { PageContainer } from "@/components/design-system/page-container";
 import { useActionState } from "react";
 import { updateCompanyData } from "./actions";
 import { CompanyInformation } from "../../create/_components/company-information";
@@ -103,7 +104,7 @@ export default function EditEmployerPage({ employerData }) {
   }, [state, router, toast, employerData.id]);
 
   return (
-    <div className="w-full flex flex-col mx-auto py-6 gap-6 relative">
+    <PageContainer className="relative">
       {/* Loading Overlay */}
       {isPending && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -237,6 +238,6 @@ export default function EditEmployerPage({ employerData }) {
           </div>
         </div>
       </form>
-    </div>
+    </PageContainer>
   );
 }

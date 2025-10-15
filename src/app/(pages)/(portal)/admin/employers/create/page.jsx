@@ -14,8 +14,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useActionState } from "react";
+import { PageHeader } from "@/components/design-system/page-header";
+import { PageContainer } from "@/components/design-system/page-container";
 import { createCompanyData } from "./actions";
-import { Header } from "./_components/header";
 import { CompanyInformation } from "./_components/company-information";
 import { AboutEmployer } from "./_components/about-employer";
 import { WorkEnvironment } from "./_components/work-environment";
@@ -32,6 +33,10 @@ export default function CreateProfilePage() {
   const formRef = useRef(null);
   const router = useRouter();
   const { toast } = useToast();
+
+  const onBack = () => {
+    router.push(AdminRoutes.employers);
+  };
   const [state, createCompany, isPending] = useActionState(
     createCompanyData,
     null,
@@ -74,8 +79,13 @@ export default function CreateProfilePage() {
   }, [state, router, toast]);
 
   return (
-    <div className="w-full flex flex-col mx-auto py-6 gap-6">
-      <Header />
+    <PageContainer>
+      <PageHeader
+        title="Create Employer"
+        description="Complete the form below to create a new employer profile"
+        showBackButton={true}
+        onBack={onBack}
+      />
 
       <form
         ref={formRef}
@@ -155,6 +165,6 @@ export default function CreateProfilePage() {
           </div>
         </div>
       </form>
-    </div>
+    </PageContainer>
   );
 }

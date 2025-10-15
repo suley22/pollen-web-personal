@@ -1,4 +1,5 @@
-import { Header } from "@/admin/employers/_components/header";
+"use client";
+
 import { Filters } from "@/admin/employers/_components/filters";
 import { StatisticsCards } from "@/admin/employers/_components/cards";
 import { ResultsCount } from "@/admin/employers/_components/results-count";

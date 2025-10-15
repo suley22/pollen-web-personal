@@ -37,7 +37,7 @@ export function PageHeader({
         )}
 
         <div className="flex flex-col">
-          <h1 className="text-2xl font-sora font-bold">{title}</h1>
+          <div className="text-2xl font-sora font-bold">{title}</div>
           {description && (
             <p className="text-muted-foreground">{description}</p>
           )}

@@ -7,33 +7,33 @@ import { createClient } from "@/lib/utils/supabase/server";
  */
 async function fetchJobApplicationCounts(supabase, jobId) {
   try {
-    // Count new applications to review
+    // Count new applications to review (new_applicants status)
     const { count: newApplicationsCount } = await supabase
       .from("job_applications")
       .select("*", { count: "exact", head: true })
       .eq("job_id", jobId)
-      .eq("status", "pending");
+      .eq("status", "new_applicants");
 
-    // Count Pollen interviews booked (applications in interview stage)
+    // Count Pollen interviews booked (in_progress status)
     const { count: pollenInterviewsCount } = await supabase
       .from("job_applications")
       .select("*", { count: "exact", head: true })
       .eq("job_id", jobId)
-      .eq("status", "interview_scheduled");
+      .eq("status", "in_progress");
 
-    // Count candidates matched to employer (applications approved/matched)
+    // Count candidates matched to employer (matched_to_employer status)
     const { count: candidatesMatchedCount } = await supabase
       .from("job_applications")
       .select("*", { count: "exact", head: true })
       .eq("job_id", jobId)
-      .eq("status", "matched");
+      .eq("status", "matched_to_employer");
 
-    // Count feedback sent (applications completed with feedback)
+    // Count feedback sent (complete status)
     const { count: feedbackSentCount } = await supabase
       .from("job_applications")
       .select("*", { count: "exact", head: true })
       .eq("job_id", jobId)
-      .eq("status", "completed");
+      .eq("status", "complete");
 
     // Count total applications
     const { count: totalApplicationsCount } = await supabase

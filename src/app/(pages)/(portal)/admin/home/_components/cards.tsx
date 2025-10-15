@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { HomeCardsSkeleton } from "./cards-skeleton";
+import { DashboardStats } from "@/types/dashboard-stats";
 
 import {
   BarChart3,
@@ -20,23 +21,34 @@ import { AdminRoutes } from "../../router";
 export function HomeCards() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
-
-  const stats = {
-    totalCommunityMembers: 1247,
-    newSignupsToday: 8,
-    totalEmployers: 184,
-    newEmployersRequiringApproval: 11,
-    liveJobs: 23,
-    pendingJobApprovals: 7,
-  };
+  const [stats, setStats] = useState<DashboardStats>({
+    totalCommunityMembers: 0,
+    newSignupsToday: 0,
+    totalEmployers: 0,
+    newEmployersRequiringApproval: 0,
+    liveJobs: 0,
+    pendingJobApprovals: 0,
+  });
 
   useEffect(() => {
-    // Simular carga de datos
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    // Fetch real data from API
+    const fetchStats = async () => {
+      try {
+        const response = await fetch("/api/admin/stats");
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+        } else {
+          console.error("Failed to fetch stats");
+        }
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    return () => clearTimeout(timer);
+    fetchStats();
   }, []);
 
   if (isLoading) {
@@ -102,7 +114,9 @@ export function HomeCards() {
               <p className="text-sm font-medium text-muted-foreground">
                 Employers
               </p>
-              <p className="text-2xl font-bold">3</p>
+              <p className="text-2xl font-bold">
+                {stats?.totalEmployers.toLocaleString()}
+              </p>
             </div>
             <div className="rounded-full bg-orange-100 p-4">
               <Building2 className="h-8 w-8 text-orange-600" />

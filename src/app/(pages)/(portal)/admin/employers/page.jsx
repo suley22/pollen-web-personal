@@ -33,8 +33,10 @@ export default function AdminEmployers() {
 
         <StatisticsCards />
         <Filters />
-        <ResultsCount />
-        <List />
+        <div className="flex flex-col gap-2">
+          <ResultsCount />
+          <List />
+        </div>
       </div>
     </AmdinEmployersProvider>
   );

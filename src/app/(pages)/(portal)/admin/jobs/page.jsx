@@ -14,161 +14,37 @@ import {
   Calendar,
   UserCircle,
 } from "lucide-react";
+import Filters from "./_components/filters";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { AdminRoutes } from "../router";
+import { PageHeader } from "@/components/design-system/page-header";
+import { PrimaryButton } from "@/components/design-system/primary-button";
 
 export default function JobsManagmentPage() {
   const router = useRouter();
   const { form } = useJobManagement();
 
   return (
-    <div className="min-h-screen bg-gray-50 admin-compact-mode">
-      {/* Header */}
-
-      <div className="flex flex-1 bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-4">
-            <Button
-              variant="ghost"
-              onClick={() => router.back()}
-              className="mb-4"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-            </Button>
-            <div className="flex items-center space-x-4">
-              <div>
-                <h1 className="text-3xl font-bold">Jobs Management</h1>
-
-                <p className="text-muted-foreground mt-2">
-                  Manage job postings and track application progress
-                </p>
-              </div>
-            </div>
-            <Button
-              // TODO: agregar función onClick
-              // onClick={() => setLocation("/admin/job-creation-flow")}
-              className="flex items-center gap-2"
-              style={{
-                height: "40px",
-                minHeight: "40px",
-                fontSize: "14px",
-                fontWeight: "500",
-                padding: "0 16px",
-              }}
-              onClick={() => {
-                router.push(`/admin/jobs-management/create`);
-              }}
-            >
-              <Plus className="w-4 h-4" />
-              Create Job
-            </Button>
-          </div>
-        </div>
+    <div className="min-h-screen w-full bg-gray-50 ">
+      <div className="py-6">
+        <PageHeader
+          title="Employers"
+          description="Manage and review employer company profiles"
+        >
+          <PrimaryButton
+            icon={<Plus />}
+            text="Create"
+            //TODO: habilitar creación de trabajos
+            onClick={"onCreate"}
+          />
+        </PageHeader>
       </div>
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto">
-        {/* Tab Toggle Bar */}
-        <div className="bg-white rounded-lg border border-gray-200 p-1 mb-6">
-          <div className="flex">
-            <button
-              onClick={() => form.setActiveTab("all")}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                form.activeTab === "all"
-                  ? "text-white shadow-sm"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-              }`}
-              style={
-                form.activeTab === "all" ? { backgroundColor: "#E2007A" } : {}
-              }
-            >
-              <Users className="h-4 w-4" />
-              All Jobs
-              <Badge
-                variant="outline"
-                className="ml-1 text-xs"
-                style={
-                  form.activeTab === "all"
-                    ? {
-                        backgroundColor: "white",
-                        color: "#E2007A",
-                        borderColor: "white",
-                      }
-                    : {}
-                }
-              >
-                {form.jobs.length}
-              </Badge>
-            </button>
-            <button
-              onClick={() => form.setActiveTab("management")}
-              className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                form.activeTab === "management"
-                  ? "text-white shadow-sm"
-                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-              }`}
-              style={
-                form.activeTab === "management"
-                  ? { backgroundColor: "#E2007A" }
-                  : {}
-              }
-            >
-              <Eye className="h-4 w-4" />
-              Live Jobs
-              <Badge
-                variant="outline"
-                className="ml-1 text-xs"
-                style={
-                  form.activeTab === "management"
-                    ? {
-                        backgroundColor: "white",
-                        color: "#E2007A",
-                        borderColor: "white",
-                      }
-                    : {}
-                }
-              >
-                {form.jobs.length}
-              </Badge>
-            </button>
-          </div>
-        </div>
-
         {/* Search and Filter */}
-        <div className="flex items-center space-x-4 mb-6">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Search jobs..."
-              value={form.searchTerm}
-              onChange={(e) => form.setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <select
-            value={form.selectedAssignment}
-            onChange={(e) => form.setSelectedAssignment(e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
-          >
-            <option value="all">All Jobs</option>
-            <option value="mine">My Assigned Jobs</option>
-            <option value="karen">Karen's Jobs</option>
-            <option value="sophie">Sophie's Jobs</option>
-          </select>
-          <select
-            value={form.selectedStatus}
-            onChange={(e) => form.setSelectedStatus(e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
-          >
-            <option value="all">All Statuses</option>
-            <option value="draft">In Draft</option>
-            <option value="live">Live</option>
-            <option value="paused">Paused</option>
-            <option value="cancelled">Cancelled</option>
-            <option value="complete">Complete</option>
-          </select>
-        </div>
+        <Filters form={form} />
 
         {/* Jobs Section */}
         <div className="space-y-3">

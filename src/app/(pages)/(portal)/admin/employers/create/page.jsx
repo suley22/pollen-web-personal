@@ -65,7 +65,6 @@ export default function CreateProfilePage() {
               icon={<FileText className="h-5 w-5" />}
               name="company_about"
               placeholder="Describe the company, its mission, values, and what makes it unique..."
-              minHeight="150px"
             />
 
             <TextAreaCard
@@ -73,7 +72,6 @@ export default function CreateProfilePage() {
               icon={<Building className="h-5 w-5" />}
               name="work_environment"
               placeholder="Describe the work environment, office culture, team dynamics, and atmosphere..."
-              minHeight="150px"
             />
 
             <TextAreaCard
@@ -81,7 +79,6 @@ export default function CreateProfilePage() {
               icon={<Heart className="h-5 w-5" />}
               name="company_loves"
               placeholder="What does Pollen love about this company? Highlight unique benefits, values, or opportunities..."
-              minHeight="150px"
             />
 
             <TextAreaCard
@@ -89,7 +86,6 @@ export default function CreateProfilePage() {
               icon={<Building className="h-5 w-5" />}
               name="entry_level_support"
               placeholder="Describe the support and resources provided for entry-level employees, such as training programs, mentorship, onboarding..."
-              minHeight="150px"
             />
 
             <InternalPollenData />

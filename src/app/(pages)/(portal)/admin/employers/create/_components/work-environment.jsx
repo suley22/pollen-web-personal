@@ -11,7 +11,6 @@ export function WorkEnvironment({ initialValue }) {
       name="work_environment"
       placeholder="Describe the work environment, office culture, team dynamics, and atmosphere..."
       defaultValue={initialValue}
-      minHeight="150px"
     />
   );
 }

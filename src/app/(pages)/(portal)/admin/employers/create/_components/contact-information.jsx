@@ -16,7 +16,7 @@ export function ContactInformation({
       icon={<User className="h-5 w-5" />}
       className="w-full"
     >
-      <div className="space-y-4">
+      <div className="flex flex-col gap-5">
         {/* Contact Name */}
         <Input
           label="Contact Name"

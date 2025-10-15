@@ -1,24 +1,17 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-  DialogDescription,
-  DialogClose,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useActionState } from "react";
 import { PageHeader } from "@/components/design-system/page-header";
 import { PageContainer } from "@/components/design-system/page-container";
+import { FormContainer } from "@/components/design-system/form-container";
+import { FormActions } from "@/components/design-system/form-actions";
+import { ConfirmationDialog } from "@/components/design-system/confirmation-dialog";
 import { createCompanyData } from "./actions";
 import { CompanyInformation } from "./_components/company-information";
-import { AboutEmployer } from "./_components/about-employer";
 import { WorkEnvironment } from "./_components/work-environment";
 import { PollenLoves } from "./_components/pollen-loves";
 import { AccoladesAccreditations } from "./_components/accolades-accreditations";
@@ -28,6 +21,8 @@ import { SocialMedia } from "./_components/social-media";
 import { InternalPollenData } from "./_components/internal-pollen-data";
 import { useToast } from "@/lib/hooks/use-toast";
 import { AdminRoutes } from "../../router";
+import { FileText } from "lucide-react";
+import { FormCard, Textarea } from "@/components/design-system";
 
 export default function CreateProfilePage() {
   const formRef = useRef(null);
@@ -66,7 +61,7 @@ export default function CreateProfilePage() {
       });
       // Redirect after success
       setTimeout(() => {
-        router.push(AdminRoutes.employers);
+        router.push(AdminRoutes.employersView(state.companyId));
       }, 1500);
     } else if (state?.error) {
       toast({
@@ -87,11 +82,7 @@ export default function CreateProfilePage() {
         onBack={onBack}
       />
 
-      <form
-        ref={formRef}
-        className="flex flex-col gap-6"
-        action={createCompany}
-      >
+      <FormContainer ref={formRef} action={createCompany}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2 space-y-6">
             <CompanyInformation
@@ -104,7 +95,18 @@ export default function CreateProfilePage() {
               logoUrl={logoUrl}
               onLogoUrlChange={setLogoUrl}
             />
-            <AboutEmployer />
+            <FormCard
+              title="About the Employer"
+              icon={<FileText className="h-5 w-5" />}
+            >
+              <Textarea
+                name="company_about"
+                placeholder="Describe the company, its mission, values, and what makes it unique..."
+                className="min-h-[150px] resize-y"
+                defaultValue={industryValue.company_about}
+              />
+            </FormCard>
+
             <WorkEnvironment />
             <PollenLoves />
 
@@ -122,49 +124,27 @@ export default function CreateProfilePage() {
           </div>
         </div>
 
-        {/* Divider and Save Button */}
-        <div className="flex flex-col gap-4">
-          <div className="w-full h-[1px] bg-gray-200" />
-          <div className="flex justify-end">
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button type="button" size="lg" disabled={isPending}>
-                  {isPending ? "Creating..." : "Create company profile"}
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Confirm company creation?</DialogTitle>
-                  <DialogDescription>
-                    Are you sure you want to create the company profile? This
-                    will create a new employer profile in the system.
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button
-                      variant="secondary"
-                      type="button"
-                      disabled={isPending}
-                    >
-                      Cancel
-                    </Button>
-                  </DialogClose>
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      if (formRef.current) formRef.current.requestSubmit();
-                    }}
-                    disabled={isPending}
-                  >
-                    {isPending ? "Creating..." : "Confirm"}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </div>
-      </form>
+        <FormActions>
+          <ConfirmationDialog
+            trigger={
+              <Button type="button" size="lg" disabled={isPending}>
+                {isPending ? "Creating..." : "Create company profile"}
+              </Button>
+            }
+            title="Confirm company creation?"
+            description="Are you sure you want to create the company profile? This will create a new employer profile in the system."
+            confirmText="Confirm"
+            cancelText="Cancel"
+            onConfirm={() => {
+              if (formRef.current) formRef.current.requestSubmit();
+            }}
+            isLoading={isPending}
+            loadingText="Creating..."
+            open={isDialogOpen}
+            onOpenChange={setIsDialogOpen}
+          />
+        </FormActions>
+      </FormContainer>
     </PageContainer>
   );
 }

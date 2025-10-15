@@ -1,33 +1,27 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-  DialogDescription,
-  DialogClose,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { PageContainer } from "@/components/design-system/page-container";
+import { FormContainer } from "@/components/design-system/form-container";
+import { FormActions } from "@/components/design-system/form-actions";
+import { ConfirmationDialog } from "@/components/design-system/confirmation-dialog";
 import { useActionState } from "react";
-import { updateCompanyData } from "./actions";
-import { CompanyInformation } from "../../create/_components/company-information";
-import { AboutEmployer } from "../../create/_components/about-employer";
-import { WorkEnvironment } from "../../create/_components/work-environment";
-import { PollenLoves } from "../../create/_components/pollen-loves";
-import { AccoladesAccreditations } from "../../create/_components/accolades-accreditations";
-import { EntryLevelSupport } from "../../create/_components/entry-level-support";
-import { ContactInformation } from "../../create/_components/contact-information";
-import { SocialMedia } from "../../create/_components/social-media";
-import { InternalPollenData } from "../../create/_components/internal-pollen-data";
+import { CompanyInformation } from "@/employers/create/_components/company-information";
+import { WorkEnvironment } from "@/employers/create/_components/work-environment";
+import { PollenLoves } from "@/employers/create/_components/pollen-loves";
+import { AccoladesAccreditations } from "@/employers/create/_components/accolades-accreditations";
+import { EntryLevelSupport } from "@/employers/create/_components/entry-level-support";
+import { ContactInformation } from "@/employers/create/_components/contact-information";
+import { SocialMedia } from "@/employers/create/_components/social-media";
+import { InternalPollenData } from "@/employers/create/_components/internal-pollen-data";
 import { useToast } from "@/lib/hooks/use-toast";
-import { AdminRoutes } from "../../../router";
-import { ArrowLeft } from "lucide-react";
+import { AdminRoutes } from "@/admin/router";
+import { ArrowLeft, FileText } from "lucide-react";
+import { FormCard, Textarea } from "@/components/design-system";
+import { updateEmployerAction } from "@/employers/actions";
 
 export default function EditEmployerPage({ employerData }) {
   const formRef = useRef(null);
@@ -35,7 +29,7 @@ export default function EditEmployerPage({ employerData }) {
   const { toast } = useToast();
 
   // Bind the employer ID to the update function
-  const updateWithId = updateCompanyData.bind(null, employerData.id);
+  const updateWithId = updateEmployerAction.bind(null, employerData.id);
 
   const [state, updateCompany, isPending] = useActionState(updateWithId, null);
 
@@ -131,11 +125,7 @@ export default function EditEmployerPage({ employerData }) {
         </div>
       </div>
 
-      <form
-        ref={formRef}
-        className="flex flex-col gap-6"
-        action={updateCompany}
-      >
+      <FormContainer ref={formRef} action={updateCompany}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2 space-y-6">
             <CompanyInformation
@@ -159,7 +149,19 @@ export default function EditEmployerPage({ employerData }) {
                 ),
               }}
             />
-            <AboutEmployer initialValue={employerData.company_about} />
+
+            <FormCard
+              title="About the Employer"
+              icon={<FileText className="h-5 w-5" />}
+            >
+              <Textarea
+                name="company_about"
+                placeholder="Describe the company, its mission, values, and what makes it unique..."
+                className="min-h-[150px] resize-y"
+                defaultValue={initialValue}
+              />
+            </FormCard>
+
             <WorkEnvironment initialValue={employerData.work_environment} />
             <PollenLoves initialValue={employerData.company_loves} />
             <EntryLevelSupport
@@ -194,50 +196,28 @@ export default function EditEmployerPage({ employerData }) {
           </div>
         </div>
 
-        {/* Divider and Save Button */}
-        <div className="flex flex-col gap-4">
-          <div className="w-full h-[1px] bg-gray-200" />
-          <div className="flex justify-end">
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button type="button" size="lg" disabled={isPending}>
-                  {isPending ? "Saving..." : "Save changes"}
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Confirm changes?</DialogTitle>
-                  <DialogDescription>
-                    Are you sure you want to save these changes to the employer
-                    profile?
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button
-                      variant="secondary"
-                      type="button"
-                      disabled={isPending}
-                    >
-                      Cancel
-                    </Button>
-                  </DialogClose>
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      setIsDialogOpen(false);
-                      if (formRef.current) formRef.current.requestSubmit();
-                    }}
-                    disabled={isPending}
-                  >
-                    {isPending ? "Saving..." : "Confirm"}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </div>
-      </form>
+        <FormActions>
+          <ConfirmationDialog
+            trigger={
+              <Button type="button" size="lg" disabled={isPending}>
+                {isPending ? "Saving..." : "Save changes"}
+              </Button>
+            }
+            title="Confirm changes?"
+            description="Are you sure you want to save these changes to the employer profile?"
+            confirmText="Confirm"
+            cancelText="Cancel"
+            onConfirm={() => {
+              setIsDialogOpen(false);
+              if (formRef.current) formRef.current.requestSubmit();
+            }}
+            isLoading={isPending}
+            loadingText="Saving..."
+            open={isDialogOpen}
+            onOpenChange={setIsDialogOpen}
+          />
+        </FormActions>
+      </FormContainer>
     </PageContainer>
   );
 }

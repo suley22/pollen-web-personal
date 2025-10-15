@@ -206,6 +206,185 @@ export class EmployerService {
       return { success: false, error: "Failed to fetch employer" };
     }
   }
+
+  /**
+   * Transforms form data to database format for employer creation/update
+   */
+  private transformFormDataToDatabase(formData: FormData, userId: string) {
+    const formCompanyData = Object.fromEntries(formData.entries());
+    const standardIndustries = formData.getAll("industries");
+    const customIndustries = formCompanyData.custom_industries
+      ? (formCompanyData.custom_industries as string)
+          .split(",")
+          .map((i: string) => i.trim())
+          .filter(Boolean)
+      : [];
+    const allIndustries = [...standardIndustries, ...customIndustries];
+    const accolades = formCompanyData.company_accolades as string;
+    const howHiredPreviously = formData.getAll("how_hired_previously");
+
+    // Parse social_medias JSON
+    const socialMedias = formCompanyData.social_medias
+      ? JSON.parse(formCompanyData.social_medias as string)
+      : [];
+
+    return {
+      // Company Information
+      company_name: formCompanyData.company_name,
+      company_size: formCompanyData.company_size,
+      founded_year: formCompanyData.founded_year,
+      company_location: formCompanyData.location,
+      website_url: formCompanyData.website,
+      logo_url: formCompanyData.logo_url,
+      industries: allIndustries,
+
+      // About & Culture
+      company_about: formCompanyData.company_about,
+      work_environment: formCompanyData.work_environment,
+      company_loves: formCompanyData.company_loves,
+      company_entry_level: formCompanyData.company_entry_level,
+
+      // Accolades
+      company_accolades: accolades
+        ? accolades.split(",").map((a) => a.trim())
+        : [],
+
+      // Contact Information
+      contact_name: formCompanyData.contact_name,
+      job_title: formCompanyData.job_title,
+      contact_email: formCompanyData.contact_email,
+      contact_phone: formCompanyData.contact_phone,
+
+      // Social Media (JSONB)
+      social_medias: socialMedias,
+
+      // Internal Pollen Data
+      how_did_you_hear_about_us: formCompanyData.how_did_you_hear_about_us,
+      more_info: formCompanyData.more_info,
+      hiring_frequency: formCompanyData.hiring_frequency,
+      additional_notes: formCompanyData.additional_notes,
+      how_hired_previously: howHiredPreviously,
+
+      // System Fields
+      user_id: userId,
+    };
+  }
+
+  /**
+   * Creates a new employer profile
+   */
+  async createEmployer(formData: FormData, userId: string) {
+    try {
+      const transformedData = this.transformFormDataToDatabase(
+        formData,
+        userId,
+      );
+
+      // Validate required fields
+      if (
+        !transformedData.company_name ||
+        !transformedData.company_name.toString().trim()
+      ) {
+        return {
+          success: false,
+          error: "Company name is required",
+        };
+      }
+
+      const { data, error } = await this.supabase
+        .from("employer_profile")
+        .insert({
+          ...transformedData,
+          // System Fields for creation
+          approval_status: "pending",
+          created_by: userId,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .select();
+
+      if (error) {
+        console.error("EmployerService: Error creating employer:", error);
+        return {
+          success: false,
+          error: error.message || "Failed to create company profile",
+        };
+      }
+
+      console.log("EmployerService: Created employer data:", data);
+      return {
+        success: true,
+        data: data[0],
+        message: "Company profile created successfully",
+      };
+    } catch (error) {
+      console.error(
+        "EmployerService: Unexpected error creating employer:",
+        error,
+      );
+      return {
+        success: false,
+        error: "Failed to create company profile",
+      };
+    }
+  }
+
+  /**
+   * Updates an existing employer profile
+   */
+  async updateEmployer(id: string, formData: FormData, userId: string) {
+    try {
+      const transformedData = this.transformFormDataToDatabase(
+        formData,
+        userId,
+      );
+
+      // Validate required fields
+      if (
+        !transformedData.company_name ||
+        !transformedData.company_name.toString().trim()
+      ) {
+        return {
+          success: false,
+          error: "Company name is required",
+        };
+      }
+
+      const { data, error } = await this.supabase
+        .from("employer_profile")
+        .update({
+          ...transformedData,
+          // System Fields for update
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id)
+        .select();
+
+      if (error) {
+        console.error("EmployerService: Error updating employer:", error);
+        return {
+          success: false,
+          error: error.message || "Failed to update company profile",
+        };
+      }
+
+      console.log("EmployerService: Updated employer data:", data);
+      return {
+        success: true,
+        data: data[0],
+        message: "Company profile updated successfully",
+      };
+    } catch (error) {
+      console.error(
+        "EmployerService: Unexpected error updating employer:",
+        error,
+      );
+      return {
+        success: false,
+        error: "Failed to update company profile",
+      };
+    }
+  }
 }
 
 /**

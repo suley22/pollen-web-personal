@@ -3,6 +3,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { HomeCardsSkeleton } from "./cards-skeleton";
 
 import {
   BarChart3,
@@ -16,6 +18,7 @@ import {
 
 export function HomeCards() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
 
   const stats = {
     totalCommunityMembers: 1247,
@@ -26,17 +29,30 @@ export function HomeCards() {
     pendingJobApprovals: 7,
   };
 
+  useEffect(() => {
+    // Simular carga de datos
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <HomeCardsSkeleton />;
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {/* Job Seekers Card */}
       <Card className="border-2 border-purple-200 bg-purple-50 hover:shadow-lg transition-shadow">
         <CardContent className="p-6">
-          <div className="flex items-start justify-between mb-2">
+          <div className="flex items-start justify-between ">
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">
                 Community
               </p>
-              <p className="text-3xl font-semibold">
+              <p className="text-2xl font-bold">
                 {stats?.totalCommunityMembers.toLocaleString()}
               </p>
             </div>
@@ -83,9 +99,9 @@ export function HomeCards() {
           <div className="flex items-start justify-between mb-6">
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">
-                Company Profiles
+                Employers
               </p>
-              <p className="text-3xl font-semibold">3</p>
+              <p className="text-2xl font-bold">3</p>
             </div>
             <div className="rounded-full bg-orange-100 p-4">
               <Building2 className="h-8 w-8 text-orange-600" />
@@ -127,7 +143,7 @@ export function HomeCards() {
           <div className="flex items-start justify-between mb-6">
             <div className="space-y-1">
               <p className="text-sm font-medium text-muted-foreground">Jobs</p>
-              <p className="text-3xl font-semibold">{stats?.liveJobs}</p>
+              <p className="text-2xl font-bold">{stats?.liveJobs}</p>
             </div>
             <div className="rounded-full bg-pink-100 p-4">
               <FileText className="h-8 w-8 text-pink-600" />

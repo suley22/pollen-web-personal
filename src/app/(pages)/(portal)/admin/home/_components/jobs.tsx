@@ -7,10 +7,15 @@ import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { useHome } from "@/admin/home/useHome";
 import { AdminRoutes } from "@/admin/router";
+import { HomeJobsSkeleton } from "./jobs-skeleton";
 
 export function HomeJobs() {
   const router = useRouter();
   const { homeState } = useHome();
+
+  if (homeState.loading) {
+    return <HomeJobsSkeleton />;
+  }
 
   return (
     <div className="bg-white rounded-lg shadow-sm border">

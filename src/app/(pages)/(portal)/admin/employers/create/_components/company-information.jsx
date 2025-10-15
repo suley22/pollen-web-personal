@@ -6,6 +6,7 @@ import { CompanyAvatar } from "@/components/ui/company-avatar";
 import { FormCard } from "@/components/design-system/form-card";
 import { PrimaryButton } from "@/components/ui/buttons/primary-button";
 import { INDUSTRY_OPTIONS } from "@/lib/configs/constants/industries";
+import { COMPANY_SIZE_OPTIONS } from "@/lib/configs/constants/company-size";
 import { InputCheckboxGroup } from "@/ds/input-checkbox-group";
 
 export function CompanyInformation({
@@ -72,14 +73,7 @@ export function CompanyInformation({
             id="company_size"
             placeholder="Select company size"
             defaultValue={initialData.company_size}
-            options={[
-              { value: "1-10", label: "1-10 employees" },
-              { value: "11-50", label: "11-50 employees" },
-              { value: "51-200", label: "51-200 employees" },
-              { value: "201-500", label: "201-500 employees" },
-              { value: "501-1000", label: "501-1000 employees" },
-              { value: "1001+", label: "1001+ employees" },
-            ]}
+            options={COMPANY_SIZE_OPTIONS}
           />
 
           {/* Founded Year */}
@@ -111,6 +105,7 @@ export function CompanyInformation({
             defaultValue={initialData.website || ""}
           />
         </div>
+
         {/* Industry */}
         <InputCheckboxGroup
           label="Industry"

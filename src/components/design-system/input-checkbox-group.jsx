@@ -11,6 +11,7 @@ import { CheckboxGroup as BaseCheckboxGroup } from "./checkbox-group";
  */
 export function InputCheckboxGroup({
   label,
+  subtitle = null,
   error,
   helperText,
   required = false,
@@ -29,18 +30,24 @@ export function InputCheckboxGroup({
 
   return (
     <div className={cn("w-full", className)}>
-      {label && (
-        <Label
-          htmlFor={fieldId}
-          className={cn(
-            "text-sm font-medium text-gray-700 pb-2 mb-1.5 block",
-            error && "text-destructive",
-          )}
-        >
-          {label}
-          {required && <span className="text-destructive ml-1">*</span>}
-        </Label>
-      )}
+      <div className="flex flex-col mb-1">
+        {label && (
+          <Label
+            htmlFor={fieldId}
+            className={cn(
+              "text-sm font-medium text-gray-700 pb-1 mb-1.5 block",
+              error && "text-destructive",
+            )}
+          >
+            {label}
+            {required && <span className="text-destructive ml-1">*</span>}
+          </Label>
+        )}
+
+        {subtitle && (
+          <Label className="text-xs text-gray-600 mb-4 block">{subtitle}</Label>
+        )}
+      </div>
 
       <div
         id={fieldId}

@@ -1,17 +1,41 @@
-import js from "@eslint/js";
 import globals from "globals";
+import pluginJs from "@eslint/js";
 import pluginReact from "eslint-plugin-react";
-import { FlatCompat } from "@eslint/eslintrc";
-
-const compat = new FlatCompat();
+import pluginReactHooks from "eslint-plugin-react-hooks";
+import pluginNext from "@next/eslint-plugin-next";
+import pluginTypeScript from "@typescript-eslint/eslint-plugin";
+import parserTypeScript from "@typescript-eslint/parser";
 
 const config = [
-  ...compat.extends("next/core-web-vitals"),
-  js.configs.recommended,
   {
-    files: ["src/**/*.{js,mjs,cjs,jsx,ts,tsx}"],
+    files: ["**/*.{js,mjs,cjs,jsx,ts,tsx}"],
     plugins: {
       react: pluginReact,
+      "react-hooks": pluginReactHooks,
+      "@next/next": pluginNext,
+    },
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
+    rules: {
+      ...pluginJs.configs.recommended.rules,
+      ...pluginReact.configs.recommended.rules,
+      ...pluginReactHooks.configs.recommended.rules,
+      ...pluginNext.configs.recommended.rules,
+      ...pluginNext.configs["core-web-vitals"].rules,
+    },
+  },
+
+  // Configuración para archivos .jsx (componentes de UI)
+  {
+    files: ["src/**/*.jsx"],
+    plugins: {
+      react: pluginReact,
+      "react-hooks": pluginReactHooks,
+      "@next/next": pluginNext,
     },
     ignores: ["**/*.css"],
     languageOptions: {
@@ -29,50 +53,67 @@ const config = [
       },
     },
     rules: {
-      // Configuración de variables no utilizadas
-      "no-unused-vars": "off", // Deshabilita completamente la validación de variables no usadas
-      "no-undef": "warn", // Convierte errores de variables no definidas en warnings
-
-      // Configuración de React Hooks (hacer menos estricto)
-      "react-hooks/rules-of-hooks": "warn", // Convierte errores de hooks en warnings
-      "react-hooks/exhaustive-deps": "warn", // Convierte errores de dependencias en warnings
-
-      // Configuración de Next.js (hacer menos estricto)
-      "@next/next/no-img-element": "warn", // Convierte errores de img en warnings
-
-      // Configuración adicional para hacer menos estricto
-      // (react/no-unescaped-entities ya configurado arriba)
-
-      // Configuración de React
-      "react/react-in-jsx-scope": "off", // No necesario en React 17+
-      "react/prop-types": "off", // No necesario con TypeScript o para proyectos rápidos
-      "react/display-name": "off", // Demasiado estricto
-      "react/no-unescaped-entities": "warn", // Convierte en warning en lugar de error
-      "react/jsx-uses-react": "off", // No necesario en React 17+
+      // Configuración menos estricta para archivos .jsx
+      "no-unused-vars": "off",
+      "no-undef": "warn",
+      "react-hooks/rules-of-hooks": "warn",
+      "react-hooks/exhaustive-deps": "warn",
+      "@next/next/no-img-element": "warn",
+      "react/react-in-jsx-scope": "off",
+      "react/prop-types": "off",
+      "react/display-name": "off",
+      "react/no-unescaped-entities": "warn",
+      "react/jsx-uses-react": "off",
       "react/jsx-uses-vars": "error",
+    },
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
+  },
 
-      // Reglas recomendadas de React (equivalente a plugin:react/recommended)
-      "react/jsx-key": "error",
-      "react/jsx-no-duplicate-props": "error",
-      "react/jsx-no-undef": "error",
-      "react/no-array-index-key": "warn",
-      "react/no-children-prop": "error",
-      "react/no-danger": "warn",
-      "react/no-danger-with-children": "error",
-      "react/no-deprecated": "warn",
-      "react/no-direct-mutation-state": "error",
-      "react/no-find-dom-node": "error",
-      "react/no-is-mounted": "error",
-      "react/no-render-return-value": "error",
-      "react/no-string-refs": "error",
-      "react/no-unknown-property": "error",
-      "react/no-unsafe": "warn",
-      "react/require-render-return": "error",
-      "react/self-closing-comp": "error",
-      "react/sort-comp": "off",
-      "react/sort-prop-types": "off",
-      "react/style-prop-object": "error",
-      "react/void-dom-elements-no-children": "error",
+  // Configuración para archivos .ts y .tsx (lógica y hooks)
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    plugins: {
+      react: pluginReact,
+      "react-hooks": pluginReactHooks,
+      "@next/next": pluginNext,
+      "@typescript-eslint": pluginTypeScript,
+    },
+    languageOptions: {
+      parser: parserTypeScript,
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        React: "readonly",
+      },
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+        ecmaFeatures: {
+          jsx: true,
+        },
+        project: ["./tsconfig.json"],
+      },
+    },
+    rules: {
+      // TypeScript específico
+      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/ban-types": "off",
+      "@typescript-eslint/no-inferrable-types": "off",
+      // React rules
+      "react-hooks/rules-of-hooks": "warn",
+      "react-hooks/exhaustive-deps": "warn",
+      "@next/next/no-img-element": "warn",
+      "react/react-in-jsx-scope": "off",
+      "react/prop-types": "off",
+      "react/display-name": "off",
+      "react/no-unescaped-entities": "warn",
+      "react/jsx-uses-react": "off",
+      "react/jsx-uses-vars": "error",
     },
     settings: {
       react: {

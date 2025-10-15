@@ -1,37 +1,19 @@
 "use client";
 
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { Input, Select, CheckboxGroupField } from "@/components/design-system";
 import { Building2, UploadIcon } from "lucide-react";
 import { CompanyAvatar } from "@/components/ui/company-avatar";
 import { FormCard } from "@/components/design-system/form-card";
 import { PrimaryButton } from "@/components/ui/buttons/primary-button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select/select";
-import { IndustryCategoriesSection } from "./industry-categories";
-import { CustomIndustriesSection } from "./custom-industries-section";
-import { Checkbox } from "@/components/ui/checkbox";
+import { INDUSTRY_OPTIONS } from "@/lib/configs/constants/industries";
+import { InputCheckboxGroup } from "@/ds/input-checkbox-group";
 
 export function CompanyInformation({
-  industryValue,
   onIndustryValueChange,
-  customIndustries,
-  onCustomIndustriesChange,
-  showCustomIndustries,
-  onShowCustomIndustriesChange,
   logoUrl,
   onLogoUrlChange,
   initialData = {},
 }) {
-  // Debug: Log the initial company size value
-  console.log("CompanyInformation initialData:", initialData);
-  console.log("Company size value:", initialData.company_size);
-
   return (
     <FormCard
       title="Company Information"
@@ -50,51 +32,33 @@ export function CompanyInformation({
           </div>
 
           <div className="w-full flex flex-col gap-3">
-            <div className="flex-1">
-              {/* Company Name */}
-              <div className="col-span-2">
-                <Label
-                  htmlFor="company_name"
-                  className="text-sm font-medium text-gray-700 mb-1.5 block"
-                >
-                  Company Name
-                </Label>
-                <Input
-                  type="text"
-                  name="company_name"
-                  id="company_name"
-                  placeholder="Enter company name"
-                  className="w-full"
-                  defaultValue={initialData.company_name || ""}
-                />
-              </div>
-            </div>
-            {/* Company Logo URL - Right Side */}
-            <div className="flex-1">
-              <Label
-                htmlFor="logo_url"
-                className="text-sm font-medium text-gray-700 mb-1.5 block"
-              >
-                Company Logo
-              </Label>
+            {/* Company Name */}
+            <Input
+              label="Company Name"
+              type="text"
+              name="company_name"
+              id="company_name"
+              placeholder="Enter company name"
+              defaultValue={initialData.company_name || ""}
+            />
 
-              <div className="flex flex-row gap-4">
-                <Input
-                  type="text"
-                  name="logo_url"
-                  id="logo_url"
-                  placeholder="Logo URL"
-                  className="w-full"
-                  value={logoUrl || initialData.logo_url || ""}
-                  onChange={(e) => onLogoUrlChange?.(e.target.value)}
-                />
-                <PrimaryButton
-                  type="button"
-                  icon={<UploadIcon />}
-                  text="Upload Logo"
-                  className="w-fit"
-                />
-              </div>
+            {/* Company Logo URL - Right Side */}
+            <div className="flex flex-row gap-4 items-end">
+              <Input
+                label="Company Logo"
+                type="text"
+                name="logo_url"
+                id="logo_url"
+                placeholder="Logo URL"
+                value={logoUrl || initialData.logo_url || ""}
+                onChange={(e) => onLogoUrlChange?.(e.target.value)}
+              />
+              <PrimaryButton
+                type="button"
+                icon={<UploadIcon />}
+                text="Upload Logo"
+                className="w-fit whitespace-nowrap h-9"
+              />
             </div>
           </div>
         </div>
@@ -102,120 +66,63 @@ export function CompanyInformation({
         {/* Second Row: Company Information Grid */}
         <div className="grid grid-cols-2 gap-x-8 gap-y-6">
           {/* Company Size */}
-          <div>
-            <Label
-              htmlFor="company_size"
-              className="text-sm font-medium text-gray-700 mb-1.5 block"
-            >
-              Company Size
-            </Label>
-            <Select
-              name="company_size"
-              id="company_size"
-              defaultValue={initialData.company_size || undefined}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select company size" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1-10">1-10 employees</SelectItem>
-                <SelectItem value="11-50">11-50 employees</SelectItem>
-                <SelectItem value="51-200">51-200 employees</SelectItem>
-                <SelectItem value="201-500">201-500 employees</SelectItem>
-                <SelectItem value="501-1000">501-1000 employees</SelectItem>
-                <SelectItem value="1001+">1001+ employees</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <Select
+            label="Company Size"
+            name="company_size"
+            id="company_size"
+            placeholder="Select company size"
+            defaultValue={initialData.company_size}
+            options={[
+              { value: "1-10", label: "1-10 employees" },
+              { value: "11-50", label: "11-50 employees" },
+              { value: "51-200", label: "51-200 employees" },
+              { value: "201-500", label: "201-500 employees" },
+              { value: "501-1000", label: "501-1000 employees" },
+              { value: "1001+", label: "1001+ employees" },
+            ]}
+          />
 
           {/* Founded Year */}
-          <div>
-            <Label
-              htmlFor="founded_year"
-              className="text-sm font-medium text-gray-700 mb-1.5 block"
-            >
-              Founded Year
-            </Label>
-            <Input
-              type="text"
-              name="founded_year"
-              id="founded_year"
-              placeholder="e.g., 2020"
-              className="w-full"
-              defaultValue={initialData.founded_year || ""}
-            />
-          </div>
+          <Input
+            label="Founded Year"
+            type="text"
+            name="founded_year"
+            id="founded_year"
+            placeholder="e.g., 2020"
+            defaultValue={initialData.founded_year || ""}
+          />
 
           {/* Location */}
-          <div>
-            <Label
-              htmlFor="location"
-              className="text-sm font-medium text-gray-700 mb-1.5 block"
-            >
-              Location
-            </Label>
-            <Input
-              type="text"
-              name="location"
-              id="location"
-              placeholder="City, State/Country"
-              className="w-full"
-              defaultValue={initialData.location || ""}
-            />
-          </div>
+          <Input
+            label="Location"
+            type="text"
+            name="location"
+            id="location"
+            placeholder="City, State/Country"
+            defaultValue={initialData.location || ""}
+          />
 
           {/* Website */}
-          <div>
-            <Label
-              htmlFor="website"
-              className="text-sm font-medium text-gray-700 mb-1.5 block"
-            >
-              Website
-            </Label>
-            <Input
-              name="website"
-              id="website"
-              placeholder="https://example.com"
-              className="w-full"
-              defaultValue={initialData.website || ""}
-            />
-          </div>
+          <Input
+            label="Website"
+            name="website"
+            id="website"
+            placeholder="https://example.com"
+            defaultValue={initialData.website || ""}
+          />
         </div>
         {/* Industry */}
-        <div className="flex flex-col w-full gap-2">
-          <Label
-            htmlFor="industries"
-            className="text-sm font-medium text-gray-700 mb-1.5 block"
-          >
-            Industry
-          </Label>
-          <IndustryCategoriesSection
-            value={industryValue}
-            onValueChange={onIndustryValueChange}
-            initialSelectedIndustries={initialData.industries || []}
-          />
-          <div className="flex items-center space-x-2 mt-2">
-            <Checkbox
-              id="custom_industry"
-              checked={showCustomIndustries}
-              onCheckedChange={onShowCustomIndustriesChange}
-            />
-            <Label
-              htmlFor="custom_industry"
-              className="text-sm font-normal text-gray-600 cursor-pointer"
-            >
-              Add custom industry
-            </Label>
-          </div>
-          {/* Custom Industries */}
-          {showCustomIndustries && (
-            <CustomIndustriesSection
-              customIndustries={customIndustries}
-              setCustomIndustries={onCustomIndustriesChange}
-              placeholder="Add your custom industry types and press Enter"
-            />
-          )}
-        </div>
+        <InputCheckboxGroup
+          label="Industry"
+          id="industries"
+          name="industries"
+          items={INDUSTRY_OPTIONS}
+          initialSelectedItems={initialData.industries || []}
+          onChange={onIndustryValueChange}
+          allowCustomItems={true}
+          customItemsPlaceholder="Add your custom industry and press Enter"
+          columns={3}
+        />
       </div>
     </FormCard>
   );

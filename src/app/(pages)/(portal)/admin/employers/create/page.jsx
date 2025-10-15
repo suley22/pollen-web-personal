@@ -22,7 +22,8 @@ import { InternalPollenData } from "./_components/internal-pollen-data";
 import { useToast } from "@/lib/hooks/use-toast";
 import { AdminRoutes } from "../../router";
 import { FileText } from "lucide-react";
-import { FormCard, Textarea } from "@/components/design-system";
+import { FormCard } from "@/components/design-system/form-card";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function CreateProfilePage() {
   const formRef = useRef(null);
@@ -103,7 +104,7 @@ export default function CreateProfilePage() {
                 name="company_about"
                 placeholder="Describe the company, its mission, values, and what makes it unique..."
                 className="min-h-[150px] resize-y"
-                defaultValue={industryValue.company_about}
+                defaultValue={"industryValue?.company_abou"}
               />
             </FormCard>
 

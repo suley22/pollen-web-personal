@@ -56,13 +56,13 @@ export function HomeJobs() {
                       {/* Job Details */}
                       <div className="space-y-2 text-sm">
                         {/* Company and Date */}
-                        <div className="flex items-start gap-4">
-                          <div className="flex items-start gap-2 text-muted-foreground">
-                            <Building2 className="w-4 h-4 flex-shrink-0 text-pink-600 mt-0.5" />
+                        <div className="flex flex-row items-start gap-4">
+                          <div className="flex justfy-center gap-2 text-muted-foreground">
+                            <Building2 className="w-4 h-4 text-pink-600 mt-0.5" />
                             <span className="truncate">{job.company_name}</span>
                           </div>
-                          <div className="flex items-start gap-2 text-muted-foreground">
-                            <Calendar className="w-4 h-4 flex-shrink-0 text-pink-600 mt-0.5" />
+                          <div className="flex justfy-center gap-2 text-muted-foreground mt-0.5">
+                            <Calendar className="w-4 h-4 text-pink-600 " />
                             <span className="truncate">
                               {job.status === "draft"
                                 ? `Created ${new Date(job.assigned_date).toLocaleDateString()}`
@@ -126,7 +126,7 @@ export function HomeJobs() {
                       <div className="flex items-center gap-1">
                         {job.status !== "draft" && (
                           <Button
-                            variant="ghost"
+                            variant="pollen"
                             size="sm"
                             className="h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
                             onClick={(e) => {
@@ -139,7 +139,7 @@ export function HomeJobs() {
                           </Button>
                         )}
                         <Button
-                          variant="ghost"
+                          variant="pollen"
                           size="sm"
                           className={
                             job.status === "draft"

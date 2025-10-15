@@ -6,6 +6,16 @@ import { Building2, MapPin, Globe } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { InfoField } from "./info-field";
 
+// Helper function to ensure URL has proper protocol
+function formatUrl(url) {
+  if (!url) return null;
+  // If URL doesn't start with http:// or https://, add https://
+  if (!url.match(/^https?:\/\//i)) {
+    return `https://${url}`;
+  }
+  return url;
+}
+
 export function CompanyInformation({ company }) {
   return (
     <Card className="overflow-hidden py-6">
@@ -68,7 +78,7 @@ export function CompanyInformation({ company }) {
                 value={
                   company.website ? (
                     <a
-                      href={company.website}
+                      href={formatUrl(company.website)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 hover:underline truncate"

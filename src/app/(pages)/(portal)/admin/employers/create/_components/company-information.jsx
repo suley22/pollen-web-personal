@@ -183,7 +183,6 @@ export function CompanyInformation({
                 Website
               </Label>
               <Input
-                type="url"
                 name="website"
                 id="website"
                 placeholder="https://example.com"

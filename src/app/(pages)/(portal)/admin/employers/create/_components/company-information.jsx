@@ -5,7 +5,7 @@ import { Building2, UploadIcon } from "lucide-react";
 import { CompanyAvatar } from "@/components/ui/company-avatar";
 import { FormCard } from "@/components/design-system/form-card";
 import { PrimaryButton } from "@/components/ui/buttons/primary-button";
-import { ImageUploader } from "@/components/ui/image-uploader";
+import { FileSelector } from "@/components/ui/file-selector";
 import { INDUSTRY_OPTIONS } from "@/lib/configs/constants/industries";
 import { COMPANY_SIZE_OPTIONS } from "@/lib/configs/constants/company-size";
 import { InputCheckboxGroup } from "@/ds/input-checkbox-group";
@@ -15,6 +15,7 @@ export function CompanyInformation({
   logoUrl,
   onLogoUrlChange,
   onIndustryValueChange,
+  onFileSelect,
 }) {
   return (
     <FormCard
@@ -55,14 +56,15 @@ export function CompanyInformation({
                 value={logoUrl || initialData?.logo_url || ""}
                 onChange={(e) => onLogoUrlChange?.(e.target.value)}
               />
-              <ImageUploader
-                onUploadComplete={(uploadedUrl) => {
-                  onLogoUrlChange?.(uploadedUrl);
+              <FileSelector
+                onFileSelect={(file, fileName) => {
+                  // Set only the filename in the input field
+                  onLogoUrlChange?.(fileName);
+                  // Notify parent about file selection for pending upload
+                  onFileSelect?.('logo_url', file, fileName);
                 }}
                 buttonText="Upload Logo"
                 buttonIcon={<UploadIcon />}
-                bucketName="images"
-                folder="employer_logo"
                 className="w-fit whitespace-nowrap h-9"
               />
             </div>

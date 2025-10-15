@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useActionState } from "react";
 import { useToastNotifications } from "@/hooks/useToastNotifications";
 import { useNavigation } from "@/hooks/useNavigation";
+import { usePendingFileUpload } from "@/hooks/usePendingFileUpload";
 import { AdminRoutes } from "../../router";
 
 /**
@@ -14,6 +15,15 @@ export function useEmployersPage({ action, employer = null }) {
   const { navigateTo, navigateWithDelay } = useNavigation();
   const { showSuccess, showError } = useToastNotifications();
   const lastProcessedState = useRef(null);
+
+  // Pending file uploads
+  const {
+    addPendingFile,
+    uploadAllPendingFiles,
+    hasPendingFiles,
+    clearPendingFiles,
+    isUploading: isUploadingFiles
+  } = usePendingFileUpload();
 
   // Form action state
   const [state, formAction, isPending] = useActionState(action, null);
@@ -35,6 +45,11 @@ export function useEmployersPage({ action, employer = null }) {
     navigateTo(AdminRoutes.employers);
   };
 
+  // Handle file selection
+  const handleFileSelect = (fieldName, file, fileName) => {
+    addPendingFile(fieldName, file, fileName);
+  };
+
   // Handle action state changes
   useEffect(() => {
     // Skip if state hasn't changed or is null
@@ -46,16 +61,61 @@ export function useEmployersPage({ action, employer = null }) {
 
     if (state?.success) {
       showSuccess("Success!", state.message);
+      clearPendingFiles(); // Clear pending files on success
       navigateWithDelay(AdminRoutes.employers);
     } else if (state?.error) {
       showError("Error", state.error);
       setIsDialogOpen(false);
     }
-  }, [state, navigateWithDelay, showSuccess, showError, setIsDialogOpen]);
+  }, [state, navigateWithDelay, showSuccess, showError, setIsDialogOpen, clearPendingFiles]);
 
-  // Handle form submission
-  const handleSubmit = () => {
-    if (formRef.current) {
+  // Handle form submission with file uploads
+  const handleSubmit = async () => {
+    if (!formRef.current) return;
+
+    // If there are pending files, upload them first
+    if (hasPendingFiles()) {
+      try {
+        // Upload all pending files
+        const uploadResults = await uploadAllPendingFiles("images", "employer_logo");
+        
+        // Update form with the uploaded URLs
+        const formData = new FormData(formRef.current);
+        
+        // Replace filename with actual URL for each uploaded file
+        Object.entries(uploadResults).forEach(([fieldName, url]) => {
+          if (url) {
+            formData.set(fieldName, url);
+          }
+        });
+
+        // Create a new form with updated data and submit it
+        const tempForm = document.createElement('form');
+        tempForm.style.display = 'none';
+        
+        // Copy all form data to temp form
+        for (const [key, value] of formData.entries()) {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = key;
+          input.value = value;
+          tempForm.appendChild(input);
+        }
+        
+        document.body.appendChild(tempForm);
+        
+        // Submit with the action
+        const submitFormData = new FormData(tempForm);
+        formAction(submitFormData);
+        
+        document.body.removeChild(tempForm);
+        
+      } catch (error) {
+        showError("Upload Failed", "Failed to upload files. Please try again.");
+        console.error("File upload error:", error);
+      }
+    } else {
+      // No pending files, submit normally
       formRef.current.requestSubmit();
     }
   };
@@ -66,7 +126,7 @@ export function useEmployersPage({ action, employer = null }) {
     // Form state
     state,
     formAction,
-    isPending,
+    isPending: isPending || isUploadingFiles,
     // Field states
     checked,
     setChecked,
@@ -81,5 +141,8 @@ export function useEmployersPage({ action, employer = null }) {
     // Handlers
     handleBack,
     handleSubmit,
+    handleFileSelect,
+    // File upload state
+    hasPendingFiles,
   };
 }

@@ -29,163 +29,136 @@ export function HomeCards() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {/* Job Seekers Card */}
-      <Card
-        className="cursor-pointer hover:shadow-lg transition-all duration-200 bg-blue-50 shadow-md p-6"
-        onClick={() => router.push(AdminRoutes.allJobSeekers)}
-      >
-        <CardHeader className="pb-3 items-center">
-          <CardTitle
-            className="text-sm font-medium text-gray-900 flex "
-            style={{ fontFamily: "Sora, sans-serif" }}
-          >
-            <Users className="h-4 w-4 mr-2" />
-            Community
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <div className="flex items-baseline justify-between">
-            <div className="px-1 text-2xl font-bold text-gray-900">
-              {stats?.totalCommunityMembers.toLocaleString()}
+      <Card className="border-2 border-purple-200 bg-purple-50 hover:shadow-lg transition-shadow">
+        <CardContent className="p-6">
+          <div className="flex items-start mb-2">
+            <div className="rounded-full bg-purple-100 p-4">
+              <Users className="h-8 w-8 text-purple-600" />
+            </div>
+            <div className="space-y-1 ml-6">
+              <p className="text-sm font-medium text-muted-foreground">
+                Community
+              </p>
+              <p className="text-4xl font-bold">
+                {stats?.totalCommunityMembers.toLocaleString()}
+              </p>
             </div>
           </div>
-          <div className="flex flex-row justify-between items-center pt-2">
-            <div className="flex flex-row items-center gap-1">
-              <TrendingUp className="h-3 w-3 text-green-600 mr-1" />
-              <span className="text-sm text-green-600 font-medium">
-                +{stats?.newSignupsToday} today
-              </span>
-            </div>
-            <div className="flex flex-row">
-              <div className="flex gap-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-xs p-1"
-                  //TODO:
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push("/admin/community/members");
-                  }}
-                >
-                  <Users className="h-3 w-3 mr-1" />
-                  View All
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-xs p-1"
-                  //TODO:
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    router.push("/admin/community/analytics/");
-                  }}
-                >
-                  <BarChart3 className="h-3 w-3 mr-1" />
-                  Analytics
-                </Button>
-              </div>
-            </div>
+          <div className="flex items-center gap-2 mb-2 text-sm text-green-600 font-medium">
+            <TrendingUp className="h-4 w-4" />
+            <span>+{stats?.newSignupsToday} today</span>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 bg-purple-50 hover:bg-purple-100"
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push("/admin/community/members");
+              }}
+            >
+              <Eye className="mr-2 h-4 w-4" />
+              View All
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 bg-purple-50 hover:bg-purple-100"
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push("/admin/community/analytics/");
+              }}
+            >
+              <BarChart3 className="mr-2 h-4 w-4" />
+              Analytics
+            </Button>
           </div>
         </CardContent>
       </Card>
 
       {/* Company Profiles Card */}
-      <Card
-        className="cursor-pointer hover:shadow-lg transition-all duration-200 bg-orange-50 shadow-md p-6"
-        onClick={() => router.push(AdminRoutes.employers)}
-      >
-        <CardHeader className="pb-3">
-          <CardTitle
-            className="text-sm font-medium text-gray-900 flex items-center"
-            style={{ fontFamily: "Sora, sans-serif" }}
-          >
-            <Building2 className="h-4 w-4 mr-2" />
-            Company Profiles
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <div className="flex items-baseline justify-between">
-            <div className="text-2xl font-bold text-gray-900">3</div>
-            <div className="flex gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-xs p-1"
-                //TODO:
-                // onClick={(e) => {
-                //   e.stopPropagation();
-                //   router.push();
-                // }}
-              >
-                <Plus className="h-3 w-3 mr-1" />
-                Create
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-xs p-1"
-                //TODO:
-                onClick={(e) => {
-                  e.stopPropagation();
-                  router.push("/admin/employers-managment");
-                }}
-              >
-                <Eye className="h-3 w-3 mr-1" />
-                View All
-              </Button>
+      <Card className="border-2 border-orange-200 bg-orange-50 hover:shadow-lg transition-shadow">
+        <CardContent className="p-6">
+          <div className="flex items-start mb-6">
+            <div className="rounded-full bg-orange-100 p-4">
+              <Building2 className="h-8 w-8 text-orange-600" />
             </div>
+            <div className="space-y-1 ml-6">
+              <p className="text-sm font-medium text-muted-foreground">
+                Company Profiles
+              </p>
+              <p className="text-4xl font-bold">3</p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 bg-orange-50 hover:bg-orange-100"
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push("/admin/employers-managment");
+              }}
+            >
+              <Eye className="mr-2 h-4 w-4" />
+              View All
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 bg-orange-50 hover:bg-orange-100"
+              //TODO:
+              // onClick={(e) => {
+              //   e.stopPropagation();
+              //   router.push();
+              // }}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Create
+            </Button>
           </div>
         </CardContent>
       </Card>
 
       {/* Jobs Card */}
-      <Card
-        className="cursor-pointer hover:shadow-lg transition-all duration-200 bg-pink-50 shadow-md p-6"
-        //TODO:
-        onClick={() => router.push("/admin/jobs-managment")}
-      >
-        <CardHeader className="pb-3">
-          <CardTitle
-            className="text-sm font-medium text-gray-900 flex items-center"
-            style={{ fontFamily: "Sora, sans-serif" }}
-          >
-            <FileText className="h-4 w-4 mr-2" />
-            Jobs
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="pt-0">
-          <div className="flex items-baseline justify-between">
-            <div className="text-2xl font-bold text-gray-900">
-              {stats?.liveJobs}
+      <Card className="border-2 border-pink-200 bg-pink-50 hover:shadow-lg transition-shadow">
+        <CardContent className="p-6">
+          <div className="flex items-start mb-6">
+            <div className="rounded-full bg-pink-100 p-4">
+              <FileText className="h-8 w-8 text-pink-600" />
             </div>
-            <div className="flex gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-xs p-1"
-                //TODO:
-                // onClick={(e) => {
-                //   e.stopPropagation();
-                //   router.push();
-                // }}
-              >
-                <Plus className="h-3 w-3 mr-1" />
-                Create
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-xs p-1"
-                //TODO:
-                onClick={(e) => {
-                  e.stopPropagation();
-                  router.push("/admin/jobs-managment");
-                }}
-              >
-                <Eye className="h-3 w-3 mr-1" />
-                View All
-              </Button>
+            <div className="space-y-1 ml-6">
+              <p className="text-sm font-medium text-muted-foreground">Jobs</p>
+              <p className="text-4xl font-bold">{stats?.liveJobs}</p>
             </div>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 bg-pink-50 hover:bg-pink-100"
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push("/admin/jobs-managment");
+              }}
+            >
+              <Eye className="mr-2 h-4 w-4" />
+              View All
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 bg-pink-50 hover:bg-pink-100"
+              //TODO:
+              // onClick={(e) => {
+              //   e.stopPropagation();
+              //   router.push();
+              // }}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Create
+            </Button>
           </div>
         </CardContent>
       </Card>

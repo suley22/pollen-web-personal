@@ -81,15 +81,15 @@ export function StatisticsCards() {
         <Card
           className={cn(
             "w-full cursor-pointer transition-all hover:shadow-md hover:scale-[1.02]",
-            selectedStatus === "pending" && "ring-2 ring-yellow-500",
+            selectedStatus === "draft" && "ring-2 ring-yellow-500",
           )}
-          onClick={() => handleCardClick("pending")}
+          onClick={() => handleCardClick("draft")}
         >
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
-                  Pending
+                  Draft
                 </p>
                 <p className="text-2xl font-bold text-yellow-600">
                   {statistics.pending}

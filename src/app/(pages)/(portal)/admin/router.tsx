@@ -13,7 +13,7 @@ export const AdminRoutes = {
   employersEdit: (id) => `${basePath}/employers/edit/${id}`,
   allJobSeekers: `${basePath}/job-seekers`,
   roles: `${basePath}/roles`,
-  applicants: (jobId) => `${basePath}/jobs/job-applicants/${jobId}`,
+  jobsApplicants: (jobId) => `${basePath}/jobs/job-applicants/${jobId}`,
 };
 
 export const ADMIN_ROUTES = Object.values(AdminRoutes);

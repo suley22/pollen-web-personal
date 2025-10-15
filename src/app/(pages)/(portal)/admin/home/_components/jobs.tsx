@@ -142,7 +142,9 @@ export function HomeJobs() {
                                 className="h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  router.push(AdminRoutes.applicants(job.id));
+                                  router.push(
+                                    AdminRoutes.jobsApplicants(job.id),
+                                  );
                                 }}
                               >
                                 <Users className="h-4 w-4 mr-1" />

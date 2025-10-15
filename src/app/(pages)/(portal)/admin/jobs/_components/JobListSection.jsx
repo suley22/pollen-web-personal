@@ -1,14 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Eye,
-  Star,
-  Building2,
-  Calendar,
-  UserCircle,
-  Users,
-} from "lucide-react";
+import { Eye, Building2, Calendar, UserCircle, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { AdminRoutes } from "../../router";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -95,9 +88,6 @@ export default function JobListSection({ form }) {
                     {/* Job Title and Status */}
                     <div className="flex items-center gap-3 flex-wrap mb-2">
                       <h3 className="text-lg font-semibold text-foreground truncate">
-                        {form.hasActionRequired(job) && (
-                          <Star className="w-4 h-4 text-pink-600 fill-pink-600 inline mr-2" />
-                        )}
                         {job.job_title}
                       </h3>
                       {form.getStatusBadge(job.status)}
@@ -207,7 +197,7 @@ export default function JobListSection({ form }) {
                           className="h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
                           onClick={(e) => {
                             e.stopPropagation();
-                            router.push(AdminRoutes.jobApplicants(job.id));
+                            router.push(AdminRoutes.jobsApplicants(job.id));
                           }}
                         >
                           <Users className="h-4 w-4 mr-1" />

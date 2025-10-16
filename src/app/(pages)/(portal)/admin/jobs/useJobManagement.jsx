@@ -13,10 +13,24 @@ export function useJobManagement() {
   const [error, setError] = useState(null);
   const loadingRef = useRef(false);
 
-  // Debounce search term
+  // Debug: Log filter changes
+  useEffect(() => {
+    console.log("🔄 Filters changed:", {
+      selectedStatus,
+      selectedAssignment,
+      debouncedSearchTerm,
+    });
+  }, [selectedStatus, selectedAssignment, debouncedSearchTerm]);
+
+  // Debounce search term y resetear filtros cuando se busca
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
+      // Si hay término de búsqueda, resetear los filtros
+      if (searchTerm.trim()) {
+        setSelectedStatus("all");
+        setSelectedAssignment("all");
+      }
     }, 500);
 
     return () => clearTimeout(timeoutId);
@@ -33,9 +47,16 @@ export function useJobManagement() {
     setError(null);
 
     try {
+      // Si hay búsqueda activa, ignorar los filtros y buscar en todos
+      const statusToUse = debouncedSearchTerm.trim() ? "all" : selectedStatus;
+      const assignmentToUse = debouncedSearchTerm.trim()
+        ? "all"
+        : selectedAssignment;
+
       const result = await getJobList({
-        status: selectedStatus,
+        status: statusToUse,
         searchTerm: debouncedSearchTerm.trim(),
+        assignment: assignmentToUse,
       });
 
       if (result.success) {
@@ -54,6 +75,15 @@ export function useJobManagement() {
           offersExtended: 2,
           hiresMade: 1,
         }));
+        console.log(
+          `✅ Loaded ${jobsResult.length} jobs:`,
+          jobsResult.map((j) => ({
+            id: j.id,
+            title: j.job_title,
+            status: j.status,
+            assigned_to: j.assigned_to,
+          })),
+        );
         setJobs(jobsResult || []);
         setError(null);
       } else {
@@ -67,9 +97,9 @@ export function useJobManagement() {
       setLoading(false);
       loadingRef.current = false;
     }
-  }, [selectedStatus, debouncedSearchTerm]);
+  }, [selectedStatus, debouncedSearchTerm, selectedAssignment]);
 
-  // Load jobs when loadJobs function changes
+  // Load jobs when filters change
   useEffect(() => {
     loadJobs();
   }, [loadJobs]);
@@ -119,6 +149,20 @@ export function useJobManagement() {
     );
   }, []);
 
+  // Función personalizada para cambiar el status y limpiar el buscador
+  const handleStatusChange = useCallback((status) => {
+    setSelectedStatus(status);
+    setSearchTerm("");
+    setDebouncedSearchTerm("");
+  }, []);
+
+  // Función personalizada para cambiar el assignment y limpiar el buscador
+  const handleAssignmentChange = useCallback((assignment) => {
+    setSelectedAssignment(assignment);
+    setSearchTerm("");
+    setDebouncedSearchTerm("");
+  }, []);
+
   return useMemo(
     () => ({
       form: {
@@ -129,11 +173,11 @@ export function useJobManagement() {
         jobs: jobs,
         loading: loading,
         error: error,
-        setSelectedStatus: setSelectedStatus,
+        setSelectedStatus: handleStatusChange,
         setSearchTerm: setSearchTerm,
         loadJobs: loadJobs,
         getStatusBadge: getStatusBadge,
-        setSelectedAssignment: setSelectedAssignment,
+        setSelectedAssignment: handleAssignmentChange,
         setActiveTab: setActiveTab,
         hasActionRequired: hasActionRequired,
       },
@@ -149,6 +193,8 @@ export function useJobManagement() {
       loadJobs,
       getStatusBadge,
       hasActionRequired,
+      handleStatusChange,
+      handleAssignmentChange,
     ],
   );
 }

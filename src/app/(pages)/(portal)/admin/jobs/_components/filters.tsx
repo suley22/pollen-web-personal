@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import { Search, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,10 +12,12 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import { useJobManagement } from "../useJobManagement";
 
-const Filters: React.FC = () => {
-  const { form } = useJobManagement();
+interface FiltersProps {
+  form: any;
+}
+
+const Filters: React.FC<FiltersProps> = ({ form }) => {
   const {
     searchTerm,
     setSearchTerm,

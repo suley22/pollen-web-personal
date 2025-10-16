@@ -40,23 +40,6 @@ export function InternalPollenData({
           />
 
           <InfoField
-            label="Previous hiring methods"
-            value={
-              previousHiringMethods && previousHiringMethods.length > 0 ? (
-                <div className="flex flex-wrap gap-2 mt-1">
-                  {previousHiringMethods.map((method) => (
-                    <Badge key={method} variant="outline" className="text-xs">
-                      {method}
-                    </Badge>
-                  ))}
-                </div>
-              ) : (
-                "Not specified"
-              )
-            }
-          />
-
-          <InfoField
             label="How they've hired previously"
             value={
               previousHiringMethods && previousHiringMethods.length > 0 ? (
@@ -73,22 +56,7 @@ export function InternalPollenData({
             }
           />
 
-          <InfoField
-            label="How they've hired previously"
-            value={
-              previousHiringMethods && previousHiringMethods.length > 0 ? (
-                <div className="flex flex-wrap gap-2 mt-1">
-                  {previousHiringMethods.map((method) => (
-                    <Badge key={method} variant="outline" className="text-xs">
-                      {method}
-                    </Badge>
-                  ))}
-                </div>
-              ) : (
-                "Not specified"
-              )
-            }
-          />
+          
           <InfoField label="Additional Notes" value={additionalNotes} />
         </div>
       </FormCard>

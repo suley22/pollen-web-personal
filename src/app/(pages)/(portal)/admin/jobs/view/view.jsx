@@ -392,23 +392,11 @@ export default function JobsManagmentReviewPage({
             </FormCard>
 
             {/* Internal Notes Card */}
-            <FormCard
-              title="Internal Notes"
+            <DescriptionCard
+              title="Interal Notes"
               icon={<Lightbulb className="h-5 w-5" />}
-            >
-              {!isEditing ? (
-                <p className="text-gray-700">{job.internal_notes}</p>
-              ) : (
-                <Textarea
-                  value={editedJob?.internal_notes || ""}
-                  onChange={(e) =>
-                    updateEditedJob("internalNotes", e.target.value)
-                  }
-                  className="min-h-[80px]"
-                  placeholder="Add internal notes about this role..."
-                />
-              )}
-            </FormCard>
+              value={job.internal_notes}
+            />
 
             {/* Action Buttons - Only show when editing */}
             {isEditing && (
@@ -654,7 +642,6 @@ export default function JobsManagmentReviewPage({
                             <div className="prose max-w-none">
                               <div
                                 className="whitespace-pre-wrap leading-relaxed text-gray-700"
-                                // eslint-disable-next-line react/no-danger
                                 dangerouslySetInnerHTML={{
                                   __html: assessmentData.generatedContent
                                     .replace(/\n\n/g, "</p><p>")
@@ -702,27 +689,6 @@ export default function JobsManagmentReviewPage({
                       <div className="text-sm text-amber-800 leading-relaxed whitespace-pre-wrap">
                         {assessmentData.scoringCriteria}
                       </div>
-                    </div>
-                  )}
-
-                  {isEditing && (
-                    <div className="flex justify-end gap-2 pt-4">
-                      <Button
-                        variant="outline"
-                        onClick={handleCancel}
-                        size="sm"
-                      >
-                        <X className="h-4 w-4 mr-2" />
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={handleSave}
-                        size="sm"
-                        className="bg-blue-600 hover:bg-blue-700"
-                      >
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        Save Changes
-                      </Button>
                     </div>
                   )}
                 </>

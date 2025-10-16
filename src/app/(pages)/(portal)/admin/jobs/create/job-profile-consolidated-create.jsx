@@ -587,19 +587,16 @@ export default function JobsManagmentCreatePage() {
 
           <TabsContent value="assessment" className="space-y-6">
             {/* Assessment Creation Card */}
-            <Card className="p-6">
-              <CardHeader>
-                <CardTitle className="flex items-center pb-4">
-                  <Brain className="h-5 w-5 mr-2" />
-                  Skills Assessment Creation
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
+            <FormCard
+              icon={<Brain className="h-5 w-5 text-gray-500" />}
+              title="Create Skills Assessment"
+            >
+              <div className="flex flex-col gap-6">
                 {/* Assessment Instructions */}
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="font-medium text-blue-900 mb-2">
+                  <div className="font-medium text-blue-900 mb-2">
                     Assessment Guidelines
-                  </h4>
+                  </div>
                   <p className="text-sm text-blue-800">
                     Create a skills assessment that will help evaluate
                     candidates for this role. The assessment should include
@@ -608,9 +605,11 @@ export default function JobsManagmentCreatePage() {
                 </div>
 
                 {/* Assessment Basic Info */}
-                <div className="space-y-4">
+                <div className="flex flex-col gap-4">
                   <div>
-                    <Label htmlFor="assessmentTitle">Assessment Title</Label>
+                    <Label htmlFor="assessmentTitle" className="mb-2">
+                      Assessment Title
+                    </Label>
                     <Input
                       id="assessmentTitle"
                       name="assessment_title"
@@ -627,7 +626,7 @@ export default function JobsManagmentCreatePage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="estimatedTime">
+                      <Label htmlFor="estimatedTime" className="mb-2">
                         Estimated Time (minutes)
                       </Label>
                       <Input
@@ -645,7 +644,9 @@ export default function JobsManagmentCreatePage() {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="totalQuestions">Total Questions</Label>
+                      <Label htmlFor="totalQuestions" className="mb-2">
+                        Total Questions
+                      </Label>
                       <Input
                         id="totalQuestions"
                         name="total_questions"
@@ -663,7 +664,7 @@ export default function JobsManagmentCreatePage() {
                   </div>
 
                   <div>
-                    <Label htmlFor="assessmentInstructions">
+                    <Label htmlFor="assessmentInstructions" className="mb-2">
                       Assessment Instructions
                     </Label>
                     <Textarea
@@ -683,13 +684,13 @@ export default function JobsManagmentCreatePage() {
                 </div>
 
                 {/* Opening Question */}
-                <Card className="border-l-4 border-l-purple-500">
-                  <CardHeader>
-                    <CardTitle className="text-lg">Opening Question</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
+                <FormCard
+                  title="Opening Question"
+                  icon={<Lightbulb className="h-5 w-5 text-yellow-500" />}
+                >
+                  <div className="flex flex-col gap-4">
                     <div>
-                      <Label htmlFor="openingQuestionTitle">
+                      <Label htmlFor="openingQuestionTitle" className="mb-2">
                         Question Title
                       </Label>
                       <Input
@@ -708,8 +709,9 @@ export default function JobsManagmentCreatePage() {
                         placeholder="Tell us about yourself and your interest in this role"
                       />
                     </div>
+
                     <div>
-                      <Label htmlFor="openingQuestionContent">
+                      <Label htmlFor="openingQuestionContent" className="mb-2">
                         Question Content/Instructions
                       </Label>
                       <Textarea
@@ -729,19 +731,17 @@ export default function JobsManagmentCreatePage() {
                         placeholder="Please provide a brief introduction about yourself, your background, and what interests you about this position..."
                       />
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </FormCard>
 
                 {/* Main Assessment Content */}
-                <Card className="border-l-4 border-l-green-500">
-                  <CardHeader>
-                    <CardTitle className="text-lg">
-                      Assessment Questions & Tasks
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
+                <FormCard
+                  title="Assessment Questions and Tasks"
+                  icon={<Brain className="h-5 w-5 text-gray-500" />}
+                >
+                  <div className="flex flex-col gap-4">
                     <div>
-                      <Label htmlFor="assessmentContent">
+                      <Label htmlFor="assessmentContent" className="mb-2">
                         Full Assessment Content
                       </Label>
                       <Textarea
@@ -773,39 +773,39 @@ You are tasked with [specific scenario relevant to the role]. How would you appr
 What type of work environment do you thrive in? How do you handle [specific challenge relevant to company culture]?`}
                       />
                     </div>
+
                     <div className="text-sm text-gray-600">
                       <p>
                         <strong>Tip:</strong> Use ### for question headers, and
                         provide clear instructions for each section.
                       </p>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </FormCard>
 
                 {/* Scoring Criteria */}
-                <Card className="border-l-4 border-l-amber-500">
-                  <CardHeader>
-                    <CardTitle className="text-lg">
-                      Scoring Criteria (Internal Use)
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
+                <FormCard
+                  title="Scoring Criteria"
+                  icon={<CheckCircle className="h-5 w-5 text-green-500" />}
+                >
+                  <div>
+                    <div className="mb-2">
                       <Label htmlFor="scoringCriteria">
                         Evaluation Guidelines
                       </Label>
-                      <Textarea
-                        id="scoringCriteria"
-                        name="scoring_criteria"
-                        value={editedAssessment?.scoringCriteria || ""}
-                        onChange={(e) =>
-                          setEditedAssessment((prev) => ({
-                            ...(prev ?? {}),
-                            scoringCriteria: e.target.value,
-                          }))
-                        }
-                        className="min-h-[200px]"
-                        placeholder={`Define how responses should be evaluated. For example:
+                    </div>
+                    <Textarea
+                      id="scoringCriteria"
+                      name="scoring_criteria"
+                      value={editedAssessment?.scoringCriteria || ""}
+                      onChange={(e) =>
+                        setEditedAssessment((prev) => ({
+                          ...(prev ?? {}),
+                          scoringCriteria: e.target.value,
+                        }))
+                      }
+                      className="min-h-[200px]"
+                      placeholder={`Define how responses should be evaluated. For example:
 
 SCORING RUBRIC (1-5 scale):
 
@@ -828,52 +828,47 @@ Overall Assessment Guidelines:
 - Evaluate problem-solving methodology
 - Assess communication clarity
 - Consider cultural fit indicators`}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
+                    />
+                  </div>
+                </FormCard>
 
                 {/* Assessment Preview */}
-                <Card className="bg-gray-50">
-                  <CardHeader>
-                    <CardTitle className="text-lg text-gray-700">
-                      Assessment Preview
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-sm text-gray-600 space-y-2">
-                      <p>
-                        <strong>Title:</strong>{" "}
-                        {editedAssessment?.title || "Not specified"}
-                      </p>
-                      <p>
-                        <strong>Estimated Time:</strong>{" "}
-                        {editedAssessment?.estimatedTime
-                          ? `${editedAssessment.estimatedTime} minutes`
-                          : "Not specified"}
-                      </p>
-                      <p>
-                        <strong>Total Questions:</strong>{" "}
-                        {editedAssessment?.totalQuestions || "Not specified"}
-                      </p>
-                      <p>
-                        <strong>Opening Question:</strong>{" "}
-                        {editedAssessment?.openingQuestion?.title ||
-                          "Not defined"}
-                      </p>
-                      <p>
-                        <strong>Content Length:</strong>{" "}
-                        {editedAssessment?.generatedContent
-                          ? `${editedAssessment.generatedContent.length} characters`
-                          : "No content"}
-                      </p>
-                      <p>
-                        <strong>Has Scoring Criteria:</strong>{" "}
-                        {editedAssessment?.scoringCriteria ? "Yes" : "No"}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <FormCard
+                  title="Assessment Preview"
+                  icon={<Eye className="h-5 w-5 text-purple-500" />}
+                >
+                  <div className="text-sm text-gray-600 space-y-2">
+                    <p>
+                      <strong>Title:</strong>{" "}
+                      {editedAssessment?.title || "Not specified"}
+                    </p>
+                    <p>
+                      <strong>Estimated Time:</strong>{" "}
+                      {editedAssessment?.estimatedTime
+                        ? `${editedAssessment.estimatedTime} minutes`
+                        : "Not specified"}
+                    </p>
+                    <p>
+                      <strong>Total Questions:</strong>{" "}
+                      {editedAssessment?.totalQuestions || "Not specified"}
+                    </p>
+                    <p>
+                      <strong>Opening Question:</strong>{" "}
+                      {editedAssessment?.openingQuestion?.title ||
+                        "Not defined"}
+                    </p>
+                    <p>
+                      <strong>Content Length:</strong>{" "}
+                      {editedAssessment?.generatedContent
+                        ? `${editedAssessment.generatedContent.length} characters`
+                        : "No content"}
+                    </p>
+                    <p>
+                      <strong>Has Scoring Criteria:</strong>{" "}
+                      {editedAssessment?.scoringCriteria ? "Yes" : "No"}
+                    </p>
+                  </div>
+                </FormCard>
 
                 {/* Hidden inputs for form submission */}
                 <div className="hidden">
@@ -918,8 +913,8 @@ Overall Assessment Guidelines:
                     value={editedAssessment?.scoringCriteria || ""}
                   />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </FormCard>
           </TabsContent>
         </Tabs>
 

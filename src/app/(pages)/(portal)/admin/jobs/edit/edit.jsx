@@ -37,6 +37,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  PageHeader,
+  PageContainer,
+  FormCard,
+  DescriptionCard,
+} from "@/components/design-system";
+import Page from "../../employers/create/page";
 
 export default function JobsManagmentReviewPage({
   job,
@@ -56,27 +63,7 @@ export default function JobsManagmentReviewPage({
   const [candidateCompletionData, setCandidateCompletionData] = useState(null);
   const [activeTab, setActiveTab] = useState("description");
 
-  // Mock assessment data
-
-  // Mock persona data
-  const defaultPersonaData = {
-    primaryDisc: "Influencer (I/D)",
-    traits: [
-      "Enthusiastic",
-      "People-focused",
-      "Creative",
-      "Collaborative",
-      "Optimistic",
-    ],
-    workStyle:
-      "Thrives in collaborative environments with opportunities for creativity and social interaction",
-    idealEnvironment:
-      "Dynamic, team-oriented workspace with variety and opportunities to present ideas",
-    behavioralInsights:
-      "This role is perfect for someone who enjoys building relationships, creating engaging content, and working in a fast-paced, collaborative environment. The ideal candidate will be naturally outgoing and comfortable with change.",
-  };
-
-  const persona = personaData ?? defaultPersonaData;
+  const persona = personaData;
 
   const canMarkComplete = () => {
     if (!candidateCompletionData) return false;
@@ -247,173 +234,146 @@ export default function JobsManagmentReviewPage({
   const addArrayItem = () => {};
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <PageContainer>
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => router.back()}
-                className="text-gray-600 hover:text-gray-900"
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-              <div>
-                <h1 className="text-xl font-semibold text-gray-900">
-                  {job.job_title} at {job.company_name}
-                </h1>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+
+      <PageHeader
+        title={`${job.job_title} at ${job.company_name}`}
+        onBackClick={() => router.back()}
+        showBackButton={true}
+      />
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className=" mx-auto">
         {/* Draft Job Status Card */}
         {job.status === "draft" && (
-          <Card className="mb-6 p-6">
-            <CardHeader>
-              <CardTitle className="flex items-center mb-6">
-                <Building2 className="h-5 w-5 mr-2" />
-                Job Status
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Status Badge and Action Buttons */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 px-3 py-2 bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <div className="w-2 h-2 rounded-full bg-yellow-500" />
-                  <span className="text-sm font-medium text-yellow-700">
-                    Draft - Awaiting Approval
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {!isEditing && !isEditingAssessment ? (
-                    <>
-                      <Button
-                        onClick={() => setShowSubmitDialog(true)}
-                        size="sm"
-                        className="bg-green-600 hover:bg-green-700 text-white"
-                      >
-                        <Play className="h-4 w-4 mr-2" />
-                        Submit to Employer
-                      </Button>
-                      <Button
-                        onClick={handleEditClick}
-                        variant="outline"
-                        size="sm"
-                        className="text-blue-600 border-blue-300 hover:bg-blue-50"
-                      >
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit Job
-                      </Button>
-                      <Button
-                        onClick={() => handleStatusAction("cancel")}
-                        variant="outline"
-                        size="sm"
-                        className="text-red-600 border-red-300 hover:bg-red-50"
-                      >
-                        <X className="h-4 w-4 mr-2" />
-                        Cancel Job
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <Button
-                        onClick={handleCancel}
-                        variant="outline"
-                        size="sm"
-                      >
-                        <X className="h-4 w-4 mr-2" />
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={isEditing ? handleSave : handleSaveAssessment}
-                        size="sm"
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
-                      >
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        Save Changes
-                      </Button>
-                    </>
-                  )}
-                </div>
+          <FormCard title="Job Status" icon={<Building2 className="h-5 w-5" />}>
+            {/* Status Badge and Action Buttons */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 px-3 py-2 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div className="w-2 h-2 rounded-full bg-yellow-500" />
+                <span className="text-sm font-medium text-yellow-700">
+                  Draft - Awaiting Approval
+                </span>
               </div>
 
-              {/* Draft Status Info */}
-              <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm text-yellow-800">
-                      <strong>Next Steps:</strong> Review all components below
-                      and submit to employer for approval. Once approved, the
-                      job will go live automatically.
-                    </p>
-                  </div>
-                  <Button
-                    //TODO: colocar función del click
-                    ///        onClick={() =>
-                    ///    setLocation(
-                    ///      `/admin/job-creation-flow?step=action&jobId=${job.id}`
-                    ///    )
-                    ///  }
-                    variant="outline"
-                    size="sm"
-                    className="ml-4 text-yellow-700 border-yellow-300 hover:bg-yellow-100"
-                  >
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit in Builder
-                  </Button>
-                </div>
-
-                {/* Employer Portal View CTA - Only show after submission */}
-                {submittedToEmployer && (
-                  <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-blue-600" />
-                        <span className="text-sm text-blue-800 font-medium">
-                          Job submitted to employer for approval
-                        </span>
-                      </div>
-                      <Button
-                        onClick={() =>
-                          window.open(
-                            `/employer-portal/jobs/${job.id}/review`,
-                            "_blank",
-                          )
-                        }
-                        variant="outline"
-                        size="sm"
-                        className="text-blue-600 border-blue-300 hover:bg-blue-100"
-                      >
-                        <Eye className="h-4 w-4 mr-2" />
-                        View in Employer Portal
-                      </Button>
-                    </div>
-                  </div>
+              <div className="flex items-center gap-2">
+                {!isEditing && !isEditingAssessment ? (
+                  <>
+                    <Button
+                      onClick={() => setShowSubmitDialog(true)}
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      <Play className="h-4 w-4 mr-2" />
+                      Submit to Employer
+                    </Button>
+                    <Button
+                      onClick={handleEditClick}
+                      variant="outline"
+                      size="sm"
+                      className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit Job
+                    </Button>
+                    <Button
+                      onClick={() => handleStatusAction("cancel")}
+                      variant="outline"
+                      size="sm"
+                      className="text-red-600 border-red-300 hover:bg-red-50"
+                    >
+                      <X className="h-4 w-4 mr-2" />
+                      Cancel Job
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button onClick={handleCancel} variant="outline" size="sm">
+                      <X className="h-4 w-4 mr-2" />
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={isEditing ? handleSave : handleSaveAssessment}
+                      size="sm"
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Save Changes
+                    </Button>
+                  </>
                 )}
               </div>
+            </div>
 
-              {/* Copy Link Button for Draft Jobs */}
-              <div className="pt-2 border-t border-gray-100">
+            {/* Draft Status Info */}
+            <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="text-sm text-yellow-800">
+                    <strong>Next Steps:</strong> Review all components below and
+                    submit to employer for approval. Once approved, the job will
+                    go live automatically.
+                  </p>
+                </div>
                 <Button
-                  onClick={handleCopyLink}
-                  variant="ghost"
+                  //TODO: colocar función del click
+                  ///        onClick={() =>
+                  ///    setLocation(
+                  ///      `/admin/job-creation-flow?step=action&jobId=${job.id}`
+                  ///    )
+                  ///  }
+                  variant="outline"
                   size="sm"
-                  className="w-full justify-center text-xs text-gray-500 hover:text-gray-700 hover:bg-gray-50 h-8"
+                  className="ml-4 text-yellow-700 border-yellow-300 hover:bg-yellow-100"
                 >
-                  <Copy className="h-3 w-3 mr-1.5" />
-                  {copySuccess ? "Link Copied!" : "Copy Job Link"}
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit in Builder
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+
+              {/* Employer Portal View CTA - Only show after submission */}
+              {submittedToEmployer && (
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-blue-600" />
+                      <span className="text-sm text-blue-800 font-medium">
+                        Job submitted to employer for approval
+                      </span>
+                    </div>
+                    <Button
+                      onClick={() =>
+                        window.open(
+                          `/employer-portal/jobs/${job.id}/review`,
+                          "_blank",
+                        )
+                      }
+                      variant="outline"
+                      size="sm"
+                      className="text-blue-600 border-blue-300 hover:bg-blue-100"
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      View in Employer Portal
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Copy Link Button for Draft Jobs */}
+            <div className="pt-2 border-t border-gray-100">
+              <Button
+                onClick={handleCopyLink}
+                variant="ghost"
+                size="sm"
+                className="w-full justify-center text-xs text-gray-500 hover:text-gray-700 hover:bg-gray-50 h-8"
+              >
+                <Copy className="h-3 w-3 mr-1.5" />
+                {copySuccess ? "Link Copied!" : "Copy Job Link"}
+              </Button>
+            </div>
+          </FormCard>
         )}
 
         {/* Live Job Status Card */}
@@ -586,308 +546,302 @@ export default function JobsManagmentReviewPage({
 
           <TabsContent value="description" className="space-y-6">
             {/* Job Overview Card */}
-            <Card className="p-6">
-              <CardHeader>
-                <CardTitle className="flex items-center pb-4">
-                  <Briefcase className="h-5 w-5 mr-2" />
-                  Job Overview
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  {!isEditing ? (
-                    <>
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {job.job_title}
-                      </h3>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="link"
-                          className="text-sm text-blue-600 hover:text-blue-800 p-0 h-auto"
-                          //TODO: colocar función del click
-                          // onClick={() =>
-                          //   setLocation(`/admin/company-profiles/${job.id}`)
-                          // }
-                        >
-                          <Building2 className="h-3 w-3 mr-1" />
-                          {job.company_name}
-                        </Button>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="space-y-3">
-                      <div>
-                        <Label htmlFor="jobTitle">Job Title</Label>
-                        <Input
-                          id="jobTitle"
-                          value={editedJob?.jobTitle || ""}
-                          onChange={(e) =>
-                            updateEditedJob("jobTitle", e.target.value)
-                          }
-                          placeholder="Enter job title..."
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="companyName">Company Name</Label>
-                        <Select
-                          value={editedJob?.companyName || ""}
-                          onValueChange={(value) =>
-                            updateEditedJob("companyName", value)
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select company" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="TechFlow Solutions">
-                              TechFlow Solutions
-                            </SelectItem>
-                            <SelectItem value="Creative Studios">
-                              Creative Studios
-                            </SelectItem>
-                            <SelectItem value="StartupCo">StartupCo</SelectItem>
-                            <SelectItem value="Digital Agency">
-                              Digital Agency
-                            </SelectItem>
-                            <SelectItem value="SalesForce Pro">
-                              SalesForce Pro
-                            </SelectItem>
-                            <SelectItem value="Analytics Hub">
-                              Analytics Hub
-                            </SelectItem>
-                            <SelectItem value="Brand Builders Ltd">
-                              Brand Builders Ltd
-                            </SelectItem>
-                            <SelectItem value="FinanceFirst">
-                              FinanceFirst
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
+            <FormCard
+              title="Job Overview"
+              icon={<Briefcase className="h-5 w-5" />}
+            >
+              <div>
                 {!isEditing ? (
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="flex items-center text-gray-600">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      {job.location}
+                  <>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {job.job_title}
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="link"
+                        className="text-sm text-blue-600 hover:text-blue-800 p-0 h-auto"
+                        //TODO: colocar función del click
+                        // onClick={() =>
+                        //   setLocation(`/admin/company-profiles/${job.id}`)
+                        // }
+                      >
+                        <Building2 className="h-3 w-3 mr-1" />
+                        {job.company_name}
+                      </Button>
                     </div>
-                    <div className="flex items-center text-gray-600">
-                      <Clock className="h-4 w-4 mr-2" />
-                      {job.job_type}
-                    </div>
-                    <div className="flex items-center text-gray-600">
-                      <Users className="h-4 w-4 mr-2" />
-                      {job.salary_range}
-                    </div>
-                    <div className="flex items-center text-gray-600">
-                      <Building2 className="h-4 w-4 mr-2" />
-                      {job.work_arrangement}
-                    </div>
-                  </div>
+                  </>
                 ) : (
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-3">
                     <div>
-                      <Label htmlFor="location">Location</Label>
+                      <Label htmlFor="jobTitle">Job Title</Label>
                       <Input
-                        id="location"
-                        value={editedJob?.location || ""}
+                        id="jobTitle"
+                        value={editedJob?.jobTitle || ""}
                         onChange={(e) =>
-                          updateEditedJob("location", e.target.value)
+                          updateEditedJob("jobTitle", e.target.value)
                         }
-                        placeholder="Enter location..."
+                        placeholder="Enter job title..."
                       />
                     </div>
                     <div>
-                      <Label htmlFor="jobType">Working Hours</Label>
+                      <Label htmlFor="companyName">Company Name</Label>
                       <Select
-                        value={editedJob?.jobType || ""}
+                        value={editedJob?.companyName || ""}
                         onValueChange={(value) =>
-                          updateEditedJob("jobType", value)
+                          updateEditedJob("companyName", value)
                         }
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select working hours" />
+                          <SelectValue placeholder="Select company" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Full-time">Full-time</SelectItem>
-                          <SelectItem value="Part-time">Part-time</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="salaryRange">Salary Range</Label>
-                      <Input
-                        id="salaryRange"
-                        value={editedJob?.salaryRange || ""}
-                        onChange={(e) =>
-                          updateEditedJob("salaryRange", e.target.value)
-                        }
-                        placeholder="e.g. £25,000 - £30,000"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="workArrangement">Work Arrangement</Label>
-                      <Select
-                        value={editedJob?.workArrangement || ""}
-                        onValueChange={(value) =>
-                          updateEditedJob("workArrangement", value)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select arrangement" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Office-based">
-                            Office-based
+                          <SelectItem value="TechFlow Solutions">
+                            TechFlow Solutions
                           </SelectItem>
-                          <SelectItem value="Remote">Remote</SelectItem>
-                          <SelectItem value="Hybrid">Hybrid</SelectItem>
-                          <SelectItem value="Out and About">
-                            Out and About
+                          <SelectItem value="Creative Studios">
+                            Creative Studios
+                          </SelectItem>
+                          <SelectItem value="StartupCo">StartupCo</SelectItem>
+                          <SelectItem value="Digital Agency">
+                            Digital Agency
+                          </SelectItem>
+                          <SelectItem value="SalesForce Pro">
+                            SalesForce Pro
+                          </SelectItem>
+                          <SelectItem value="Analytics Hub">
+                            Analytics Hub
+                          </SelectItem>
+                          <SelectItem value="Brand Builders Ltd">
+                            Brand Builders Ltd
+                          </SelectItem>
+                          <SelectItem value="FinanceFirst">
+                            FinanceFirst
                           </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                   </div>
                 )}
+              </div>
 
-                <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-                  <h4 className="font-medium text-gray-900">
-                    Employment Details
-                  </h4>
-                  {!isEditing ? (
-                    <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
-                      <div>
-                        <span className="font-medium">Type:</span>{" "}
-                        {job.employment_type}
-                      </div>
-                      <div>
-                        <span className="font-medium">Start Date:</span>{" "}
-                        {job.start_date}
-                      </div>
-                      <div>
-                        <span className="font-medium">
-                          Application Deadline:
-                        </span>{" "}
-                        {job.application_deadline}
-                      </div>
-                      <div>
-                        <span className="font-medium">Authorisation:</span>{" "}
-                        {job.work_authorization}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="employmentType">Employment Type</Label>
-                        <Select
-                          value={editedJob?.employment_type || ""}
-                          onValueChange={(value) =>
-                            updateEditedJob("employment_type", value)
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Permanent">Permanent</SelectItem>
-                            <SelectItem value="Fixed term/temporary">
-                              Fixed term/temporary
-                            </SelectItem>
-                            <SelectItem value="Contract/freelance">
-                              Contract/freelance
-                            </SelectItem>
-                            <SelectItem value="Internship">
-                              Internship
-                            </SelectItem>
-                            <SelectItem value="Apprenticeship">
-                              Apprenticeship
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div>
-                        <Label htmlFor="startDate">Start Date</Label>
-                        <Input
-                          id="startDate"
-                          value={editedJob?.startDate || ""}
-                          onChange={(e) =>
-                            updateEditedJob("startDate", e.target.value)
-                          }
-                          placeholder="e.g. ASAP, January 2025"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="applicationDeadline">
-                          Application Deadline
-                        </Label>
-                        <Input
-                          id="applicationDeadline"
-                          type="date"
-                          value={editedJob?.applicationDeadline || ""}
-                          onChange={(e) =>
-                            updateEditedJob(
-                              "applicationDeadline",
-                              e.target.value,
-                            )
-                          }
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="employmentTypeDetails">
-                          Employment Type Details
-                        </Label>
-                        <Input
-                          id="employmentTypeDetails"
-                          value={editedJob?.employmentTypeDetails || ""}
-                          onChange={(e) =>
-                            updateEditedJob(
-                              "employmentTypeDetails",
-                              e.target.value,
-                            )
-                          }
-                          placeholder="e.g. Standard employment contract"
-                        />
-                      </div>
-                      <div className="col-span-2">
-                        <Label htmlFor="workAuthorisation">
-                          Work Authorisation
-                        </Label>
-                        <Select
-                          value={editedJob?.workAuthorisation || ""}
-                          onValueChange={(value) =>
-                            updateEditedJob("workAuthorisation", value)
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select work authorisation requirement" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="UK work authorisation required">
-                              UK work authorisation required
-                            </SelectItem>
-                            <SelectItem value="EU work authorisation required">
-                              EU work authorisation required
-                            </SelectItem>
-                            <SelectItem value="No work authorisation required">
-                              No work authorisation required
-                            </SelectItem>
-                            <SelectItem value="Sponsorship available">
-                              Sponsorship available
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  )}
+              {!isEditing ? (
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="flex items-center text-gray-600">
+                    <MapPin className="h-4 w-4 mr-2" />
+                    {job.location}
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <Clock className="h-4 w-4 mr-2" />
+                    {job.job_type}
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <Users className="h-4 w-4 mr-2" />
+                    {job.salary_range}
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <Building2 className="h-4 w-4 mr-2" />
+                    {job.work_arrangement}
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+              ) : (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="location">Location</Label>
+                    <Input
+                      id="location"
+                      value={editedJob?.location || ""}
+                      onChange={(e) =>
+                        updateEditedJob("location", e.target.value)
+                      }
+                      placeholder="Enter location..."
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="jobType">Working Hours</Label>
+                    <Select
+                      value={editedJob?.jobType || ""}
+                      onValueChange={(value) =>
+                        updateEditedJob("jobType", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select working hours" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Full-time">Full-time</SelectItem>
+                        <SelectItem value="Part-time">Part-time</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="salaryRange">Salary Range</Label>
+                    <Input
+                      id="salaryRange"
+                      value={editedJob?.salaryRange || ""}
+                      onChange={(e) =>
+                        updateEditedJob("salaryRange", e.target.value)
+                      }
+                      placeholder="e.g. £25,000 - £30,000"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="workArrangement">Work Arrangement</Label>
+                    <Select
+                      value={editedJob?.workArrangement || ""}
+                      onValueChange={(value) =>
+                        updateEditedJob("workArrangement", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select arrangement" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Office-based">
+                          Office-based
+                        </SelectItem>
+                        <SelectItem value="Remote">Remote</SelectItem>
+                        <SelectItem value="Hybrid">Hybrid</SelectItem>
+                        <SelectItem value="Out and About">
+                          Out and About
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              )}
+
+              <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+                <h4 className="font-medium text-gray-900">
+                  Employment Details
+                </h4>
+                {!isEditing ? (
+                  <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
+                    <div>
+                      <span className="font-medium">Type:</span>{" "}
+                      {job.employment_type}
+                    </div>
+                    <div>
+                      <span className="font-medium">Start Date:</span>{" "}
+                      {job.start_date}
+                    </div>
+                    <div>
+                      <span className="font-medium">Application Deadline:</span>{" "}
+                      {job.application_deadline}
+                    </div>
+                    <div>
+                      <span className="font-medium">Authorisation:</span>{" "}
+                      {job.work_authorization}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="employmentType">Employment Type</Label>
+                      <Select
+                        value={editedJob?.employment_type || ""}
+                        onValueChange={(value) =>
+                          updateEditedJob("employment_type", value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Permanent">Permanent</SelectItem>
+                          <SelectItem value="Fixed term/temporary">
+                            Fixed term/temporary
+                          </SelectItem>
+                          <SelectItem value="Contract/freelance">
+                            Contract/freelance
+                          </SelectItem>
+                          <SelectItem value="Internship">Internship</SelectItem>
+                          <SelectItem value="Apprenticeship">
+                            Apprenticeship
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label htmlFor="startDate">Start Date</Label>
+                      <Input
+                        id="startDate"
+                        value={editedJob?.startDate || ""}
+                        onChange={(e) =>
+                          updateEditedJob("startDate", e.target.value)
+                        }
+                        placeholder="e.g. ASAP, January 2025"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="applicationDeadline">
+                        Application Deadline
+                      </Label>
+                      <Input
+                        id="applicationDeadline"
+                        type="date"
+                        value={editedJob?.applicationDeadline || ""}
+                        onChange={(e) =>
+                          updateEditedJob("applicationDeadline", e.target.value)
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="employmentTypeDetails">
+                        Employment Type Details
+                      </Label>
+                      <Input
+                        id="employmentTypeDetails"
+                        value={editedJob?.employmentTypeDetails || ""}
+                        onChange={(e) =>
+                          updateEditedJob(
+                            "employmentTypeDetails",
+                            e.target.value,
+                          )
+                        }
+                        placeholder="e.g. Standard employment contract"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <Label htmlFor="workAuthorisation">
+                        Work Authorisation
+                      </Label>
+                      <Select
+                        value={editedJob?.workAuthorisation || ""}
+                        onValueChange={(value) =>
+                          updateEditedJob("workAuthorisation", value)
+                        }
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select work authorisation requirement" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="UK work authorisation required">
+                            UK work authorisation required
+                          </SelectItem>
+                          <SelectItem value="EU work authorisation required">
+                            EU work authorisation required
+                          </SelectItem>
+                          <SelectItem value="No work authorisation required">
+                            No work authorisation required
+                          </SelectItem>
+                          <SelectItem value="Sponsorship available">
+                            Sponsorship available
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </FormCard>
 
             {/* About This Role Card */}
+
+            <DescriptionCard
+              title="About this role"
+              icon={<FileText className="h-5 w-5" />}
+              value={job.description}
+            />
             <Card className="p-6">
               <CardHeader>
                 <CardTitle className="flex items-center pb-4">
@@ -1509,6 +1463,6 @@ export default function JobsManagmentReviewPage({
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+    </PageContainer>
   );
 }

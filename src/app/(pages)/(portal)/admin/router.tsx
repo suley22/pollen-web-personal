@@ -15,6 +15,7 @@ export const AdminRoutes = {
   allJobSeekers: `${basePath}/job-seekers`,
   roles: `${basePath}/roles`,
   jobsApplicants: (jobId) => `${basePath}/jobs/job-applicants/${jobId}`,
+  jobPersonaResults: (jobId) => `${basePath}/jobs/persona-results/${jobId}`,
 };
 
 export const ADMIN_ROUTES = Object.values(AdminRoutes);

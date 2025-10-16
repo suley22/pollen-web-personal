@@ -3,7 +3,7 @@ import {
   fetchPersonaData,
   fetchAssessmentData,
 } from "../actions";
-import JobsManagmentReviewPage from "../job-profile-consolidated";
+import JobsManagmentReviewPage from "../view";
 
 export default async function JobReviewPage({ params }) {
   const { id } = await params;

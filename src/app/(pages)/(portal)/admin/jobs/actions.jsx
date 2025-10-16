@@ -62,34 +62,50 @@ async function fetchJobApplicationCounts(supabase, jobId) {
 
 export async function getJobList(filters = {}) {
   try {
-    console.log("Fetching jobs with filters:", filters);
+    console.log("🔍 Fetching jobs with filters:", filters);
 
     const supabase = await createClient();
 
     let query = supabase
       .from("job")
       .select("*")
-      .order("created_at", { ascending: false })
-      .limit(10);
+      .order("created_at", { ascending: false });
 
     // Aplicar filtro por status si existe
     if (filters.status && filters.status !== "all") {
+      console.log("✅ Applying status filter:", filters.status);
       query = query.eq("status", filters.status);
+    }
+
+    // Aplicar filtro por assignment si existe
+    if (filters.assignment && filters.assignment !== "all") {
+      console.log("✅ Applying assignment filter:", filters.assignment);
+      if (filters.assignment === "mine") {
+        // TODO: Replace with actual current user logic
+        query = query.eq("assigned_to", "Current User");
+      } else if (filters.assignment === "karen") {
+        query = query.ilike("assigned_to", "karen");
+      } else if (filters.assignment === "sophie") {
+        query = query.ilike("assigned_to", "sophie");
+      }
     }
 
     // Aplicar filtro de búsqueda si existe
     if (filters.searchTerm) {
+      console.log("✅ Applying search filter:", filters.searchTerm);
       query = query.or(
-        `company_name.ilike.%${filters.searchTerm}%,job_title.ilike.%${filters.searchTerm}%,description.ilike.%${filters.searchTerm}%`,
+        `company_name.ilike.%${filters.searchTerm}%,job_title.ilike.%${filters.searchTerm}%,description.ilike.%${filters.searchTerm}%,assigned_to.ilike.%${filters.searchTerm}%`,
       );
     }
 
     const { data, error } = await query;
 
     if (error) {
-      console.error("Error fetching jobs:", error);
+      console.error("❌ Error fetching jobs:", error);
       return { success: false, error: error.message };
     }
+
+    console.log(`📦 Fetched ${data?.length || 0} jobs from database`);
 
     // Fetch application counts for each job
     const jobsWithApplicationCounts = await Promise.all(

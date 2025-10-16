@@ -24,7 +24,7 @@ export function CompanyInformation({
   // Cleanup de URL blob cuando el componente se desmonta o cambia la previsualización
   useEffect(() => {
     return () => {
-      if (previewUrl && previewUrl.startsWith('blob:')) {
+      if (previewUrl && previewUrl.startsWith("blob:")) {
         URL.revokeObjectURL(previewUrl);
       }
     };
@@ -60,15 +60,16 @@ export function CompanyInformation({
             {/* Company Logo URL - Right Side */}
             <div className="flex flex-row gap-4 items-end">
               <Input
+                disabled={true}
                 label="Company Logo"
                 type="text"
                 name="logo_url"
                 id="logo_url"
-                placeholder="Logo URL"
+                placeholder="Local file name"
                 value={logoUrl || initialData?.logo_url || ""}
                 onChange={(e) => {
                   // Limpiar previsualización cuando se cambia manualmente la URL
-                  if (previewUrl && previewUrl.startsWith('blob:')) {
+                  if (previewUrl && previewUrl.startsWith("blob:")) {
                     URL.revokeObjectURL(previewUrl);
                     setPreviewUrl(null);
                   }
@@ -78,18 +79,18 @@ export function CompanyInformation({
               <FileSelector
                 onFileSelect={(file, fileName) => {
                   // Limpiar URL anterior si existe
-                  if (previewUrl && previewUrl.startsWith('blob:')) {
+                  if (previewUrl && previewUrl.startsWith("blob:")) {
                     URL.revokeObjectURL(previewUrl);
                   }
-                  
+
                   // Crear URL temporal para previsualización
                   const newPreviewUrl = URL.createObjectURL(file);
                   setPreviewUrl(newPreviewUrl);
-                  
+
                   // Set only the filename in the input field
                   onLogoUrlChange?.(fileName);
                   // Notify parent about file selection for pending upload
-                  onFileSelect?.('logo_url', file, fileName);
+                  onFileSelect?.("logo_url", file, fileName);
                 }}
                 buttonText="Upload Logo"
                 buttonIcon={<UploadIcon />}

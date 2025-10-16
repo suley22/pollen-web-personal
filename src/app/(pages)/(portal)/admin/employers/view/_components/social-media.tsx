@@ -28,7 +28,7 @@ export function SocialMedia({
                   rel="noopener noreferrer"
                   className="text-blue-600 hover:underline text-sm truncate max-w-xs"
                 >
-                  {link.url.replace(/^https?:\/\//, "")}
+                  {link.url}
                 </a>
               </div>
             ))}

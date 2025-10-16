@@ -9,7 +9,7 @@ import { useToastNotifications } from "@/hooks/useToastNotifications";
  */
 export function useFileUpload() {
   const [isUploading, setIsUploading] = useState(false);
-  const { showSuccess, showError } = useToastNotifications();
+  const { showError } = useToastNotifications();
 
   const uploadFile = async (file, bucketName = "company-logos", folder = "logos") => {
     
@@ -43,7 +43,6 @@ export function useFileUpload() {
         .from(bucketName)
         .getPublicUrl(filePath);
 
-      showSuccess("Success", "Logo uploaded successfully!");
       return publicUrl;
 
     } catch (error) {
@@ -69,7 +68,6 @@ export function useFileUpload() {
         return false;
       }
 
-      showSuccess("Success", "File deleted successfully!");
       return true;
 
     } catch (error) {

@@ -11,7 +11,10 @@ export function AccoladesAccreditations({ employer = null }) {
   }));
 
   return (
-    <FormCard>
+    <FormCard
+      title="Accolades & Accreditations"
+      icon={<Award className="h-5 w-5" />}
+    >
       <DynamicListInput
         title="Accolades & Accreditations"
         icon={<Award className="h-5 w-5" />}
@@ -20,7 +23,7 @@ export function AccoladesAccreditations({ employer = null }) {
         fields={[
           {
             key: "name",
-            label: "Accolade or Accreditation",
+            label: "Insert as many as needed",
             placeholder: "e.g., ISO 9001, Best Workplace Award...",
             type: "text",
             required: true,

@@ -33,7 +33,7 @@ export function CompanyAvatar({
   return (
     <Avatar className={`${sizeClasses[size]} ${className}`}>
       <AvatarImage
-        className="rounded-md"
+        className="rounded-md object-cover"
         src={logoUrl || ""}
         alt={`${companyName} logo`}
       />

@@ -72,7 +72,9 @@ export class EmployerService {
     let query = this.supabase
       .from("employer_profile")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .filter("deleted_at", "is", null);
+
 
     // Apply approval_status filter
     if (filters.status && filters.status !== "all") {

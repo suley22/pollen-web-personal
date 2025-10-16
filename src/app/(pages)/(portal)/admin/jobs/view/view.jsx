@@ -16,7 +16,6 @@ import {
   Brain,
   Building2,
   CheckCircle,
-  Copy,
   Edit,
   Eye,
   Play,
@@ -57,7 +56,6 @@ export default function JobsManagmentReviewPage({
   personaData,
   assessmentData,
 }) {
-  const [copySuccess, setCopySuccess] = useState(false);
   const [submittedToEmployer, setSubmittedToEmployer] = useState(false);
   const [editedAssessment, setEditedAssessment] = useState(null);
   const [editedJob, setEditedJob] = useState(null);
@@ -138,17 +136,6 @@ export default function JobsManagmentReviewPage({
     setIsEditingAssessment(false);
   };
 
-  const handleCopyLink = async () => {
-    const currentUrl = window.location.href;
-    try {
-      await navigator.clipboard.writeText(currentUrl);
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2000);
-    } catch (err) {
-      console.error("Failed to copy link:", err);
-    }
-  };
-
   const updateEditedJob = (field, value) => {
     setEditedJob((prev) => ({ ...prev, [field]: value }));
   };
@@ -194,9 +181,7 @@ export default function JobsManagmentReviewPage({
       />
 
       {/* Main Content */}
-      <div className=" mx-auto">
-        {/* Draft Job Status Card */}
-
+      <div className=" w-full flex flex-col gap-4">
         <FormCard title="Job Status" icon={<Building2 className="h-5 w-5" />}>
           {/* Status Badge */}
           <div className="flex flex-row justify-between items-center">
@@ -248,21 +233,6 @@ export default function JobsManagmentReviewPage({
             </Button>
           </div>
         </FormCard>
-
-        {/* View Candidates Button */}
-
-        {/* Copy Link Button for Live Jobs */}
-        <div className="pt-2 border-t border-gray-100">
-          <Button
-            onClick={handleCopyLink}
-            variant="ghost"
-            size="sm"
-            className="w-full justify-center text-xs text-gray-500 hover:text-gray-700 hover:bg-gray-50 h-8"
-          >
-            <Copy className="h-3 w-3 mr-1.5" />
-            {copySuccess ? "Link Copied!" : "Copy Job Link"}
-          </Button>
-        </div>
 
         {/* 3-Tab Structure for All Jobs */}
         <Tabs

@@ -71,11 +71,11 @@ export default function EmployerProfileView({ employerProfile }) {
           <DescriptionCard
             title="Entry Level Support"
             icon={<GraduationCap className="h-5 w-5" />}
-            value={profile.entry_level_support}
+            value={profile.company_entry_level}
           />
 
-          <AccoladesAccreditations accolades={profile.accolades} />
-          <SocialMedia socialMediaLinks={profile.social_media_links} />
+          <AccoladesAccreditations accolades={profile.company_accolades} />
+          <SocialMedia socialMediaLinks={profile.social_medias} />
         </div>
 
         {/* Right Column - Contact & Meta Information */}
@@ -98,7 +98,7 @@ export default function EmployerProfileView({ employerProfile }) {
             howDidTheyHearAboutUs={profile.how_did_you_hear_about_us}
             howDidTheyHearMoreInfo={profile.more_info}
             entryLevelHiringFrequency={profile.hiring_frequency}
-            previousHiringMethods={profile.how_hired_previously}
+            previousHiringMethods={profile.previous_hiring_methods}
             additionalNotes={profile.additional_notes}
           />
         </div>

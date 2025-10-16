@@ -35,6 +35,7 @@ export function ProfileForm({ employer = null, action }) {
     setIsDialogOpen,
     handleBack,
     handleSubmit,
+    handleFileSelect,
   } = useEmployersPage({ action, employer });
 
   return (
@@ -60,6 +61,7 @@ export function ProfileForm({ employer = null, action }) {
               onIndustryValueChange={setIndustryValue}
               logoUrl={logoUrl}
               onLogoUrlChange={setLogoUrl}
+              onFileSelect={handleFileSelect}
             />
 
             <TextAreaCard

@@ -1,10 +1,12 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Input, Select, CheckboxGroupField } from "@/components/design-system";
 import { Building2, UploadIcon } from "lucide-react";
 import { CompanyAvatar } from "@/components/ui/company-avatar";
 import { FormCard } from "@/components/design-system/form-card";
 import { PrimaryButton } from "@/components/ui/buttons/primary-button";
+import { FileSelector } from "@/components/ui/file-selector";
 import { INDUSTRY_OPTIONS } from "@/lib/configs/constants/industries";
 import { COMPANY_SIZE_OPTIONS } from "@/lib/configs/constants/company-size";
 import { InputCheckboxGroup } from "@/ds/input-checkbox-group";
@@ -14,7 +16,19 @@ export function CompanyInformation({
   logoUrl,
   onLogoUrlChange,
   onIndustryValueChange,
+  onFileSelect,
 }) {
+  // Estado para manejar la URL de previsualización temporal de la imagen
+  const [previewUrl, setPreviewUrl] = useState(null);
+
+  // Cleanup de URL blob cuando el componente se desmonta o cambia la previsualización
+  useEffect(() => {
+    return () => {
+      if (previewUrl && previewUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
   return (
     <FormCard
       title="Company Information"
@@ -26,7 +40,7 @@ export function CompanyInformation({
           {/* Company Logo - Left Side */}
           <div className="flex-shrink-0">
             <CompanyAvatar
-              logoUrl={logoUrl || initialData?.logo_url}
+              logoUrl={previewUrl || logoUrl || initialData?.logo_url}
               companyName={initialData?.company_name || "?"}
               size="xl"
             />
@@ -52,12 +66,33 @@ export function CompanyInformation({
                 id="logo_url"
                 placeholder="Logo URL"
                 value={logoUrl || initialData?.logo_url || ""}
-                onChange={(e) => onLogoUrlChange?.(e.target.value)}
+                onChange={(e) => {
+                  // Limpiar previsualización cuando se cambia manualmente la URL
+                  if (previewUrl && previewUrl.startsWith('blob:')) {
+                    URL.revokeObjectURL(previewUrl);
+                    setPreviewUrl(null);
+                  }
+                  onLogoUrlChange?.(e.target.value);
+                }}
               />
-              <PrimaryButton
-                type="button"
-                icon={<UploadIcon />}
-                text="Upload Logo"
+              <FileSelector
+                onFileSelect={(file, fileName) => {
+                  // Limpiar URL anterior si existe
+                  if (previewUrl && previewUrl.startsWith('blob:')) {
+                    URL.revokeObjectURL(previewUrl);
+                  }
+                  
+                  // Crear URL temporal para previsualización
+                  const newPreviewUrl = URL.createObjectURL(file);
+                  setPreviewUrl(newPreviewUrl);
+                  
+                  // Set only the filename in the input field
+                  onLogoUrlChange?.(fileName);
+                  // Notify parent about file selection for pending upload
+                  onFileSelect?.('logo_url', file, fileName);
+                }}
+                buttonText="Upload Logo"
+                buttonIcon={<UploadIcon />}
                 className="w-fit whitespace-nowrap h-9"
               />
             </div>

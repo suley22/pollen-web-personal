@@ -41,7 +41,7 @@ export function CompanyInformation({ company }) {
             />
 
             {/* Company Size */}
-            <InfoField label="Company Size" value={company.size} />
+            <InfoField label="Company Size" value={company.company_size} />
 
             {/* Location */}
             <InfoField

@@ -23,7 +23,7 @@ export function AccoladesAccreditations({
           <Badge
             key={accolade}
             variant="outline"
-            className="bg-green-50 text-green-700 border-green-200"
+            className="text-xs"
           >
             {accolade}
           </Badge>

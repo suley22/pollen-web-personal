@@ -26,7 +26,7 @@ export function InfoField({
           <span className="text-sm">{value || "Not specified"}</span>
         </div>
       ) : (
-        <p className="mt-1 text-sm">{value || "Not specified"}</p>
+        <span className="mt-1 text-sm">{value || "Not specified"}</span>
       )}
     </div>
   );

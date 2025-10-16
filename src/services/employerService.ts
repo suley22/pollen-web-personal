@@ -211,6 +211,18 @@ export class EmployerService {
    * Transforms form data to database format for employer creation/update
    */
   private transformFormDataToDatabase(formData: FormData, userId: string) {
+    // Debug logging to check what we're receiving
+    console.log("EmployerService: FormData type check:", {
+      isFormData: formData instanceof FormData,
+      hasEntries: typeof formData?.entries === 'function',
+      formData: formData
+    });
+
+    // Ensure we have a proper FormData object
+    if (!formData || typeof formData.entries !== 'function') {
+      throw new Error(`Expected FormData object, but received: ${typeof formData}`);
+    }
+
     const formCompanyData = Object.fromEntries(formData.entries());
 
     // Get all industries (includes both predefined and custom items from CheckboxGroup)
@@ -282,6 +294,7 @@ export class EmployerService {
    */
   async createEmployer(formData: FormData, userId: string) {
     try {
+
       const transformedData = this.transformFormDataToDatabase(
         formData,
         userId,

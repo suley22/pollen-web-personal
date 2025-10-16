@@ -78,6 +78,7 @@ export default function JobListSection({ form }) {
           form={form}
           router={router}
           routes={AdminRoutes}
+          showAdminBadge={true}
         />
       ))}
     </div>

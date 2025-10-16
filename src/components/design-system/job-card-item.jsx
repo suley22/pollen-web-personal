@@ -8,7 +8,7 @@ export default function JobCardItem({
   form,
   router,
   routes,
-  showAdminBadge = true,
+  showAdminBadge,
 }) {
   return (
     <Card
@@ -18,108 +18,112 @@ export default function JobCardItem({
         router.push(routes.jobView(job.id));
       }}
     >
-      <CardContent className="px-5 py-3">
+      <CardContent className="px-5 pt-3 pb-2">
         <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 min-w-0 space-y-3">
+          <div className="flex-1 min-w-0 space-y-4">
             <div className="flex flex-row justify-between">
-              <div className="flex flex-col flex-1 gap-4">
-                <div className="">
-                  {/* Job Title and Status */}
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <h3 className="text-lg font-semibold text-foreground truncate">
-                      {job.job_title}
-                    </h3>
-                    {form.getStatusBadge(job.status)}
-                  </div>
-                  {/* Company and Date */}
-                  <div className="flex flex-row items-center gap-3">
-                    <div className="space-y-2 text-sm">
-                      <div className="flex flex-row items-start gap-4 text-muted-foreground">
-                        <div className="flex justify-center gap-2">
-                          <Building2 className="w-4 h-4  mt-0.5" />
-                          <span className="truncate">{job.company_name}</span>
-                        </div>
-                        <div className="flex justify-center gap-2 mt-0.5">
-                          <Calendar className="w-4 h-4 text-gray-600 " />
-                          <span className="truncate">
-                            {job.status === "draft"
-                              ? `Created ${new Date(job.assigned_date).toLocaleDateString()}`
-                              : `Published ${new Date(job.assigned_date).toLocaleDateString()}`}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+              <div className="flex flex-col flex-1 space-y-2">
+                {/* Job Title and Status */}
+                <div className="flex items-center gap-3 flex-wrap">
+                  <h3 className="text-lg font-semibold text-foreground truncate">
+                    {job.job_title}
+                  </h3>
+                  {form.getStatusBadge(job.status)}
                 </div>
 
-                {/* Status Badges */}
-                <div className="text-sm">
-                  <p>Applicants Status:</p>
-                  <div className="flex items-center gap-2  flex-wrap text-muted-foreground">
-                    <div className="flex items-center gap-1.5 font-medium">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                      <span>
-                        {job.new_applications_to_review ??
-                          job.newApplicationsToReview}{" "}
-                        New
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1.5 font-medium">
-                      <div className="w-2 h-2 bg-yellow-500 rounded-full" />
-                      <span>
-                        {job.pollen_interviews_booked ??
-                          job.pollenInterviewsBooked}{" "}
-                        In Progress
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1.5 font-medium">
-                      <div className="w-2 h-2 bg-green-500 rounded-full" />
-                      <span>
-                        {job.candidates_matched_to_employer ??
-                          job.candidatesMatchedToEmployer}{" "}
-                        Matched
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1.5 font-medium">
-                      <div className="w-2 h-2 bg-gray-500 rounded-full" />
-                      <span>{job.feedbackSent} Complete</span>
-                    </div>
+                {/* Company and Date */}
+                <div className="flex flex-col items-start gap-2 text-muted-foreground text-sm">
+                  <div className="flex  gap-2">
+                    <Building2 className="w-4 h-4  mt-0.5" />
+                    <span className="truncate">{job.company_name}</span>
+                  </div>
+                  <div className="flex gap-2 items-center">
+                    <Calendar className="w-4 h-4 " />
+                    <span className="truncate">
+                      {job.status === "draft"
+                        ? `Created ${new Date(job.assigned_date).toLocaleDateString()}`
+                        : `Published ${new Date(job.assigned_date).toLocaleDateString()}`}
+                    </span>
                   </div>
                 </div>
               </div>
 
-              {/* Right Section - Total Applications */}
-              <div className="flex flex-col justify-start">
-                <div className="text-right space-y-1 bg-pink-50 px-4 py-2 rounded-lg border border-pink-200">
-                  <div className="text-xs text-pink-700 font-medium">
-                    Total Applications
+              <div
+                className={`flex flex-col items-end justify-between text-right ${showAdminBadge ? "items-start" : "items-end"}`}
+              >
+                {/* Right Section - Total Applications */}
+
+                <div
+                  className={`flex flex-col text-muted-foreground gap-2 my-2`}
+                >
+                  {/* Total applications */}
+                  <div className="flex flex-row items-center justify-end gap-2">
+                    <p className="text-sm text-gray-700 ">
+                      Total Applications:
+                    </p>
+                    <p className="text-base font-semibold text-foreground">
+                      {job.total_applications}
+                    </p>
                   </div>
-                  <div className="text-2xl font-bold text-pink-900">
-                    {job.total_applications}
-                  </div>
+
+                  {/* Assigned Admin */}
+                  {job.assigned_to ? (
+                    <Badge
+                      variant="outline"
+                      className={`bg-blue-50 text-blue-700 border-blue-200 font-medium ${showAdminBadge ? "" : "hidden"}`}
+                    >
+                      Assigned to: {job.assigned_to}
+                    </Badge>
+                  ) : (
+                    <Badge
+                      variant="outline"
+                      className="bg-gray-50 text-gray-600 border-gray-200 font-medium"
+                    >
+                      Unassigned{" "}
+                      <span className="text-gray-500">(No Admin Assigned)</span>
+                    </Badge>
+                  )}
                 </div>
               </div>
             </div>
 
             {/* Divider */}
-            <div className="border-t border-border/50 pt-3 mt-3">
+            <div className="border-t border-border/50">
               {/* Status Breakdown and Actions */}
-              <div className="flex flex-row justify-between items-center">
-                {job.assigned_to ? (
-                  <Badge
-                    variant="outline"
-                    className="bg-blue-50 text-blue-700 border-blue-200 font-medium"
-                  >
-                    Assigned to: {job.assigned_to}
-                  </Badge>
-                ) : (
-                  <Badge
-                    variant="outline"
-                    className="bg-gray-50 text-gray-600 border-gray-200 font-medium"
-                  >
-                    Unassigned
-                  </Badge>
-                )}
+              <div className="flex flex-row justify-between items-center pt-2">
+                <div className="flex items-center gap-2 text-sm flex-wrap ">
+                  <div className="flex items-center gap-1.5 font-medium">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                    <span>
+                      {job.new_applications_to_review ??
+                        job.newApplicationsToReview}{" "}
+                    </span>
+                    <span className="font-normal text-gray-500">New</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 font-medium">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full" />
+                    <span>
+                      {job.pollen_interviews_booked ??
+                        job.pollenInterviewsBooked}{" "}
+                    </span>
+                    <span className="font-normal text-gray-500">
+                      In Progress
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 font-medium">
+                    <div className="w-2 h-2 bg-green-500 rounded-full" />
+                    <span>
+                      {job.candidates_matched_to_employer ??
+                        job.candidatesMatchedToEmployer}{" "}
+                    </span>
+                    <span className="font-normal text-gray-500">Matched</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 font-medium">
+                    <div className="w-2 h-2 bg-gray-500 rounded-full" />
+                    <span>{job.feedbackSent} </span>
+                    <span className="font-normal text-gray-500">Complete</span>
+                  </div>
+                </div>
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-1">

@@ -12,10 +12,10 @@ export function HomeFooter() {
           <Button
             size="md"
             variant="outline"
-            className="justify-start h-12"
+            className="justify-start h-12 p-8"
             //  onClick={() => setLocation("/admin/comprehensive-analytics")} //TODO:
           >
-            <BarChart3 className="w-5 h-5 mr-3 text-blue-600" />
+            <BarChart3 className="w-8 h-8 mr-3 text-blue-600" />
             <div className="text-left">
               <div className="font-medium">Analytics Dashboard</div>
               <div className="text-xs text-gray-500">
@@ -26,7 +26,7 @@ export function HomeFooter() {
           <Button
             size="md"
             variant="outline"
-            className="justify-start h-12"
+            className="justify-start h-12 p-8"
             //  onClick={() => setLocation("/admin/hidden-jobs")} //TODO:
           >
             <Eye className="w-5 h-5 mr-3 text-purple-600" />
@@ -41,7 +41,7 @@ export function HomeFooter() {
           <Button
             size="md"
             variant="outline"
-            className="justify-start h-12"
+            className="justify-start h-12 p-8"
             //  onClick={() => setLocation("/admin/all-job-seekers")} //TODO:
           >
             <Users className="w-5 h-5 mr-3 text-green-600" />

@@ -71,8 +71,15 @@ export async function updateEmployerAction(
   }
 }
 
-export async function createEmployerAction(formData: FormData) {
+export async function createEmployerAction(prevState: any, formData: FormData) {
   try {
+    console.log("createEmployerAction: Received data:", {
+      prevState,
+      isFormData: formData instanceof FormData,
+      hasEntries: typeof formData?.entries === 'function',
+      formDataType: typeof formData
+    });
+
     const supabase = await createClient();
 
     // Get current user

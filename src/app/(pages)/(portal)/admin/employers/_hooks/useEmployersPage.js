@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, startTransition } from "react";
 import { useActionState } from "react";
 import { useToastNotifications } from "@/hooks/useToastNotifications";
 import { useNavigation } from "@/hooks/useNavigation";
@@ -106,7 +106,14 @@ export function useEmployersPage({ action, employer = null }) {
         
         // Submit with the action
         const submitFormData = new FormData(tempForm);
-        formAction(submitFormData);
+        console.log("Debug: submitFormData type check:", {
+          isFormData: submitFormData instanceof FormData,
+          hasEntries: typeof submitFormData?.entries === 'function',
+          entries: Array.from(submitFormData.entries())
+        });
+        startTransition(() => {
+          formAction(submitFormData);
+        });
         
         document.body.removeChild(tempForm);
         

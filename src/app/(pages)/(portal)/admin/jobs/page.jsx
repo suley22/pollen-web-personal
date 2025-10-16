@@ -33,7 +33,7 @@ export default function JobsManagmentPage() {
           <PrimaryButton
             icon={<Plus />}
             text="Create"
-            //TODO: habilitar creación de trabajos
+            onClick={() => router.push(AdminRoutes.jobsCreate)}
           />
         </PageHeader>
       </div>

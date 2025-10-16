@@ -5,7 +5,7 @@ import { HomeFooter } from "./_components/footer";
 
 export default function AdminHomePage() {
   return (
-    <div className="w-full flex flex-col admin-compact-mode py-6 gap-4">
+    <div className="w-full flex flex-col py-6 gap-4">
       <HomeHeader />
 
       <div className="flex flex-col w-full mx-auto gap-6">

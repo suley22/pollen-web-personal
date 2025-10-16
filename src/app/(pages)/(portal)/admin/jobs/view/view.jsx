@@ -434,335 +434,310 @@ export default function JobsManagmentReviewPage({
 
           <TabsContent value="persona" className="space-y-6">
             {/* Persona Results Card */}
-            <Card className="p-6">
-              <CardHeader>
-                <CardTitle className="flex items-center pb-4">
-                  <UserCheck className="h-5 w-5 mr-2" />
-                  Employer Persona Questionnaire Results
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {personaData ? (
-                  <>
-                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                      <h3 className="text-lg font-semibold text-blue-900 mb-2">
-                        Ideal Candidate Profile
-                      </h3>
-                      <p className="text-sm text-blue-800 mb-3">
-                        <strong>Primary Behavioral Type:</strong>{" "}
-                        {persona.primaryDisc}
-                      </p>
-                      <div className="space-y-2">
-                        <div>
-                          <span className="text-sm font-medium text-blue-900">
-                            Key Traits:
-                          </span>
-                          <div className="flex flex-wrap gap-1 mt-1">
-                            {persona.traits.map((trait) => (
-                              <Badge
-                                key={trait}
-                                className="bg-blue-100 text-blue-800"
-                              >
-                                {trait}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                        <div>
-                          <span className="text-sm font-medium text-blue-900">
-                            Work Style:
-                          </span>
-                          <p className="text-sm text-blue-700 mt-1">
-                            {persona.workStyle}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-sm font-medium text-blue-900">
-                            Ideal Environment:
-                          </span>
-                          <p className="text-sm text-blue-700 mt-1">
-                            {persona.idealEnvironment}
-                          </p>
+            <FormCard title="Employer Persona Questionnaire Results">
+              {personaData ? (
+                <div className="flex flex-col gap-4">
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <div className="text-lg font-semibold text-blue-900 mb-2">
+                      Ideal Candidate Profile
+                    </div>
+                    <p className="text-sm text-blue-800 mb-3">
+                      <strong>Primary Behavioral Type:</strong>{" "}
+                      {persona.primaryDisc}
+                    </p>
+                    <div className="space-y-2">
+                      <div>
+                        <span className="text-sm font-medium text-blue-900">
+                          Key Traits:
+                        </span>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {persona.traits.map((trait) => (
+                            <Badge
+                              key={trait}
+                              className="bg-blue-100 text-blue-800"
+                            >
+                              {trait}
+                            </Badge>
+                          ))}
                         </div>
                       </div>
+                      <div>
+                        <span className="text-sm font-medium text-blue-900">
+                          Work Style:
+                        </span>
+                        <p className="text-sm text-blue-700 mt-1">
+                          {persona.workStyle}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-sm font-medium text-blue-900">
+                          Ideal Environment:
+                        </span>
+                        <p className="text-sm text-blue-700 mt-1">
+                          {persona.idealEnvironment}
+                        </p>
+                      </div>
                     </div>
+                  </div>
 
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-medium text-gray-900 mb-2">
-                        Behavioral Insights
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        {persona.behavioralInsights}
-                      </p>
-                    </div>
-
-                    <div className="flex justify-center">
-                      <Button
-                        variant="outline"
-                        // TODO: colocar función del click
-                        onClick={() => {
-                          router.push(`/admin/jobs-managment/persona-results`);
-                        }}
-                        //   setLocation(
-                        //     "/admin/persona-results?job=" +
-                        //       encodeURIComponent(job.jobTitle) +
-                        //       "&company=" +
-                        //       encodeURIComponent(job.companyName)
-                        //   )
-                        // }
-                        className="text-blue-600 border-blue-300 hover:bg-blue-50"
-                      >
-                        <Eye className="w-4 h-4 mr-2" />
-                        View Full Persona Results
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <div className="text-center py-8">
-                    <UserCheck className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No Persona Data Available
-                    </h3>
-                    <p className="text-gray-600">
-                      Persona questionnaire has not been completed yet.
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <h4 className="font-medium text-gray-900 mb-2">
+                      Behavioral Insights
+                    </h4>
+                    <p className="text-sm text-gray-700">
+                      {persona.behavioralInsights}
                     </p>
                   </div>
-                )}
-              </CardContent>
-            </Card>
+
+                  <div className="flex justify-center">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        router.push(AdminRoutes.jobsPersonaResults(job.id));
+                      }}
+                      className="text-blue-600 border-blue-300 hover:bg-blue-50"
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      View Full Persona Results
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <UserCheck className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No Persona Data Available
+                  </h3>
+                  <p className="text-gray-600">
+                    Persona questionnaire has not been completed yet.
+                  </p>
+                </div>
+              )}
+            </FormCard>
           </TabsContent>
 
           <TabsContent value="assessment" className="space-y-6">
             {/* Assessment Card */}
-            <Card className="p-6">
-              <CardHeader>
-                <CardTitle className="flex items-center pb-4">
-                  <Brain className="h-5 w-5 mr-2" />
-                  Skills Assessment
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {assessmentData ? (
-                  <>
-                    <div className="bg-white border rounded-lg p-6">
-                      <h4 className="font-medium text-gray-900 mb-4">
-                        Assessment Content
-                      </h4>
-                      {isEditing ? (
-                        <div className="space-y-4">
-                          <textarea
-                            value={
-                              editedAssessment?.generatedContent ??
-                              assessmentData.generatedContent ??
-                              ""
-                            }
-                            onChange={(e) =>
-                              setEditedAssessment((prev) => ({
-                                ...(prev ?? {}),
-                                generatedContent: e.target.value,
-                              }))
-                            }
-                            className="w-full h-96 p-4 border border-gray-300 rounded-lg text-sm font-mono resize-vertical"
-                            placeholder="Enter assessment content..."
-                          />
+            <FormCard
+              title="Skills Assessment"
+              icon={<Brain className="h-5 w-5" />}
+            >
+              {assessmentData ? (
+                <>
+                  <div className="bg-white border rounded-lg p-6">
+                    <h4 className="font-medium text-gray-900 mb-4">
+                      Assessment Content
+                    </h4>
+                    {isEditing ? (
+                      <div className="space-y-4">
+                        <textarea
+                          value={
+                            editedAssessment?.generatedContent ??
+                            assessmentData.generatedContent ??
+                            ""
+                          }
+                          onChange={(e) =>
+                            setEditedAssessment((prev) => ({
+                              ...(prev ?? {}),
+                              generatedContent: e.target.value,
+                            }))
+                          }
+                          className="w-full h-96 p-4 border border-gray-300 rounded-lg text-sm font-mono resize-vertical"
+                          placeholder="Enter assessment content..."
+                        />
+                      </div>
+                    ) : assessmentData.structuredQuestions ? (
+                      <div className="space-y-6">
+                        {/* Assessment Header - Simple like job seeker view */}
+                        <div className="mb-6">
+                          <p className="text-gray-600 text-sm">
+                            <span className="text-purple-600">⏱</span>{" "}
+                            Estimated time:{" "}
+                            {assessmentData.structuredQuestions.guidelines
+                              ?.timeGuideline || "45 minutes"}{" "}
+                            (guideline only - not timed)
+                          </p>
                         </div>
-                      ) : assessmentData.structuredQuestions ? (
-                        <div className="space-y-6">
-                          {/* Assessment Header - Simple like job seeker view */}
-                          <div className="mb-6">
+
+                        {/* Note on AI Usage - matching job seeker style */}
+                        <div className="bg-orange-50 border border-orange-200 rounded p-4 text-sm">
+                          <span className="font-semibold text-orange-800">
+                            Note on AI usage:
+                          </span>
+                          <span className="text-orange-700">
+                            {" "}
+                            AI platforms, like Chat GPT, can be helpful for job
+                            applications, but pretty please don&apos;t copy and
+                            paste an answer for your application. We have
+                            beady-eyes and will not accept anything that is
+                            obviously AI generated. We want to know the real
+                            you, not a robot. You&apos;ve got this!
+                          </span>
+                        </div>
+
+                        {/* Opening Question */}
+                        {assessmentData.structuredQuestions.openingQuestion && (
+                          <div className="space-y-3">
+                            <h3 className="text-base font-semibold text-gray-900">
+                              1.{" "}
+                              {
+                                assessmentData.structuredQuestions
+                                  .openingQuestion.title
+                              }{" "}
+                              <span className="text-red-500">*</span>
+                            </h3>
                             <p className="text-gray-600 text-sm">
-                              <span className="text-purple-600">⏱</span>{" "}
-                              Estimated time:{" "}
-                              {assessmentData.structuredQuestions.guidelines
-                                ?.timeGuideline || "45 minutes"}{" "}
-                              (guideline only - not timed)
+                              {
+                                assessmentData.structuredQuestions
+                                  .openingQuestion.subtitle
+                              }
                             </p>
-                          </div>
-
-                          {/* Note on AI Usage - matching job seeker style */}
-                          <div className="bg-orange-50 border border-orange-200 rounded p-4 text-sm">
-                            <span className="font-semibold text-orange-800">
-                              Note on AI usage:
-                            </span>
-                            <span className="text-orange-700">
-                              {" "}
-                              AI platforms, like Chat GPT, can be helpful for
-                              job applications, but pretty please don&apos;t
-                              copy and paste an answer for your application. We
-                              have beady-eyes and will not accept anything that
-                              is obviously AI generated. We want to know the
-                              real you, not a robot. You&apos;ve got this!
-                            </span>
-                          </div>
-
-                          {/* Opening Question */}
-                          {assessmentData.structuredQuestions
-                            .openingQuestion && (
-                            <div className="space-y-3">
-                              <h3 className="text-base font-semibold text-gray-900">
-                                1.{" "}
-                                {
-                                  assessmentData.structuredQuestions
-                                    .openingQuestion.title
-                                }{" "}
-                                <span className="text-red-500">*</span>
-                              </h3>
-                              <p className="text-gray-600 text-sm">
-                                {
-                                  assessmentData.structuredQuestions
-                                    .openingQuestion.subtitle
-                                }
-                              </p>
-                              <div className="border border-gray-200 rounded p-3 bg-gray-50 min-h-[100px]">
-                                <span className="text-gray-400 text-sm">
-                                  Job seekers would type their response here...
-                                </span>
-                              </div>
+                            <div className="border border-gray-200 rounded p-3 bg-gray-50 min-h-[100px]">
+                              <span className="text-gray-400 text-sm">
+                                Job seekers would type their response here...
+                              </span>
                             </div>
-                          )}
+                          </div>
+                        )}
 
-                          {/* Tasks/Questions - Simple numbered format */}
-                          {assessmentData.structuredQuestions.tasks &&
-                            assessmentData.structuredQuestions.tasks.length >
-                              0 && (
-                              <div className="space-y-8">
-                                {assessmentData.structuredQuestions.tasks.map(
-                                  (task, index) => (
-                                    <div key={task.id} className="space-y-3">
-                                      <h3 className="text-base font-semibold text-gray-900">
-                                        {index + 2}.{" "}
-                                        {task.title || `Task ${index + 1}`}{" "}
-                                        <span className="text-red-500">*</span>
-                                      </h3>
-                                      <div className="text-gray-700 text-sm leading-relaxed space-y-2">
-                                        <div
-                                          // eslint-disable-next-line react/no-danger
-                                          dangerouslySetInnerHTML={{
-                                            __html: task.content
-                                              .replace(/\n\n/g, "</p><p>")
-                                              .replace(/^/, "<p>")
-                                              .replace(/$/, "</p>")
-                                              .replace(
-                                                /\*\*(.+?)\*\*/g,
-                                                "<strong>$1</strong>",
-                                              )
-                                              .replace(
-                                                /_(.+?)_/g,
-                                                "<em>$1</em>",
-                                              )
-                                              .replace(/^<p><\/p>/, "")
-                                              .replace(/<p><\/p>$/g, ""),
-                                          }}
-                                        />
-                                      </div>
-                                      <div className="border border-gray-200 rounded p-3 bg-gray-50 min-h-[150px]">
-                                        <span className="text-gray-400 text-sm">
-                                          Job seekers would type their response
-                                          here...
-                                        </span>
-                                      </div>
+                        {/* Tasks/Questions - Simple numbered format */}
+                        {assessmentData.structuredQuestions.tasks &&
+                          assessmentData.structuredQuestions.tasks.length >
+                            0 && (
+                            <div className="space-y-8">
+                              {assessmentData.structuredQuestions.tasks.map(
+                                (task, index) => (
+                                  <div key={task.id} className="space-y-3">
+                                    <h3 className="text-base font-semibold text-gray-900">
+                                      {index + 2}.{" "}
+                                      {task.title || `Task ${index + 1}`}{" "}
+                                      <span className="text-red-500">*</span>
+                                    </h3>
+                                    <div className="text-gray-700 text-sm leading-relaxed space-y-2">
+                                      <div
+                                        // eslint-disable-next-line react/no-danger
+                                        dangerouslySetInnerHTML={{
+                                          __html: task.content
+                                            .replace(/\n\n/g, "</p><p>")
+                                            .replace(/^/, "<p>")
+                                            .replace(/$/, "</p>")
+                                            .replace(
+                                              /\*\*(.+?)\*\*/g,
+                                              "<strong>$1</strong>",
+                                            )
+                                            .replace(/_(.+?)_/g, "<em>$1</em>")
+                                            .replace(/^<p><\/p>/, "")
+                                            .replace(/<p><\/p>$/g, ""),
+                                        }}
+                                      />
                                     </div>
-                                  ),
-                                )}
-                              </div>
-                            )}
-
-                          {/* Fallback: Show Full Assessment if structured parsing failed */}
-                          {(!assessmentData.structuredQuestions.tasks ||
-                            assessmentData.structuredQuestions.tasks.length ===
-                              0) && (
-                            <div className="border rounded-lg p-6 bg-white shadow-sm">
-                              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                                Full Assessment Content
-                              </h3>
-                              <div className="prose max-w-none">
-                                <div
-                                  className="whitespace-pre-wrap leading-relaxed text-gray-700"
-                                  // eslint-disable-next-line react/no-danger
-                                  dangerouslySetInnerHTML={{
-                                    __html: assessmentData.generatedContent
-                                      .replace(/\n\n/g, "</p><p>")
-                                      .replace(/^/, "<p>")
-                                      .replace(/$/, "</p>")
-                                      .replace(
-                                        /###\s+(.+?)(<\/p><p>|$)/g,
-                                        '<h3 class="text-xl font-bold mb-4 mt-6 text-gray-900">$1</h3><p>',
-                                      )
-                                      .replace(
-                                        /\*\*(.+?)\*\*/g,
-                                        "<strong>$1</strong>",
-                                      )
-                                      .replace(/_(.+?)_/g, "<em>$1</em>")
-                                      .replace(/^<p><\/p>/, "")
-                                      .replace(/<p><\/p>$/g, ""),
-                                  }}
-                                />
-                              </div>
+                                    <div className="border border-gray-200 rounded p-3 bg-gray-50 min-h-[150px]">
+                                      <span className="text-gray-400 text-sm">
+                                        Job seekers would type their response
+                                        here...
+                                      </span>
+                                    </div>
+                                  </div>
+                                ),
+                              )}
                             </div>
                           )}
-                        </div>
-                      ) : (
-                        <div className="prose prose-sm max-w-none text-gray-700 leading-relaxed">
-                          <div className="whitespace-pre-wrap font-sans">
-                            {assessmentData.generatedContent}
-                          </div>
-                        </div>
-                      )}
-                    </div>
 
-                    {/* Scoring Criteria - Internal Use */}
-                    {assessmentData.scoringCriteria && (
-                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
-                        <div className="flex items-center gap-2 mb-4">
-                          <div className="bg-amber-100 p-2 rounded-full">
-                            <span className="text-amber-700 font-bold text-sm">
-                              📋
-                            </span>
+                        {/* Fallback: Show Full Assessment if structured parsing failed */}
+                        {(!assessmentData.structuredQuestions.tasks ||
+                          assessmentData.structuredQuestions.tasks.length ===
+                            0) && (
+                          <div className="border rounded-lg p-6 bg-white shadow-sm">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                              Full Assessment Content
+                            </h3>
+                            <div className="prose max-w-none">
+                              <div
+                                className="whitespace-pre-wrap leading-relaxed text-gray-700"
+                                // eslint-disable-next-line react/no-danger
+                                dangerouslySetInnerHTML={{
+                                  __html: assessmentData.generatedContent
+                                    .replace(/\n\n/g, "</p><p>")
+                                    .replace(/^/, "<p>")
+                                    .replace(/$/, "</p>")
+                                    .replace(
+                                      /###\s+(.+?)(<\/p><p>|$)/g,
+                                      '<h3 class="text-xl font-bold mb-4 mt-6 text-gray-900">$1</h3><p>',
+                                    )
+                                    .replace(
+                                      /\*\*(.+?)\*\*/g,
+                                      "<strong>$1</strong>",
+                                    )
+                                    .replace(/_(.+?)_/g, "<em>$1</em>")
+                                    .replace(/^<p><\/p>/, "")
+                                    .replace(/<p><\/p>$/g, ""),
+                                }}
+                              />
+                            </div>
                           </div>
-                          <h4 className="font-semibold text-amber-900">
-                            Scoring Criteria (Internal Use)
-                          </h4>
-                        </div>
-                        <div className="text-sm text-amber-800 leading-relaxed whitespace-pre-wrap">
-                          {assessmentData.scoringCriteria}
+                        )}
+                      </div>
+                    ) : (
+                      <div className="prose prose-sm max-w-none text-gray-700 leading-relaxed">
+                        <div className="whitespace-pre-wrap font-sans">
+                          {assessmentData.generatedContent}
                         </div>
                       </div>
                     )}
-
-                    {isEditing && (
-                      <div className="flex justify-end gap-2 pt-4">
-                        <Button
-                          variant="outline"
-                          onClick={handleCancel}
-                          size="sm"
-                        >
-                          <X className="h-4 w-4 mr-2" />
-                          Cancel
-                        </Button>
-                        <Button
-                          onClick={handleSave}
-                          size="sm"
-                          className="bg-blue-600 hover:bg-blue-700"
-                        >
-                          <CheckCircle className="h-4 w-4 mr-2" />
-                          Save Changes
-                        </Button>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="text-center py-8">
-                    <Brain className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      No Assessment Available
-                    </h3>
-                    <p className="text-gray-600">
-                      Skills assessment has not been created yet.
-                    </p>
                   </div>
-                )}
-              </CardContent>
-            </Card>
+
+                  {/* Scoring Criteria - Internal Use */}
+                  {assessmentData.scoringCriteria && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="bg-amber-100 p-2 rounded-full">
+                          <span className="text-amber-700 font-bold text-sm">
+                            📋
+                          </span>
+                        </div>
+                        <h4 className="font-semibold text-amber-900">
+                          Scoring Criteria (Internal Use)
+                        </h4>
+                      </div>
+                      <div className="text-sm text-amber-800 leading-relaxed whitespace-pre-wrap">
+                        {assessmentData.scoringCriteria}
+                      </div>
+                    </div>
+                  )}
+
+                  {isEditing && (
+                    <div className="flex justify-end gap-2 pt-4">
+                      <Button
+                        variant="outline"
+                        onClick={handleCancel}
+                        size="sm"
+                      >
+                        <X className="h-4 w-4 mr-2" />
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={handleSave}
+                        size="sm"
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
+                        <CheckCircle className="h-4 w-4 mr-2" />
+                        Save Changes
+                      </Button>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-8">
+                  <Brain className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    No Assessment Available
+                  </h3>
+                  <p className="text-gray-600">
+                    Skills assessment has not been created yet.
+                  </p>
+                </div>
+              )}
+            </FormCard>
           </TabsContent>
         </Tabs>
       </div>

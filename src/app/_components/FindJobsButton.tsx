@@ -4,19 +4,28 @@ import { Button } from "@/components/ui/buttons/button";
 import { useUser } from "../providers";
 import { useRouter } from "next/navigation";
 
-export const FindJobsButton = () => {
+const buttonVariants = {
+  primary: "findJobsSolid",
+  secondary: "findJobs",
+  solid: "findJobsSolid",
+  outline: "findJobsOutline",
+};
+
+export const FindJobsButton = ({
+  btnStyle = "primary",
+  text = "Find jobs now →",
+}) => {
   const user = useUser();
   const router = useRouter();
 
   return (
     <Button
       onClick={() => router.push(user?.redirectUrl)}
-      size="lg"
-      className="bg-white text-pink-600 hover:bg-gray-100 px-12 py-4 text-lg disabled:opacity-50"
-      style={{ fontFamily: "Sora" }}
-      variant={"solid"}
+      size="default"
+      variant={buttonVariants[btnStyle]}
+      className="px-12 py-6 text-base font-semibold"
     >
-      Find jobs now →
+      {text}
     </Button>
   );
 };

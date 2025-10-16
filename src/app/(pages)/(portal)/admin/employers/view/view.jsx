@@ -74,7 +74,7 @@ export default function EmployerProfileView({ employerProfile }) {
             value={profile.company_entry_level}
           />
 
-          <AccoladesAccreditations accolades={profile.accolades} />
+          <AccoladesAccreditations accolades={profile.company_accolades} />
           <SocialMedia socialMediaLinks={profile.social_medias} />
         </div>
 

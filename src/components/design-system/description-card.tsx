@@ -32,15 +32,15 @@ export function DescriptionCard({
           className={cn("text-sm leading-relaxed text-gray-700", textClassName)}
         >
           {value ? (
-            <p
+            <span
               className={cn("text-sm leading-relaxed text-gray-700", className)}
             >
               {value}
-            </p>
+            </span>
           ) : (
-            <p className={cn("text-sm text-muted-foreground", className)}>
+            <span className={cn("text-sm text-muted-foreground", className)}>
               {placeholder}
-            </p>
+            </span>
           )}
         </p>
       ) : (

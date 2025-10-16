@@ -772,7 +772,7 @@ export default function JobApplicantsPage({ params }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 admin-compact-mode">
+    <div className="w-full min-h-screen bg-gray-50 admin-compact-mode">
       {/* Header */}
       <div className="bg-white border-b sticky top-0 z-40">
         <div className="px-6 py-4">

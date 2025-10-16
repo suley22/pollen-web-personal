@@ -32,9 +32,9 @@ const Filters: React.FC<FiltersProps> = ({ form }) => {
   };
 
   return (
-    <Card className="w-full mb-6">
-      <CardContent className="p-6">
-        <div className="flex flex-col sm:flex-row gap-4">
+    <Card className="flex flex-col w-full mb-6 ">
+      <CardContent className="flex-col w-full p-6">
+        <div className="flex flex-col w-full sm:flex-row gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input

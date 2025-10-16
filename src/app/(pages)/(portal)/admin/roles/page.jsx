@@ -24,9 +24,9 @@ export default function RoleManagmentPage() {
       <div className="text-gray-500">Loading profiles...</div>
     </div>
   ) : (
-    <div>
-      <div className="mx-auto p-4 space-y-4">
-        <div className="text-left mb-6">
+    <div className="w-full flex flex-row ">
+      <div className="w-full flex flex-row p-4 space-y-4">
+        <div className="w-full flex-col text-left mb-6">
           {/* Search and Filters */}
           <div className="bg-white p-4 rounded-lg shadow-sm border space-y-3 mb-3">
             <div className="flex flex-col md:flex-row gap-4">
@@ -43,19 +43,18 @@ export default function RoleManagmentPage() {
           </div>
 
           {/* Jobs Display */}
-          <div className="bg-white rounded-lg border overflow-hidden">
-            <table className="w-full table-auto">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="w-auto" style={{ width: "1%" }} />
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
+          <div className="flex flex-col w-full bg-white rounded-lg border overflow-hidden">
+            <table className="flex flex-col w-full table-auto">
+              <thead className="flex bg-gray-50 border-b">
+                <tr className="flex w-full">
+                  <th className="flex flex-1 text-left py-3 px-4 font-medium text-gray-900">
                     Name
                   </th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-900">
+                  <th className="flex flex-1 text-left py-3 px-4 font-medium text-gray-900">
                     Email
                   </th>
                   <th
-                    className="text-left py-3 px-4 font-medium text-gray-900 w-auto"
+                    className="flex flex-1 text-right py-3 px-4 font-medium text-gray-900"
                     style={{ width: "1%" }}
                   >
                     Actions
@@ -88,8 +87,11 @@ export default function RoleManagmentPage() {
                       </div>
                     </td>
 
-                    <td className="py-2 px-4 w-auto" style={{ width: "1%" }}>
-                      <div className="flex">
+                    <td
+                      className="flex justify-start py-2 px-4 w-auto"
+                      style={{ width: "1%" }}
+                    >
+                      <div className="flex justify-start">
                         <Select
                           key={`${jobSeeker.id}-${jobSeeker.role}`}
                           onValueChange={(role) =>

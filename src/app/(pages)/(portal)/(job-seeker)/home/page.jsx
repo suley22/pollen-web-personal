@@ -20,7 +20,10 @@ import {
   MapPin,
 } from "lucide-react";
 
+import { useUser } from "@/app/providers";
+
 export default function Home() {
+  const user = useUser();
   const [, setProgress] = useState(0);
   const router = useRouter();
 
@@ -104,7 +107,7 @@ export default function Home() {
         {/* Welcome Section */}
         <div className="mb-6 mt-10">
           <h1 className="text-7xl lg:text-8xl font-sora font-bold text-gray-900 mb-2">
-            Welcome back, querido! 👋
+            Welcome back, {user?.firstName}! 👋
           </h1>
           <div className="flex flex-row justify-between ">
             <p className="text-sm font-sora text-gray-600 inline-block align-middle">

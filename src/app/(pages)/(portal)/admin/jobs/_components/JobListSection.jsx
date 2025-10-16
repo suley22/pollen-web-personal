@@ -39,8 +39,8 @@ export default function JobListSection({ form }) {
 
   return (
     <div className="space-y-3 mb-6">
-      <div className="flex items-center justify-between">
-        <div className="flex pl-1 items-center justify-between">
+      <div className="items-center justify-between">
+        <div className="pl-1 items-center justify-between">
           <p className="text-sm text-muted-foreground">
             Showing{" "}
             <span className="font-semibold text-foreground">

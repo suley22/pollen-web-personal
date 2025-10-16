@@ -33,7 +33,7 @@ export async function login(_, formData) {
     await supabase.auth.signInWithPassword(credentials);
 
   if (authError) {
-    return { error: "Error signing in" };
+    return { error: authError.message };
   }
 
   // TODO: -> Mismo código en src/app/page.tsx

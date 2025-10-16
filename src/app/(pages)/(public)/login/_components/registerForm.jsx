@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { GoogleIcon } from "@/components/icons/icons";
 import { useRegister } from "../_hooks/useRegister";
 import { useActionState } from "react";
-import { Alert } from "@/components/ui/alert";
 
 export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
   const { form } = useRegister();
@@ -38,82 +37,90 @@ export function RegisterForm({ className, signup, onChangeLogin, ...props }) {
         </div>
 
         <form action={formAction} className="flex flex-col gap-6">
-          {state &&
-            (state.success ? (
-              <Alert
-                title={state?.message}
-                description={state?.description}
-                type="success"
-              />
-            ) : (
-              <Alert
-                title={state?.message}
-                description={state?.description}
-                type="error"
-              />
-            ))}
+          {state && (
+            <div
+              className={cn(
+                "rounded-lg border p-4",
+                state.success
+                  ? "bg-green-50 border-green-200 text-green-800"
+                  : "bg-red-50 border-red-200 text-red-800",
+              )}
+            >
+              <h3 className="font-semibold text-sm mb-1">{state?.message}</h3>
+              {state?.description && (
+                <p className="text-sm opacity-90">{state?.description}</p>
+              )}
+            </div>
+          )}
 
-          {/* Email */}
-          <div className="grid gap-3">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id={form.fields.emailId}
-              type="email"
-              name="email"
-              placeholder="m@example.com"
-              onChange={(e) =>
-                form.handleOnChange(form.fields.emailId, e.target.value)
-              }
-            />
-            <ul className="mt-2 text-sm space-y-1">
-              {form.checks.email.map((check) => (
-                <li
-                  key={check.label}
-                  className={`flex items-center gap-2 ${
-                    check.valid ? "text-green-600" : "text-gray-500"
-                  }`}
-                >
-                  ● {check.valid ? "Email is valid" : "Email is not valid"}
-                </li>
-              ))}
-            </ul>
-          </div>
+          {!state && (
+            <div className="flex flex-col gap-5">
+              {/* Email */}
+              <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id={form.fields.emailId}
+                  type="email"
+                  name="email"
+                  placeholder="m@example.com"
+                  onChange={(e) =>
+                    form.handleOnChange(form.fields.emailId, e.target.value)
+                  }
+                />
+                <ul className="mt-2 text-sm space-y-1">
+                  {form.checks.email.map((check) => (
+                    <li
+                      key={check.label}
+                      className={`flex items-center gap-2 ${
+                        check.valid ? "text-green-600" : "text-gray-500"
+                      }`}
+                    >
+                      ● Valid email
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-          {/* Password */}
-          <div className="grid gap-3">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              name="password"
-              id={form.fields.passwordFieldId}
-              type="password"
-              onChange={(e) =>
-                form.handleOnChange(form.fields.passwordFieldId, e.target.value)
-              }
-            />
+              {/* Password */}
+              <div className="grid gap-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  name="password"
+                  id={form.fields.passwordFieldId}
+                  type="password"
+                  onChange={(e) =>
+                    form.handleOnChange(
+                      form.fields.passwordFieldId,
+                      e.target.value,
+                    )
+                  }
+                />
 
-            {/* Lista de requisitos */}
-            <ul className="mt-2 text-sm space-y-1">
-              {form.checks.password.map((check) => (
-                <li
-                  key={check.label}
-                  className={`flex items-center gap-2 ${
-                    check.valid ? "text-green-600" : "text-gray-500"
-                  }`}
-                >
-                  ● {check.label}
-                </li>
-              ))}
-            </ul>
-          </div>
+                {/* Lista de requisitos */}
+                <ul className="mt-2 text-sm space-y-1">
+                  {form.checks.password.map((check) => (
+                    <li
+                      key={check.label}
+                      className={`flex items-center gap-2 ${
+                        check.valid ? "text-green-600" : "text-gray-500"
+                      }`}
+                    >
+                      ● {check.label}
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-          {/* Botón Sign up */}
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isLoading || !form.valid}
-          >
-            {isLoading ? "Loading..." : "Sign up"}
-          </Button>
+              {/* Botón Sign up */}
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isLoading || !form.valid}
+              >
+                {isLoading ? "Loading..." : "Sign up"}
+              </Button>
+            </div>
+          )}
         </form>
       </div>
 

@@ -9,8 +9,18 @@ import {
 
 export function useRegister() {
   const [isFormValid, setIsFormValid] = useState(false);
-  const [emailChecks, setEmailChecks] = useState([]);
-  const [passwordChecks, setPasswordChecks] = useState([]);
+  const [emailChecks, setEmailChecks] = useState(
+    Object.entries(emailErrorMessages).map(([, message]) => ({
+      label: message,
+      valid: false,
+    })),
+  );
+  const [passwordChecks, setPasswordChecks] = useState(
+    Object.entries(passwordErrorMessages).map(([, message]) => ({
+      label: message,
+      valid: false,
+    })),
+  );
   const [googleLoading, setGoogleLoading] = useState(false);
 
   useEffect(() => {

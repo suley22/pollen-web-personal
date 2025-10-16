@@ -1,12 +1,13 @@
 import { createClient } from "@/lib/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { LoginRoutes } from "@/public/router";
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type");
 
-  let next = searchParams.get("next") ?? "/main/user-info";
+  let next = searchParams.get("next") ?? LoginRoutes.userInfo;
 
   if (token_hash && type) {
     const supabase = await createClient();

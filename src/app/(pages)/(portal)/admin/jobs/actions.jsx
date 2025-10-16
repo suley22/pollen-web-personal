@@ -69,7 +69,8 @@ export async function getJobList(filters = {}) {
     let query = supabase
       .from("job")
       .select("*")
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(10);
 
     // Aplicar filtro por status si existe
     if (filters.status && filters.status !== "all") {

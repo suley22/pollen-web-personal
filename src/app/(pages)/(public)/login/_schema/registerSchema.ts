@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const emailErrorMessages = {
-  EMAIL_NOT_VALID: "Email is not valid",
+  EMAIL_NOT_VALID: "Valid email",
 };
 
 export const passwordErrorMessages = {

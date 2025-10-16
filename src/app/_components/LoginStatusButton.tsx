@@ -5,8 +5,7 @@ import { LayoutTemplate, Loader } from "lucide-react";
 import { useUser } from "@/app/providers";
 import { LoginRoutes } from "@/public/router";
 import { useCallback, memo } from "react";
-import Link from "next/link";
-import NextImage from "next/image";
+
 import { useLogout } from "@/hooks/useLogout";
 
 import {
@@ -22,7 +21,7 @@ import { useRouter } from "next/navigation";
 
 export const LoginStatusButton = memo(() => {
   const user = useUser();
-  const { onLogout, isLogoutInProgress } = useLogout();
+  const { onLogout } = useLogout();
   const router = useRouter();
 
   function formatString(str) {

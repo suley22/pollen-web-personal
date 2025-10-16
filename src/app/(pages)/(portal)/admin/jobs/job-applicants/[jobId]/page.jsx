@@ -2312,7 +2312,7 @@ export default function JobApplicantsPage({ params }) {
       </div>
 
       {/* Confirmation Dialog */}
-      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+      {/* <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Confirm Action</DialogTitle>
@@ -2355,7 +2355,7 @@ export default function JobApplicantsPage({ params }) {
             </Button>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
       {/* Full Page Assessment Modal */}
       {isMobileFullPage && selectedAssessment && (
@@ -3091,7 +3091,7 @@ export default function JobApplicantsPage({ params }) {
         </div>
       )}
       {/* Feedback Review Dialog */}
-      <Dialog open={showFeedbackReview} onOpenChange={setShowFeedbackReview}>
+      {/* <Dialog open={showFeedbackReview} onOpenChange={setShowFeedbackReview}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -3102,7 +3102,6 @@ export default function JobApplicantsPage({ params }) {
 
           {selectedFeedback && (
             <div className="space-y-6">
-              {/* Header showing it's direct feedback */}
               <div className="bg-pink-50 border border-pink-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <FileText className="h-4 w-4 text-pink-600" />
@@ -3118,7 +3117,6 @@ export default function JobApplicantsPage({ params }) {
                 </p>
               </div>
 
-              {/* Interview Scores */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                   <BarChart3 className="h-5 w-5 text-purple-600" />
@@ -3156,7 +3154,6 @@ export default function JobApplicantsPage({ params }) {
                 </div>
               </div>
 
-              {/* Feedback Notes */}
               <div className="space-y-3">
                 <h4 className="font-medium text-purple-600">Notes:</h4>
                 <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-purple-500">
@@ -3164,7 +3161,6 @@ export default function JobApplicantsPage({ params }) {
                 </div>
               </div>
 
-              {/* Approval Section */}
               {selectedFeedback.reviewStatus === "pending" && (
                 <div className="flex justify-end gap-3 pt-4 border-t">
                   <Button
@@ -3193,7 +3189,7 @@ export default function JobApplicantsPage({ params }) {
             </div>
           )}
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </PageContainer>
   );
 }

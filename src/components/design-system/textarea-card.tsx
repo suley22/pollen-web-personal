@@ -20,7 +20,7 @@ interface TextAreaCardProps {
   placeholder?: string;
   defaultValue?: string;
   value?: string;
-  onChange?: (event: any) => void;
+  onChange?: () => void;
   className?: string;
   textareaClassName?: string;
   rows?: number;

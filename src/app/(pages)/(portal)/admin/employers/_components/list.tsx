@@ -27,7 +27,7 @@ import { EmptyState } from "@/components/design-system/empty-state";
 export function List() {
   const router = useRouter();
   const { employers, getStatusBadge, loading } = useEmployerManagementContext();
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const handleDeleteClick = (company, e) => {
     e.preventDefault();

@@ -47,7 +47,7 @@ export class EmployerService {
         .from("job")
         .select("*", { count: "exact", head: true })
         .eq("company_id", employerId)
-        .eq("status", "draft");
+        .eq("status", "pending");
 
       return {
         live_jobs_count: liveCount || 0,
@@ -74,7 +74,6 @@ export class EmployerService {
       .select("*")
       .order("created_at", { ascending: false })
       .filter("deleted_at", "is", null);
-
 
     // Apply approval_status filter
     if (filters.status && filters.status !== "all") {
@@ -216,13 +215,15 @@ export class EmployerService {
     // Debug logging to check what we're receiving
     console.log("EmployerService: FormData type check:", {
       isFormData: formData instanceof FormData,
-      hasEntries: typeof formData?.entries === 'function',
-      formData: formData
+      hasEntries: typeof formData?.entries === "function",
+      formData: formData,
     });
 
     // Ensure we have a proper FormData object
-    if (!formData || typeof formData.entries !== 'function') {
-      throw new Error(`Expected FormData object, but received: ${typeof formData}`);
+    if (!formData || typeof formData.entries !== "function") {
+      throw new Error(
+        `Expected FormData object, but received: ${typeof formData}`,
+      );
     }
 
     const formCompanyData = Object.fromEntries(formData.entries());
@@ -296,7 +297,6 @@ export class EmployerService {
    */
   async createEmployer(formData: FormData, userId: string) {
     try {
-
       const transformedData = this.transformFormDataToDatabase(
         formData,
         userId,

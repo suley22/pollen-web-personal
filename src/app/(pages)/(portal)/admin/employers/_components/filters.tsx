@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Filter, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

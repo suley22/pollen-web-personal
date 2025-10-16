@@ -2,10 +2,8 @@
 
 import { useState, useCallback } from "react";
 import { createClient } from "@/lib/utils/supabase/client";
-import { useRouter } from "next/navigation";
 
 export const useLogout = () => {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
   const handleLogout = useCallback(async () => {

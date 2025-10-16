@@ -1,14 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useActionState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { createJobData } from "./actions";
 import {
   Target,
   FileText,
-  Badge,
   Lightbulb,
   Award,
   UserCheck,
@@ -16,22 +13,28 @@ import {
   Brain,
   CheckCircle,
   Eye,
-  X,
   Users,
-  ArrowLeft,
+  X,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { CompanySearchSelect } from "./CompanySearchSelect";
+import {
+  FormCard,
+  PageContainer,
+  PageHeader,
+  FormContainer,
+  FormActions,
+  ConfirmationDialog,
+  Input,
+  Textarea,
+  TextAreaCard,
+  DynamicListInput,
+  Select as DSSelect,
+} from "@/components/design-system";
 
 export default function JobsManagmentCreatePage() {
   const formRef = useRef(null);
@@ -47,10 +50,10 @@ export default function JobsManagmentCreatePage() {
     instructions: "",
     openingQuestion: {
       title: "",
-      content: ""
+      content: "",
     },
     generatedContent: "",
-    scoringCriteria: ""
+    scoringCriteria: "",
   });
   const [editedPersonaData, setEditedPersonaData] = useState({
     primaryDisc: "Influencer (I/D)",
@@ -85,39 +88,62 @@ export default function JobsManagmentCreatePage() {
     who_would_love: [""],
     success_looks: "",
     pollen_approved_requirements: [""],
-    internal_notes: ""
+    internal_notes: "",
   });
   const [activeTab, setActiveTab] = useState("description");
 
-
-  
-
-  
   const handleCancel = () => {
     router.back();
   };
 
   const handleSubmit = async (formData) => {
     // Preparar los datos de los arrays como strings separados por comas
-    formData.set('responsibilities', editedJob.responsibilities.filter(r => r.trim()).join(','));
-    formData.set('who_would_love', editedJob.who_would_love.filter(w => w.trim()).join(','));
-    formData.set('pollen_approved_requirements', editedJob.pollen_approved_requirements.filter(p => p.trim()).join(','));
-    
+    formData.set(
+      "responsibilities",
+      editedJob.responsibilities.filter((r) => r.trim()).join(","),
+    );
+    formData.set(
+      "who_would_love",
+      editedJob.who_would_love.filter((w) => w.trim()).join(","),
+    );
+    formData.set(
+      "pollen_approved_requirements",
+      editedJob.pollen_approved_requirements.filter((p) => p.trim()).join(","),
+    );
+
     // Agregar datos del assessment
-    formData.set('assessment_title', editedAssessment.title || '');
-    formData.set('assessment_estimated_time', editedAssessment.estimatedTime || '');
-    formData.set('assessment_total_questions', editedAssessment.totalQuestions || '');
-    formData.set('assessment_instructions', editedAssessment.instructions || '');
-    formData.set('assessment_opening_question_title', editedAssessment.openingQuestion?.title || '');
-    formData.set('assessment_opening_question_content', editedAssessment.openingQuestion?.content || '');
-    formData.set('assessment_content', editedAssessment.generatedContent || '');
-    formData.set('assessment_scoring_criteria', editedAssessment.scoringCriteria || '');
-    
+    formData.set("assessment_title", editedAssessment.title || "");
+    formData.set(
+      "assessment_estimated_time",
+      editedAssessment.estimatedTime || "",
+    );
+    formData.set(
+      "assessment_total_questions",
+      editedAssessment.totalQuestions || "",
+    );
+    formData.set(
+      "assessment_instructions",
+      editedAssessment.instructions || "",
+    );
+    formData.set(
+      "assessment_opening_question_title",
+      editedAssessment.openingQuestion?.title || "",
+    );
+    formData.set(
+      "assessment_opening_question_content",
+      editedAssessment.openingQuestion?.content || "",
+    );
+    formData.set("assessment_content", editedAssessment.generatedContent || "");
+    formData.set(
+      "assessment_scoring_criteria",
+      editedAssessment.scoringCriteria || "",
+    );
+
     const result = await createJobAction(formData);
-    
+
     if (result?.success) {
       // Redirigir a la lista de jobs o mostrar mensaje de éxito
-      router.push('/admin/jobs-managment');
+      router.push("/admin/jobs-managment");
     }
   };
 
@@ -143,83 +169,33 @@ export default function JobsManagmentCreatePage() {
   const addArrayItem = (field) => {
     setEditedJob((prev) => ({
       ...prev,
-      [field]: [...prev[field], ""]
+      [field]: [...prev[field], ""],
     }));
   };
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleConfirmSubmit = () => {
+    if (formRef.current) {
+      const formData = new FormData(formRef.current);
+      handleSubmit(formData);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => router.back()}
-                className="text-gray-600 hover:text-gray-900"
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-              <div>
-                <h1 className="text-xl font-semibold text-gray-900">
-                  Create New Job
-                </h1>
-                <p className="text-sm text-gray-600">
-                  Fill in the details below to create a new job posting
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <PageContainer>
+      <PageHeader
+        title="Create a new Job"
+        description="Fill in the details below to create a new job posting"
+        showBackButton={true}
+        onBack={() => router.back()}
+      />
 
-      {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <form ref={formRef} action={handleSubmit}>
-          {/* Action Buttons for Job Creation */}
-          <div className="mb-6 flex justify-between items-center">
-            <div className="text-sm text-gray-600">
-              Fill in all the details below to create your new job posting
-              {state?.error && (
-                <div className="mt-2 text-sm text-red-600 bg-red-50 p-2 rounded">
-                  Error: {state.error}
-                </div>
-              )}
-              {state?.success && (
-                <div className="mt-2 text-sm text-green-600 bg-green-50 p-2 rounded">
-                  Job created successfully!
-                </div>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                onClick={handleCancel}
-                variant="outline"
-                size="sm"
-              >
-                <X className="h-4 w-4 mr-2" />
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                size="sm"
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-                disabled={isPending}
-              >
-                <CheckCircle className="h-4 w-4 mr-2" />
-                {isPending ? "Creating..." : "Create Job"}
-              </Button>
-            </div>
-          </div>
-
-        {/* 3-Tab Structure for All Jobs */}
+      <FormContainer ref={formRef} action={handleSubmit}>
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}
-          className="space-y-4"
+          className="space-y-6"
         >
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger
@@ -243,107 +219,83 @@ export default function JobsManagmentCreatePage() {
 
           <TabsContent value="description" className="space-y-6">
             {/* Job Overview Card */}
-            <Card className="p-6">
-              <CardHeader>
-                <CardTitle className="flex items-center pb-4">
-                  <Briefcase className="h-5 w-5 mr-2" />
-                  Job Overview
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <div className="space-y-3">
-                    <div>
-                      <Label htmlFor="jobTitle">Job Title</Label>
-                      <Input
-                        id="jobTitle"
-                        name="job_title"
-                        value={editedJob?.job_title || ""}
-                        onChange={(e) =>
-                          updateEditedJob("job_title", e.target.value)
-                        }
-                        placeholder="Enter job title..."
-                      />
-                    </div>
-                    <div>
-                      <CompanySearchSelect
-                        name="company_name"
-                        value={editedJob?.company_name || ""}
-                        onValueChange={(value) =>
-                          updateEditedJob("company_name", value)
-                        }
-                      />
-                    </div>
-                  </div>
+            <FormCard
+              icon={<Briefcase className="h-5 w-5 text-gray-500" />}
+              title="Job Overview"
+            >
+              <div className="w-full flex flex-col gap-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <CompanySearchSelect
+                    name="company_name"
+                    value={editedJob?.company_name || ""}
+                    onValueChange={(value) =>
+                      updateEditedJob("company_name", value)
+                    }
+                  />
+                  <Input
+                    label="Job Title"
+                    type="text"
+                    name="job_title"
+                    id="job_title"
+                    placeholder="Enter job title"
+                    defaultValue={editedJob?.job_title || ""}
+                  />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="location">Location</Label>
-                    <Input
-                      id="location"
-                      name="location"
-                      value={editedJob?.location || ""}
-                      onChange={(e) =>
-                        updateEditedJob("location", e.target.value)
-                      }
-                      placeholder="Enter location..."
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="jobType">Working Hours</Label>
-                    <Select
-                      name="job_type"
-                      value={editedJob?.job_type || ""}
-                      onValueChange={(value) =>
-                        updateEditedJob("job_type", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select working hours" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Full-time">Full-time</SelectItem>
-                        <SelectItem value="Part-time">Part-time</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="salaryRange">Salary Range</Label>
-                    <Input
-                      id="salaryRange"
-                      name="salary_range"
-                      value={editedJob?.salary_range || ""}
-                      onChange={(e) =>
-                        updateEditedJob("salary_range", e.target.value)
-                      }
-                      placeholder="e.g. £25,000 - £30,000"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="workArrangement">Work Arrangement</Label>
-                    <Select
-                      name="work_arrangement"
-                      value={editedJob?.work_arrangement || ""}
-                      onValueChange={(value) =>
-                        updateEditedJob("work_arrangement", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select arrangement" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Office-based">
-                          Office-based
-                        </SelectItem>
-                        <SelectItem value="Remote">Remote</SelectItem>
-                        <SelectItem value="Hybrid">Hybrid</SelectItem>
-                        <SelectItem value="Out and About">
-                          Out and About
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <Input
+                    label="Location"
+                    id="location"
+                    name="location"
+                    value={editedJob?.location || ""}
+                    onChange={(e) =>
+                      updateEditedJob("location", e.target.value)
+                    }
+                    placeholder="Enter location..."
+                  />
+
+                  <DSSelect
+                    label="Working Hours"
+                    name="job_type"
+                    value={editedJob?.job_type || ""}
+                    onValueChange={(value) =>
+                      updateEditedJob("job_type", value)
+                    }
+                    placeholder="Select working hours"
+                    options={[
+                      { value: "Full-time", label: "Full-time" },
+                      { value: "Part-time", label: "Part-time" },
+                    ]}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <Input
+                    label="Salary Range"
+                    id="salaryRange"
+                    name="salary_range"
+                    value={editedJob?.salary_range || ""}
+                    onChange={(e) =>
+                      updateEditedJob("salary_range", e.target.value)
+                    }
+                    placeholder="e.g. £25,000 - £30,000"
+                  />
+
+                  <DSSelect
+                    label="Work Arrangement"
+                    name="work_arrangement"
+                    value={editedJob?.work_arrangement || ""}
+                    onValueChange={(value) =>
+                      updateEditedJob("work_arrangement", value)
+                    }
+                    placeholder="Select arrangement"
+                    options={[
+                      { value: "Office-based", label: "Office-based" },
+                      { value: "Remote", label: "Remote" },
+                      { value: "Hybrid", label: "Hybrid" },
+                      { value: "Out and About", label: "Out and About" },
+                    ]}
+                  />
                 </div>
 
                 <div className="bg-gray-50 p-4 rounded-lg space-y-3">
@@ -351,335 +303,186 @@ export default function JobsManagmentCreatePage() {
                     Employment Details
                   </h4>
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="employmentType">Employment Type</Label>
-                      <Select
-                        name="employment_type"
-                        value={editedJob?.employment_type || ""}
-                        onValueChange={(value) =>
-                          updateEditedJob("employment_type", value)
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Permanent">Permanent</SelectItem>
-                          <SelectItem value="Fixed term/temporary">
-                            Fixed term/temporary
-                          </SelectItem>
-                          <SelectItem value="Contract/freelance">
-                            Contract/freelance
-                          </SelectItem>
-                          <SelectItem value="Internship">
-                            Internship
-                          </SelectItem>
-                          <SelectItem value="Apprenticeship">
-                            Apprenticeship
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="startDate">Start Date</Label>
-                      <Input
-                        id="startDate"
-                        name="start_date"
-                        value={editedJob?.start_date || ""}
-                        onChange={(e) =>
-                          updateEditedJob("start_date", e.target.value)
-                        }
-                        placeholder="e.g. ASAP, January 2025"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="applicationDeadline">
-                        Application Deadline
-                      </Label>
-                      <Input
-                        id="applicationDeadline"
-                        name="application_deadline"
-                        type="date"
-                        value={editedJob?.application_deadline || ""}
-                        onChange={(e) =>
-                          updateEditedJob(
-                            "application_deadline",
-                            e.target.value,
-                          )
-                        }
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="employmentTypeDetails">
-                        Employment Type Details
-                      </Label>
-                      <Input
-                        id="employmentTypeDetails"
-                        name="employment_type_details"
-                        value={editedJob?.employment_type_details || ""}
-                        onChange={(e) =>
-                          updateEditedJob(
-                            "employment_type_details",
-                            e.target.value,
-                          )
-                        }
-                        placeholder="e.g. Standard employment contract"
-                      />
-                    </div>
+                    <DSSelect
+                      label="Employment Type"
+                      name="employment_type"
+                      value={editedJob?.employment_type || ""}
+                      onValueChange={(value) =>
+                        updateEditedJob("employment_type", value)
+                      }
+                      placeholder="Select type"
+                      options={[
+                        { value: "Permanent", label: "Permanent" },
+                        {
+                          value: "Fixed term/temporary",
+                          label: "Fixed term/temporary",
+                        },
+                        {
+                          value: "Contract/freelance",
+                          label: "Contract/freelance",
+                        },
+                        { value: "Internship", label: "Internship" },
+                        { value: "Apprenticeship", label: "Apprenticeship" },
+                      ]}
+                    />
+
+                    <Input
+                      label="Start Date"
+                      id="startDate"
+                      name="start_date"
+                      value={editedJob?.start_date || ""}
+                      onChange={(e) =>
+                        updateEditedJob("start_date", e.target.value)
+                      }
+                      placeholder="e.g. ASAP, January 2025"
+                    />
+
+                    <Input
+                      label="Application Deadline"
+                      id="applicationDeadline"
+                      name="application_deadline"
+                      type="date"
+                      value={editedJob?.application_deadline || ""}
+                      onChange={(e) =>
+                        updateEditedJob("application_deadline", e.target.value)
+                      }
+                    />
+
+                    <Input
+                      label="Employment Type Details"
+                      id="employmentTypeDetails"
+                      name="employment_type_details"
+                      value={editedJob?.employment_type_details || ""}
+                      onChange={(e) =>
+                        updateEditedJob(
+                          "employment_type_details",
+                          e.target.value,
+                        )
+                      }
+                      placeholder="e.g. Standard employment contract"
+                    />
+
                     <div className="col-span-2">
-                      <Label htmlFor="workAuthorisation">
-                        Work Authorisation
-                      </Label>
-                      <Select
+                      <DSSelect
+                        label="Work Authorisation"
                         name="work_authorization"
                         value={editedJob?.work_authorization || ""}
                         onValueChange={(value) =>
                           updateEditedJob("work_authorization", value)
                         }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select work authorisation requirement" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="UK work authorisation required">
-                            UK work authorisation required
-                          </SelectItem>
-                          <SelectItem value="EU work authorisation required">
-                            EU work authorisation required
-                          </SelectItem>
-                          <SelectItem value="No work authorisation required">
-                            No work authorisation required
-                          </SelectItem>
-                          <SelectItem value="Sponsorship available">
-                            Sponsorship available
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
+                        placeholder="Select work authorisation requirement"
+                        options={[
+                          {
+                            value: "UK work authorisation required",
+                            label: "UK work authorisation required",
+                          },
+                          {
+                            value: "EU work authorisation required",
+                            label: "EU work authorisation required",
+                          },
+                          {
+                            value: "No work authorisation required",
+                            label: "No work authorisation required",
+                          },
+                          {
+                            value: "Sponsorship available",
+                            label: "Sponsorship available",
+                          },
+                        ]}
+                      />
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </FormCard>
 
-            {/* About This Role Card */}
-            <Card className="p-6">
-              <CardHeader>
-                <CardTitle className="flex items-center pb-4">
-                  <FileText className="h-5 w-5 mr-2" />
-                  About This Role
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Textarea
-                  name="description"
-                  value={editedJob?.description || ""}
-                  onChange={(e) =>
-                    updateEditedJob("description", e.target.value)
-                  }
-                  className="min-h-[100px]"
-                  placeholder="Enter job description..."
+            <TextAreaCard
+              title="About This Role"
+              icon={<FileText className="h-5 w-5" />}
+              name="description"
+              placeholder="Enter job description..."
+              value={editedJob?.description || ""}
+              onChange={(e) => updateEditedJob("description", e.target.value)}
+            />
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormCard
+                title="Key Responsibilities"
+                icon={<Target className="h-5 w-5" />}
+              >
+                <DynamicListInput
+                  title="Key Responsibilities"
+                  icon={<Target className="h-5 w-5" />}
+                  name="responsibilities"
+                  addButtonText="Add Responsibility"
+                  fields={[
+                    {
+                      key: "value",
+                      placeholder: "Enter responsibility...",
+                      type: "text",
+                    },
+                  ]}
                 />
-              </CardContent>
-            </Card>
+              </FormCard>
 
-            {/* Key Responsibilities Card */}
-            <Card className="p-6">
-              <CardHeader>
-                <CardTitle className="flex items-center pb-4">
-                  <Target className="h-5 w-5 mr-2" />
-                  Key Responsibilities
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {editedJob?.responsibilities?.map(
-                    (responsibility, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <Input
-                          value={responsibility}
-                          onChange={(e) =>
-                            updateArrayField(
-                              "responsibilities",
-                              index,
-                              e.target.value,
-                            )
-                          }
-                          className="flex-1"
-                          placeholder="Enter responsibility..."
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            removeArrayItem("responsibilities", index)
-                          }
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ),
-                  )}
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addArrayItem("responsibilities")}
-                    className="text-blue-600 hover:text-blue-700"
-                  >
-                    + Add Responsibility
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Who Would Love This Job Card */}
-            <Card className="p-6">
-              <CardHeader>
-                <CardTitle className="flex items-center pb-4">
-                  <Users className="h-5 w-5 mr-2" />
-                  Who Would Love This Job
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {editedJob?.who_would_love?.map((trait, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <Input
-                        value={trait}
-                        onChange={(e) =>
-                          updateArrayField(
-                            "who_would_love",
-                            index,
-                            e.target.value,
-                          )
-                        }
-                        className="flex-1"
-                        placeholder="Enter ideal candidate trait..."
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => removeArrayItem("who_would_love", index)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addArrayItem("who_would_love")}
-                    className="text-blue-600 hover:text-blue-700"
-                  >
-                    + Add Trait
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Success Metrics Card */}
-            <Card className="p-6">
-              <CardHeader>
-                <CardTitle className="flex items-center pb-4">
-                  <Target className="h-5 w-5 mr-2" />
-                  Success In This Role Looks Like
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Textarea
-                  name="success_looks"
-                  value={editedJob?.success_looks || ""}
-                  onChange={(e) =>
-                    updateEditedJob("success_looks", e.target.value)
-                  }
-                  className="min-h-[80px]"
-                  placeholder="Describe what success looks like in this role..."
+              <FormCard
+                title="Who Would Love This Role"
+                icon={<Users className="h-5 w-5" />}
+              >
+                <DynamicListInput
+                  title="Who Would Love This Job"
+                  icon={<Users className="h-5 w-5" />}
+                  name="who_would_love"
+                  addButtonText="Add Trait"
+                  fields={[
+                    {
+                      key: "value",
+                      placeholder: "Enter ideal candidate trait...",
+                      type: "text",
+                    },
+                  ]}
                 />
-              </CardContent>
-            </Card>
+              </FormCard>
+            </div>
 
-            {/* Pollen Approved Requirements Card */}
-            <Card className="p-6">
-              <CardHeader>
-                <CardTitle className="flex items-center pb-4">
-                  <Award className="h-5 w-5 mr-2" />
-                  Pollen Approved Requirements
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {editedJob?.pollen_approved_requirements?.map(
-                    (requirement, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <Input
-                          value={requirement}
-                          onChange={(e) =>
-                            updateArrayField(
-                              "pollen_approved_requirements",
-                              index,
-                              e.target.value,
-                            )
-                          }
-                          className="flex-1"
-                          placeholder="Enter requirement..."
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            removeArrayItem(
-                              "pollen_approved_requirements",
-                              index,
-                            )
-                          }
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ),
-                  )}
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addArrayItem("pollen_approved_requirements")}
-                    className="text-blue-600 hover:text-blue-700"
-                  >
-                    + Add Requirement
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <TextAreaCard
+              title="Success In This Role Looks Like"
+              icon={<Target className="h-5 w-5" />}
+              name="success_looks"
+              placeholder="Describe what success looks like in this role..."
+              value={editedJob?.success_looks || ""}
+              onChange={(e) => updateEditedJob("success_looks", e.target.value)}
+            />
 
-            {/* Internal Notes Card */}
-            <Card className="p-6">
-              <CardHeader>
-                <CardTitle className="flex items-center pb-4">
-                  <Lightbulb className="h-5 w-5 mr-2" />
-                  Internal Notes
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Textarea
-                  name="internal_notes"
-                  value={editedJob?.internal_notes || ""}
-                  onChange={(e) =>
-                    updateEditedJob("internal_notes", e.target.value)
-                  }
-                  className="min-h-[80px]"
-                  placeholder="Add internal notes about this role..."
-                />
-              </CardContent>
-            </Card>
+            <FormCard
+              title="Pollen Approved Requirements"
+              icon={<CheckCircle className="h-5 w-5 " />}
+            >
+              <DynamicListInput
+                title="Pollen Approved Requirements"
+                icon={<Award className="h-5 w-5" />}
+                name="pollen_approved_requirements"
+                addButtonText="Add Requirement"
+                fields={[
+                  {
+                    key: "value",
+                    placeholder: "Enter requirement...",
+                    type: "text",
+                  },
+                ]}
+              />
+            </FormCard>
 
-
+            <TextAreaCard
+              title="Internal Notes"
+              icon={<Lightbulb className="h-5 w-5" />}
+              name="internal_notes"
+              placeholder="Add internal notes about this role..."
+              value={editedJob?.internal_notes || ""}
+              onChange={(e) =>
+                updateEditedJob("internal_notes", e.target.value)
+              }
+            />
           </TabsContent>
 
           <TabsContent value="persona" className="space-y-6">
@@ -798,8 +601,9 @@ export default function JobsManagmentCreatePage() {
                     Assessment Guidelines
                   </h4>
                   <p className="text-sm text-blue-800">
-                    Create a skills assessment that will help evaluate candidates for this role. 
-                    The assessment should include relevant questions, tasks, and scoring criteria.
+                    Create a skills assessment that will help evaluate
+                    candidates for this role. The assessment should include
+                    relevant questions, tasks, and scoring criteria.
                   </p>
                 </div>
 
@@ -823,7 +627,9 @@ export default function JobsManagmentCreatePage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="estimatedTime">Estimated Time (minutes)</Label>
+                      <Label htmlFor="estimatedTime">
+                        Estimated Time (minutes)
+                      </Label>
                       <Input
                         id="estimatedTime"
                         name="estimated_time"
@@ -857,7 +663,9 @@ export default function JobsManagmentCreatePage() {
                   </div>
 
                   <div>
-                    <Label htmlFor="assessmentInstructions">Assessment Instructions</Label>
+                    <Label htmlFor="assessmentInstructions">
+                      Assessment Instructions
+                    </Label>
                     <Textarea
                       id="assessmentInstructions"
                       name="assessment_instructions"
@@ -881,7 +689,9 @@ export default function JobsManagmentCreatePage() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <Label htmlFor="openingQuestionTitle">Question Title</Label>
+                      <Label htmlFor="openingQuestionTitle">
+                        Question Title
+                      </Label>
                       <Input
                         id="openingQuestionTitle"
                         name="opening_question_title"
@@ -892,14 +702,16 @@ export default function JobsManagmentCreatePage() {
                             openingQuestion: {
                               ...(prev?.openingQuestion ?? {}),
                               title: e.target.value,
-                            }
+                            },
                           }))
                         }
                         placeholder="Tell us about yourself and your interest in this role"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="openingQuestionContent">Question Content/Instructions</Label>
+                      <Label htmlFor="openingQuestionContent">
+                        Question Content/Instructions
+                      </Label>
                       <Textarea
                         id="openingQuestionContent"
                         name="opening_question_content"
@@ -910,7 +722,7 @@ export default function JobsManagmentCreatePage() {
                             openingQuestion: {
                               ...(prev?.openingQuestion ?? {}),
                               content: e.target.value,
-                            }
+                            },
                           }))
                         }
                         className="min-h-[80px]"
@@ -923,11 +735,15 @@ export default function JobsManagmentCreatePage() {
                 {/* Main Assessment Content */}
                 <Card className="border-l-4 border-l-green-500">
                   <CardHeader>
-                    <CardTitle className="text-lg">Assessment Questions & Tasks</CardTitle>
+                    <CardTitle className="text-lg">
+                      Assessment Questions & Tasks
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <Label htmlFor="assessmentContent">Full Assessment Content</Label>
+                      <Label htmlFor="assessmentContent">
+                        Full Assessment Content
+                      </Label>
                       <Textarea
                         id="assessmentContent"
                         name="assessment_content"
@@ -958,7 +774,10 @@ What type of work environment do you thrive in? How do you handle [specific chal
                       />
                     </div>
                     <div className="text-sm text-gray-600">
-                      <p><strong>Tip:</strong> Use ### for question headers, and provide clear instructions for each section.</p>
+                      <p>
+                        <strong>Tip:</strong> Use ### for question headers, and
+                        provide clear instructions for each section.
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
@@ -966,11 +785,15 @@ What type of work environment do you thrive in? How do you handle [specific chal
                 {/* Scoring Criteria */}
                 <Card className="border-l-4 border-l-amber-500">
                   <CardHeader>
-                    <CardTitle className="text-lg">Scoring Criteria (Internal Use)</CardTitle>
+                    <CardTitle className="text-lg">
+                      Scoring Criteria (Internal Use)
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <Label htmlFor="scoringCriteria">Evaluation Guidelines</Label>
+                      <Label htmlFor="scoringCriteria">
+                        Evaluation Guidelines
+                      </Label>
                       <Textarea
                         id="scoringCriteria"
                         name="scoring_criteria"
@@ -1019,33 +842,106 @@ Overall Assessment Guidelines:
                   </CardHeader>
                   <CardContent>
                     <div className="text-sm text-gray-600 space-y-2">
-                      <p><strong>Title:</strong> {editedAssessment?.title || "Not specified"}</p>
-                      <p><strong>Estimated Time:</strong> {editedAssessment?.estimatedTime ? `${editedAssessment.estimatedTime} minutes` : "Not specified"}</p>
-                      <p><strong>Total Questions:</strong> {editedAssessment?.totalQuestions || "Not specified"}</p>
-                      <p><strong>Opening Question:</strong> {editedAssessment?.openingQuestion?.title || "Not defined"}</p>
-                      <p><strong>Content Length:</strong> {editedAssessment?.generatedContent ? `${editedAssessment.generatedContent.length} characters` : "No content"}</p>
-                      <p><strong>Has Scoring Criteria:</strong> {editedAssessment?.scoringCriteria ? "Yes" : "No"}</p>
+                      <p>
+                        <strong>Title:</strong>{" "}
+                        {editedAssessment?.title || "Not specified"}
+                      </p>
+                      <p>
+                        <strong>Estimated Time:</strong>{" "}
+                        {editedAssessment?.estimatedTime
+                          ? `${editedAssessment.estimatedTime} minutes`
+                          : "Not specified"}
+                      </p>
+                      <p>
+                        <strong>Total Questions:</strong>{" "}
+                        {editedAssessment?.totalQuestions || "Not specified"}
+                      </p>
+                      <p>
+                        <strong>Opening Question:</strong>{" "}
+                        {editedAssessment?.openingQuestion?.title ||
+                          "Not defined"}
+                      </p>
+                      <p>
+                        <strong>Content Length:</strong>{" "}
+                        {editedAssessment?.generatedContent
+                          ? `${editedAssessment.generatedContent.length} characters`
+                          : "No content"}
+                      </p>
+                      <p>
+                        <strong>Has Scoring Criteria:</strong>{" "}
+                        {editedAssessment?.scoringCriteria ? "Yes" : "No"}
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
 
                 {/* Hidden inputs for form submission */}
                 <div className="hidden">
-                  <input type="hidden" name="assessment_title" value={editedAssessment?.title || ""} />
-                  <input type="hidden" name="estimated_time" value={editedAssessment?.estimatedTime || ""} />
-                  <input type="hidden" name="total_questions" value={editedAssessment?.totalQuestions || ""} />
-                  <input type="hidden" name="assessment_instructions" value={editedAssessment?.instructions || ""} />
-                  <input type="hidden" name="opening_question_title" value={editedAssessment?.openingQuestion?.title || ""} />
-                  <input type="hidden" name="opening_question_content" value={editedAssessment?.openingQuestion?.content || ""} />
-                  <input type="hidden" name="assessment_content" value={editedAssessment?.generatedContent || ""} />
-                  <input type="hidden" name="scoring_criteria" value={editedAssessment?.scoringCriteria || ""} />
+                  <input
+                    type="hidden"
+                    name="assessment_title"
+                    value={editedAssessment?.title || ""}
+                  />
+                  <input
+                    type="hidden"
+                    name="estimated_time"
+                    value={editedAssessment?.estimatedTime || ""}
+                  />
+                  <input
+                    type="hidden"
+                    name="total_questions"
+                    value={editedAssessment?.totalQuestions || ""}
+                  />
+                  <input
+                    type="hidden"
+                    name="assessment_instructions"
+                    value={editedAssessment?.instructions || ""}
+                  />
+                  <input
+                    type="hidden"
+                    name="opening_question_title"
+                    value={editedAssessment?.openingQuestion?.title || ""}
+                  />
+                  <input
+                    type="hidden"
+                    name="opening_question_content"
+                    value={editedAssessment?.openingQuestion?.content || ""}
+                  />
+                  <input
+                    type="hidden"
+                    name="assessment_content"
+                    value={editedAssessment?.generatedContent || ""}
+                  />
+                  <input
+                    type="hidden"
+                    name="scoring_criteria"
+                    value={editedAssessment?.scoringCriteria || ""}
+                  />
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
-        </form>
-      </div>
-    </div>
+
+        <FormActions>
+          <ConfirmationDialog
+            trigger={
+              <Button type="button" size="lg" disabled={isPending}>
+                {isPending ? "Creating..." : "Create Job"}
+              </Button>
+            }
+            title="Confirm job creation?"
+            description="Are you sure you want to create this job? This will add a new job posting to the system."
+            confirmText="Confirm"
+            cancelText="Cancel"
+            onConfirm={handleConfirmSubmit}
+            isLoading={isPending}
+            loadingText="Creating..."
+            open={isDialogOpen}
+            onOpenChange={setIsDialogOpen}
+          />
+        </FormActions>
+      </FormContainer>
+    </PageContainer>
   );
 }

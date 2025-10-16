@@ -61,7 +61,9 @@ export function CompanySearchSelect({ value, onValueChange, name }) {
   };
 
   const filteredCompanies = companies.filter((company) =>
-    company.company_name.toLowerCase().includes((value || searchTerm).toLowerCase())
+    company.company_name
+      .toLowerCase()
+      .includes((value || searchTerm).toLowerCase()),
   );
 
   return (
@@ -80,7 +82,7 @@ export function CompanySearchSelect({ value, onValueChange, name }) {
             className="pl-10"
           />
         </div>
-        
+
         {showDropdown && (
           <div
             ref={dropdownRef}
@@ -102,13 +104,15 @@ export function CompanySearchSelect({ value, onValueChange, name }) {
               </ul>
             ) : (
               <div className="px-3 py-2 text-sm text-gray-500">
-                {searchTerm || value ? "No companies found" : "Start typing to search companies"}
+                {searchTerm || value
+                  ? "No companies found"
+                  : "Start typing to search companies"}
               </div>
             )}
           </div>
         )}
       </div>
-      
+
       {/* Hidden input for form submission */}
       <input type="hidden" name={name} value={value} />
     </div>

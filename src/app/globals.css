@@ -240,7 +240,6 @@ button {
 .notifications-page h1 {
   font-size: 1.25rem !important;
   line-height: 1.2 !important;
-  margin-bottom: 0.5rem !important;
 }
 
 /* Exception: Welcome message should be reasonably sized */

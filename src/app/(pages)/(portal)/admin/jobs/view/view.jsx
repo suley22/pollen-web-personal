@@ -91,9 +91,7 @@ export default function JobsManagmentReviewPage({
   };
 
   const handleEditClick = () => {
-    setEditedJob({ ...job });
-    setEditedAssessment({ ...assessmentData });
-    setIsEditing(true);
+    router.push(AdminRoutes.jobsEdit(job.id));
   };
 
   const handleStatusAction = (action) => {

@@ -26,6 +26,7 @@ export async function updateJobData(jobId, _, formData) {
       return [];
     } catch (e) {
       // Si no es JSON, intentamos parsearlo como CSV (backward compatibility)
+      console.log("Parsing field as CSV for backward compatibility:", e);
       return fieldData
         .split(",")
         .map((item) => item.trim())

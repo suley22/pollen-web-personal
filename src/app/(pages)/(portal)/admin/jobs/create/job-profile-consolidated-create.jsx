@@ -36,6 +36,11 @@ import {
   Select as DSSelect,
 } from "@/components/design-system";
 import { AdminRoutes } from "@/admin/router";
+import {
+  WORK_AUTHORIZATION_OPTIONS,
+  WORK_ARRANGEMENT_OPTIONS,
+  EMPLOYMENT_TYPE_OPTIONS,
+} from "@/lib/constants/jobs-constants";
 
 export default function JobsManagmentCreatePage() {
   const formRef = useRef(null);
@@ -295,19 +300,14 @@ export default function JobsManagmentCreatePage() {
                       updateEditedJob("work_arrangement", value)
                     }
                     placeholder="Select arrangement"
-                    options={[
-                      { value: "Office-based", label: "Office-based" },
-                      { value: "Remote", label: "Remote" },
-                      { value: "Hybrid", label: "Hybrid" },
-                      { value: "Out and About", label: "Out and About" },
-                    ]}
+                    options={WORK_ARRANGEMENT_OPTIONS}
                   />
                 </div>
 
                 <div className="bg-gray-50 p-4 rounded-lg space-y-3">
-                  <h4 className="font-medium text-gray-900">
+                  <div className="font-medium text-gray-900">
                     Employment Details
-                  </h4>
+                  </div>
                   <div className="grid grid-cols-2 gap-4">
                     <DSSelect
                       label="Employment Type"
@@ -317,19 +317,7 @@ export default function JobsManagmentCreatePage() {
                         updateEditedJob("employment_type", value)
                       }
                       placeholder="Select type"
-                      options={[
-                        { value: "Permanent", label: "Permanent" },
-                        {
-                          value: "Fixed term/temporary",
-                          label: "Fixed term/temporary",
-                        },
-                        {
-                          value: "Contract/freelance",
-                          label: "Contract/freelance",
-                        },
-                        { value: "Internship", label: "Internship" },
-                        { value: "Apprenticeship", label: "Apprenticeship" },
-                      ]}
+                      options={EMPLOYMENT_TYPE_OPTIONS}
                     />
 
                     <Input
@@ -377,24 +365,7 @@ export default function JobsManagmentCreatePage() {
                           updateEditedJob("work_authorization", value)
                         }
                         placeholder="Select work authorisation requirement"
-                        options={[
-                          {
-                            value: "UK work authorisation required",
-                            label: "UK work authorisation required",
-                          },
-                          {
-                            value: "EU work authorisation required",
-                            label: "EU work authorisation required",
-                          },
-                          {
-                            value: "No work authorisation required",
-                            label: "No work authorisation required",
-                          },
-                          {
-                            value: "Sponsorship available",
-                            label: "Sponsorship available",
-                          },
-                        ]}
+                        options={WORK_AUTHORIZATION_OPTIONS}
                       />
                     </div>
                   </div>

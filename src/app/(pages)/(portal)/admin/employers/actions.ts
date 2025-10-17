@@ -47,6 +47,9 @@ export async function updateEmployerAction(
   try {
     const supabase = await createClient();
 
+    // Cargamos la imagen
+    console.log("File", Object.fromEntries(formData.entries()).logo_url);
+
     // Get current user
     const {
       data: { user },
@@ -76,8 +79,8 @@ export async function createEmployerAction(prevState: any, formData: FormData) {
     console.log("createEmployerAction: Received data:", {
       prevState,
       isFormData: formData instanceof FormData,
-      hasEntries: typeof formData?.entries === 'function',
-      formDataType: typeof formData
+      hasEntries: typeof formData?.entries === "function",
+      formDataType: typeof formData,
     });
 
     const supabase = await createClient();

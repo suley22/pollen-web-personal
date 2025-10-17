@@ -7,13 +7,14 @@ import { UploadIcon } from "lucide-react";
 /**
  * File selector component that only sets the filename without uploading
  */
-export function FileSelector({ 
-  onFileSelect, 
+export function FileSelector({
+  onFileSelect,
   acceptedTypes = "image/*",
   buttonText = "Select File",
   buttonIcon = <UploadIcon />,
   className = "",
-  disabled = false 
+  disabled = false,
+  ...props
 }) {
   const fileInputRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -25,27 +26,29 @@ export function FileSelector({
 
   const validateImageFile = (file) => {
     if (!file) return "No file selected";
-    
+
     // Check file type
     if (!file.type.startsWith("image/")) {
       return "File must be an image";
     }
-    
+
     // Check file size (5MB limit)
     const maxSize = 5 * 1024 * 1024; // 5MB in bytes
     if (file.size > maxSize) {
       return "File size must be less than 5MB";
     }
-    
+
     // Check file extension
-    const allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+    const allowedExtensions = ["jpg", "jpeg", "png", "gif", "webp", "svg"];
     const fileName = file.name.toLowerCase();
-    const hasValidExtension = allowedExtensions.some(ext => fileName.endsWith(`.${ext}`));
-    
+    const hasValidExtension = allowedExtensions.some((ext) =>
+      fileName.endsWith(`.${ext}`),
+    );
+
     if (!hasValidExtension) {
-      return `File must have one of these extensions: ${allowedExtensions.join(', ')}`;
+      return `File must have one of these extensions: ${allowedExtensions.join(", ")}`;
     }
-    
+
     return null; // No errors
   };
 
@@ -61,7 +64,7 @@ export function FileSelector({
     }
 
     setSelectedFile(file);
-    
+
     // Call the callback with the file object and filename
     if (onFileSelect) {
       onFileSelect(file, file.name);
@@ -81,8 +84,9 @@ export function FileSelector({
         accept={acceptedTypes}
         onChange={handleFileChange}
         className="hidden"
+        {...props}
       />
-      
+
       <PrimaryButton
         type="button"
         icon={buttonIcon}

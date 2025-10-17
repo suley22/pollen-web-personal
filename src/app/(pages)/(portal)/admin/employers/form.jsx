@@ -109,7 +109,7 @@ export function ProfileForm({ employer = null, action }) {
         <FormActions>
           <ConfirmationDialog
             trigger={
-              <Button type="button" size="lg" disabled={isPending}>
+              <Button type="submit" size="lg" disabled={isPending}>
                 {isPending
                   ? isEditMode
                     ? "Updating..."
@@ -131,7 +131,6 @@ export function ProfileForm({ employer = null, action }) {
             }
             confirmText="Confirm"
             cancelText="Cancel"
-            onConfirm={handleSubmit}
             isLoading={isPending}
             loadingText={isEditMode ? "Updating..." : "Creating..."}
             open={isDialogOpen}

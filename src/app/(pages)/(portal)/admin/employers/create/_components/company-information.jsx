@@ -77,6 +77,7 @@ export function CompanyInformation({
                 }}
               />
               <FileSelector
+                name="logo_url"
                 onFileSelect={(file, fileName) => {
                   // Limpiar URL anterior si existe
                   if (previewUrl && previewUrl.startsWith("blob:")) {

@@ -151,6 +151,10 @@ export default function JobsManagmentCreatePage() {
     setEditedJob((prev) => ({ ...prev, [field]: value }));
   };
 
+  const updateEditedAssessment = (field, value) => {
+    setEditedAssessment((prev) => ({ ...prev, [field]: value }));
+  };
+
   const updateArrayField = (field, index, value) => {
     setEditedJob((prev) => {
       const newArray = [...prev[field]];

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useRef, useActionState } from "react";
+import { useState, useRef, useActionState, useTransition } from "react";
 import { createJobData } from "./actions";
 import {
   Target,
@@ -35,14 +35,13 @@ import {
   DynamicListInput,
   Select as DSSelect,
 } from "@/components/design-system";
+import { AdminRoutes } from "@/admin/router";
 
 export default function JobsManagmentCreatePage() {
   const formRef = useRef(null);
   const router = useRouter();
-  const [state, createJobAction, isPending] = useActionState(
-    createJobData,
-    null,
-  );
+  const [isPending, startTransition] = useTransition();
+  const [state, createJobAction] = useActionState(createJobData, null);
   const [editedAssessment, setEditedAssessment] = useState({
     title: "",
     estimatedTime: "",
@@ -93,10 +92,15 @@ export default function JobsManagmentCreatePage() {
   const [activeTab, setActiveTab] = useState("description");
 
   const handleCancel = () => {
-    router.back();
+    /* Lines 95-96 omitted */
   };
 
-  const handleSubmit = async (formData) => {
+  const handleSubmit = async () => {
+    if (!formRef.current) return;
+
+    // Obtener FormData del formulario
+    const formData = new FormData(formRef.current);
+
     // Preparar los datos de los arrays como strings separados por comas
     formData.set(
       "responsibilities",
@@ -139,12 +143,10 @@ export default function JobsManagmentCreatePage() {
       editedAssessment.scoringCriteria || "",
     );
 
-    const result = await createJobAction(formData);
-
-    if (result?.success) {
-      // Redirigir a la lista de jobs o mostrar mensaje de éxito
-      router.push("/admin/jobs-managment");
-    }
+    // Enviar el formulario usando startTransition
+    startTransition(() => {
+      createJobAction(formData);
+    });
   };
 
   const updateEditedJob = (field, value) => {
@@ -195,7 +197,7 @@ export default function JobsManagmentCreatePage() {
         onBack={() => router.back()}
       />
 
-      <FormContainer ref={formRef} action={handleSubmit}>
+      <FormContainer ref={formRef} action={createJobAction}>
         <Tabs
           value={activeTab}
           onValueChange={setActiveTab}

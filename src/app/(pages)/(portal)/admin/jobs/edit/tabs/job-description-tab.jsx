@@ -19,12 +19,15 @@ import {
   WORK_AUTHORIZATION_OPTIONS,
   WORKING_HOURS_OPTIONS,
 } from "../shared";
+import { Responsibilities } from "./_components/responsabilities";
+import { WhoWouldLove } from "./_components/who_would_love";
+import { Requirement } from "./_components/requirement";
 
-export function JobDescriptionTab({ 
+export function JobDescriptionTab({
   editedJob,
-  formRef, 
-  updateJobAction, 
-  updateEditedJob 
+  formRef,
+  updateJobAction,
+  updateEditedJob,
 }) {
   return (
     <FormContainer ref={formRef} action={updateJobAction}>
@@ -34,6 +37,7 @@ export function JobDescriptionTab({
       >
         <div className="w-full flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-4">
+            {/* TODO: checkear */}
             <CompanySearchSelect
               name="company_name"
               value={editedJob?.company_name || ""}
@@ -140,54 +144,14 @@ export function JobDescriptionTab({
         icon={<FileText className="h-5 w-5" />}
         name="description"
         placeholder="Enter job description..."
-        value={editedJob?.description || ""}
-        onChange={(e) => updateEditedJob("description", e.target.value)}
+        defaultValuealue={editedJob?.description || ""}
       />
 
-      <div className="grid grid-cols-2 gap-4">
-        <FormCard
-          title="Key Responsibilities"
-          icon={<Target className="h-5 w-5" />}
-        >
-          <DynamicListInput
-            title="Key Responsibilities"
-            icon={<Target className="h-5 w-5" />}
-            name="responsibilities"
-            addButtonText="Add Responsibility"
-            fields={[
-              {
-                key: "value",
-                placeholder: "Enter responsibility...",
-                type: "text",
-              },
-            ]}
-            initialItems={editedJob.responsibilities.map((r, i) => ({
-              id: `resp-${i}`,
-              value: r,
-            }))}
-          />
-        </FormCard>
-
-        <FormCard
-          title="Who Would Love This Role"
-          icon={<Users className="h-5 w-5" />}
-        >
-          <DynamicListInput
-            title="Who Would Love This Job"
-            icon={<Users className="h-5 w-5" />}
-            name="who_would_love"
-            addButtonText="Add Trait"
-            fields={[
-              {
-                key: "value",
-                placeholder: "Enter ideal candidate trait...",
-                type: "text",
-              },
-            ]}
-            initialItems={editedJob.who_would_love}
-          />
-        </FormCard>
-      </div>
+      <Responsibilities
+        editedJob={editedJob}
+        updateEditedJob={updateEditedJob}
+      />
+      <WhoWouldLove editedJob={editedJob} updateEditedJob={updateEditedJob} />
 
       <TextAreaCard
         title="Success In This Role Looks Like"
@@ -198,28 +162,7 @@ export function JobDescriptionTab({
         onChange={(e) => updateEditedJob("success_looks", e.target.value)}
       />
 
-      <FormCard
-        title="Pollen Approved Requirements"
-        icon={<CheckCircle className="h-5 w-5 " />}
-      >
-        <DynamicListInput
-          title="Pollen Approved Requirements"
-          icon={<Award className="h-5 w-5" />}
-          name="pollen_approved_requirements"
-          addButtonText="Add Requirement"
-          fields={[
-            {
-              key: "value",
-              placeholder: "Enter requirement...",
-              type: "text",
-            },
-          ]}
-          initialItems={editedJob.pollen_approved_requirements.map((p, i) => ({
-            id: `req-${i}`,
-            value: p,
-          }))}
-        />
-      </FormCard>
+      <Requirement editedJob={editedJob} updateEditedJob={updateEditedJob} />
 
       <TextAreaCard
         title="Internal Notes"

@@ -40,7 +40,7 @@ import {
   WORK_AUTHORIZATION_OPTIONS,
   WORK_ARRANGEMENT_OPTIONS,
   EMPLOYMENT_TYPE_OPTIONS,
-} from "@/lib/constants/jobs-constants";
+} from "@/lib/configs/constants/jobs-constants";
 
 export default function JobsManagmentCreatePage() {
   const formRef = useRef(null);

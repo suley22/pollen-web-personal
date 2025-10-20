@@ -168,3 +168,52 @@ export function JobCountBadge({
       return <NeutralBadge className={className}>{text}</NeutralBadge>;
   }
 }
+
+// New badges: Pollen Approved and External
+export function PollenApprovedBadge({ className }: { className?: string }) {
+  return (
+    <Badge
+      variant="outline"
+      className={cn(
+        "bg-green-100 text-green-800 border-green-200 font-semibold",
+        className,
+      )}
+    >
+      Pollen Approved
+    </Badge>
+  );
+}
+
+export function ExternalBadge({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) {
+  return (
+    <Badge
+      variant="outline"
+      className={cn(
+        "bg-transparent text-black border-gray-200 font-semibold",
+        className,
+      )}
+    >
+      {children ?? "External"}
+    </Badge>
+  );
+}
+
+// Boolean switcher: if approvedByPollen is true -> Pollen Approved, else -> External
+export function ApprovalSourceBadge({
+  approvedByPollen,
+  className,
+}: {
+  approvedByPollen: boolean;
+  className?: string;
+}) {
+  if (approvedByPollen) {
+    return <PollenApprovedBadge className={className} />;
+  }
+  return <ExternalBadge className={className} />;
+}

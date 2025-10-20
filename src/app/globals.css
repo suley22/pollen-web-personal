@@ -306,7 +306,7 @@ button {
 .jobs-page .gap-4,
 .applications-page .gap-4,
 .messages-page .gap-4 {
-  gap: 0.5rem !important;
+  gap: 0.5rem;
 }
 
 .notion-compact .gap-6,

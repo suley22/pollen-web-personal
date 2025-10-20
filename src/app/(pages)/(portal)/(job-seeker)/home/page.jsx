@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/buttons/button";
 import CircularProgress from "@/components/ui/circular-progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import { CardFooter } from "@/components/ui/card";
 
 import { Badge } from "@/components/ui/badge";
 
@@ -18,10 +19,12 @@ import {
   ChevronRight,
   Trophy,
   MapPin,
+  Banknote,
 } from "lucide-react";
 
 import { useUser } from "@/app/providers";
 import { Header } from "@/components/design-system";
+import { JobCard } from "./_components/job-card";
 
 export default function Home() {
   const user = useUser();
@@ -204,123 +207,30 @@ export default function Home() {
             <Star className="h-5 w-5 text-gray-700" />
             This Week&apos;s Featured Jobs
           </CardTitle>
-          <CardContent style={{ padding: "0.75rem" }}>
-            <div className="space-y-4">
-              {topJobRecommendations.map((job) => (
-                <div
-                  key={job.id}
-                  className="flex items-start justify-between mb-2 border rounded-lg p-3 sm:p-4 hover:bg-gray-50"
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
-                    <div className="flex items-start gap-3 flex-1">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-gray-900 text-base">
-                          {job.title}
-                        </h3>
-                        {job.pollenApproved && (
-                          <Badge
-                            variant="default"
-                            className="bg-green-100 text-green-800 text-xs"
-                          >
-                            Pollen Approved
-                          </Badge>
-                        )}
-                        {job.type === "external" && (
-                          <Badge variant="outline" className="text-xs">
-                            External
-                          </Badge>
-                        )}
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-sm text-gray-500">
-                          <span className="flex items-center gap-1">
-                            <Building className="w-3 h-3" />
-                            <Button
-                              onClick={() =>
-                                (window.location.href = "/profile-checkpoints")
-                              }
-                              variant="link"
-                              size="sm"
-                              className="w-full sm:w-auto text-gray-600 hover:text-blue-600"
-                              style={{ fontWeight: "300" }}
-                            >
-                              {job.company.name}
-                            </Button>
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <MapPin className="w-3 h-3" />
-                            {job.location}
-                          </span>
-                          <span>
-                            £{job.salary.min.toLocaleString()} - £
-                            {job.salary.max.toLocaleString()}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-600">
-                          Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit, sed do eiusmod tempor incididunt ut labore et
-                          dolore magna aliqua. Ut enim ad minim veniam
-                        </p>
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-xs text-gray-600 mt-2">
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />
-                            Apply by{" "}
-                            {new Date(
-                              job.applicationDeadline,
-                            ).toLocaleDateString("en-GB", {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            })}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between sm:justify-end">
-                    <div className="flex gap-2 w-full sm:w-auto">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleSaveJob(job.id)}
-                        className={`flex-1 sm:flex-none ${
-                          savedJobs.has(job.id) ? "text-pink-600" : ""
-                        }`}
-                      >
-                        <Heart
-                          className={`w-3 h-3 ${
-                            savedJobs.has(job.id)
-                              ? "fill-pink-600 text-pink-600"
-                              : ""
-                          }`}
-                        />
-                      </Button>
-
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          window.location.href = `/jobs/${job.id}/apply`;
-                        }}
-                        className="bg-pink-600 hover:bg-pink-700 text-white flex-1 sm:flex-none font-sora"
-                      >
-                        View and Apply
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="text-center mt-3">
-              <Button
-                variant="ghost"
-                onClick={() => (window.location.href = "/jobs")}
-                size="sm"
-                className="inline-flex items-center justify-center gap-2 whitespace-nowrap [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"
-              >
-                <span className="hidden sm:inline">View All Jobs</span>
-                <ChevronRight className="w-3 h- ml-2" />
-              </Button>
-            </div>
-          </CardContent>
         </CardHeader>
+        <CardContent style={{ padding: "0.75rem" }}>
+          <div className="grid grid-cols-3 gap-4">
+            {topJobRecommendations.map((job) => (
+              <JobCard
+                key={job.id}
+                job={job}
+                isSaved={savedJobs.has(job.id)}
+                onToggleSave={() => handleSaveJob(job.id)}
+              />
+            ))}
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button
+            variant="ghost"
+            onClick={() => (window.location.href = "/jobs")}
+            size="sm"
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"
+          >
+            <span className="hidden sm:inline">View All Jobs</span>
+            <ChevronRight className="w-3 h- ml-2" />
+          </Button>
+        </CardFooter>
       </Card>
 
       {/* Weekly Community Drop-in - Full Width Banner */}

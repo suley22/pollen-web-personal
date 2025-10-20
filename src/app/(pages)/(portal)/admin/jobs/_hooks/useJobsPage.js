@@ -88,7 +88,7 @@ export function useJobsPage({ action, job = null }) {
   }, [state, router, isEditMode, job?.id]);
 
   const handleBack = () => {
-    router.back();
+    router.push(AdminRoutes.jobs);
   };
 
   // ✅ Soporta tanto eventos como valores directos

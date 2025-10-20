@@ -58,10 +58,10 @@ export function useJobsPage({ action, job = null }) {
     application_deadline: job?.application_deadline || "",
     work_authorization: job?.work_authorization || "",
     description: job?.description || "",
-    responsibilities: job?.responsibilities || [""],
-    who_would_love: job?.who_would_love || [""],
+    responsibilities: job?.responsibilities || [],
+    who_would_love: job?.who_would_love || [],
     success_looks: job?.success_looks || "",
-    pollen_approved_requirements: job?.pollen_approved_requirements || [""],
+    pollen_approved_requirements: job?.pollen_approved_requirements || [],
     internal_notes: job?.internal_notes || "",
   });
 

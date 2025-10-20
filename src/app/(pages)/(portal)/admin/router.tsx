@@ -1,4 +1,11 @@
-import { Home, Briefcase, User, LayoutDashboard, Key } from "lucide-react";
+import {
+  Home,
+  Briefcase,
+  User,
+  LayoutDashboard,
+  Key,
+  ClipboardList as Clipboard,
+} from "lucide-react";
 
 const basePath = "/admin";
 
@@ -17,6 +24,10 @@ export const AdminRoutes = {
   roles: `${basePath}/roles`,
   jobsApplicants: (jobId) => `${basePath}/jobs/job-applicants/${jobId}`,
   jobPersonaResults: (jobId) => `${basePath}/jobs/persona-results/${jobId}`,
+  assessments: `${basePath}/assessments`,
+  assessmentCreate: `${basePath}/assessments/create`,
+  assessmentEdit: (id) => `${basePath}/assessments/edit/${id}`,
+  assessmentView: (id) => `${basePath}/assessments/view/${id}`,
 };
 
 export const ADMIN_ROUTES = Object.values(AdminRoutes);
@@ -38,6 +49,12 @@ export const ADMIN_NAVIGATION = [
     icon: User,
     label: "Employers",
     path: AdminRoutes.employers,
+    section: "Admin",
+  },
+  {
+    icon: Clipboard,
+    label: "Assessments",
+    path: AdminRoutes.assessments,
     section: "Admin",
   },
   {

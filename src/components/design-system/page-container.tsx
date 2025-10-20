@@ -1,0 +1,17 @@
+"use client";
+
+import { ReactNode } from "react";
+import { cn } from "@/lib/utils";
+
+interface PageContainerProps {
+  children: ReactNode;
+  className?: string;
+}
+
+export function PageContainer({ children, className }: PageContainerProps) {
+  return (
+    <div className={cn("w-full flex flex-col mx-auto py-6 gap-6", className)}>
+      {children}
+    </div>
+  );
+}

@@ -1,0 +1,35 @@
+/**
+ * Lista de industrias predefinidas
+ * Se guardan los labels (no los values) en la base de datos
+ */
+export const INDUSTRY_OPTIONS = [
+  "Technology",
+  "Healthcare",
+  "Finance",
+  "Education",
+  "Retail",
+  "Manufacturing",
+  "Hospitality",
+  "Transportation",
+  "Construction",
+  "Real Estate",
+  "Media & Entertainment",
+  "Non-Profit",
+  "Government",
+  "Energy",
+  "Telecommunications",
+  "Agriculture",
+  "Pharmaceuticals",
+  "Aerospace",
+  "Automotive",
+  "Consulting",
+  "Legal",
+  "Marketing & Advertising",
+  "Human Resources",
+  "Travel & Tourism",
+  "Food & Beverage",
+  "Sports & Recreation",
+  "Arts & Culture",
+  "Environmental Services",
+  "Security Services",
+];

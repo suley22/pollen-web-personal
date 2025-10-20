@@ -1,14 +1,7 @@
 "use client";
 
-import React from "react";
-import {
-  Home,
-  Briefcase,
-  Building2,
-  Users,
-  User,
-  LayoutDashboard,
-} from "lucide-react";
+import React, { useTransition, useCallback, useMemo } from "react";
+
 import { usePathname, useRouter } from "next/navigation";
 import {
   SidebarGroupLabel,
@@ -18,104 +11,65 @@ import {
   useSidebar,
 } from "@/components/sidebar/sidebar";
 import { CustomSidebarMenuButton } from "@/components/sidebar/custom-sidebar-menu-button";
+import { useUser } from "@/app/providers";
 
-export function NavigationItems({ user }) {
+import { ADMIN_NAVIGATION } from "@/admin/router";
+import { JOB_SEEKER_NAVIGATION } from "@/job-seeker/router";
+
+export function NavigationItems() {
+  const user = useUser();
   const pathname = usePathname();
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
   const { state } = useSidebar();
 
-  console.log("User in NavigationItems:", user);
+  // Optimized navigation handler
+  const handleNavigation = useCallback(
+    (path) => {
+      // For same-domain navigation, use Next.js router for better performance
+      if (pathname !== path) {
+        startTransition(() => {
+          router.push(path);
+        });
+      }
+    },
+    [router, pathname, startTransition],
+  );
 
-  const itemsJobSeeker = [
-    {
-      icon: Home,
-      label: "Home",
-      path: "/main/home",
-      isActive: pathname === "/main/home",
-      section: "Main",
-    },
-    {
-      icon: Briefcase,
-      label: "Jobs",
-      path: "/main/jobs",
-      isActive: pathname === "/main/jobs",
-      section: "Main",
-    },
-    {
-      icon: Building2,
-      label: "Companies",
-      path: "/main/companies",
-      isActive: pathname === "/main/companies",
-      section: "Main",
-    },
-    {
-      icon: Users,
-      label: "Community",
-      path: "/main/community",
-      isActive: pathname === "/main/community",
-      section: "Main",
-    },
-  ];
+  const items = useMemo(
+    () =>
+      (user?.isAdmin ? ADMIN_NAVIGATION : JOB_SEEKER_NAVIGATION).map(
+        (item) => ({
+          ...item,
+          isActive: pathname.startsWith(item.path),
+        }),
+      ),
+    [user?.isAdmin, pathname],
+  );
 
-  const itemsAdmin = [
-    {
-      icon: Home,
-      label: "Home",
-      path: "/admin/home",
-      isActive: pathname === "/admin/home",
-      section: "Admin",
-    },
-    {
-      icon: User,
-      label: "Employers Managment",
-      path: "/admin/employers-managment",
-      isActive: pathname === "/admin/employers-managment",
-      section: "Admin",
-    },
-    {
-      icon: LayoutDashboard,
-      label: "Job Seekers",
-      path: "/admin/all-job-seekers",
-      isActive: pathname === "/admin/all-job-seekers",
-      section: "Admin",
-    },
-    {
-      icon: Briefcase,
-      label: "Jobs Managment",
-      path: "/admin/jobs-managment",
-      isActive: pathname === "/admin/jobs-managment",
-      section: "Admin",
-    },
-    {
-      icon: Briefcase,
-      label: "Roles Managment",
-      path: "/admin/role-managment",
-      isActive: pathname === "/admin/role-managment",
-      section: "Admin",
-    },
-  ];
-
-  const items = user?.role === "admin" ? itemsAdmin : itemsJobSeeker;
-
+  // Render items with optimized section handling
   return (
     <>
       {items.map((item, idx) => {
         const prev = items[idx - 1];
-        const showSectionLabel = idx === 0 || prev.section !== item.section;
+        const showSectionLabel = idx === 0 || prev?.section !== item.section;
+        const IconComponent = item.icon;
+
         return (
           <React.Fragment key={item.path}>
             {showSectionLabel && state !== "collapsed" && (
-              <SidebarGroupLabel className="">{item.section}</SidebarGroupLabel>
+              <SidebarGroupLabel>{item.section}</SidebarGroupLabel>
             )}
-            <SidebarGroupContent className="">
-              <SidebarMenu className="">
-                <SidebarMenuItem className="">
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
                   <CustomSidebarMenuButton
                     isActive={item.isActive}
                     tooltip={item.label}
-                    onClick={() => router.push(item.path)}
+                    onClick={() => handleNavigation(item.path)}
                   >
-                    <item.icon className="w-4 h-4" />
+                    <IconComponent className="w-4 h-4" />
                     <span>{item.label}</span>
                   </CustomSidebarMenuButton>
                 </SidebarMenuItem>

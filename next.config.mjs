@@ -3,11 +3,29 @@ const nextConfig = {
   // Deshabilitar source maps para evitar errores de ENOENT
   productionBrowserSourceMaps: false,
 
-  webpack: (config, { dev }) => {
-    if (dev) {
-      config.devtool = false; // Deshabilitar source maps en desarrollo
-    }
-    return config;
+  // Configuración de imágenes
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "www.gravatar.com",
+        port: "",
+        pathname: "/**",
+      },
+    ],
+  },
+
+  // Configuración para Turbopack (nueva sintaxis)
+  turbopack: {
+    resolveAlias: {
+      // Si necesitas alias adicionales, agrégalos aquí
+    },
   },
 };
 

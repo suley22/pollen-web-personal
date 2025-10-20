@@ -1,6 +1,7 @@
 /** biome-ignore-all lint/performance/noImgElement: "AI Elements is framework agnostic" */
+/* eslint-disable @next/next/no-img-element */
 
-"use client";;
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -46,34 +47,33 @@ export const usePromptInputAttachments = () => {
   const context = useContext(AttachmentsContext);
 
   if (!context) {
-    throw new Error("usePromptInputAttachments must be used within a PromptInput");
+    throw new Error(
+      "usePromptInputAttachments must be used within a PromptInput",
+    );
   }
 
   return context;
 };
 
-export function PromptInputAttachment({
-  data,
-  className,
-  ...props
-}) {
+export function PromptInputAttachment({ data, className, ...props }) {
   const attachments = usePromptInputAttachments();
 
   return (
     <div
       className={cn("group relative h-14 w-14 rounded-md border", className)}
       key={data.id}
-      {...props}>
+      {...props}
+    >
       {data.mediaType?.startsWith("image/") && data.url ? (
         <img
           alt={data.filename || "attachment"}
           className="size-full rounded-md object-cover"
           height={56}
           src={data.url}
-          width={56} />
+          width={56}
+        />
       ) : (
-        <div
-          className="flex size-full items-center justify-center text-muted-foreground">
+        <div className="flex size-full items-center justify-center text-muted-foreground">
           <PaperclipIcon className="size-4" />
         </div>
       )}
@@ -83,18 +83,15 @@ export function PromptInputAttachment({
         onClick={() => attachments.remove(data.id)}
         size="icon"
         type="button"
-        variant="outline">
+        variant="outline"
+      >
         <XIcon className="h-3 w-3" />
       </Button>
     </div>
   );
 }
 
-export function PromptInputAttachments({
-  className,
-  children,
-  ...props
-}) {
+export function PromptInputAttachments({ className, children, ...props }) {
   const attachments = usePromptInputAttachments();
   const [height, setHeight] = useState(0);
   const contentRef = useRef(null);
@@ -115,9 +112,13 @@ export function PromptInputAttachments({
   return (
     <div
       aria-live="polite"
-      className={cn("overflow-hidden transition-[height] duration-200 ease-out", className)}
+      className={cn(
+        "overflow-hidden transition-[height] duration-200 ease-out",
+        className,
+      )}
       style={{ height: attachments.files.length ? height : 0 }}
-      {...props}>
+      {...props}
+    >
       <div className="flex flex-wrap gap-2 p-3 pt-3" ref={contentRef}>
         {attachments.files.map((file) => (
           <Fragment key={file.id}>{children(file)}</Fragment>
@@ -139,7 +140,8 @@ export const PromptInputActionAddAttachments = ({
       onSelect={(e) => {
         e.preventDefault();
         attachments.openFileDialog();
-      }}>
+      }}
+    >
       <ImageIcon className="mr-2 size-4" /> {label}
     </DropdownMenuItem>
   );
@@ -174,63 +176,68 @@ export const PromptInput = ({
     inputRef.current?.click();
   }, []);
 
-  const matchesAccept = useCallback((f) => {
-    if (!accept || accept.trim() === "") {
+  const matchesAccept = useCallback(
+    (f) => {
+      if (!accept || accept.trim() === "") {
+        return true;
+      }
+      // Simple check: if accept includes "image/*", filter to images; otherwise allow.
+      if (accept.includes("image/*")) {
+        return f.type.startsWith("image/");
+      }
       return true;
-    }
-    // Simple check: if accept includes "image/*", filter to images; otherwise allow.
-    if (accept.includes("image/*")) {
-      return f.type.startsWith("image/");
-    }
-    return true;
-  }, [accept]);
+    },
+    [accept],
+  );
 
-  const add = useCallback((files) => {
-    const incoming = Array.from(files);
-    const accepted = incoming.filter((f) => matchesAccept(f));
-    if (accepted.length === 0) {
-      onError?.({
-        code: "accept",
-        message: "No files match the accepted types.",
-      });
-      return;
-    }
-    const withinSize = (f) =>
-      maxFileSize ? f.size <= maxFileSize : true;
-    const sized = accepted.filter(withinSize);
-    if (sized.length === 0 && accepted.length > 0) {
-      onError?.({
-        code: "max_file_size",
-        message: "All files exceed the maximum size.",
-      });
-      return;
-    }
-    setItems((prev) => {
-      const capacity =
-        typeof maxFiles === "number"
-          ? Math.max(0, maxFiles - prev.length)
-          : undefined;
-      const capped =
-        typeof capacity === "number" ? sized.slice(0, capacity) : sized;
-      if (typeof capacity === "number" && sized.length > capacity) {
+  const add = useCallback(
+    (files) => {
+      const incoming = Array.from(files);
+      const accepted = incoming.filter((f) => matchesAccept(f));
+      if (accepted.length === 0) {
         onError?.({
-          code: "max_files",
-          message: "Too many files. Some were not added.",
+          code: "accept",
+          message: "No files match the accepted types.",
         });
+        return;
       }
-      const next = [];
-      for (const file of capped) {
-        next.push({
-          id: nanoid(),
-          type: "file",
-          url: URL.createObjectURL(file),
-          mediaType: file.type,
-          filename: file.name,
+      const withinSize = (f) => (maxFileSize ? f.size <= maxFileSize : true);
+      const sized = accepted.filter(withinSize);
+      if (sized.length === 0 && accepted.length > 0) {
+        onError?.({
+          code: "max_file_size",
+          message: "All files exceed the maximum size.",
         });
+        return;
       }
-      return prev.concat(next);
-    });
-  }, [matchesAccept, maxFiles, maxFileSize, onError]);
+      setItems((prev) => {
+        const capacity =
+          typeof maxFiles === "number"
+            ? Math.max(0, maxFiles - prev.length)
+            : undefined;
+        const capped =
+          typeof capacity === "number" ? sized.slice(0, capacity) : sized;
+        if (typeof capacity === "number" && sized.length > capacity) {
+          onError?.({
+            code: "max_files",
+            message: "Too many files. Some were not added.",
+          });
+        }
+        const next = [];
+        for (const file of capped) {
+          next.push({
+            id: nanoid(),
+            type: "file",
+            url: URL.createObjectURL(file),
+            mediaType: file.type,
+            filename: file.name,
+          });
+        }
+        return prev.concat(next);
+      });
+    },
+    [matchesAccept, maxFiles, maxFileSize, onError],
+  );
 
   const remove = useCallback((id) => {
     setItems((prev) => {
@@ -332,14 +339,17 @@ export const PromptInput = ({
     onSubmit({ text: event.currentTarget.message.value, files }, event);
   };
 
-  const ctx = useMemo(() => ({
-    files: items.map((item) => ({ ...item, id: item.id })),
-    add,
-    remove,
-    clear,
-    openFileDialog,
-    fileInputRef: inputRef,
-  }), [items, add, remove, clear, openFileDialog]);
+  const ctx = useMemo(
+    () => ({
+      files: items.map((item) => ({ ...item, id: item.id })),
+      add,
+      remove,
+      clear,
+      openFileDialog,
+      fileInputRef: inputRef,
+    }),
+    [items, add, remove, clear, openFileDialog],
+  );
 
   return (
     <AttachmentsContext.Provider value={ctx}>
@@ -350,22 +360,21 @@ export const PromptInput = ({
         multiple={multiple}
         onChange={handleChange}
         ref={inputRef}
-        type="file" />
+        type="file"
+      />
       <form
         className={cn(
           "w-full divide-y overflow-hidden rounded-xl border bg-background shadow-sm",
-          className
+          className,
         )}
         onSubmit={handleSubmit}
-        {...props} />
+        {...props}
+      />
     </AttachmentsContext.Provider>
   );
 };
 
-export const PromptInputBody = ({
-  className,
-  ...props
-}) => (
+export const PromptInputBody = ({ className, ...props }) => (
   <div className={cn(className, "flex flex-col")} {...props} />
 );
 
@@ -403,7 +412,7 @@ export const PromptInputTextarea = ({
         "field-sizing-content bg-transparent dark:bg-transparent",
         "max-h-48 min-h-16",
         "focus-visible:ring-0",
-        className
+        className,
       )}
       name="message"
       onChange={(e) => {
@@ -411,30 +420,27 @@ export const PromptInputTextarea = ({
       }}
       onKeyDown={handleKeyDown}
       placeholder={placeholder}
-      {...props} />
+      {...props}
+    />
   );
 };
 
-export const PromptInputToolbar = ({
-  className,
-  ...props
-}) => (
+export const PromptInputToolbar = ({ className, ...props }) => (
   <div
     className={cn("flex items-center justify-between p-1", className)}
-    {...props} />
+    {...props}
+  />
 );
 
-export const PromptInputTools = ({
-  className,
-  ...props
-}) => (
+export const PromptInputTools = ({ className, ...props }) => (
   <div
     className={cn(
       "flex items-center gap-1",
       "[&_button:first-child]:rounded-bl-xl",
-      className
+      className,
     )}
-    {...props} />
+    {...props}
+  />
 );
 
 export const PromptInputButton = ({
@@ -452,18 +458,17 @@ export const PromptInputButton = ({
         "shrink-0 gap-1.5 rounded-lg",
         variant === "ghost" && "text-muted-foreground",
         newSize === "default" && "px-3",
-        className
+        className,
       )}
       size={newSize}
       type="button"
       variant={variant}
-      {...props} />
+      {...props}
+    />
   );
 };
 
-export const PromptInputActionMenu = (props) => (
-  <DropdownMenu {...props} />
-);
+export const PromptInputActionMenu = (props) => <DropdownMenu {...props} />;
 
 export const PromptInputActionMenuTrigger = ({
   className,
@@ -477,17 +482,11 @@ export const PromptInputActionMenuTrigger = ({
   </DropdownMenuTrigger>
 );
 
-export const PromptInputActionMenuContent = ({
-  className,
-  ...props
-}) => (
+export const PromptInputActionMenuContent = ({ className, ...props }) => (
   <DropdownMenuContent align="start" className={cn(className)} {...props} />
 );
 
-export const PromptInputActionMenuItem = ({
-  className,
-  ...props
-}) => (
+export const PromptInputActionMenuItem = ({ className, ...props }) => (
   <DropdownMenuItem className={cn(className)} {...props} />
 );
 
@@ -515,46 +514,34 @@ export const PromptInputSubmit = ({
       size={size}
       type="submit"
       variant={variant}
-      {...props}>
+      {...props}
+    >
       {children ?? Icon}
     </Button>
   );
 };
 
-export const PromptInputModelSelect = (props) => (
-  <Select {...props} />
-);
+export const PromptInputModelSelect = (props) => <Select {...props} />;
 
-export const PromptInputModelSelectTrigger = ({
-  className,
-  ...props
-}) => (
+export const PromptInputModelSelectTrigger = ({ className, ...props }) => (
   <SelectTrigger
     className={cn(
       "border-none bg-transparent font-medium text-muted-foreground shadow-none transition-colors",
       'hover:bg-accent hover:text-foreground [&[aria-expanded="true"]]:bg-accent [&[aria-expanded="true"]]:text-foreground',
-      className
+      className,
     )}
-    {...props} />
+    {...props}
+  />
 );
 
-export const PromptInputModelSelectContent = ({
-  className,
-  ...props
-}) => (
+export const PromptInputModelSelectContent = ({ className, ...props }) => (
   <SelectContent className={cn(className)} {...props} />
 );
 
-export const PromptInputModelSelectItem = ({
-  className,
-  ...props
-}) => (
+export const PromptInputModelSelectItem = ({ className, ...props }) => (
   <SelectItem className={cn(className)} {...props} />
 );
 
-export const PromptInputModelSelectValue = ({
-  className,
-  ...props
-}) => (
+export const PromptInputModelSelectValue = ({ className, ...props }) => (
   <SelectValue className={cn(className)} {...props} />
 );

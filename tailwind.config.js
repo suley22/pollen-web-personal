@@ -1,16 +1,13 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
+  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   darkMode: ["class"],
   theme: {
     extend: {
       fontFamily: {
-        sora: ["Sora", "sans-serif"],
-        poppins: ["Poppins", "sans-serif"],
+        sans: ["var(--font-sora)", "sans-serif"],
+        sora: ["var(--font-sora)", "sans-serif"],
+        poppins: ["var(--font-poppins)", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

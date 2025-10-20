@@ -1,40 +1,16 @@
 "use client";
 
+import Image from "next/image";
+
 import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, Trophy, Briefcase, Code } from "lucide-react";
-import honeycombLogo from "@/assets/honeycomb_1753116372462.png";
-import platformScreenshot from "@/assets/image_1753357343185.png";
-import bbcLogo from "@/assets/image_1753303879889.png";
-import timesLogo from "@/assets/image_1753303894280.png";
-import fastCompanyLogo from "@/assets/image_1753303914295.png";
-import businessInsiderLogo from "@/assets/image_1753303943999.png";
-import stylistLogo from "@/assets/image_1753303963933.png";
-import nyPostLogo from "@/assets/image_1753303981878.png";
-import Image from "next/image";
-import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import { LandingImagePaths } from "@/lib/configs/constants/image_paths";
 
-export default function Home() {
-  const router = useRouter();
+import { LoginStatusButton } from "@/app/_components/LoginStatusButton";
+import { FindJobsButton } from "@/app/_components/FindJobsButton";
 
-  const handleLogin = async () => {
-    try {
-      const supabase = createClient();
-
-      const { data, error } = await supabase.auth.getSession();
-
-      if (error || !data.session) {
-        router.push("/login");
-      } else {
-        router.push("/main/home");
-      }
-    } catch (error) {
-      console.error("Error al verificar la sesión:", error);
-      router.push("/login");
-    }
-  };
-
+export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
@@ -43,7 +19,7 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center p-1 relative">
               <Image
-                src={honeycombLogo}
+                src={LandingImagePaths.honeycombLogo}
                 alt="Pollen"
                 className="object-contain"
                 height={24}
@@ -58,21 +34,7 @@ export default function Home() {
               Pollen
             </span>
           </div>
-          <div className="flex items-center gap-4">
-            <a
-              href="/employers"
-              className="text-gray-600 hover:text-gray-900 text-sm hidden sm:inline"
-            >
-              Employers? <span className="text-pink-600">Learn More →</span>
-            </a>
-            <Button
-              onClick={handleLogin}
-              className="bg-pink-600 hover:bg-pink-700 text-white"
-              style={{ fontFamily: "Sora" }}
-            >
-              Login
-            </Button>
-          </div>
+          <LoginStatusButton />
         </div>
       </nav>
 
@@ -94,17 +56,6 @@ export default function Home() {
             look beyond the CV. Pollen helps you get hired through real skills,
             behavioural insights, and community support.
           </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button
-              onClick={handleLogin}
-              size="lg"
-              className="bg-pink-600 hover:bg-pink-700 text-white px-12 py-4 text-lg"
-              style={{ fontFamily: "Sora" }}
-            >
-              Explore Demo
-            </Button>
-          </div>
 
           {/* Secondary CTA for employers */}
           <div className="bg-yellow-50 rounded-lg p-6 max-w-md mx-auto mb-16">
@@ -155,7 +106,9 @@ export default function Home() {
                       style={{ aspectRatio: "16/10" }}
                     >
                       <Image
-                        src={platformScreenshot}
+                        width={800}
+                        height={500}
+                        src={LandingImagePaths.platformScreenshot}
                         alt="Pollen Platform Demo"
                         className="w-full h-full object-cover object-top"
                       />
@@ -191,45 +144,52 @@ export default function Home() {
             </p>
             <div className="flex flex-nowrap justify-center items-center gap-6 md:gap-8 opacity-100 overflow-x-auto">
               <Image
-                src={bbcLogo}
-                alt="BBC"
                 width={100}
+                height={100}
+                src={LandingImagePaths.bbcLogo}
+                alt="BBC"
                 className="h-8 object-contain flex-shrink-0"
               />
               <Image
-                src={timesLogo}
+                src={LandingImagePaths.timesLogo}
                 alt="The Times"
                 width={100}
+                height={100}
                 className="h-20 object-contain flex-shrink-0"
               />
               <Image
-                src={honeycombLogo}
+                src={LandingImagePaths.honeycombLogo}
                 alt="Honeycomb"
                 width={100}
+                height={100}
                 className="h-20 object-contain flex-shrink-0"
               />
               <Image
-                src={fastCompanyLogo}
+                src={LandingImagePaths.fastCompanyLogo}
                 alt="FastCompany"
                 width={100}
+                height={100}
                 className="h-8 object-contain flex-shrink-0"
               />
               <Image
-                src={businessInsiderLogo}
+                src={LandingImagePaths.businessInsiderLogo}
                 alt="Business Insider"
                 width={100}
+                height={100}
                 className="h-8 object-contain flex-shrink-0"
               />
               <Image
-                src={stylistLogo}
+                src={LandingImagePaths.stylistLogo}
                 alt="Stylist"
                 width={100}
+                height={100}
                 className="h-8 object-contain flex-shrink-0"
               />
               <Image
-                src={nyPostLogo}
+                src={LandingImagePaths.nyPostLogo}
                 alt="New York Post"
                 width={100}
+                height={100}
                 className="h-8 object-contain flex-shrink-0"
               />
             </div>
@@ -349,8 +309,8 @@ export default function Home() {
                 Create Your Profile
               </h3>
               <p className="text-gray-600" style={{ fontFamily: "Poppins" }}>
-                Assess your strengths, tell us about your interests, and we'll
-                help you discover what makes you unique.
+                Assess your strengths, tell us about your interests, and
+                we&apos;ll help you discover what makes you unique.
               </p>
             </div>
 
@@ -367,7 +327,7 @@ export default function Home() {
                 className="text-xl font-semibold mb-3"
                 style={{ fontFamily: "Sora" }}
               >
-                Prove What You're Great At
+                Prove What You&apos;re Great At
               </h3>
               <p className="text-gray-600" style={{ fontFamily: "Poppins" }}>
                 Complete skills-based challenges designed to help you learn,
@@ -418,13 +378,14 @@ export default function Home() {
                   className="text-gray-700 mb-4"
                   style={{ fontFamily: "Poppins" }}
                 >
-                  "From the very first task-based assignment, I knew I had found
-                  something special. The team's feedback and communication were
-                  exceptional, and their friendliness and supportiveness made
-                  the experience even better. Thanks to Pollen, my confidence
-                  during my job search has significantly improved. In fact, I
-                  found my current job advertised through Pollen. I can't
-                  recommend Pollen enough – they truly are a game-changer."
+                  From the very first task-based assignment, I knew I had found
+                  something special. The team&apos;s feedback and communication
+                  were exceptional, and their friendliness and supportiveness
+                  made the experience even better. Thanks to Pollen, my
+                  confidence during my job search has significantly improved. In
+                  fact, I found my current job advertised through Pollen. I
+                  can&apos;t recommend Pollen enough – they truly are a
+                  game-changer.&quot;
                 </blockquote>
                 <cite
                   className="text-pink-600 font-medium"
@@ -441,13 +402,13 @@ export default function Home() {
                   className="text-gray-700 mb-4"
                   style={{ fontFamily: "Poppins" }}
                 >
-                  "During an interview, I was once told that my CV poorly
+                  &quot;During an interview, I was once told that my CV poorly
                   reflected who I am as a person and the value I could bring to
-                  a role. It became clear that the issue wasn't my skills or the
-                  demand for someone like me – it was miscommunication. That's
-                  where Pollen made a difference for me. They gave me an
-                  opportunity to show my potential in real-life scenarios
-                  directly relevant to the role."
+                  a role. It became clear that the issue wasn&apos;t my skills
+                  or the demand for someone like me – it was miscommunication.
+                  That&apos;s where Pollen made a difference for me. They gave
+                  me an opportunity to show my potential in real-life scenarios
+                  directly relevant to the role.&quot;
                 </blockquote>
                 <cite
                   className="text-pink-600 font-medium"
@@ -468,7 +429,7 @@ export default function Home() {
             className="text-3xl font-bold text-white mb-4"
             style={{ fontFamily: "Sora" }}
           >
-            Ready to explore what you're capable of?
+            Ready to explore what you&apos;re capable of?
           </h2>
           <p
             className="text-pink-100 mb-8 text-lg"
@@ -477,14 +438,7 @@ export default function Home() {
             💡 No CVs. No pressure. Just your skills and potential.
           </p>
 
-          <Button
-            onClick={handleLogin}
-            size="lg"
-            className="bg-white text-pink-600 hover:bg-gray-100 px-12 py-4 text-lg"
-            style={{ fontFamily: "Sora" }}
-          >
-            Explore Demo
-          </Button>
+          <FindJobsButton />
         </div>
       </div>
 
@@ -495,7 +449,7 @@ export default function Home() {
             className="text-3xl font-bold text-gray-900 mb-4"
             style={{ fontFamily: "Sora" }}
           >
-            Employers – Learn More
+            Employers
           </h2>
           <p
             className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto"
@@ -514,7 +468,7 @@ export default function Home() {
               className="px-8 py-4 text-lg border-gray-300"
               style={{ fontFamily: "Sora" }}
             >
-              Go to Employer Page →
+              Learn More →
             </Button>
           </div>
         </div>
@@ -527,9 +481,10 @@ export default function Home() {
             <div className="flex items-center gap-2 mb-4 md:mb-0">
               <div className="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center p-1">
                 <Image
-                  src={honeycombLogo}
+                  src={LandingImagePaths.honeycombLogo}
                   alt="Pollen"
                   width={100}
+                  height={100}
                   className="w-full h-full object-contain"
                 />
               </div>

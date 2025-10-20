@@ -1,14 +1,7 @@
-// Importar todo lo común desde shared.js
-import {
-  UserCheck,
-  Eye,
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../shared";
+import { UserCheck, Eye } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function PersonaTab({ personaData }) {
   return (
@@ -37,10 +30,7 @@ export function PersonaTab({ personaData }) {
                   </span>
                   <div className="flex flex-wrap gap-1 mt-1">
                     {personaData.traits.map((trait, index) => (
-                      <Badge
-                        key={index}
-                        className="bg-blue-100 text-blue-800"
-                      >
+                      <Badge key={index} className="bg-blue-100 text-blue-800">
                         {trait}
                       </Badge>
                     ))}

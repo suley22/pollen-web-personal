@@ -1,21 +1,12 @@
-// Importar todo lo común desde shared.js
+import { Brain, Lightbulb, CheckCircle, Eye } from "lucide-react";
+import { FormCard, Input, InfoField } from "@/components/design-system";
+import { Textarea } from "@/components/ui/textarea";
 import {
-  Brain,
-  Lightbulb,
-  CheckCircle,
-  Eye,
-  FormCard,
-  Input,
-  Textarea,
-  InfoField,
   ASSESSMENT_PLACEHOLDER_CONSTANT,
   ASSESSMENT_SCORING_PLACEHOLDER,
-} from "../shared";
+} from "@/lib/configs/constants/jobs-constants";
 
-export function AssessmentTab({ 
-  assessment, 
-  updateEditedAssessment 
-}) {
+export function AssessmentTab({ assessment, updateEditedAssessment }) {
   return (
     <FormCard
       icon={<Brain className="h-5 w-5 text-gray-500" />}
@@ -27,9 +18,9 @@ export function AssessmentTab({
             Assessment Guidelines
           </div>
           <p className="text-sm text-blue-800">
-            Update the skills assessment that will help evaluate
-            candidates for this role. The assessment should include
-            relevant questions, tasks, and scoring criteria.
+            Update the skills assessment that will help evaluate candidates for
+            this role. The assessment should include relevant questions, tasks,
+            and scoring criteria.
           </p>
         </div>
 
@@ -112,8 +103,8 @@ export function AssessmentTab({
 
             <div className="text-sm text-gray-600">
               <p>
-                <strong>Tip:</strong> Use ### for question headers, and
-                provide clear instructions for each section.
+                <strong>Tip:</strong> Use ### for question headers, and provide
+                clear instructions for each section.
               </p>
             </div>
           </div>
@@ -151,9 +142,7 @@ export function AssessmentTab({
 
             <InfoField
               label="Opening Question"
-              value={
-                assessment?.openingQuestion?.title || "Not defined"
-              }
+              value={assessment?.openingQuestion?.title || "Not defined"}
             />
 
             <InfoField

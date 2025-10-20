@@ -1,4 +1,3 @@
-// Importar todo lo común desde shared.js
 import {
   Target,
   FileText,
@@ -7,18 +6,22 @@ import {
   CheckCircle,
   Users,
   Briefcase,
+} from "lucide-react";
+import {
   FormCard,
   FormContainer,
   Input,
   TextAreaCard,
   DynamicListInput,
   Select,
-  CompanySearchSelect,
+} from "@/components/design-system";
+import { CompanySearchSelect } from "../CompanySearchSelect";
+import {
   WORK_ARRANGEMENT_OPTIONS,
   EMPLOYMENT_TYPE_OPTIONS,
   WORK_AUTHORIZATION_OPTIONS,
   WORKING_HOURS_OPTIONS,
-} from "../shared";
+} from "@/lib/configs/constants/jobs-constants";
 import { Responsibilities } from "./_components/responsabilities";
 import { WhoWouldLove } from "./_components/who_would_love";
 import { Requirement } from "./_components/requirement";
@@ -26,18 +29,17 @@ import { Requirement } from "./_components/requirement";
 export function JobDescriptionTab({
   editedJob,
   formRef,
-  updateJobAction,
+  formAction,
   updateEditedJob,
 }) {
   return (
-    <FormContainer ref={formRef} action={updateJobAction}>
+    <FormContainer ref={formRef} action={formAction}>
       <FormCard
         icon={<Briefcase className="h-5 w-5 text-gray-500" />}
         title="Job Overview"
       >
         <div className="w-full flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-4">
-            {/* TODO: checkear */}
             <CompanySearchSelect
               name="company_name"
               value={editedJob?.company_name || ""}
@@ -49,7 +51,7 @@ export function JobDescriptionTab({
               name="job_title"
               id="job_title"
               placeholder="Enter job title"
-              value={editedJob?.job_title || ""}
+              defaultValue={editedJob?.job_title || ""}
             />
           </div>
 
@@ -58,7 +60,7 @@ export function JobDescriptionTab({
               label="Location"
               id="location"
               name="location"
-              value={editedJob?.location || ""}
+              defaultValue={editedJob?.location || ""}
               placeholder="Enter location..."
             />
             <Select
@@ -76,14 +78,14 @@ export function JobDescriptionTab({
               label="Salary Range"
               id="salaryRange"
               name="salary_range"
-              value={editedJob?.salary_range || ""}
+              defaultValue={editedJob?.salary_range || ""}
               placeholder="e.g. £25,000 - £30,000"
             />
 
             <Select
               label="Work Arrangement"
               name="work_arrangement"
-              value={editedJob?.work_arrangement || ""}
+              defaultValue={editedJob?.work_arrangement || ""}
               placeholder="Select arrangement"
               options={WORK_ARRANGEMENT_OPTIONS}
             />
@@ -104,7 +106,7 @@ export function JobDescriptionTab({
                 label="Start Date"
                 id="startDate"
                 name="start_date"
-                value={editedJob?.start_date || ""}
+                defaultValue={editedJob?.start_date || ""}
                 onChange={(e) => updateEditedJob("start_date", e.target.value)}
                 placeholder="e.g. ASAP, January 2025"
               />
@@ -114,14 +116,14 @@ export function JobDescriptionTab({
                 id="applicationDeadline"
                 name="application_deadline"
                 type="date"
-                value={editedJob?.application_deadline || ""}
+                defaultValue={editedJob?.application_deadline || ""}
               />
 
               <Input
                 label="Employment Type Details"
                 id="employmentTypeDetails"
                 name="employment_type_details"
-                value={editedJob?.employment_type_details || ""}
+                defaultValue={editedJob?.employment_type_details || ""}
                 placeholder="e.g. Standard employment contract"
               />
 
@@ -129,7 +131,7 @@ export function JobDescriptionTab({
                 <Select
                   label="Work Authorisation"
                   name="work_authorization"
-                  value={editedJob?.work_authorization || ""}
+                  defaultValue={editedJob?.work_authorization || ""}
                   placeholder="Select work authorisation requirement"
                   options={WORK_AUTHORIZATION_OPTIONS}
                 />
@@ -144,7 +146,7 @@ export function JobDescriptionTab({
         icon={<FileText className="h-5 w-5" />}
         name="description"
         placeholder="Enter job description..."
-        defaultValuealue={editedJob?.description || ""}
+        defaultValue={editedJob?.description || ""}
       />
 
       <Responsibilities
@@ -158,8 +160,7 @@ export function JobDescriptionTab({
         icon={<Target className="h-5 w-5" />}
         name="success_looks"
         placeholder="Describe what success looks like in this role..."
-        value={editedJob?.success_looks || ""}
-        onChange={(e) => updateEditedJob("success_looks", e.target.value)}
+        defaultValue={editedJob?.success_looks || ""}
       />
 
       <Requirement editedJob={editedJob} updateEditedJob={updateEditedJob} />
@@ -169,7 +170,7 @@ export function JobDescriptionTab({
         icon={<Lightbulb className="h-5 w-5" />}
         name="internal_notes"
         placeholder="Add internal notes about this role..."
-        value={editedJob?.internal_notes || ""}
+        defaultValue={editedJob?.internal_notes || ""}
       />
     </FormContainer>
   );

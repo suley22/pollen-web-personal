@@ -19,7 +19,10 @@ export function WhoWouldLove({ editedJob, updateEditedJob }) {
             type: "text",
           },
         ]}
-        initialItems={editedJob.who_would_love}
+        initialItems={editedJob.who_would_love.map((trait, i) => ({
+          id: `trait-${i}`,
+          value: trait,
+        }))}
       />
     </FormCard>
   );

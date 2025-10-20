@@ -1,131 +1,45 @@
 "use server";
 
-import { createClient } from "@/lib/utils/supabase/server";
+import { createJobService } from "@/services/jobsService";
 
-/**
- * Fetches application counts for a specific job
- */
-async function fetchJobApplicationCounts(supabase, jobId) {
-  try {
-    // Count new applications to review (new_applicants status)
-    const { count: newApplicationsCount } = await supabase
-      .from("job_applications")
-      .select("*", { count: "exact", head: true })
-      .eq("job_id", jobId)
-      .eq("status", "new_applicants");
-
-    // Count Pollen interviews booked (in_progress status)
-    const { count: pollenInterviewsCount } = await supabase
-      .from("job_applications")
-      .select("*", { count: "exact", head: true })
-      .eq("job_id", jobId)
-      .eq("status", "in_progress");
-
-    // Count candidates matched to employer (matched_to_employer status)
-    const { count: candidatesMatchedCount } = await supabase
-      .from("job_applications")
-      .select("*", { count: "exact", head: true })
-      .eq("job_id", jobId)
-      .eq("status", "matched_to_employer");
-
-    // Count feedback sent (complete status)
-    const { count: feedbackSentCount } = await supabase
-      .from("job_applications")
-      .select("*", { count: "exact", head: true })
-      .eq("job_id", jobId)
-      .eq("status", "complete");
-
-    // Count total applications
-    const { count: totalApplicationsCount } = await supabase
-      .from("job_applications")
-      .select("*", { count: "exact", head: true })
-      .eq("job_id", jobId);
-
-    return {
-      newApplicationsToReview: newApplicationsCount || 0,
-      pollenInterviewsBooked: pollenInterviewsCount || 0,
-      candidatesMatchedToEmployer: candidatesMatchedCount || 0,
-      feedbackSent: feedbackSentCount || 0,
-      total_applications: totalApplicationsCount || 0,
-    };
-  } catch (error) {
-    console.error(`Error fetching application counts for job ${jobId}:`, error);
-    return {
-      newApplicationsToReview: 0,
-      pollenInterviewsBooked: 0,
-      candidatesMatchedToEmployer: 0,
-      feedbackSent: 0,
-      total_applications: 0,
-    };
-  }
-}
+// ============================================
+// LIST ACTIONS
+// ============================================
 
 export async function getJobList(filters = {}) {
-  try {
-    console.log("🔍 Fetching jobs with filters:", filters);
+  const jobService = await createJobService();
+  return await jobService.fetchJobs(filters);
+}
 
-    const supabase = await createClient();
+// ============================================
+// CREATE ACTIONS
+// ============================================
 
-    let query = supabase
-      .from("job")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(10);
+export async function getEmployerProfiles(searchTerm = "") {
+  const jobService = await createJobService();
+  return await jobService.fetchEmployerProfiles(searchTerm);
+}
 
-    // Aplicar filtro por status si existe
-    if (filters.status && filters.status !== "all") {
-      console.log("✅ Applying status filter:", filters.status);
-      query = query.eq("status", filters.status);
-    }
+export async function getJobAssessments(jobId) {
+  const jobService = await createJobService();
+  return await jobService.fetchJobAssessments(jobId);
+}
 
-    // Aplicar filtro por assignment si existe
-    if (filters.assignment && filters.assignment !== "all") {
-      console.log("✅ Applying assignment filter:", filters.assignment);
-      if (filters.assignment === "mine") {
-        // TODO: Replace with actual current user logic
-        query = query.eq("assigned_to", "Current User");
-      } else if (filters.assignment === "karen") {
-        query = query.ilike("assigned_to", "karen");
-      } else if (filters.assignment === "sophie") {
-        query = query.ilike("assigned_to", "sophie");
-      }
-    }
+export async function createJobAction(prevState, formData) {
+  const jobService = await createJobService();
+  return await jobService.createJob(formData);
+}
 
-    // Aplicar filtro de búsqueda si existe
-    if (filters.searchTerm) {
-      console.log("✅ Applying search filter:", filters.searchTerm);
-      query = query.or(
-        `company_name.ilike.%${filters.searchTerm}%,job_title.ilike.%${filters.searchTerm}%,description.ilike.%${filters.searchTerm}%,assigned_to.ilike.%${filters.searchTerm}%`,
-      );
-    }
+// ============================================
+// EDIT ACTIONS
+// ============================================
 
-    const { data, error } = await query;
+export async function updateJobAction(jobId, prevState, formData) {
+  const jobService = await createJobService();
+  return await jobService.updateJob(jobId, formData);
+}
 
-    if (error) {
-      console.error("❌ Error fetching jobs:", error);
-      return { success: false, error: error.message };
-    }
-
-    console.log(`📦 Fetched ${data?.length || 0} jobs from database`);
-
-    // Fetch application counts for each job
-    const jobsWithApplicationCounts = await Promise.all(
-      data.map(async (job) => {
-        const applicationCounts = await fetchJobApplicationCounts(
-          supabase,
-          job.id,
-        );
-
-        return {
-          ...job,
-          ...applicationCounts,
-        };
-      }),
-    );
-
-    return { success: true, data: jobsWithApplicationCounts };
-  } catch (error) {
-    console.error("Unexpected error:", error);
-    return { success: false, error: "Failed to fetch jobs" };
-  }
+export async function fetchJobByIdAction(id) {
+  const jobService = await createJobService();
+  return await jobService.fetchJobWithAssessment(id);
 }

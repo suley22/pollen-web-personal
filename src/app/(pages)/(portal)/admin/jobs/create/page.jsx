@@ -1,5 +1,6 @@
-import JobsManagmentCreatePage from "./job-profile-consolidated-create";
+import { JobForm } from "../form";
+import { createJobAction } from "../actions";
 
-export default async function JobReviewPage() {
-  return <JobsManagmentCreatePage />;
+export default function Page() {
+  return <JobForm action={createJobAction} />;
 }

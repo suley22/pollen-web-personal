@@ -23,3 +23,4 @@ export { TextAreaCard } from "./textarea-card";
 export { DynamicListInput } from "./dynamic-list-input";
 export { DescriptionCard } from "./description-card";
 export { InfoField } from "./info-field";
+export { Divider } from "./divider";

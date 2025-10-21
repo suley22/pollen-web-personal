@@ -1,17 +1,84 @@
 "use client";
 
-import { PageContainer, PageHeader } from "@/components/design-system";
+import {
+  PageContainer,
+  PageHeader,
+  FormCard,
+  Input,
+  PrimaryButton,
+  Divider,
+} from "@/components/design-system";
 import { Card } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { Building2 } from "lucide-react";
+import { SecondaryButton } from "@/components/design-system/primary-button";
+
+interface MultipleChoiceQuestion {
+  title: string;
+  description: string;
+  options_title: string;
+  options: { value: string; label: string }[];
+}
 
 export default function AdminFormsPage() {
-  const options = [
-    { value: "1", label: "Take charge and lead the way" },
-    { value: "2", label: "Collaborate and seek consensus" },
-    { value: "3", label: "Support others and follow directions" },
-    { value: "4", label: "Analyze and provide insights" },
-  ];
+  // Estado para las preguntas creadas
+  const [questions, setQuestions] = useState<MultipleChoiceQuestion[]>([]);
+
+  // Estado para el formulario de nueva pregunta
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [optionsTitle, setOptionsTitle] = useState("");
+  const [options, setOptions] = useState<{ value: string; label: string }[]>(
+    [],
+  );
+  const [currentOption, setCurrentOption] = useState("");
+
+  // Función para agregar una opción
+  const handleAddOption = () => {
+    if (!currentOption.trim()) return;
+
+    const newOption = {
+      value: (options.length + 1).toString(),
+      label: currentOption.trim(),
+    };
+
+    setOptions([...options, newOption]);
+    setCurrentOption("");
+  };
+
+  // Función para eliminar una opción
+  const handleRemoveOption = (value: string) => {
+    setOptions(options.filter((option) => option.value !== value));
+  };
+
+  // Función para limpiar el formulario
+  const handleClearForm = () => {
+    setTitle("");
+    setDescription("");
+    setOptionsTitle("");
+    setOptions([]);
+    setCurrentOption("");
+  };
+
+  // Función para crear la pregunta
+  const handleAddQuestion = () => {
+    if (!title.trim() || !optionsTitle.trim() || options.length === 0) {
+      alert("Please fill in all required fields and add at least one option");
+      return;
+    }
+
+    const newQuestion: MultipleChoiceQuestion = {
+      title: title.trim(),
+      description: description.trim(),
+      options_title: optionsTitle.trim(),
+      options: options,
+    };
+
+    setQuestions([...questions, newQuestion]);
+    handleClearForm();
+  };
 
   return (
     <PageContainer>
@@ -21,95 +88,141 @@ export default function AdminFormsPage() {
         description="Select and create a new assessment"
         onBack={() => window.history.back()}
       />
+      <FormCard
+        title="Company Information"
+        icon={<Building2 className="h-5 w-5" />}
+      >
+        <div className="flex flex-col gap-4">
+          <div className="w-full flex flex-col gap-3">
+            {/* Question Title */}
+            <Input
+              label="Question Title"
+              type="text"
+              name="question_title"
+              id="question_title"
+              placeholder="Enter question title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            {/* Question Description */}
+            <Input
+              label="Question Description"
+              type="text"
+              name="question_description"
+              id="question_description"
+              placeholder="Enter question description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <Input
+              label="Options Title"
+              type="text"
+              name="options_title"
+              id="options_title"
+              placeholder="Enter options title"
+              value={optionsTitle}
+              onChange={(e) => setOptionsTitle(e.target.value)}
+            />
+
+            {/* Display added options */}
+            {options.length > 0 && (
+              <div className="flex flex-col gap-2">
+                <Label className="font-medium">Added Options:</Label>
+                {options.map((option) => (
+                  <div
+                    key={option.value}
+                    className="flex items-center justify-between px-2 py-1 border rounded"
+                  >
+                    <span className="text-sm">{option.label}</span>
+                    <SecondaryButton
+                      text="Remove"
+                      onClick={() => handleRemoveOption(option.value)}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="flex flex-row gap-2 items-end">
+              <Input
+                label="Add Option"
+                type="text"
+                name="current_option"
+                id="current_option"
+                placeholder="Enter option text"
+                value={currentOption}
+                onChange={(e) => setCurrentOption(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddOption();
+                  }
+                }}
+              />
+              <SecondaryButton text="Add Option" onClick={handleAddOption} />
+            </div>
+          </div>
+
+          <Divider />
+
+          <div className="flex flex-row justify-end">
+            <PrimaryButton text="Add Question" onClick={handleAddQuestion} />
+          </div>
+        </div>
+      </FormCard>
 
       <div className="flex flex-col gap-4">
-        <Card id="multiple-choice" className="p-6 gap-3">
-          <div id="header">
-            <div className="font-semibold text-xl">
-              When working through something with other people
-            </div>
-            <div className="text-sm text-gray-600">
-              Like planning an event, solving a problem, or organising
-              something...
-            </div>
-          </div>
-          <div className="border-b border-grey h-[1px] w-full p-1" />
-          <div id="content" className="flex flex-col gap-1 mt-2 text-md">
-            <div id="content-title" className="font-medium">
-              Most of the time, I prefer to:
-            </div>
-            <div id="content-title" className="font-medium mt-2 mb-3">
-              <RadioGroup
-                className="flex flex-col gap-3 pl-2"
-                value={1}
-                onValueChange={(value) => {}}
-              >
-                {options.map((option) => (
-                  <div
-                    key={option.value}
-                    className="flex items-center space-x-2"
-                  >
-                    <RadioGroupItem
-                      value={option.value}
-                      id={`impact-${option.value}`}
-                    />
-                    <Label
-                      htmlFor={`impact-${option.value}`}
-                      className="font-normal"
-                    >
-                      {option.label}
-                    </Label>
-                  </div>
-                ))}
-              </RadioGroup>
-            </div>
-          </div>
-        </Card>
-      </div>
-      <div className="flex flex-col gap-4">
-        <Card id="multiple-choice" className="p-6 gap-3">
-          <div id="header">
-            <div className="font-semibold text-xl">
-              When working through something with other people
-            </div>
-            <div className="text-sm text-gray-600">
-              Like planning an event, solving a problem, or organising
-              something...
-            </div>
-          </div>
-          <div className="border-b border-grey h-[1px] w-full p-1" />
-          <div id="content" className="flex flex-col gap-1 mt-2 text-md">
-            <div id="content-title" className="font-medium">
-              Most of the time, I prefer to:
-            </div>
-            <div id="content-title" className="font-medium mt-2 mb-3">
-              <RadioGroup
-                className="flex flex-col gap-3 pl-2"
-                value={1}
-                onValueChange={(value) => {}}
-              >
-                {options.map((option) => (
-                  <div
-                    key={option.value}
-                    className="flex items-center space-x-2"
-                  >
-                    <RadioGroupItem
-                      value={option.value}
-                      id={`impact-${option.value}`}
-                    />
-                    <Label
-                      htmlFor={`impact-${option.value}`}
-                      className="font-normal"
-                    >
-                      {option.label}
-                    </Label>
-                  </div>
-                ))}
-              </RadioGroup>
-            </div>
-          </div>
-        </Card>
+        {questions.map((question, index) => (
+          <AdminMultipleChoiceQuestionCard key={index} question={question} />
+        ))}
       </div>
     </PageContainer>
+  );
+}
+
+export function AdminMultipleChoiceQuestionCard({
+  question,
+}: {
+  question?: MultipleChoiceQuestion;
+}) {
+  const options = question?.options || [];
+
+  return (
+    <Card id="multiple-choice" className="p-6 gap-3">
+      <div id="header">
+        <div className="font-semibold text-xl">{question?.title}</div>
+        <div className="text-sm text-gray-600">{question?.description}</div>
+      </div>
+      <Divider />
+      <div id="content" className="flex flex-col gap-1 mt-2 text-md">
+        <div id="content-title" className="font-medium">
+          {question?.options_title}
+        </div>
+        <div id="content-title" className="font-medium mt-2 mb-3">
+          {/* @ts-ignore */}
+          <RadioGroup
+            className="flex flex-col gap-3 pl-2"
+            value="1"
+            onValueChange={() => {}}
+          >
+            {options.map((option) => (
+              <div key={option.value} className="flex items-center space-x-2">
+                {/* @ts-ignore */}
+                <RadioGroupItem
+                  value={option.value}
+                  id={`impact-${option.value}`}
+                />
+                <Label
+                  htmlFor={`impact-${option.value}`}
+                  className="font-normal"
+                >
+                  {option.label}
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+        </div>
+      </div>
+    </Card>
   );
 }

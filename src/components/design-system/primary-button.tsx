@@ -44,3 +44,34 @@ export function PrimaryButton({
     </Button>
   );
 }
+
+export function SecondaryButton({
+  text,
+  icon,
+  onClick,
+  disabled = false,
+  loading = false,
+  className,
+  type = "button",
+}: PrimaryButtonProps) {
+  // Clone the icon and add default size
+  const iconWithSize = icon
+    ? cloneElement(icon as ReactElement<any>, {
+        className: cn("w-4 h-4", (icon.props as any)?.className),
+      })
+    : null;
+
+  return (
+    <Button
+      type={type}
+      variant="outline"
+      size="default"
+      onClick={onClick}
+      disabled={disabled || loading}
+      className={cn("max-w-xs font-sora gap-2", className)}
+    >
+      {iconWithSize}
+      {loading ? "Loading..." : text}
+    </Button>
+  );
+}

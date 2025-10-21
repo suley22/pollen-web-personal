@@ -16,7 +16,7 @@ export default function AdminFormsPage() {
     <PageContainer>
       <PageHeader
         title="Admin Assessments Page"
-        description="Create and manage assessments"
+        subtitle="Create and manage assessments"
       >
         <PrimaryButton
           icon={<Plus />}

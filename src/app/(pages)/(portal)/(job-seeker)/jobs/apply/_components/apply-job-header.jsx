@@ -17,7 +17,7 @@ export default function ApplyJobHeader({
       title={`Apply for ${job?.job_title || "Job"}`}
       showBackButton={true}
       onBack={onBack}
-      description={`at ${job?.company_name || ""}`}
+      subtitle={`at ${job?.company_name || ""}`}
     >
       <div className="flex items-center gap-4">
         <Button

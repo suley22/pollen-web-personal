@@ -24,7 +24,6 @@ export { DynamicListInput } from "./dynamic-list-input";
 export { DescriptionCard } from "./description-card";
 export { InfoField } from "./info-field";
 export { Divider } from "./divider";
-export { Header } from "./header";
 export {
   SuccessBadge,
   WarningBadge,

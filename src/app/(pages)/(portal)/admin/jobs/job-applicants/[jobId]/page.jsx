@@ -776,7 +776,7 @@ export default function JobApplicantsPage({ params }) {
     <PageContainer>
       <PageHeader
         title={`${job?.job_title} • ${candidates.length} Applicants`}
-        description={`${job?.company_name}`}
+        subtitle={`${job?.company_name}`}
         onBack={() => router.back()}
         showBackButton={true}
       />

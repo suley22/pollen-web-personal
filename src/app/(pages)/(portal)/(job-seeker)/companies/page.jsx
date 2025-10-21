@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, MapPin, Users, Star, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Header } from "@/components/design-system/header";
+import { PageHeader, PageContainer } from "@/components/design-system";
 
 export default function CompaniesPage() {
   const companies = [
@@ -122,11 +122,10 @@ export default function CompaniesPage() {
   const router = useRouter();
 
   return (
-    <div className="w-full py-6">
-      <Header
-        titleSize="text-2xl"
+    <PageContainer>
+      <PageHeader
         title="Companies"
-        subtitle="Discover amazing companies and career opportunities"
+        subtitle={"Discover amazing companies and career opportunities."}
       />
 
       <div className="my-4">
@@ -322,6 +321,6 @@ export default function CompaniesPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </PageContainer>
   );
 }

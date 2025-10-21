@@ -21,6 +21,7 @@ import { useUser } from "@/app/providers";
 import { Header } from "@/components/design-system";
 import { JobCard } from "./_components/job-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageContainer, PageHeader } from "@/components/design-system";
 
 export default function Home() {
   const user = useUser();
@@ -83,11 +84,11 @@ export default function Home() {
   // Render directly from form.form.jobs; map to the JobCard shape inline
 
   return (
-    <div className="w-full flex flex-col py-6 gap-5 home-page">
+    <PageContainer>
       {/* Welcome Section */}
-      <Header
-        titleSize="text-5xl"
+      <PageHeader
         title={<>Welcome back, {user?.firstName}! 👋</>}
+        titleSize="text-5xl"
         subtitle={"Let's find you a job you love."}
       />
 
@@ -292,6 +293,6 @@ export default function Home() {
       </Card>
 
       {/* Simple chatbot */}
-    </div>
+    </PageContainer>
   );
 }

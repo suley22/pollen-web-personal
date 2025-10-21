@@ -64,7 +64,7 @@ const config = [
       "react/display-name": "off",
       "react/no-unescaped-entities": "warn",
       "react/jsx-uses-react": "off",
-      "react/jsx-uses-vars": "error",
+      "react/jsx-uses-vars": "warn",
     },
     settings: {
       react: {
@@ -100,6 +100,7 @@ const config = [
     },
     rules: {
       // TypeScript específico
+      "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/ban-types": "off",

@@ -27,7 +27,7 @@ export default function AdminEmployers() {
       <PageContainer>
         <PageHeader
           title="Employers"
-          description="Manage and review employer company profiles"
+          subtitle="Manage and review employer company profiles"
         >
           <PrimaryButton icon={<Plus />} text="Create" onClick={onCreate} />
         </PageHeader>

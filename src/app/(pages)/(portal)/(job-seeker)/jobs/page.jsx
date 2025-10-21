@@ -186,7 +186,10 @@ export default function JobsPage() {
 
   return (
     <PageContainer>
-      <PageHeader title="Find Your Next Opportunity" />
+      <PageHeader
+        title="Find Your Next Opportunity"
+        subtitle="Explore job openings tailored to your skills and preferences."
+      />
 
       <div className="text-left mb-6">
         <div className="grid md:grid-cols-2 gap-4 w-full mb-6">

@@ -120,22 +120,6 @@ export default function AdminFormsPage() {
           />
         </div>
       </FormCard>
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col ">
-          <div className="text-xl font-semibold">
-            {assessmentTitle || "Assessment Title"}
-          </div>
-
-          <div className="text-md text-gray-500">
-            {assessmentDescription || "Assessment Description"}
-          </div>
-        </div>
-        <div className="flex flex-col gap-4">
-          {questions.map((question, index) => (
-            <AdminMultipleChoiceQuestionCard key={index} question={question} />
-          ))}
-        </div>
-      </div>
 
       <div className="flex flex-row gap-4">
         <FormCard

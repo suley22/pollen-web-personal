@@ -12,7 +12,7 @@ import { Card } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { Building2 } from "lucide-react";
+import { Building2, Plus } from "lucide-react";
 import { SecondaryButton } from "@/components/design-system/primary-button";
 
 interface MultipleChoiceQuestion {
@@ -30,6 +30,8 @@ export default function AdminFormsPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [optionsTitle, setOptionsTitle] = useState("");
+  const [assessmentTitle, setAssessmentTitle] = useState("");
+  const [assessmentDescription, setAssessmentDescription] = useState("");
   const [options, setOptions] = useState<{ value: string; label: string }[]>(
     [],
   );
@@ -88,93 +90,143 @@ export default function AdminFormsPage() {
         description="Select and create a new assessment"
         onBack={() => window.history.back()}
       />
+
       <FormCard
-        title="Company Information"
+        title="Assessment Details"
         icon={<Building2 className="h-5 w-5" />}
+        className="flex-1"
       >
         <div className="flex flex-col gap-4">
-          <div className="w-full flex flex-col gap-3">
-            {/* Question Title */}
-            <Input
-              label="Question Title"
-              type="text"
-              name="question_title"
-              id="question_title"
-              placeholder="Enter question title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-            {/* Question Description */}
-            <Input
-              label="Question Description"
-              type="text"
-              name="question_description"
-              id="question_description"
-              placeholder="Enter question description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-            <Input
-              label="Options Title"
-              type="text"
-              name="options_title"
-              id="options_title"
-              placeholder="Enter options title"
-              value={optionsTitle}
-              onChange={(e) => setOptionsTitle(e.target.value)}
-            />
+          {/* Assessment Title */}
+          <Input
+            label="Title"
+            type="text"
+            name="assessment_title"
+            id="assessment_title"
+            placeholder="Enter assessment title"
+            value={assessmentTitle}
+            onChange={(e) => setAssessmentTitle(e.target.value)}
+          />
 
-            {/* Display added options */}
-            {options.length > 0 && (
-              <div className="flex flex-col gap-2">
-                <Label className="font-medium">Added Options:</Label>
-                {options.map((option) => (
-                  <div
-                    key={option.value}
-                    className="flex items-center justify-between px-2 py-1 border rounded"
-                  >
-                    <span className="text-sm">{option.label}</span>
-                    <SecondaryButton
-                      text="Remove"
-                      onClick={() => handleRemoveOption(option.value)}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="flex flex-row gap-2 items-end">
-              <Input
-                label="Add Option"
-                type="text"
-                name="current_option"
-                id="current_option"
-                placeholder="Enter option text"
-                value={currentOption}
-                onChange={(e) => setCurrentOption(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddOption();
-                  }
-                }}
-              />
-              <SecondaryButton text="Add Option" onClick={handleAddOption} />
-            </div>
-          </div>
-
-          <Divider />
-
-          <div className="flex flex-row justify-end">
-            <PrimaryButton text="Add Question" onClick={handleAddQuestion} />
-          </div>
+          {/* Assessment Description */}
+          <Input
+            label="Description"
+            type="text"
+            name="assessment_description"
+            id="assessment_description"
+            placeholder="Enter assessment description"
+            value={assessmentDescription}
+            onChange={(e) => setAssessmentDescription(e.target.value)}
+          />
         </div>
       </FormCard>
-
       <div className="flex flex-col gap-4">
-        {questions.map((question, index) => (
-          <AdminMultipleChoiceQuestionCard key={index} question={question} />
-        ))}
+        <div className="flex flex-col ">
+          <div className="text-xl font-semibold">
+            {assessmentTitle || "Assessment Title"}
+          </div>
+
+          <div className="text-md text-gray-500">
+            {assessmentDescription || "Assessment Description"}
+          </div>
+        </div>
+        <div className="flex flex-col gap-4">
+          {questions.map((question, index) => (
+            <AdminMultipleChoiceQuestionCard key={index} question={question} />
+          ))}
+        </div>
+      </div>
+
+      <div className="flex flex-row gap-4">
+        <FormCard
+          title="Question Details"
+          icon={<Building2 className="h-5 w-5" />}
+          className="flex-1"
+        >
+          <div className="w-full flex flex-col gap-4">
+            <div className="w-full flex flex-col gap-3">
+              {/* Question Title */}
+              <Input
+                label="Title"
+                type="text"
+                name="question_title"
+                id="question_title"
+                placeholder="Enter question title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+              {/* Question Description */}
+              <Input
+                label="Description"
+                type="text"
+                name="question_description"
+                id="question_description"
+                placeholder="Enter question description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+              <Input
+                label="Options Title"
+                type="text"
+                name="options_title"
+                id="options_title"
+                placeholder="Enter options title"
+                value={optionsTitle}
+                onChange={(e) => setOptionsTitle(e.target.value)}
+              />
+
+              {/* Display added options */}
+              {options.length > 0 && (
+                <div className="flex flex-col gap-2 py-1">
+                  <Label className="text-sm font-semibold text-gray-700">
+                    Added Options:
+                  </Label>
+                  {options.map((option) => (
+                    <div
+                      key={option.value}
+                      className="flex items-center justify-between px-2 py-1 border rounded"
+                    >
+                      <span className="text-sm">{option.label}</span>
+                      <SecondaryButton
+                        text="Remove"
+                        onClick={() => handleRemoveOption(option.value)}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex flex-row gap-2 items-end mt-1">
+                <Input
+                  label="Add Option"
+                  type="text"
+                  name="current_option"
+                  id="current_option"
+                  placeholder="Enter option text"
+                  value={currentOption}
+                  onChange={(e) => setCurrentOption(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddOption();
+                    }
+                  }}
+                />
+                <SecondaryButton
+                  icon={<Plus />}
+                  text="Add Option"
+                  onClick={handleAddOption}
+                />
+              </div>
+            </div>
+
+            <Divider />
+
+            <div className="flex flex-row justify-end">
+              <PrimaryButton text="Add Question" onClick={handleAddQuestion} />
+            </div>
+          </div>
+        </FormCard>
       </div>
     </PageContainer>
   );
@@ -189,7 +241,7 @@ export function AdminMultipleChoiceQuestionCard({
 
   return (
     <Card id="multiple-choice" className="p-6 gap-3">
-      <div id="header">
+      <div className="flex flex-col gap-1">
         <div className="font-semibold text-xl">{question?.title}</div>
         <div className="text-sm text-gray-600">{question?.description}</div>
       </div>

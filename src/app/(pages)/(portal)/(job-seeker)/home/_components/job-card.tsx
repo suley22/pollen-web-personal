@@ -52,7 +52,7 @@ export function JobCard({ job, isSaved, onToggleSave, onApply }: JobCardProps) {
   };
 
   return (
-    <Card className="flex items-start justify-between mb-2 border rounded-lg !p-3 hover:bg-gray-50">
+    <Card className="flex items-start justify-between border rounded-lg !p-3 hover:bg-gray-50">
       <CardHeader className="w-full flex-col">
         <div className="flex items-start">
           <div className="flex-1 min-w-0">

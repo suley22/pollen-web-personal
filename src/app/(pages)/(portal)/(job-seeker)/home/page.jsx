@@ -219,7 +219,7 @@ export default function Home() {
             </div>
           ) : (
             <div className="grid grid-cols-3 gap-4">
-              {(form?.form?.jobs || []).map((raw) => {
+              {(form?.form?.jobs || []).slice(0, 6).map((raw) => {
                 const job = mapAdminJobToCardJob(raw);
                 return (
                   <JobCard
@@ -233,12 +233,12 @@ export default function Home() {
             </div>
           )}
         </CardContent>
-        <CardFooter>
+        <CardFooter className="px-3 pb-3 pt-0 flex justify-end">
           <Button
             variant="ghost"
             onClick={() => (window.location.href = "/jobs")}
             size="sm"
-            className="inline-flex items-center justify-center gap-2 whitespace-nowrap [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full"
+            className="h-10 px-4 py-2 w-full"
           >
             <span className="hidden sm:inline">View All Jobs</span>
             <ChevronRight className="w-3 h- ml-2" />

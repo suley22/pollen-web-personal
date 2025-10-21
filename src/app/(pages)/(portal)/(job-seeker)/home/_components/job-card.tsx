@@ -16,20 +16,16 @@ type Company = {
   logo?: string;
 };
 
-type Salary = {
-  min: number;
-  max: number;
-};
-
 export type Job = {
   id: string;
   title: string;
   company: Company;
   location: string;
-  salary: Salary;
+  salary: string; // pre-formatted from DB
   pollenApproved?: boolean;
   type?: string;
   applicationDeadline: Date | string | number;
+  description?: string;
 };
 
 export type JobCardProps = {
@@ -39,21 +35,28 @@ export type JobCardProps = {
   onApply?: () => void;
 };
 
+const clampText = (text: string, maxChars: number) => {
+  const t = text.trim();
+  if (t.length <= maxChars) return t;
+  const sliced = t.slice(0, maxChars);
+  // Avoid cutting the last word in half
+  return sliced.replace(/\s+\S*$/, "") + "…";
+};
+
 export function JobCard({ job, isSaved, onToggleSave, onApply }: JobCardProps) {
   const apply = () => {
     if (onApply) return onApply();
-    // Fallback navigation
     if (typeof window !== "undefined") {
       window.location.href = `/jobs/${job.id}/apply`;
     }
   };
 
   return (
-    <Card className="flex items-start justify-between mb-2 border rounded-lg p-3 hover:bg-gray-50">
+    <Card className="flex items-start justify-between mb-2 border rounded-lg !p-3 hover:bg-gray-50">
       <CardHeader className="w-full flex-col">
         <div className="flex items-start">
           <div className="flex-1 min-w-0">
-            <div className="font-semibold text-gray-900 text-sm">
+            <div className="font-semibold text-gray-900 text-base">
               {job.title}
             </div>
             {job.pollenApproved && (
@@ -79,29 +82,30 @@ export function JobCard({ job, isSaved, onToggleSave, onApply }: JobCardProps) {
                   {job.company.name}
                 </a>
               </span>
-              <ApprovalSourceBadge approvedByPollen={job.pollenApproved} />
+              <ApprovalSourceBadge approvedByPollen={!!job.pollenApproved} />
             </div>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="flex flex-col !gap-3 pt-4 ">
+      <CardContent className="flex flex-col !gap-3 pt-4 justify-between w-full h-full">
         <div className="flex flex-col text-sm text-gray-500">
           <span className="flex items-center gap-1">
             <MapPin className="w-4 h-4" />
-            {job.location}
+            {job.location ? job.location : "Not specified"}
           </span>
           <span className="flex items-center gap-1 mt-1">
-            <Banknote className="w-4 h-4" />£{job.salary.min.toLocaleString()} -
-            £{job.salary.max.toLocaleString()}
+            <Banknote className="w-4 h-4" />
+            {job.salary ? job.salary : "Not disclosed"}
           </span>
         </div>
-        {/* Job Details */}
-        <p className="text-sm text-gray-600">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam
-        </p>
+        <div className="flex h-full items-start">
+          <p className="text-sm text-gray-600">
+            {job.description
+              ? clampText(job.description, 190)
+              : "No description available."}
+          </p>
+        </div>
         <span className="flex items-center text-xs text-gray-600 gap-1">
           <Clock className="w-3 h-3" />
           Apply by{" "}

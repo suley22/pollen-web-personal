@@ -6,30 +6,27 @@ import CircularProgress from "@/components/ui/circular-progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { CardFooter } from "@/components/ui/card";
-
-import { Badge } from "@/components/ui/badge";
+import { useJobManagement } from "@/admin/jobs/useJobManagement";
 
 import {
-  Heart,
-  Building,
   Users,
   Calendar,
   Star,
   Clock,
   ChevronRight,
   Trophy,
-  MapPin,
-  Banknote,
 } from "lucide-react";
 
 import { useUser } from "@/app/providers";
 import { Header } from "@/components/design-system";
 import { JobCard } from "./_components/job-card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Home() {
   const user = useUser();
   const [, setProgress] = useState(0);
   const router = useRouter();
+  const form = useJobManagement();
 
   // estado para guardados (JS puro)
   const [savedJobs, setSavedJobs] = useState(new Set());
@@ -54,54 +51,36 @@ export default function Home() {
     });
   };
 
-  // Top job recommendations for home page
-  const topJobRecommendations = [
-    {
-      id: "job-001",
-      title: "Media Planning Assistant",
-      company: {
-        id: "5",
-        name: "CreativeMinds Agency",
-        logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=50&h=50&fit=crop&crop=center",
-        applicationDeadline: new Date(),
-      },
-      location: "London, UK",
-      salary: { min: 26000, max: 32000 },
-      matchScore: 92,
-      matchReason: "",
-      applicationDeadline: new Date(),
+  // Note: Removed topJobRecommendations; we render directly from form.form.jobs
+
+  // Map admin job shape -> JobCard shape
+  const mapAdminJobToCardJob = (job) => ({
+    id: String(job.id),
+    title: job.job_title || job.title || "Untitled job",
+    company: {
+      id: String(job.company_id || job.employer_id || job.id),
+      name: job.company_name || "Unknown Company",
+      logo: job.company_logo || undefined,
     },
-    {
-      id: "job-002",
-      title: "Client Relationship Coordinator",
-      company: {
-        id: "2",
-        name: "Adaptive Solutions Ltd",
-        logo: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=50&h=50&fit=crop&crop=center",
-        applicationDeadline: new Date(),
-      },
-      location: "Manchester, UK",
-      salary: { min: 24000, max: 28000 },
-      matchScore: 85,
-      matchReason: "",
-      applicationDeadline: new Date(),
-    },
-    {
-      id: "job-003",
-      title: "Marketing Assistant",
-      company: {
-        id: "3",
-        name: "Growth Partners",
-        logo: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=50&h=50&fit=crop&crop=center",
-        applicationDeadline: new Date(),
-      },
-      location: "Birmingham, UK",
-      salary: { min: 25000, max: 30000 },
-      matchScore: 81,
-      matchReason: "",
-      applicationDeadline: new Date(),
-    },
-  ];
+    location: job.location || job.city || "Remote",
+    salary: job.salary || job.salary_range || "",
+    pollenApproved: Boolean(
+      job.pollenApproved ||
+        job.pollen_approved ||
+        job.is_pollen_approved ||
+        false,
+    ),
+    description: job.description || job.job_description || "",
+    type: job.type || (job.is_external ? "external" : undefined),
+    applicationDeadline:
+      job.application_deadline ||
+      job.assigned_date ||
+      job.published_at ||
+      job.created_at ||
+      new Date(),
+  });
+
+  // Render directly from form.form.jobs; map to the JobCard shape inline
 
   return (
     <div className="w-full flex flex-col py-6 gap-5 home-page">
@@ -209,16 +188,50 @@ export default function Home() {
           </CardTitle>
         </CardHeader>
         <CardContent style={{ padding: "0.75rem" }}>
-          <div className="grid grid-cols-3 gap-4">
-            {topJobRecommendations.map((job) => (
-              <JobCard
-                key={job.id}
-                job={job}
-                isSaved={savedJobs.has(job.id)}
-                onToggleSave={() => handleSaveJob(job.id)}
-              />
-            ))}
-          </div>
+          {form?.form?.loading ? (
+            <div className="grid grid-cols-3 gap-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={`job-skeleton-${i}`}
+                  className="flex flex-col border rounded-lg p-3 gap-3"
+                >
+                  <div className="flex flex-col gap-2">
+                    <Skeleton className="h-4 w-2/3 bg-gray-200" />
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-3 w-20 bg-gray-200" />
+                      <Skeleton className="h-3 w-16 bg-gray-200" />
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2 mt-2">
+                    <Skeleton className="h-4 w-5/6 bg-gray-200" />
+                    <Skeleton className="h-4 w-1/2 bg-gray-200" />
+                  </div>
+                  <div className="flex flex-col gap-2 mt-2">
+                    <Skeleton className="h-3 w-1/3 bg-gray-200" />
+                    <Skeleton className="h-3 w-1/4 bg-gray-200" />
+                  </div>
+                  <div className="flex gap-2 pt-3 mt-3 border-t">
+                    <Skeleton className="h-9 flex-1 bg-gray-200" />
+                    <Skeleton className="h-9 w-10 bg-gray-200" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-4">
+              {(form?.form?.jobs || []).map((raw) => {
+                const job = mapAdminJobToCardJob(raw);
+                return (
+                  <JobCard
+                    key={job.id}
+                    job={job}
+                    isSaved={savedJobs.has(job.id)}
+                    onToggleSave={() => handleSaveJob(job.id)}
+                  />
+                );
+              })}
+            </div>
+          )}
         </CardContent>
         <CardFooter>
           <Button

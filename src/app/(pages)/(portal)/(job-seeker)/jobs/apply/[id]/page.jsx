@@ -1,9 +1,10 @@
 "use client";
-import { PageContainer, PageHeader } from "@/components/design-system";
+import { PageContainer } from "@/components/design-system";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/buttons/button";
-import { Heart } from "lucide-react";
 import { useState } from "react";
+import ApplyJobHeader from "../_components/apply-job-header";
+import ProgressSteps from "../_components/progress-steps";
+import JobDetails from "../_components/job-details";
 
 // Mock data para maquetado //
 const job = {
@@ -18,49 +19,32 @@ const removeSavedJobMutation = { isPending: false };
 // ----------------------- //
 
 export default function ApplyJobPage() {
+  const [currentStep, setCurrentStep] = useState(1);
   const [showCompanyProfile, setShowCompanyProfile] = useState(false);
   const router = useRouter();
 
+  const handleSaveJob = () => {
+    // Lógica para guardar/quitar el trabajo de favoritos
+    console.log("Toggle save job");
+  };
+
   return (
     <PageContainer>
-      <PageHeader
-        title={`Apply for ${job.job_title}`}
-        showBackButton={true}
-        onBack={router.back}
-        description={`at ${job.company_name}`}
-      >
-        <div className="flex items-center gap-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {}}
-            className={isSaved ? "text-pink-600 border-pink-600" : ""}
-            disabled={
-              saveJobMutation.isPending || removeSavedJobMutation.isPending
-            }
-          >
-            <Heart className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`} />
-            {isSaved ? "Saved" : "Save Job"}
-          </Button>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <span>Job Details</span>
-            <button
-              onClick={() => setShowCompanyProfile(!showCompanyProfile)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colours ${
-                showCompanyProfile ? "bg-pink-600" : "bg-gray-200"
-              }`}
-              style={showCompanyProfile ? { backgroundColor: "#E2007A" } : {}}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  showCompanyProfile ? "translate-x-6" : "translate-x-1"
-                }`}
-              />
-            </button>
-            <span>Company Profile</span>
-          </div>
-        </div>
-      </PageHeader>
+      <ApplyJobHeader
+        job={job}
+        isSaved={isSaved}
+        showCompanyProfile={showCompanyProfile}
+        setShowCompanyProfile={setShowCompanyProfile}
+        onSaveJob={handleSaveJob}
+        onBack={() => router.back()}
+        saveJobMutation={saveJobMutation}
+        removeSavedJobMutation={removeSavedJobMutation}
+      />
+
+      <ProgressSteps currentStep={currentStep} />
+      <JobDetails job={job} />
+
+      <div className="flex flex-col bg-white rounded-lg border border-gray-200 p-6"></div>
     </PageContainer>
   );
 }

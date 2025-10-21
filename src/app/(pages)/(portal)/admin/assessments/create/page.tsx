@@ -250,49 +250,15 @@ export default function AdminFormsPage() {
           </div>
           <div className="flex flex-col gap-4">
             {questions.map((question, index) => (
-              <div key={index} className="relative">
-                <div className="absolute top-4 left-4 bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center font-semibold text-sm z-10">
-                  {index + 1}
-                </div>
-                <AdminMultipleChoiceQuestionCard question={question} />
-                <div className="absolute top-4 right-4 flex flex-row gap-2">
-                  {/* Botón para mover hacia arriba */}
-                  <button
-                    onClick={() => handleMoveQuestionUp(index)}
-                    disabled={index === 0}
-                    className={`p-2 rounded border ${
-                      index === 0
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white hover:bg-gray-50 text-gray-700"
-                    }`}
-                    title="Move up"
-                  >
-                    <ChevronUp className="h-4 w-4" />
-                  </button>
-
-                  {/* Botón para mover hacia abajo */}
-                  <button
-                    onClick={() => handleMoveQuestionDown(index)}
-                    disabled={index === questions.length - 1}
-                    className={`p-2 rounded border ${
-                      index === questions.length - 1
-                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                        : "bg-white hover:bg-gray-50 text-gray-700"
-                    }`}
-                    title="Move down"
-                  >
-                    <ChevronDown className="h-4 w-4" />
-                  </button>
-
-                  {/* Botón para eliminar */}
-                  <button
-                    onClick={() => handleRemoveQuestion(index)}
-                    className="p-2 rounded border bg-white hover:bg-red-50 text-red-600 hover:text-red-700"
-                    title="Remove question"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </div>
+              <div key={index}>
+                <AdminMultipleChoiceQuestionCard
+                  questionsLength={questions.length}
+                  question={question}
+                  index={index}
+                  handleMoveQuestionUp={handleMoveQuestionUp}
+                  handleMoveQuestionDown={handleMoveQuestionDown}
+                  handleRemoveQuestion={handleRemoveQuestion}
+                />
               </div>
             ))}
           </div>
@@ -304,46 +270,95 @@ export default function AdminFormsPage() {
 
 export function AdminMultipleChoiceQuestionCard({
   question,
+  index,
+  questionsLength,
+  handleMoveQuestionUp,
+  handleMoveQuestionDown,
+  handleRemoveQuestion,
 }: {
   question?: MultipleChoiceQuestion;
+  index: number;
+  questionsLength: number;
+  handleMoveQuestionUp: (index: number) => void;
+  handleMoveQuestionDown: (index: number) => void;
+  handleRemoveQuestion: (index: number) => void;
 }) {
   const options = question?.options || [];
 
   return (
     <Card id="multiple-choice" className="p-6 gap-3">
-      <div className="flex flex-col gap-1">
-        <div className="font-semibold text-xl">{question?.title}</div>
-        <div className="text-sm text-gray-600">{question?.description}</div>
+      <div className="flex flex-row justify-between ">
+        <div className="flex flex-col gap-1">
+          <div className="flex flex-row gap-4 font-semibold text-xl">
+            {question?.title}
+          </div>
+          <div className="text-sm text-gray-600">{question?.description}</div>
+        </div>
+        <div className="flex flex-row gap-2">
+          {/* Botón para mover hacia arriba */}
+          <button
+            onClick={() => handleMoveQuestionUp(index)}
+            disabled={index === 0}
+            className={`p-4 rounded border ${
+              index === 0
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-white hover:bg-gray-50 text-gray-700"
+            }`}
+            title="Move up"
+          >
+            <ChevronUp className="h-4 w-4" />
+          </button>
+
+          {/* Botón para mover hacia abajo */}
+          <button
+            onClick={() => handleMoveQuestionDown(index)}
+            disabled={index === questionsLength - 1}
+            className={`p-4 rounded border ${
+              index === questionsLength - 1
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-white hover:bg-gray-50 text-gray-700"
+            }`}
+            title="Move down"
+          >
+            <ChevronDown className="h-4 w-4" />
+          </button>
+
+          {/* Botón para eliminar */}
+          <button
+            onClick={() => handleRemoveQuestion(index)}
+            className="p-4 rounded border bg-white hover:bg-red-50 text-red-600 hover:text-red-700"
+            title="Remove question"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
       </div>
+
       <Divider />
       <div id="content" className="flex flex-col gap-1 mt-2 text-md">
-        <div id="content-title" className="font-medium">
-          {question?.options_title}
-        </div>
-        <div id="content-title" className="font-medium mt-2 mb-3">
-          {/* @ts-ignore */}
-          <RadioGroup
-            className="flex flex-col gap-3 pl-2"
-            value="1"
-            onValueChange={() => {}}
-          >
-            {options.map((option) => (
-              <div key={option.value} className="flex items-center space-x-2">
-                {/* @ts-ignore */}
-                <RadioGroupItem
-                  value={option.value}
-                  id={`impact-${option.value}`}
-                />
-                <Label
-                  htmlFor={`impact-${option.value}`}
-                  className="font-normal"
-                >
-                  {option.label}
-                </Label>
-              </div>
-            ))}
-          </RadioGroup>
-        </div>
+        <div className="flex">{question?.options_title}</div>
+        <div className="flex">Options</div>
+      </div>
+      <div id="content-title" className="font-medium mt-2 mb-3">
+        {/* @ts-ignore */}
+        <RadioGroup
+          className="flex flex-col gap-3 pl-2"
+          value="1"
+          onValueChange={() => {}}
+        >
+          {options.map((option) => (
+            <div key={option.value} className="flex items-center space-x-2">
+              {/* @ts-ignore */}
+              <RadioGroupItem
+                value={option.value}
+                id={`impact-${option.value}`}
+              />
+              <Label htmlFor={`impact-${option.value}`} className="font-normal">
+                {option.label}
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
       </div>
     </Card>
   );

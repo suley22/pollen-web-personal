@@ -8,6 +8,7 @@ export const JobSeekerRoutes = {
   jobs: `/jobs`,
   companies: `/companies`,
   community: `/community`,
+  applyJobs: (id) => `/jobs/apply/${id}`,
 };
 
 export const JOB_SEEKER_ROUTES = Object.values(JobSeekerRoutes);

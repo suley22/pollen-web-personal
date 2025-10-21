@@ -27,6 +27,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { PageContainer, PageHeader } from "@/components/design-system";
 import PollenApprovedJobs from "./_components/pollen-approved";
 import ExternalJobs from "./_components/external-jobs";
+import { JobSeekerRoutes } from "../router";
 
 export default function JobsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -189,10 +190,7 @@ export default function JobsPage() {
 
       <div className="text-left mb-6">
         <div className="grid md:grid-cols-2 gap-4 w-full mb-6">
-          {/* Pollen Approved Jobs */}
           <PollenApprovedJobs />
-
-          {/* External Jobs */}
           <ExternalJobs />
         </div>
 
@@ -678,8 +676,13 @@ export default function JobsPage() {
                             <Eye className="w-4 h-4 mr-1" />
                             Details
                           </Button>
+
+                          {/* TODO: Apply Button */}
                           <Button
-                            onClick={() => handleJobAction(job)}
+                            // onClick={() => handleJobAction(job)}
+                            onClick={() =>
+                              router.push(JobSeekerRoutes.applyJobs(job.id))
+                            }
                             className="bg-[#E2007A] hover:bg-[#E2007A]/90 text-white px-4 py-2 text-sm font-medium rounded-lg shadow-sm"
                           >
                             {job.pollenApproved ? "View & Apply" : "Apply"} →

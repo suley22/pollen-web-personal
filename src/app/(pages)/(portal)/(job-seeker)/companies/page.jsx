@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, MapPin, Users, Star, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Header } from "@/components/design-system/header";
 
 export default function CompaniesPage() {
   const companies = [
@@ -121,14 +122,12 @@ export default function CompaniesPage() {
   const router = useRouter();
 
   return (
-    <div className="max-w-5xl mx-auto py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Companies</h1>
-        <p className="text-gray-600 text-lg">
-          Discover amazing companies and career opportunities
-        </p>
-      </div>
+    <div className="w-full py-6">
+      <Header
+        titleSize="text-2xl"
+        title="Companies"
+        subtitle="Discover amazing companies and career opportunities"
+      />
 
       <div className="my-4">
         <div className="bg-gradient-to-r from-blue-50 to-pink-50 rounded-xl mb-3 mx-2 p-4">

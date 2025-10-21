@@ -12,7 +12,7 @@ import { Card } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { Building2, Plus } from "lucide-react";
+import { Building2, Plus, ChevronUp, ChevronDown, Trash2 } from "lucide-react";
 import { SecondaryButton } from "@/components/design-system/primary-button";
 
 interface MultipleChoiceQuestion {
@@ -53,6 +53,33 @@ export default function AdminFormsPage() {
   // Función para eliminar una opción
   const handleRemoveOption = (value: string) => {
     setOptions(options.filter((option) => option.value !== value));
+  };
+
+  // Función para eliminar una pregunta
+  const handleRemoveQuestion = (index: number) => {
+    setQuestions(questions.filter((_, i) => i !== index));
+  };
+
+  // Función para mover una pregunta hacia arriba
+  const handleMoveQuestionUp = (index: number) => {
+    if (index === 0) return; // No se puede mover la primera pregunta hacia arriba
+
+    const newQuestions = [...questions];
+    const temp = newQuestions[index];
+    newQuestions[index] = newQuestions[index - 1];
+    newQuestions[index - 1] = temp;
+    setQuestions(newQuestions);
+  };
+
+  // Función para mover una pregunta hacia abajo
+  const handleMoveQuestionDown = (index: number) => {
+    if (index === questions.length - 1) return; // No se puede mover la última pregunta hacia abajo
+
+    const newQuestions = [...questions];
+    const temp = newQuestions[index];
+    newQuestions[index] = newQuestions[index + 1];
+    newQuestions[index + 1] = temp;
+    setQuestions(newQuestions);
   };
 
   // Función para limpiar el formulario
@@ -212,6 +239,65 @@ export default function AdminFormsPage() {
           </div>
         </FormCard>
       </div>
+
+      {/* Lista de preguntas creadas */}
+      {questions.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold">
+              Questions ({questions.length})
+            </h2>
+          </div>
+          <div className="flex flex-col gap-4">
+            {questions.map((question, index) => (
+              <div key={index} className="relative">
+                <div className="absolute top-4 left-4 bg-primary text-white rounded-full w-8 h-8 flex items-center justify-center font-semibold text-sm z-10">
+                  {index + 1}
+                </div>
+                <AdminMultipleChoiceQuestionCard question={question} />
+                <div className="absolute top-4 right-4 flex flex-row gap-2">
+                  {/* Botón para mover hacia arriba */}
+                  <button
+                    onClick={() => handleMoveQuestionUp(index)}
+                    disabled={index === 0}
+                    className={`p-2 rounded border ${
+                      index === 0
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white hover:bg-gray-50 text-gray-700"
+                    }`}
+                    title="Move up"
+                  >
+                    <ChevronUp className="h-4 w-4" />
+                  </button>
+
+                  {/* Botón para mover hacia abajo */}
+                  <button
+                    onClick={() => handleMoveQuestionDown(index)}
+                    disabled={index === questions.length - 1}
+                    className={`p-2 rounded border ${
+                      index === questions.length - 1
+                        ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                        : "bg-white hover:bg-gray-50 text-gray-700"
+                    }`}
+                    title="Move down"
+                  >
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+
+                  {/* Botón para eliminar */}
+                  <button
+                    onClick={() => handleRemoveQuestion(index)}
+                    className="p-2 rounded border bg-white hover:bg-red-50 text-red-600 hover:text-red-700"
+                    title="Remove question"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </PageContainer>
   );
 }

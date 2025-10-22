@@ -10,8 +10,10 @@ import {
   MapPin,
   Heart,
   Eye,
+  Search,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { SearchAndFilterBar } from "./_components/search-and-filter-bar";
 
 import { Button } from "@/components/ui/buttons/button";
 
@@ -185,6 +187,8 @@ export default function JobsPage() {
           <PollenApprovedJobs />
           <ExternalJobs />
         </div>
+
+        <SearchAndFilterBar />
 
         {sortedJobs.length === 0 ? (
           <div className="text-center py-12">

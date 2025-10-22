@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, startTransition } from "react";
+import { useState, useRef, useEffect} from "react";
 import { useActionState } from "react";
 import { useToastNotifications } from "@/hooks/useToastNotifications";
 import { useNavigation } from "@/hooks/useNavigation";
@@ -19,7 +19,6 @@ export function useEmployersPage({ action, employer = null }) {
   // Pending file uploads
   const {
     addPendingFile,
-    uploadAllPendingFiles,
     hasPendingFiles,
     clearPendingFiles,
     isUploading: isUploadingFiles,
@@ -76,66 +75,6 @@ export function useEmployersPage({ action, employer = null }) {
     clearPendingFiles,
   ]);
 
-  // Handle form submission with file uploads
-  const handleSubmit = async () => {
-    if (!formRef.current) return;
-
-    // If there are pending files, upload them first
-    if (hasPendingFiles()) {
-      try {
-        // Upload all pending files
-        const uploadResults = await uploadAllPendingFiles(
-          "images",
-          "employer_logo",
-        );
-
-        // Update form with the uploaded URLs
-        const formData = new FormData(formRef.current);
-
-        // Replace filename with actual URL for each uploaded file
-        Object.entries(uploadResults).forEach(([fieldName, url]) => {
-          if (url) {
-            formData.set(fieldName, url);
-          }
-        });
-
-        // Create a new form with updated data and submit it
-        const tempForm = document.createElement("form");
-        tempForm.style.display = "none";
-
-        // Copy all form data to temp form
-        for (const [key, value] of formData.entries()) {
-          const input = document.createElement("input");
-          input.type = "hidden";
-          input.name = key;
-          input.value = value;
-          tempForm.appendChild(input);
-        }
-
-        document.body.appendChild(tempForm);
-
-        // Submit with the action
-        const submitFormData = new FormData(tempForm);
-        console.log("Debug: submitFormData type check:", {
-          isFormData: submitFormData instanceof FormData,
-          hasEntries: typeof submitFormData?.entries === "function",
-          entries: Array.from(submitFormData.entries()),
-        });
-        startTransition(() => {
-          formAction(submitFormData);
-        });
-
-        document.body.removeChild(tempForm);
-      } catch (error) {
-        showError("Upload Failed", "Failed to upload files. Please try again.");
-        console.error("File upload error:", error);
-      }
-    } else {
-      // No pending files, submit normally
-      formRef.current.requestSubmit();
-    }
-  };
-
   return {
     // Refs
     formRef,
@@ -156,7 +95,6 @@ export function useEmployersPage({ action, employer = null }) {
     setIsDialogOpen,
     // Handlers
     handleBack,
-    handleSubmit,
     handleFileSelect,
     // File upload state
     hasPendingFiles,

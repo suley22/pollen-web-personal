@@ -34,7 +34,6 @@ export function ProfileForm({ employer = null, action }) {
     isDialogOpen,
     setIsDialogOpen,
     handleBack,
-    handleSubmit,
     handleFileSelect,
   } = useEmployersPage({ action, employer });
 
@@ -109,7 +108,7 @@ export function ProfileForm({ employer = null, action }) {
         <FormActions>
           <ConfirmationDialog
             trigger={
-              <Button type="submit" size="lg" disabled={isPending}>
+              <Button type="button" size="lg" disabled={isPending}>
                 {isPending
                   ? isEditMode
                     ? "Updating..."
@@ -135,6 +134,13 @@ export function ProfileForm({ employer = null, action }) {
             loadingText={isEditMode ? "Updating..." : "Creating..."}
             open={isDialogOpen}
             onOpenChange={setIsDialogOpen}
+            onConfirm={() => {
+              // Enviar el formulario directamente
+              if (formRef.current) {
+                console.log("Submitting form with FormData...");
+                formRef.current.requestSubmit();
+              }
+            }}
           />
         </FormActions>
       </FormContainer>

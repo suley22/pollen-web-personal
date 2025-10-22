@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input, Select, CheckboxGroupField } from "@/components/design-system";
 import { Building2, UploadIcon } from "lucide-react";
 import { CompanyAvatar } from "@/components/ui/company-avatar";
@@ -20,6 +20,8 @@ export function CompanyInformation({
 }) {
   // Estado para manejar la URL de previsualización temporal de la imagen
   const [previewUrl, setPreviewUrl] = useState(null);
+  // Ref para el input file hidden
+  const hiddenFileInputRef = useRef(null);
 
   // Cleanup de URL blob cuando el componente se desmonta o cambia la previsualización
   useEffect(() => {
@@ -81,8 +83,22 @@ export function CompanyInformation({
 
 
               <FileSelector
-                name="logo_url"
+                name="file_selector_logo" 
                 onFileSelect={(file, fileName) => {
+                  console.log("File selected:", {
+                    name: file.name,
+                    type: file.type, 
+                    size: file.size,
+                    isFile: file instanceof File
+                  });
+                  
+                  // Validar tamaño de archivo (máximo 5MB)
+                  const maxSize = 5 * 1024 * 1024; // 5MB
+                  if (file.size > maxSize) {
+                    alert(`El archivo es demasiado grande. Máximo permitido: 5MB. Tamaño actual: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
+                    return;
+                  }
+                  
                   // Limpiar URL anterior si existe
                   if (previewUrl && previewUrl.startsWith("blob:")) {
                     URL.revokeObjectURL(previewUrl);
@@ -92,10 +108,29 @@ export function CompanyInformation({
                   const newPreviewUrl = URL.createObjectURL(file);
                   setPreviewUrl(newPreviewUrl);
 
-                  // Set only the filename in the input field
+                  // CLAVE: Asignar el archivo al input hidden usando DataTransfer API
+                  if (hiddenFileInputRef.current) {
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+                    hiddenFileInputRef.current.files = dataTransfer.files;
+                    console.log("File assigned to hidden input:", {
+                      fileName: file.name,
+                      fileType: file.type,
+                      fileSize: file.size,
+                      hiddenInputFiles: hiddenFileInputRef.current.files.length,
+                      hiddenInputFirstFile: hiddenFileInputRef.current.files[0],
+                      hiddenInputName: hiddenFileInputRef.current.name,
+                      inputExists: !!hiddenFileInputRef.current
+                    });
+                  } else {
+                    console.error("Hidden file input ref is not available!");
+                  }
+
+                  // Set only the filename in the input field for display
                   onLogoUrlChange?.(fileName);
-                  // Notify parent about file selection for pending upload
-                  //onFileSelect?.("logo_url", file, fileName);
+                  
+                  // NO usar pending files - el archivo se envía directamente via input hidden
+                  // onFileSelect?.("logo_url", file, fileName);
                 }}
                 buttonText="Upload Logo"
                 buttonIcon={<UploadIcon />}
@@ -158,6 +193,16 @@ export function CompanyInformation({
           allowCustomItems={true}
           customItemsPlaceholder="Add your custom industry and press Enter"
           columns={3}
+        />
+        
+        {/* Hidden file input to send the actual file in FormData */}
+        <input
+          ref={hiddenFileInputRef}
+          type="file"
+          name="logo_url"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={() => {}} // Controlled by FileSelector
         />
       </div>
     </FormCard>

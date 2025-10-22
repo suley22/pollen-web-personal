@@ -76,6 +76,10 @@ export function CompanyInformation({
                   onLogoUrlChange?.(e.target.value);
                 }}
               />
+
+        
+
+
               <FileSelector
                 name="logo_url"
                 onFileSelect={(file, fileName) => {
@@ -91,7 +95,7 @@ export function CompanyInformation({
                   // Set only the filename in the input field
                   onLogoUrlChange?.(fileName);
                   // Notify parent about file selection for pending upload
-                  onFileSelect?.("logo_url", file, fileName);
+                  //onFileSelect?.("logo_url", file, fileName);
                 }}
                 buttonText="Upload Logo"
                 buttonIcon={<UploadIcon />}

@@ -48,7 +48,8 @@ export async function updateEmployerAction(
     const supabase = await createClient();
 
     // Cargamos la imagen
-    console.log("File", Object.fromEntries(formData.entries()).logo_url);
+    var file = formData.get("logo_url");
+    console.log("File", file);
 
     // Get current user
     const {

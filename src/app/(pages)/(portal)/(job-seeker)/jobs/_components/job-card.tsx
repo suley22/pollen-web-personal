@@ -1,11 +1,16 @@
+"use client";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, PoundSterling, Building, Heart, Eye } from "lucide-react";
+import { MapPin, Building, Heart, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PrimaryButton } from "@/components/design-system";
 import { SecondaryButton } from "@/components/design-system/primary-button";
+import { useRouter } from "next/navigation";
+import { JobSeekerRoutes } from "../../router";
 
-export function JobCard({ job }) {
+export function JobCard({ job, onJobSelect, onShowDetails }) {
+  const router = useRouter();
+
   return (
     <Card className="p-6">
       <div className="flex flex-row justify-between">
@@ -59,8 +64,16 @@ export function JobCard({ job }) {
               text="Details"
               icon={<Eye />}
               className="text-sm"
+              onClick={() => {
+                onJobSelect(job);
+                onShowDetails(true);
+              }}
             />
-            <PrimaryButton text="View & Apply" className="text-sm" />
+            <PrimaryButton
+              text="View & Apply"
+              className="text-sm"
+              onClick={() => router.push(JobSeekerRoutes.applyJobs(job.id))}
+            />
           </div>
         </div>
       </div>

@@ -14,6 +14,8 @@ export default function JobsPage() {
   const [jobIndustriesFilter, setJobIndustriesFilter] = useState("all");
   const [jobLocationsFilter, setJobLocationsFilter] = useState("all");
   const [jobContractTypesFilter, setJobContractTypesFilter] = useState("all");
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [showJobDetails, setShowJobDetails] = useState(false);
 
   const filters = {
     searchTerm,
@@ -30,8 +32,8 @@ export default function JobsPage() {
         subtitle="Explore job openings tailored to your skills and preferences."
       />
 
-      <div className="text-left mb-6">
-        <div className="grid md:grid-cols-2 gap-4 w-full mb-6">
+      <div className="flex flex-col gap-4">
+        <div className="grid md:grid-cols-2 gap-4 w-full">
           <PollenApprovedJobs />
           <ExternalJobs />
         </div>
@@ -48,7 +50,11 @@ export default function JobsPage() {
           jobContractTypesFilter={jobContractTypesFilter}
           onContractTypesChange={setJobContractTypesFilter}
         />
-        <JobListSection filters={filters} />
+        <JobListSection 
+          filters={filters}
+          onJobSelect={setSelectedJob}
+          onShowDetails={setShowJobDetails}
+        />
       </div>
     </PageContainer>
   );

@@ -6,11 +6,14 @@ import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, Trophy, Briefcase, Code } from "lucide-react";
 import { LandingImagePaths } from "@/lib/configs/constants/image_paths";
+import { useRouter } from "next/navigation";
 
 import { LoginStatusButton } from "@/app/_components/LoginStatusButton";
 import { FindJobsButton } from "@/app/_components/FindJobsButton";
+import { PrimaryButton } from "@/components/design-system";
 
 export default function LandingPage() {
+  const router = useRouter();
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}
@@ -41,21 +44,18 @@ export default function LandingPage() {
       {/* Hero Section */}
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
         <div className="text-center">
-          <h1
-            className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6"
-            style={{ fontFamily: "Sora" }}
-          >
+          <h1 className="!text-4xl font-bold text-gray-900 mb-6">
             👋 Your career starts here —<br />
             no CV required.
           </h1>
-          <p
-            className="text-lg sm:text-xl text-gray-600 mb-8 max-w-3xl mx-auto"
-            style={{ fontFamily: "Poppins" }}
-          >
+          <p className="text-base text-gray-600 mb-8 max-w-3xl mx-auto">
             Discover your strengths and connect with inclusive employers who
             look beyond the CV. Pollen helps you get hired through real skills,
             behavioural insights, and community support.
           </p>
+          <div className="mb-8">
+            <FindJobsButton btnStyle="primary" text="Start your journey" />
+          </div>
 
           {/* Secondary CTA for employers */}
           <div className="bg-yellow-50 rounded-lg p-6 max-w-md mx-auto mb-16">
@@ -204,10 +204,7 @@ export default function LandingPage() {
             <Card className="border-0 shadow-lg">
               <CardContent className="p-6 text-center">
                 <Users className="h-12 w-12 text-pink-600 mx-auto mb-4" />
-                <h3
-                  className="text-lg font-semibold mb-2"
-                  style={{ fontFamily: "Sora" }}
-                >
+                <h3 className="text-lg font-semibold mb-2">
                   Community Support
                 </h3>
                 <p
@@ -223,10 +220,7 @@ export default function LandingPage() {
             <Card className="border-0 shadow-lg">
               <CardContent className="p-6 text-center">
                 <Code className="h-12 w-12 text-pink-600 mx-auto mb-4" />
-                <h3
-                  className="text-lg font-semibold mb-2"
-                  style={{ fontFamily: "Sora" }}
-                >
+                <h3 className="text-lg font-semibold mb-2">
                   Skills Verification
                 </h3>
                 <p
@@ -242,10 +236,7 @@ export default function LandingPage() {
             <Card className="border-0 shadow-lg">
               <CardContent className="p-6 text-center">
                 <Trophy className="h-12 w-12 text-pink-600 mx-auto mb-4" />
-                <h3
-                  className="text-lg font-semibold mb-2"
-                  style={{ fontFamily: "Sora" }}
-                >
+                <h3 className="text-lg font-semibold mb-2">
                   Behavioural Insights
                 </h3>
                 <p
@@ -261,10 +252,7 @@ export default function LandingPage() {
             <Card className="border-0 shadow-lg">
               <CardContent className="p-6 text-center">
                 <Briefcase className="h-12 w-12 text-pink-600 mx-auto mb-4" />
-                <h3
-                  className="text-lg font-semibold mb-2"
-                  style={{ fontFamily: "Sora" }}
-                >
+                <h3 className="text-lg font-semibold mb-2">
                   Inclusive Employers
                 </h3>
                 <p
@@ -284,10 +272,7 @@ export default function LandingPage() {
       <div className="py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2
-              className="text-3xl font-bold text-gray-900 mb-4"
-              style={{ fontFamily: "Sora" }}
-            >
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
               How It Works
             </h2>
           </div>
@@ -295,17 +280,9 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span
-                  className="text-2xl font-bold text-pink-600"
-                  style={{ fontFamily: "Sora" }}
-                >
-                  1
-                </span>
+                <span className="text-2xl font-bold text-pink-600">1</span>
               </div>
-              <h3
-                className="text-xl font-semibold mb-3"
-                style={{ fontFamily: "Sora" }}
-              >
+              <h3 className="text-xl font-semibold mb-3">
                 Create Your Profile
               </h3>
               <p className="text-gray-600" style={{ fontFamily: "Poppins" }}>
@@ -316,17 +293,9 @@ export default function LandingPage() {
 
             <div className="text-center">
               <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span
-                  className="text-2xl font-bold text-yellow-600"
-                  style={{ fontFamily: "Sora" }}
-                >
-                  2
-                </span>
+                <span className="text-2xl font-bold text-yellow-600">2</span>
               </div>
-              <h3
-                className="text-xl font-semibold mb-3"
-                style={{ fontFamily: "Sora" }}
-              >
+              <h3 className="text-xl font-semibold mb-3">
                 Prove What You&apos;re Great At
               </h3>
               <p className="text-gray-600" style={{ fontFamily: "Poppins" }}>
@@ -337,17 +306,9 @@ export default function LandingPage() {
 
             <div className="text-center">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span
-                  className="text-2xl font-bold text-green-600"
-                  style={{ fontFamily: "Sora" }}
-                >
-                  3
-                </span>
+                <span className="text-2xl font-bold text-green-600">3</span>
               </div>
-              <h3
-                className="text-xl font-semibold mb-3"
-                style={{ fontFamily: "Sora" }}
-              >
+              <h3 className="text-xl font-semibold mb-3">
                 Get Matched with Jobs
               </h3>
               <p className="text-gray-600" style={{ fontFamily: "Poppins" }}>
@@ -363,10 +324,7 @@ export default function LandingPage() {
       <div className="bg-gray-50 py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2
-              className="text-3xl font-bold text-gray-900 mb-4"
-              style={{ fontFamily: "Sora" }}
-            >
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Success Stories
             </h2>
           </div>
@@ -387,12 +345,7 @@ export default function LandingPage() {
                   can&apos;t recommend Pollen enough – they truly are a
                   game-changer.&quot;
                 </blockquote>
-                <cite
-                  className="text-pink-600 font-medium"
-                  style={{ fontFamily: "Sora" }}
-                >
-                  — Gabby
-                </cite>
+                <cite className="text-pink-600 font-medium">— Gabby</cite>
               </CardContent>
             </Card>
 
@@ -410,12 +363,7 @@ export default function LandingPage() {
                   me an opportunity to show my potential in real-life scenarios
                   directly relevant to the role.&quot;
                 </blockquote>
-                <cite
-                  className="text-pink-600 font-medium"
-                  style={{ fontFamily: "Sora" }}
-                >
-                  — Sanelisa
-                </cite>
+                <cite className="text-pink-600 font-medium">— Sanelisa</cite>
               </CardContent>
             </Card>
           </div>
@@ -425,10 +373,7 @@ export default function LandingPage() {
       {/* Start Your Journey CTA */}
       <div className="bg-pink-600 py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2
-            className="text-3xl font-bold text-white mb-4"
-            style={{ fontFamily: "Sora" }}
-          >
+          <h2 className="text-3xl font-bold text-white mb-4">
             Ready to explore what you&apos;re capable of?
           </h2>
           <p
@@ -438,19 +383,14 @@ export default function LandingPage() {
             💡 No CVs. No pressure. Just your skills and potential.
           </p>
 
-          <FindJobsButton />
+          <FindJobsButton btnStyle="secondary" />
         </div>
       </div>
 
       {/* Employers Section */}
       <div className="py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2
-            className="text-3xl font-bold text-gray-900 mb-4"
-            style={{ fontFamily: "Sora" }}
-          >
-            Employers
-          </h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Employers</h2>
           <p
             className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto"
             style={{ fontFamily: "Poppins" }}
@@ -466,7 +406,6 @@ export default function LandingPage() {
               variant="outline"
               size="lg"
               className="px-8 py-4 text-lg border-gray-300"
-              style={{ fontFamily: "Sora" }}
             >
               Learn More →
             </Button>
@@ -488,12 +427,7 @@ export default function LandingPage() {
                   className="w-full h-full object-contain"
                 />
               </div>
-              <span
-                className="text-xl font-bold"
-                style={{ fontFamily: "Sora" }}
-              >
-                Pollen
-              </span>
+              <span className="text-xl font-bold">Pollen</span>
             </div>
             <div className="text-center md:absolute md:left-1/2 md:transform md:-translate-x-1/2">
               <p className="text-gray-400" style={{ fontFamily: "Poppins" }}>

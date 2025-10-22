@@ -77,7 +77,7 @@ export function JobForm({ job = null, action }) {
         title={
           isEditMode ? `Edit ${job?.job_title || "Job"}` : "Create a new Job"
         }
-        description={
+        subtitle={
           isEditMode
             ? "Update the job posting information"
             : "Fill in the details below to create a new job posting"

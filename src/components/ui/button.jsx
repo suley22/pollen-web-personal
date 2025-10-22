@@ -20,6 +20,11 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
+        findJobs: "bg-white text-pink-600 hover:bg-gray-100 shadow-xs",
+        findJobsSolid: "bg-pink-600 text-white hover:bg-pink-700 shadow-xs",
+        findJobsOutline:
+          "border border-pink-600 text-pink-600 hover:bg-pink-50 shadow-xs",
+        loginStatus: "bg-pink-600 text-white hover:bg-pink-700 shadow-xs",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
@@ -41,7 +46,7 @@ function Button({ className, variant, size, asChild = false, ...props }) {
   return (
     <Comp
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(buttonVariants({ variant, size }), className)}
       {...props}
     />
   );

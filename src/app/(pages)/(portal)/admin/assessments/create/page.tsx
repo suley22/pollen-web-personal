@@ -114,7 +114,7 @@ export default function AdminFormsPage() {
       <PageHeader
         showBackButton={true}
         title="Create Assessment"
-        description="Select and create a new assessment"
+        subtitle="Select and create a new assessment"
         onBack={() => window.history.back()}
       />
 

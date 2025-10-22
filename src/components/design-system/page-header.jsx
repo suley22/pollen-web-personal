@@ -5,23 +5,15 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface PageHeaderProps {
-  title: string;
-  description?: string;
-  showBackButton?: boolean;
-  onBack?: () => void;
-  children?: ReactNode;
-  className?: string;
-}
-
 export function PageHeader({
   title,
-  description,
+  titleSize = "text-2xl",
+  subtitle,
   showBackButton = false,
   onBack,
   children,
   className,
-}: PageHeaderProps) {
+}) {
   return (
     <div className={cn("w-full flex items-center justify-between", className)}>
       <div className="flex items-center gap-4">
@@ -37,10 +29,8 @@ export function PageHeader({
         )}
 
         <div className="flex flex-col">
-          <div className="text-2xl font-sora font-bold">{title}</div>
-          {description && (
-            <p className="text-muted-foreground">{description}</p>
-          )}
+          <div className={`${titleSize} font-sora font-bold`}>{title}</div>
+          {subtitle && <p className="text-muted-foreground">{subtitle}</p>}
         </div>
       </div>
 

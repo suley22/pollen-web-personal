@@ -44,7 +44,7 @@ export function ProfileForm({ employer = null, action }) {
         title={
           isEditMode ? `Edit ${employer?.company_name}` : "Create Employer"
         }
-        description={
+        subtitle={
           isEditMode
             ? "Update the employer profile information"
             : "Complete the form below to create a new employer profile"

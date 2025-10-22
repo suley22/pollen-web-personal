@@ -31,7 +31,7 @@ const config = [
 
   // Configuración para archivos .jsx (componentes de UI)
   {
-    files: ["src/**/*.jsx"],
+    files: ["src/app/**/*.jsx"],
     plugins: {
       react: pluginReact,
       "react-hooks": pluginReactHooks,
@@ -54,7 +54,7 @@ const config = [
     },
     rules: {
       // Configuración menos estricta para archivos .jsx
-      "no-unused-vars": "off",
+
       "no-undef": "warn",
       "react-hooks/rules-of-hooks": "warn",
       "react-hooks/exhaustive-deps": "warn",
@@ -64,7 +64,7 @@ const config = [
       "react/display-name": "off",
       "react/no-unescaped-entities": "warn",
       "react/jsx-uses-react": "off",
-      "react/jsx-uses-vars": "error",
+      "react/jsx-uses-vars": "warn",
     },
     settings: {
       react: {
@@ -100,6 +100,7 @@ const config = [
     },
     rules: {
       // TypeScript específico
+      "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/ban-types": "off",

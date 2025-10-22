@@ -240,7 +240,6 @@ button {
 .notifications-page h1 {
   font-size: 1.25rem !important;
   line-height: 1.2 !important;
-  margin-bottom: 0.5rem !important;
 }
 
 /* Exception: Welcome message should be reasonably sized */
@@ -307,7 +306,7 @@ button {
 .jobs-page .gap-4,
 .applications-page .gap-4,
 .messages-page .gap-4 {
-  gap: 0.5rem !important;
+  gap: 0.5rem;
 }
 
 .notion-compact .gap-6,

@@ -28,7 +28,7 @@ export default function JobsManagmentPage() {
 
   return (
     <PageContainer>
-      <PageHeader title="Jobs" description="Manage your job listings">
+      <PageHeader title="Jobs" subtitle="Manage your job listings">
         <PrimaryButton
           icon={<Plus />}
           text="Create"

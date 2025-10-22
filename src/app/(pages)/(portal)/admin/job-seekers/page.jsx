@@ -63,7 +63,7 @@ export default function JobsPage() {
 
   return (
     <PageContainer>
-      <PageHeader title="Job Seekers" description="Manage job seekers" />
+      <PageHeader title="Job Seekers" subtitle="Manage job seekers" />
       <div className="flex flex-col w-full gap-5">
         {/* Search and Filters */}
         <div className="flex flex-row gap-4 bg-white p-4 rounded-lg shadow-sm border">

@@ -48,14 +48,14 @@ export const LoginStatusButton = memo(() => {
   }
 
   return (
-    <div className="flex flex-row items-center min-w-[150px]">
+    <div className="flex flex-row items-center">
       {/* Show login button when user is not logged in */}
       {!user.isLogged && (
         <Button
           onClick={onClick}
-          className="bg-pink-600 hover:bg-pink-700 text-white disabled:opacity-50"
-          size="sm"
-          variant="solid"
+          className="text-sm font-medium"
+          size="default"
+          variant="loginStatus"
         >
           Login
         </Button>

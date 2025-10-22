@@ -14,13 +14,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 import { Button } from "@/components/ui/buttons/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select/select";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { PageContainer, PageHeader } from "@/components/design-system";
 import PollenApprovedJobs from "./_components/pollen-approved";
@@ -191,10 +185,6 @@ export default function JobsPage() {
           <PollenApprovedJobs />
           <ExternalJobs />
         </div>
-
-        {/* Personalized Jobs Header */}
-
-        <PersonalizedJobsHeader />
 
         {sortedJobs.length === 0 ? (
           <div className="text-center py-12">

@@ -9,7 +9,6 @@ export function useJobManagement() {
   const [jobs, setJobs] = useState([]);
   const [selectedAssignment, setSelectedAssignment] = useState("all");
   const [activeTab, setActiveTab] = useState("all");
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const loadingRef = useRef(false);
 
@@ -43,7 +42,6 @@ export function useJobManagement() {
     }
 
     loadingRef.current = true;
-    setLoading(true);
     setError(null);
 
     try {
@@ -94,7 +92,6 @@ export function useJobManagement() {
       console.error("💥 Exception caught:", err);
       setError("Failed to load employers: " + err.message);
     } finally {
-      setLoading(false);
       loadingRef.current = false;
     }
   }, [selectedStatus, debouncedSearchTerm, selectedAssignment]);
@@ -171,7 +168,7 @@ export function useJobManagement() {
         activeTab: activeTab,
         searchTerm: searchTerm,
         jobs: jobs,
-        loading: loading,
+        loading: loadingRef.current,
         error: error,
         setSelectedStatus: handleStatusChange,
         setSearchTerm: setSearchTerm,
@@ -188,7 +185,7 @@ export function useJobManagement() {
       activeTab,
       searchTerm,
       jobs,
-      loading,
+      loadingRef.current,
       error,
       loadJobs,
       getStatusBadge,

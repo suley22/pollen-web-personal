@@ -31,7 +31,7 @@ const config = [
 
   // Configuración para archivos .jsx (componentes de UI)
   {
-    files: ["src/**/*.jsx"],
+    files: ["src/app/**/*.jsx"],
     plugins: {
       react: pluginReact,
       "react-hooks": pluginReactHooks,
@@ -54,7 +54,7 @@ const config = [
     },
     rules: {
       // Configuración menos estricta para archivos .jsx
-      "no-unused-vars": "off",
+
       "no-undef": "warn",
       "react-hooks/rules-of-hooks": "warn",
       "react-hooks/exhaustive-deps": "warn",

@@ -10,31 +10,6 @@ import { Building, Banknote, Clock, MapPin, Heart } from "lucide-react";
 import { PrimaryButton } from "@/components/design-system";
 import { ApprovalSourceBadge } from "@/components/design-system/badge";
 
-type Company = {
-  id: string;
-  name: string;
-  logo?: string;
-};
-
-export type Job = {
-  id: string;
-  title: string;
-  company: Company;
-  location: string;
-  salary: string; // pre-formatted from DB
-  pollenApproved?: boolean;
-  type?: string;
-  applicationDeadline: Date | string | number;
-  description?: string;
-};
-
-export type JobCardProps = {
-  job: Job;
-  isSaved: boolean;
-  onToggleSave: () => void;
-  onApply?: () => void;
-};
-
 const clampText = (text: string, maxChars: number) => {
   const t = text.trim();
   if (t.length <= maxChars) return t;
@@ -43,7 +18,7 @@ const clampText = (text: string, maxChars: number) => {
   return sliced.replace(/\s+\S*$/, "") + "…";
 };
 
-export function JobCard({ job, isSaved, onToggleSave, onApply }: JobCardProps) {
+export function JobCard({ job, isSaved, onToggleSave, onApply }) {
   const apply = () => {
     if (onApply) return onApply();
     if (typeof window !== "undefined") {
@@ -59,7 +34,7 @@ export function JobCard({ job, isSaved, onToggleSave, onApply }: JobCardProps) {
             <div className="font-semibold text-gray-900 text-base">
               {job.title}
             </div>
-            {job.pollenApproved && (
+            {job.type === "pollen" && (
               <Badge
                 variant="default"
                 className="bg-green-100 text-green-800 text-xs"
@@ -67,7 +42,7 @@ export function JobCard({ job, isSaved, onToggleSave, onApply }: JobCardProps) {
                 Pollen Approved
               </Badge>
             )}
-            {job.type === "external" && (
+            {job.type === "hidden" && (
               <Badge variant="outline" className="text-xs">
                 External
               </Badge>
@@ -123,7 +98,7 @@ export function JobCard({ job, isSaved, onToggleSave, onApply }: JobCardProps) {
           size="sm"
           variant="outline"
           onClick={onToggleSave}
-          className={`flex-none ${isSaved ? "text-pink-600" : ""}`}
+          className={`flex ${isSaved ? "text-pink-600" : ""}`}
         >
           <Heart
             className={`!w-5 !h-5 ${isSaved ? "fill-pink-600 text-pink-600" : ""}`}

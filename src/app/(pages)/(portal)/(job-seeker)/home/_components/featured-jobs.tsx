@@ -2,6 +2,7 @@
 
 import { Star, ChevronRight } from "lucide-react";
 import { FeatureJobCards } from "./featured-jobs-cards";
+import { useRouter } from "next/navigation";
 
 import { useFeaturedJobs } from "../_hooks/useFeaturedJobs";
 import { FormCard } from "@/components/design-system";
@@ -9,6 +10,7 @@ import { SecondaryButton } from "@/components/design-system/primary-button";
 
 export function FeaturedJobs() {
   const { jobs, loading, saveFavoriteJob, hiddenJobs } = useFeaturedJobs();
+  const router = useRouter();
 
   return (
     <FormCard
@@ -17,7 +19,7 @@ export function FeaturedJobs() {
       titleButtons={
         <SecondaryButton
           text="View All Jobs"
-          onClick={() => (window.location.href = "/jobs")}
+          onClick={() => router.push("/jobs")}
           icon={<ChevronRight className="h-4 w-4" />}
         />
       }

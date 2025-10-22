@@ -9,6 +9,7 @@ import {
 import { Building, Banknote, Clock, MapPin, Heart } from "lucide-react";
 import { PrimaryButton } from "@/components/design-system";
 import { ApprovalSourceBadge } from "@/components/design-system/badge";
+import { SecondaryButton } from "@/components/design-system/primary-button";
 
 const clampText = (text: string, maxChars: number) => {
   const t = text.trim();
@@ -34,19 +35,6 @@ export function JobCard({ job, isSaved, onToggleSave, onApply }) {
             <div className="font-semibold text-gray-900 text-base">
               {job.title}
             </div>
-            {job.type === "pollen" && (
-              <Badge
-                variant="default"
-                className="bg-green-100 text-green-800 text-xs"
-              >
-                Pollen Approved
-              </Badge>
-            )}
-            {job.type === "hidden" && (
-              <Badge variant="outline" className="text-xs">
-                External
-              </Badge>
-            )}
             <div className="flex flex-row items-center gap-3 mt-1">
               <span className="flex items-center gap-1">
                 <Building className="w-3 h-3" />
@@ -57,7 +45,19 @@ export function JobCard({ job, isSaved, onToggleSave, onApply }) {
                   {job.company.name}
                 </a>
               </span>
-              <ApprovalSourceBadge approvedByPollen={!!job.pollenApproved} />
+              {job.type === "pollen" && (
+                <Badge
+                  variant="default"
+                  className="bg-green-100 text-green-800 text-xs"
+                >
+                  Pollen Approved
+                </Badge>
+              )}
+              {job.type === "hidden" && (
+                <Badge variant="outline" className="text-xs">
+                  External
+                </Badge>
+              )}
             </div>
           </div>
         </div>
@@ -92,18 +92,17 @@ export function JobCard({ job, isSaved, onToggleSave, onApply }) {
         </span>
       </CardContent>
 
-      <CardFooter className="w-full flex gap-1 flex-row px-0 border-t border-border/50 pt-4 mt-4">
+      <CardFooter className="w-full flex gap-2 justify-between flex-row px-0 border-t border-border/50 pt-4 mt-4">
         <PrimaryButton className="grow" text="View and Apply" onClick={apply} />
-        <Button
-          size="sm"
-          variant="outline"
+        <SecondaryButton
+          icon={
+            <Heart
+              className={` ${isSaved ? "fill-pink-600 text-pink-600" : ""}`}
+            />
+          }
+          text=""
           onClick={onToggleSave}
-          className={`flex ${isSaved ? "text-pink-600" : ""}`}
-        >
-          <Heart
-            className={`!w-5 !h-5 ${isSaved ? "fill-pink-600 text-pink-600" : ""}`}
-          />
-        </Button>
+        />
       </CardFooter>
     </Card>
   );

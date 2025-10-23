@@ -1,6 +1,5 @@
 "use client";
 
-import { useEmployerManagementContext } from "@/employers/_context/admin-employers-context";
 import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmployerProfileHelper } from "@/types/employer-profile";
@@ -24,9 +23,8 @@ import { ListSkeleton } from "./list-skeleton";
 import { CompanyAvatar } from "@/components/ui/company-avatar";
 import { EmptyState } from "@/components/design-system/empty-state";
 
-export function List() {
+export function List({employers, getStatusBadge, loading}) {
   const router = useRouter();
-  const { employers, getStatusBadge, loading } = useEmployerManagementContext();
   const [, startTransition] = useTransition();
 
   const handleDeleteClick = (company, e) => {

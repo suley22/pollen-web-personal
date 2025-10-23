@@ -1,11 +1,8 @@
 "use client";
 
-import { useEmployerManagementContext } from "@/employers/_context/admin-employers-context";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function ResultsCount() {
-  const { employers, loading, selectedStatus, searchTerm } =
-    useEmployerManagementContext();
+export function ResultsCount({ employers, loading, selectedStatus, searchTerm }) {
 
   const getStatusLabel = (status: string) => {
     switch (status) {

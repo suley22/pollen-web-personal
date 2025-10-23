@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Input, Select, CheckboxGroupField } from "@/components/design-system";
+import { Input, Select} from "@/components/design-system";
 import { Building2, UploadIcon } from "lucide-react";
 import { CompanyAvatar } from "@/components/ui/company-avatar";
 import { FormCard } from "@/components/design-system/form-card";
-import { PrimaryButton } from "@/components/ui/buttons/primary-button";
 import { FileSelector } from "@/components/ui/file-selector";
 import { INDUSTRY_OPTIONS } from "@/lib/configs/constants/industries";
 import { COMPANY_SIZE_OPTIONS } from "@/lib/configs/constants/company-size";
@@ -16,7 +15,6 @@ export function CompanyInformation({
   logoUrl,
   onLogoUrlChange,
   onIndustryValueChange,
-  onFileSelect,
 }) {
   // Estado para manejar la URL de previsualización temporal de la imagen
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -78,9 +76,6 @@ export function CompanyInformation({
                   onLogoUrlChange?.(e.target.value);
                 }}
               />
-
-        
-
 
               <FileSelector
                 name="file_selector_logo" 

@@ -1,11 +1,14 @@
 import EmployerProfileView from "@/employers/view/view";
-import { fetchEmployerByIdAction } from "@/employers/actions";
+import { fetchEmployerProfileAction } from "@/employers/actions";
 
 export default async function EmployerReviewPage({ params }) {
-  const { id } = await params;
-  const { data, error } = await fetchEmployerByIdAction(id);
-
-  const employerData = data && !error ? data : null;
+  // Await the params to get the actual parameters
+  const resolvedParams = await params;
+  const { id } = resolvedParams;
+  
+  // Fetch employer data on the server side
+  const result = await fetchEmployerProfileAction(id);
+  const employerData = result?.data || null;
 
   return <EmployerProfileView employerProfile={employerData} />;
 }

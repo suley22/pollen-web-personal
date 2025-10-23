@@ -4,7 +4,6 @@ import { FormCard } from "@/components/design-system/form-card";
 import {
   Select,
   Textarea,
-  CheckboxGroup,
   InputCheckboxGroup,
 } from "@/components/design-system";
 import { EyeOff } from "lucide-react";

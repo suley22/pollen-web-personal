@@ -1,14 +1,17 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { fetchEmployersAction } from "@/admin/employers/actions";
 import {
   PendingBadge,
   ApprovedBadge,
   RejectedBadge,
 } from "@/components/design-system/badge";
+import {
+  createEmployerService,
+} from "@/services/employerService";
+import { fetchEmployers } from "../_services/employersService";
 
-export function useEmployersContext() {
+export function useEmployers() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -51,7 +54,7 @@ export function useEmployersContext() {
       // Si hay búsqueda activa, ignorar el filtro de status y buscar en todos
       const statusToUse = debouncedSearchTerm.trim() ? "all" : selectedStatus;
 
-      const result = await fetchEmployersAction({
+      const result = await fetchEmployers({
         status: statusToUse,
         searchTerm: debouncedSearchTerm.trim(),
       });
@@ -123,6 +126,11 @@ export function useEmployersContext() {
     }
   }, []);
 
+  const fetchEmployerById = useCallback(async (id) => {
+    const employerService = await createEmployerService();
+    return await employerService.fetchEmployerById(id);
+  }, []);
+
   return useMemo(
     () => ({
       selectedStatus: selectedStatus,
@@ -137,6 +145,7 @@ export function useEmployersContext() {
       loadApplications: loadApplications,
       addButtonOnClick: addButtonOnClick,
       getStatusBadge: getStatusBadge,
+      fetchEmployerById: fetchEmployerById,
     }),
     [
       selectedStatus,
@@ -150,6 +159,7 @@ export function useEmployersContext() {
       loadApplications,
       addButtonOnClick,
       getStatusBadge,
+      fetchEmployerById
     ],
   );
 }

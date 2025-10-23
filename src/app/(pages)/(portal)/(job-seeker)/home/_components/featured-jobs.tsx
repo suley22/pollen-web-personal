@@ -2,7 +2,6 @@
 
 import { Star, ChevronRight } from "lucide-react";
 import { FeatureJobCards } from "./featured-jobs-cards";
-
 import { useFeaturedJobs } from "../_hooks/useFeaturedJobs";
 import { FormCard } from "@/components/design-system";
 import { SecondaryButton } from "@/components/design-system/primary-button";

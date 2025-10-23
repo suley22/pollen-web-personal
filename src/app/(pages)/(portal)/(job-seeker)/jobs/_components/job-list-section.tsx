@@ -2,16 +2,11 @@
 
 import { JobCard } from "./job-card";
 
-export default function JobListSection({ onJobSelect, onShowDetails, jobs }) {
+export default function JobListSection({ jobs }) {
   return (
     <div className="space-y-4">
       {jobs?.map((job) => (
-        <JobCard
-          key={job.id}
-          job={job}
-          onJobSelect={onJobSelect}
-          onShowDetails={onShowDetails}
-        />
+        <JobCard key={job.id} job={job} />
       ))}
     </div>
   );

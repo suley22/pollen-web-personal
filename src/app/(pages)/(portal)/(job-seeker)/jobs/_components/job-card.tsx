@@ -8,7 +8,7 @@ import { SecondaryButton } from "@/components/design-system/primary-button";
 import { useRouter } from "next/navigation";
 import { JobSeekerRoutes } from "../../router";
 
-export function JobCard({ job, onJobSelect, onShowDetails }) {
+export function JobCard({ job }) {
   const router = useRouter();
 
   return (
@@ -60,15 +60,6 @@ export function JobCard({ job, onJobSelect, onShowDetails }) {
             <Heart />
           </Button>
           <div className="flex flex-row gap-4 text-sm">
-            <SecondaryButton
-              text="Details"
-              icon={<Eye />}
-              className="text-sm"
-              onClick={() => {
-                onJobSelect(job);
-                onShowDetails(true);
-              }}
-            />
             <PrimaryButton
               text="View & Apply"
               className="text-sm"

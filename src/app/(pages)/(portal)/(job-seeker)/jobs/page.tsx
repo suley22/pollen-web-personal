@@ -21,10 +21,6 @@ export default function JobsPage() {
     setJobLocationsFilter,
     jobContractTypesFilter,
     setJobContractTypesFilter,
-    selectedJob,
-    setSelectedJob,
-    showJobDetails,
-    setShowJobDetails,
   } = useJobs();
 
   return (
@@ -52,19 +48,8 @@ export default function JobsPage() {
           jobContractTypesFilter={jobContractTypesFilter}
           onContractTypesChange={setJobContractTypesFilter}
         />
-        <JobListSection
-          onJobSelect={setSelectedJob}
-          onShowDetails={setShowJobDetails}
-          jobs={jobs}
-        />
+        <JobListSection jobs={jobs} />
       </div>
-
-      {/* TODO: sacar */}
-      <JobDetailsDialog
-        job={selectedJob}
-        isOpen={showJobDetails}
-        onClose={() => setShowJobDetails(false)}
-      />
     </PageContainer>
   );
 }

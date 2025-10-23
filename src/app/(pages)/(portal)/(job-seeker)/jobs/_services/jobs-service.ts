@@ -52,3 +52,23 @@ export async function getJobs(filters) {
     return { success: false, error: "Failed to fetch jobs" };
   }
 }
+
+export async function getJobById(jobId: string) {
+  try {
+    const { data, error } = await supabase
+      .from("job")
+      .select("*")
+      .eq("id", jobId)
+      .single(); // .single() devuelve un objeto en vez de array
+
+    if (error) {
+      console.error("❌ Error fetching job:", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return { success: false, error: "Failed to fetch job" };
+  }
+}

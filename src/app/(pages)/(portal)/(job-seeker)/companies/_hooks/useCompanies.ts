@@ -4,7 +4,7 @@ import { getRecommendedCompanies, getAllCompanies } from "../_services/companies
 export function useCompanies() {
   const loadingRef = useRef(false);
   const [recommendedCompanies, setRecommendedCompanies] = useState([]);
-  const [companies, setCompanies] = useState([]);
+  const [allCompanies, setAllCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -22,7 +22,7 @@ const loadCompanies = useCallback(async () => {
       const allCompaniesResult = await getAllCompanies();
 
       if (recommendedCompaniesResult.success) {
-        setCompanies(recommendedCompaniesResult.data || []);
+        setRecommendedCompanies(recommendedCompaniesResult.data || []);
         setError(null);
       } else {
         console.error("❌ Error from server:", recommendedCompaniesResult.error);
@@ -30,7 +30,7 @@ const loadCompanies = useCallback(async () => {
       }
 
       if (allCompaniesResult.success) {
-        setCompanies(allCompaniesResult.data || []);
+        setAllCompanies(allCompaniesResult.data || []);
         setError(null);
       } else {
         console.error("❌ Error from server:", allCompaniesResult.error);
@@ -54,5 +54,5 @@ const loadCompanies = useCallback(async () => {
     loadCompanies();
   }, [loadCompanies]);
 
-  return { companies: companies, loading: loading, error: error };
+  return { recommendedCompanies: recommendedCompanies, allCompanies: allCompanies, loading: loading, error: error };
 }

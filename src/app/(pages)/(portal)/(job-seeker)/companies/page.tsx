@@ -16,7 +16,7 @@ export default function CompaniesPage() {
       />
       <RecommendedCompanies />
 
-      <div className="m-8">
+      <div className="flex flex-col gap-6">
         <AllCompanies />
         <CallToAction />
       </div>

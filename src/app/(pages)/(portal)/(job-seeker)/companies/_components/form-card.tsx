@@ -2,7 +2,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, MapPin, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ChevronRight } from "lucide-react";
 import { useCompanies } from "../_hooks/useCompanies";
 import { PrimaryButton } from "@/components/design-system/primary-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -12,7 +11,7 @@ import { JobSeekerRoutes } from "../../router";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function RecommendedCompaniesFormCard() {
-  const { companies, loading } = useCompanies();
+  const { recommendedCompanies, loading } = useCompanies();
   const router = useRouter();
 
   return (
@@ -42,7 +41,7 @@ export function RecommendedCompaniesFormCard() {
               </CardContent>
             </Card>
           ))
-        : companies.map((company) => (
+        : recommendedCompanies.map((company) => (
             <Card key={company.id} className="border-blue-200 bg-white/80">
               <CardContent className="p-4 space-y-4">
                 <div className="flex items-center gap-3">
@@ -84,7 +83,7 @@ export function RecommendedCompaniesFormCard() {
                     className=""
                     text="View Details"
                     onClick={() =>
-                      router.push(`/main/companies/review/${company.id}`)
+                      router.push(JobSeekerRoutes.companyView(company.id))
                     }
                   />
                 </div>
@@ -96,7 +95,7 @@ export function RecommendedCompaniesFormCard() {
 }
 
 export function AllCompaniesFormCard() {
-  const { companies, loading } = useCompanies();
+  const { allCompanies, loading } = useCompanies();
   const router = useRouter();
 
   return (
@@ -128,7 +127,7 @@ export function AllCompaniesFormCard() {
               </CardContent>
             </Card>
           ))
-        : companies.map((company) => (
+        : allCompanies.map((company) => (
             <Card
               key={company.id}
               className="flex p-4 gap-6 justify-between hover:shadow-lg transition-shadow"

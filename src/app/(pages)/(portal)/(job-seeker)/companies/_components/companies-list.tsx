@@ -3,15 +3,11 @@ import {
   AllCompaniesFormCard,
 } from "./form-card";
 import { Target } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { MapPin, Users, Star } from "lucide-react";
-import { Button } from "@/components/ui/buttons/button";
-import { useRouter } from "next/navigation";
 
 export function RecommendedCompanies() {
   return (
-    <div className="my-4">
-      <div className="bg-gradient-to-r from-blue-50 to-pink-50 rounded-xl mb-3 mx-2 p-4">
+    <div className="p-5">
+      <div className="bg-gradient-to-r from-blue-50 to-pink-50 rounded-xl p-5">
         <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
           <div className="bg-pink-100 p-1 sm:p-2 rounded-lg">
             <Target className="w-4 h-4 sm:w-5 sm:h-5 text-pink-600" />

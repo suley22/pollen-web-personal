@@ -9,7 +9,7 @@ export function CallToAction() {
 
   return (
     <>
-      <Card className="bg-yellow-50 mt-16 border mb-4">
+      <Card className="bg-yellow-50 border-yellow-200">
         <CardContent className="p-8 text-center">
           <h3 className="text-2xl font-bold mb-4">
             Ready to find your next opportunity?

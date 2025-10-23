@@ -1,0 +1,47 @@
+import {
+  RecommendedCompaniesFormCard as FormCard,
+  AllCompaniesFormCard,
+} from "./form-card";
+import { Target } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { MapPin, Users, Star } from "lucide-react";
+import { Button } from "@/components/ui/buttons/button";
+import { useRouter } from "next/navigation";
+
+export function RecommendedCompanies() {
+  return (
+    <div className="my-4">
+      <div className="bg-gradient-to-r from-blue-50 to-pink-50 rounded-xl mb-3 mx-2 p-4">
+        <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+          <div className="bg-pink-100 p-1 sm:p-2 rounded-lg">
+            <Target className="w-4 h-4 sm:w-5 sm:h-5 text-pink-600" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <h2 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+              Recommended For You
+            </h2>
+            <p
+              className="text-xs sm:text-sm lg:text-base text-gray-600"
+              style={{ fontFamily: "Poppins" }}
+            >
+              Based on your skills and preferences
+            </p>
+          </div>
+        </div>
+        <FormCard />
+      </div>
+    </div>
+  );
+}
+
+export function AllCompanies() {
+  return (
+    <>
+      <h2 className="text-lg font-bold text-gray-900 mb-3">All Companies</h2>
+
+      <div className="grid grid-cols-3 gap-y-3 gap-x-4 px-2">
+        <AllCompaniesFormCard />
+      </div>
+    </>
+  );
+}

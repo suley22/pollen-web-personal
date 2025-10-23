@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { SearchAndFilterBar } from "./_components/search-and-filter-bar";
-
 import { PageContainer, PageHeader } from "@/components/design-system";
 import PollenApprovedJobs from "./_components/pollen-approved";
 import ExternalJobs from "./_components/external-jobs";
 import JobListSection from "./_components/job-list-section";
+import JobDetailsDialog from "./_components/job-details-dialog";
 
 export default function JobsPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -50,12 +50,17 @@ export default function JobsPage() {
           jobContractTypesFilter={jobContractTypesFilter}
           onContractTypesChange={setJobContractTypesFilter}
         />
-        <JobListSection 
+        <JobListSection
           filters={filters}
           onJobSelect={setSelectedJob}
           onShowDetails={setShowJobDetails}
         />
       </div>
+      <JobDetailsDialog
+        job={selectedJob}
+        isOpen={showJobDetails}
+        onClose={() => setShowJobDetails(false)}
+      />
     </PageContainer>
   );
 }

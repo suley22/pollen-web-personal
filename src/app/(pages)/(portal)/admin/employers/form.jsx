@@ -15,11 +15,12 @@ import { SocialMedia } from "./create/_components/social-media";
 import { InternalPollenData } from "./create/_components/internal-pollen-data";
 import { useEmployersPage } from "./_hooks/useEmployersPage";
 
-export function ProfileForm({ employer = null, action }) {
+export function ProfileForm({ id = null}) {
   // Detect edit mode automatically based on employer presence
-  const isEditMode = !!employer;
+  const isEditMode = !!id;
 
   const {
+    employer,
     formRef,
     formAction,
     isPending,
@@ -30,7 +31,7 @@ export function ProfileForm({ employer = null, action }) {
     setIsDialogOpen,
     handleBack,
     handleFileSelect,
-  } = useEmployersPage({ action, employer });
+  } = useEmployersPage({ id });
 
   return (
     <PageContainer>

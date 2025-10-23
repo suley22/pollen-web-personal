@@ -23,7 +23,6 @@ export default function AdminEmployers() {
           searchTerm, 
           setSearchTerm,
           employers,
-          getStatusBadge
         } = useEmployers();
 
   const onCreate = () => {
@@ -61,7 +60,6 @@ export default function AdminEmployers() {
             searchTerm={searchTerm} />
           <List 
             employers={employers} 
-            getStatusBadge={getStatusBadge} 
             loading={loading} />
         </div>
       </PageContainer>

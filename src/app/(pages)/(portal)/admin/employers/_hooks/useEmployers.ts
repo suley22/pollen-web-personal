@@ -1,15 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import {
-  PendingBadge,
-  ApprovedBadge,
-  RejectedBadge,
-} from "@/components/design-system/badge";
-import {
-  createEmployerService,
-} from "@/services/employerService";
-import { fetchEmployers } from "../_services/employersService";
+import { fetchEmployers, fetchEmployerById } from "../_services/employersService";
 
 export function useEmployers() {
   const [selectedStatus, setSelectedStatus] = useState("all");
@@ -112,23 +104,10 @@ export function useEmployers() {
     setDebouncedSearchTerm("");
   }, []);
 
-  // Función para obtener el badge según el status
-  const getStatusBadge = useCallback((status) => {
-    switch (status) {
-      case "pending":
-        return <PendingBadge>Pending</PendingBadge>;
-      case "approved":
-        return <ApprovedBadge>Approved</ApprovedBadge>;
-      case "rejected":
-        return <RejectedBadge>Rejected</RejectedBadge>;
-      default:
-        return null;
-    }
-  }, []);
+  
 
-  const fetchEmployerById = useCallback(async (id) => {
-    const employerService = await createEmployerService();
-    return await employerService.fetchEmployerById(id);
+  const getEmployerById = useCallback(async (id) => {
+    return await fetchEmployerById(id);
   }, []);
 
   return useMemo(
@@ -144,8 +123,7 @@ export function useEmployers() {
       setSearchTerm: setSearchTerm,
       loadApplications: loadApplications,
       addButtonOnClick: addButtonOnClick,
-      getStatusBadge: getStatusBadge,
-      fetchEmployerById: fetchEmployerById,
+      getEmployerById: getEmployerById,
     }),
     [
       selectedStatus,
@@ -158,8 +136,7 @@ export function useEmployers() {
       handleStatusChange,
       loadApplications,
       addButtonOnClick,
-      getStatusBadge,
-      fetchEmployerById
+      getEmployerById
     ],
   );
 }

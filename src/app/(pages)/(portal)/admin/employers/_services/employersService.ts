@@ -4,7 +4,7 @@ import {
   EmployerProfileHelper,
 } from "@/types/employer-profile";
 
-const supabase = await createClient();
+const supabase = createClient();
 
 export const fetchEmployers = async (
     filters = { status: "all", searchTerm: "" },
@@ -113,3 +113,56 @@ export const fetchEmployers = async (
       };
     }
   }
+
+  /**
+   * Fetches a single employer by ID with raw values (for editing)
+   */
+  export const fetchEmployerById = async (id) => {
+    try {
+      console.log("EmployerService: Fetching employer by ID (raw):", id);
+
+      const { data, error } = await supabase
+        .from("employer_profile")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        console.error("EmployerService: Error fetching employer by ID:", error);
+        return { success: false, error: error.message };
+      }
+
+      const transformedEmployer = transformEmployerDataRaw(data);
+      const jobCounts = await fetchJobCounts(id);
+
+      return {
+        success: true,
+        data: {
+          ...transformedEmployer,
+          ...jobCounts,
+        },
+      };
+    } catch (error) {
+      console.error(
+        "EmployerService: Unexpected error fetching employer:",
+        error,
+      );
+      return { success: false, error: "Failed to fetch employer" };
+    }
+  }
+
+  /**
+   * Creates an EmployerProfile preserving raw values from database
+   * Used for editing where we need the original values (nulls, empty strings, etc.)
+   */
+  const transformEmployerDataRaw = (employer: any): EmployerProfile => {
+    return {
+      ...employer,
+      // Keep original values as-is for editing
+      live_jobs_count: employer.live_jobs_count || 0,
+      draft_jobs_count: employer.draft_jobs_count || 0,
+      profile_completeness:
+        EmployerProfileHelper.calculateProfileCompleteness(employer),
+    };
+  }
+  

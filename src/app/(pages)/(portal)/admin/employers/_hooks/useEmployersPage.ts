@@ -6,15 +6,18 @@ import { useToastNotifications } from "@/hooks/useToastNotifications";
 import { useNavigation } from "@/hooks/useNavigation";
 import { usePendingFileUpload } from "@/hooks/usePendingFileUpload";
 import { AdminRoutes } from "../../router";
+import { fetchEmployerById } from "../_services/employersService";
 
 /**
  * Custom hook to manage the employer form state and logic (create/edit)
  */
-export function useEmployersPage({ action, employer = null }) {
+export function useEmployersPage({ id = null}) {
   const formRef = useRef(null);
   const { navigateTo, navigateWithDelay } = useNavigation();
   const { showSuccess, showError } = useToastNotifications();
   const lastProcessedState = useRef(null);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+  const [employer, setEmployer] = useState(null);
 
   // Pending file uploads
   const {
@@ -23,9 +26,28 @@ export function useEmployersPage({ action, employer = null }) {
     clearPendingFiles,
     isUploading: isUploadingFiles,
   } = usePendingFileUpload();
+  
+  useEffect(() => {
+      const loadProfile = async () => {
+        if (id) {
+          setIsLoadingProfile(true);
+          try {
+            const result = await fetchEmployerById(id);
+            setEmployer(result.error ? null : result.data);
+          } catch (error) {
+            console.error("Error fetching jobs:", error);
+            setEmployer(null);
+          } finally {
+            setIsLoadingProfile(false);
+          }
+        } else {
+          setIsLoadingProfile(false);
+        }
+      };
+  
+      loadProfile();
+    }, [id]);
 
-  // Form action state
-  const [state, formAction, isPending] = useActionState(action, null);
 
   // Form field states - Initialize with employer data if in edit mode
   const [checked, setChecked] = useState(false);
@@ -48,32 +70,6 @@ export function useEmployersPage({ action, employer = null }) {
   const handleFileSelect = (fieldName, file, fileName) => {
     addPendingFile(fieldName, file, fileName);
   };
-
-  // Handle action state changes
-  useEffect(() => {
-    // Skip if state hasn't changed or is null
-    if (!state || state === lastProcessedState.current) {
-      return;
-    }
-
-    lastProcessedState.current = state;
-
-    if (state?.success) {
-      showSuccess("Success!", state.message);
-      clearPendingFiles(); // Clear pending files on success
-      navigateWithDelay(AdminRoutes.employers);
-    } else if (state?.error) {
-      showError("Error", state.error);
-      setIsDialogOpen(false);
-    }
-  }, [
-    state,
-    navigateWithDelay,
-    showSuccess,
-    showError,
-    setIsDialogOpen,
-    clearPendingFiles,
-  ]);
 
   return {
     // Refs

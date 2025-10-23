@@ -7,9 +7,9 @@ import { useNavigation } from "@/hooks/useNavigation";
 import { usePendingFileUpload } from "@/hooks/usePendingFileUpload";
 import { AdminRoutes } from "../../router";
 import { fetchEmployerById } from "../_services/employersService";
-import { createStorageService } from "@/services/storageService";
-import { createEmployerService } from "@/services/employerService";
-import { createUserService } from "@/services/userService";
+import { uploadFile } from "@/services/storageService";
+import { getLoggedInUserId } from "@/services/userService";
+import { updateEmployer, createEmployer} from "../_services/employersService";
 
 /**
  * Custom hook to manage the employer form state and logic (create/edit)
@@ -29,27 +29,28 @@ export function useEmployersPage({ id = null}) {
     isUploading: isUploadingFiles,
   } = usePendingFileUpload();
 
-  const loadProfile = useCallback(async () => {
-    console.log("Loading employer profile for ID:", id);
-        if (id) {
-          setIsLoadingProfile(true);
-          try {
-            const result = await fetchEmployerById(id);
-            setEmployer(result.error ? null : result.data);
-          } catch (error) {
-            console.error("Error fetching jobs:", error);
-            setEmployer(null);
-          } finally {
-            setIsLoadingProfile(false);
-          }
-        } else {
+  useEffect(() => {
+    const loadEmployerProfile = async () => {
+      if (id) {
+        setIsLoadingProfile(true);
+        try {
+          const result = await fetchEmployerById(id);
+          setEmployer(result.error ? null : result.data);
+        } catch (error) {
+          console.error("Error fetching employer profile:", error);
+          setEmployer(null);
+        } finally {
           setIsLoadingProfile(false);
         }
-      }, [id]);
-  
-  useEffect(() => {
-      loadProfile();
-    }, [loadProfile]);
+      } else {
+        console.log("No ID provided, clearing employer state");
+        setIsLoadingProfile(false);
+        setEmployer(null);
+      }
+    };
+
+    loadEmployerProfile();
+  }, [id]);
 
     
 
@@ -77,7 +78,6 @@ export function useEmployersPage({ id = null}) {
 
   const updateEmployerAction = async (
     id: string,
-    prevState: any,
     formData: FormData,
   ) => {
     try {
@@ -86,17 +86,15 @@ export function useEmployersPage({ id = null}) {
       const logoUrl = await getImageUrl(formData, imageFieldName);
       formData.set(imageFieldName, logoUrl);
       // Get current user
-      const userService = await createUserService();
-      const userId = await userService.getLoggedInUserId();
-  
+      const userId = await getLoggedInUserId();
+
       if (!userId) {
         console.error("No authenticated user found");
         return { error: "User not authenticated" };
       }
   
       // Use EmployerService to update the employer
-      const employerService = await createEmployerService();
-      const result = await employerService.updateEmployer(id, formData, userId);
+      const result = await updateEmployer(id, formData, userId);
   
       return result;
     } catch (error) {
@@ -108,7 +106,7 @@ export function useEmployersPage({ id = null}) {
     }
   }
 
-  const createEmployerAction = async (prevState: any, formData: FormData) => {
+  const createEmployerAction = async (formData: FormData) => {
     try {
   
       const imageFieldName = "logo_url";
@@ -116,8 +114,7 @@ export function useEmployersPage({ id = null}) {
       formData.set(imageFieldName, logoUrl);
   
       // Get current user
-      const userService = await createUserService();
-      const userId = await userService.getLoggedInUserId();
+      const userId = await getLoggedInUserId();
   
       if (!userId) {
         console.error("No authenticated user found");
@@ -125,9 +122,8 @@ export function useEmployersPage({ id = null}) {
       }
   
       // Use EmployerService to create the employer
-      const employerService = await createEmployerService();
-      const result = await employerService.createEmployer(formData, userId);
-  
+      const result = await createEmployer(formData, userId);
+
       return result;
     } catch (error) {
       console.error("Action: Unexpected error creating company:", error);
@@ -153,8 +149,7 @@ export function useEmployersPage({ id = null}) {
         };
       }
 
-      const storageService = await createStorageService();
-      const publicUrl = await storageService.uploadFile(file, bucketName, folder);
+      const publicUrl = await uploadFile(file, bucketName, folder);
 
       console.log("Image uploaded successfully to:", publicUrl);
       return publicUrl;
@@ -167,6 +162,8 @@ export function useEmployersPage({ id = null}) {
   return {
     // Refs
     formRef,
+    // Data
+    employer,
     // Form state
     isLoadingProfile,
     // Field states

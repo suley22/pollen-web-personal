@@ -1,20 +1,16 @@
-import { createClient } from "@/lib/utils/supabase/server";
+import { createClient } from "@/lib/utils/supabase/client";
 
-export class UserService {
-  private supabase: any;
+const supabase = createClient();
 
-  constructor(supabase: any) {
-    this.supabase = supabase;
-  }
 
-  async getLoggedInUserId() {
+  export const getLoggedInUserId = async () => {
 
     try {
 
       // Get current user
       const {
         data: { user },
-      } = await this.supabase.auth.getUser();
+      } = await supabase.auth.getUser();
 
       return user?.id || null;
 
@@ -24,12 +20,4 @@ export class UserService {
     } 
   };
   
-}
 
-/**
- * Factory function to create UserService    instance
- */
-export async function createUserService() {
-  const supabase = await createClient();
-  return new UserService(supabase);
-}

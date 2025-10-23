@@ -37,9 +37,16 @@ export function ProfileForm({ id = null}) {
     createEmployerAction,
   } = useEmployersPage({ id });
 
-  const handleSubmit = async (formData) => {
+  const handleSubmit = async (e) => {
+
+    e.preventDefault();
+    
+    const formData = new FormData(e.target);
+
+    console.log("Form submitted with data:", formData);
+
     const result = isEditMode
-      ? await updateEmployerAction(id, employer, formData)
+      ? await updateEmployerAction(id, formData)
       : await createEmployerAction(formData);
 
     if (result.error) {

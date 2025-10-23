@@ -1,13 +1,8 @@
-import { createClient } from "@/lib/utils/supabase/server";
+import { createClient } from "@/lib/utils/supabase/client";
 
-export class StorageService {
-  private supabase: any;
+const supabase = createClient();
 
-  constructor(supabase: any) {
-    this.supabase = supabase;
-  }
-
-  async uploadFile(file, bucketName = "company-logos", folder = "logos") {
+  export const uploadFile = async (file, bucketName = "company-logos", folder = "logos") => {
 
     try {
 
@@ -17,7 +12,7 @@ export class StorageService {
       const filePath = folder ? `${folder}/${fileName}` : fileName;
 
       // Upload file to Supabase Storage
-      const { error } = await this.supabase.storage
+      const { error } = await supabase.storage
         .from(bucketName)
         .upload(filePath, file, {
           cacheControl: "3600",
@@ -30,7 +25,7 @@ export class StorageService {
       }
 
       // Get public URL
-      const { data: { publicUrl } } = this.supabase.storage
+      const { data: { publicUrl } } = supabase.storage
         .from(bucketName)
         .getPublicUrl(filePath);
 
@@ -42,12 +37,12 @@ export class StorageService {
     } 
   };
 
-  async deleteFile(fileName, bucketName, folder) {
+  export const deleteFile = async (fileName, bucketName, folder) => {
     try {
 
       const filePath = folder ? `${folder}/${fileName}` : fileName;
-      
-      const { error } = await this.supabase.storage
+
+      const { error } = await supabase.storage
         .from(bucketName)
         .remove([filePath]);
 
@@ -64,12 +59,5 @@ export class StorageService {
     }
   };
   
-}
 
-/**
- * Factory function to create StorageService instance
- */
-export async function createStorageService() {
-  const supabase = await createClient();
-  return new StorageService(supabase);
-}
+

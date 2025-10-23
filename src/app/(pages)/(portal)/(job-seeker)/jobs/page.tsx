@@ -1,29 +1,31 @@
 "use client";
 
-import { useState } from "react";
 import { SearchAndFilterBar } from "./_components/search-and-filter-bar";
 import { PageContainer, PageHeader } from "@/components/design-system";
 import PollenApprovedJobs from "./_components/pollen-approved";
 import ExternalJobs from "./_components/external-jobs";
 import JobListSection from "./_components/job-list-section";
 import JobDetailsDialog from "./_components/job-details-dialog";
+import { useJobs } from "./_hooks/useJobPage";
 
 export default function JobsPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [jobTypeFilter, setJobTypeFilter] = useState("all");
-  const [jobIndustriesFilter, setJobIndustriesFilter] = useState("all");
-  const [jobLocationsFilter, setJobLocationsFilter] = useState("all");
-  const [jobContractTypesFilter, setJobContractTypesFilter] = useState("all");
-  const [selectedJob, setSelectedJob] = useState(null);
-  const [showJobDetails, setShowJobDetails] = useState(false);
-
-  const filters = {
+  const {
+    jobs,
     searchTerm,
-    jobType: jobTypeFilter,
-    industry: jobIndustriesFilter,
-    location: jobLocationsFilter,
-    contractType: jobContractTypesFilter,
-  };
+    setSearchTerm,
+    jobTypeFilter,
+    setJobTypeFilter,
+    jobIndustriesFilter,
+    setJobIndustriesFilter,
+    jobLocationsFilter,
+    setJobLocationsFilter,
+    jobContractTypesFilter,
+    setJobContractTypesFilter,
+    selectedJob,
+    setSelectedJob,
+    showJobDetails,
+    setShowJobDetails,
+  } = useJobs();
 
   return (
     <PageContainer>
@@ -51,11 +53,13 @@ export default function JobsPage() {
           onContractTypesChange={setJobContractTypesFilter}
         />
         <JobListSection
-          filters={filters}
           onJobSelect={setSelectedJob}
           onShowDetails={setShowJobDetails}
+          jobs={jobs}
         />
       </div>
+
+      {/* TODO: sacar */}
       <JobDetailsDialog
         job={selectedJob}
         isOpen={showJobDetails}

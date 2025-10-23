@@ -146,7 +146,7 @@ export function CompanyInformation({
             defaultValue={initialData?.company_size}
             options={COMPANY_SIZE_OPTIONS}
           />
-
+{console.log("Rendering Company Size Select with defaultValue:", initialData?.company_size)}
           {/* Founded Year */}
           <Input
             label="Founded Year"

@@ -29,12 +29,12 @@ export function useEmployersPage({ id = null}) {
     isUploading: isUploadingFiles,
   } = usePendingFileUpload();
 
-  useEffect(() => {
-    const loadEmployerProfile = async () => {
+  const loadEmployerProfile = useCallback(async () => {
       if (id) {
         setIsLoadingProfile(true);
         try {
           const result = await fetchEmployerById(id);
+          console.log("Fetched employer profileAAAAAA:", result);
           setEmployer(result.error ? null : result.data);
         } catch (error) {
           console.error("Error fetching employer profile:", error);
@@ -47,10 +47,11 @@ export function useEmployersPage({ id = null}) {
         setIsLoadingProfile(false);
         setEmployer(null);
       }
-    };
+    }, [id]);
 
+  useEffect(() => {
     loadEmployerProfile();
-  }, [id]);
+  }, [loadEmployerProfile]);
 
     
 
@@ -143,10 +144,7 @@ export function useEmployersPage({ id = null}) {
       
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        return {
-          success: false,
-          error: "Invalid file type. Please upload an image file."
-        };
+        return ""
       }
 
       const publicUrl = await uploadFile(file, bucketName, folder);
@@ -155,7 +153,7 @@ export function useEmployersPage({ id = null}) {
       return publicUrl;
     } else {
       console.log("No valid file found");
-      return null;
+      return "";
     }
 }
 

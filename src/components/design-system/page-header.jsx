@@ -6,13 +6,13 @@ import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function PageHeader({
-  title,
+  title = "Page Title",
   titleSize = "text-2xl",
-  subtitle,
+  subtitle = "",
   showBackButton = false,
-  onBack,
-  children,
-  className,
+  onBack = () => {},
+  children = null,
+  className = "",
 }) {
   return (
     <div className={cn("w-full flex items-center justify-between", className)}>

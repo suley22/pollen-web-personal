@@ -14,16 +14,18 @@ import { ContactInformation } from "./create/_components/contact-information";
 import { SocialMedia } from "./create/_components/social-media";
 import { InternalPollenData } from "./create/_components/internal-pollen-data";
 import { useEmployersPage } from "./_hooks/useEmployersPage";
+import { useRouter } from "next/navigation";
+import { AdminRoutes } from "@/admin/router";
 
 export function ProfileForm({ id = null}) {
   // Detect edit mode automatically based on employer presence
   const isEditMode = !!id;
+  const router = useRouter();
 
   const {
     employer,
     formRef,
-    formAction,
-    isPending,
+    isLoadingProfile,
     setIndustryValue,
     logoUrl,
     setLogoUrl,
@@ -31,7 +33,22 @@ export function ProfileForm({ id = null}) {
     setIsDialogOpen,
     handleBack,
     handleFileSelect,
+    updateEmployerAction,
+    createEmployerAction,
   } = useEmployersPage({ id });
+
+  const handleSubmit = async (formData) => {
+    const result = isEditMode
+      ? await updateEmployerAction(id, employer, formData)
+      : await createEmployerAction(formData);
+
+    if (result.error) {
+      console.error("Form submission error:", result.error);
+    } else {
+      console.log("Employer profile saved successfully");
+      router.push(AdminRoutes.employers);
+    }
+  };
 
   return (
     <PageContainer>
@@ -48,7 +65,7 @@ export function ProfileForm({ id = null}) {
         onBack={handleBack}
       />
 
-      <FormContainer ref={formRef} action={formAction}>
+      <FormContainer ref={formRef} onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2 space-y-6">
             <CompanyInformation
@@ -104,8 +121,8 @@ export function ProfileForm({ id = null}) {
         <FormActions>
           <ConfirmationDialog
             trigger={
-              <Button type="button" size="lg" disabled={isPending}>
-                {isPending
+              <Button type="button" size="lg" disabled={isLoadingProfile}>
+                {isLoadingProfile
                   ? isEditMode
                     ? "Updating..."
                     : "Creating..."
@@ -126,7 +143,7 @@ export function ProfileForm({ id = null}) {
             }
             confirmText="Confirm"
             cancelText="Cancel"
-            isLoading={isPending}
+            isLoading={isLoadingProfile}
             loadingText={isEditMode ? "Updating..." : "Creating..."}
             open={isDialogOpen}
             onOpenChange={setIsDialogOpen}

@@ -1,8 +1,7 @@
 import { useRouter } from "next/navigation";
 import { use, useEffect, useState } from "react";
 import { AdminRoutes } from "@/admin/router";
-import { fetchJobsByEmployer } from "@/employers/actions";
-import { fetchEmployerById } from "../../_services/employersService";
+import { fetchEmployerById, fetchJobsByEmployer} from "../../_services/employersService";
 
 export function useEmployerView(id = null) {
   const router = useRouter();

@@ -1,7 +1,7 @@
 import { JobCard } from "./job-card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function FeatureJobCards({ jobs, loading, saveFavoriteJob }) {
+export function FeatureJobCards({ jobs, loading,  saveFavoriteJob }) {
   return loading ? (
     <div className="grid grid-cols-3 gap-4">
       {Array.from({ length: 3 }).map((_, i) => (

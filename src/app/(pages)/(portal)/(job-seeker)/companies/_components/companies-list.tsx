@@ -6,8 +6,8 @@ import { Target } from "lucide-react";
 
 export function RecommendedCompanies() {
   return (
-    <div className="p-5">
-      <div className="bg-gradient-to-r from-blue-50 to-pink-50 rounded-xl p-5">
+    <div className="">
+      <div className="border border-gray-100 bg-gradient-to-r from-blue-50 to-pink-50 rounded-xl p-5">
         <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
           <div className="bg-pink-100 p-1 sm:p-2 rounded-lg">
             <Target className="w-4 h-4 sm:w-5 sm:h-5 text-pink-600" />
@@ -32,12 +32,12 @@ export function RecommendedCompanies() {
 
 export function AllCompanies() {
   return (
-    <>
-      <h2 className="text-lg font-bold text-gray-900 mb-3">All Companies</h2>
+    <div className="mb-0">
+      <div className="text-lg font-bold text-gray-900 mb-1">All Companies</div>
 
-      <div className="grid grid-cols-3 gap-y-3 gap-x-4 px-2">
+      <div className="grid grid-cols-3 gap-y-3 gap-x-4">
         <AllCompaniesFormCard />
       </div>
-    </>
+    </div>
   );
 }

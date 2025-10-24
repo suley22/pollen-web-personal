@@ -14,9 +14,6 @@ export interface EmployerProfile {
   company_loves?: string;
   company_entry_level?: string;
   company_accolades?: string[];
-  twitter_url?: string;
-  linkedin_url?: string;
-  glassdoor_url?: string;
   contact_name?: string;
   job_title?: string;
   contact_email?: string;
@@ -31,7 +28,6 @@ export interface EmployerProfile {
   additional_notes?: string;
   jobs?: any[];
   entry_level_support?: string;
-  social_media?: Array<SocialMediaLink>;
   social_medias?: Array<SocialMediaLink>;
   how_hired_previously?: string[];
   // Additional computed fields for display

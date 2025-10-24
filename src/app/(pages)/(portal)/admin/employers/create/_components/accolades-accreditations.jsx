@@ -2,7 +2,6 @@
 
 import { DynamicListInput, FormCard } from "@/components/design-system";
 import { Award } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 
 export function AccoladesAccreditations({ employer = null }) {
   // Convert string array to object array for DynamicListInput

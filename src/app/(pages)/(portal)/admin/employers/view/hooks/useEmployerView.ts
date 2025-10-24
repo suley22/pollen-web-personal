@@ -1,13 +1,34 @@
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { AdminRoutes } from "@/admin/router";
-import { EmployerProfile } from "@/types/employer-profile";
-import { fetchJobsByEmployer } from "@/employers/actions";
+import { fetchEmployerById, fetchJobsByEmployer} from "../../_services/employersService";
 
-export function useEmployerView(profile: EmployerProfile | null) {
+export function useEmployerView(id = null) {
   const router = useRouter();
   const [jobs, setJobs] = useState([]);
   const [isLoadingJobs, setIsLoadingJobs] = useState(false);
+  const [profile, setProfile] = useState(null);
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (id) {
+        setIsLoadingJobs(true);
+        try {
+          const result = await fetchEmployerById(id);
+          setProfile(result.error ? [] : result.data);
+        } catch (error) {
+          console.error("Error fetching jobs:", error);
+          setProfile([]);
+        } finally {
+          setIsLoadingJobs(false);
+        }
+      } else {
+        setIsLoadingJobs(false);
+      }
+    };
+
+    loadProfile();
+  }, [id]);
 
   useEffect(() => {
     const loadJobs = async () => {

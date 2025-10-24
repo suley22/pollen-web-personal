@@ -4,7 +4,6 @@ import { Filters } from "@/admin/employers/_components/filters";
 import { StatisticsCards } from "@/admin/employers/_components/cards";
 import { ResultsCount } from "@/admin/employers/_components/results-count";
 import { List } from "@/admin/employers/_components/list";
-import { AmdinEmployersProvider } from "@/admin/employers/_context/admin-employers-context";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { startTransition } from "react";
@@ -12,9 +11,19 @@ import { AdminRoutes } from "@/admin/router";
 import { PageHeader } from "@/components/design-system/page-header";
 import { PrimaryButton } from "@/components/design-system/primary-button";
 import { PageContainer } from "@/components/design-system";
+import { useEmployers } from "./_hooks/useEmployers";
 
 export default function AdminEmployers() {
   const router = useRouter();
+
+  const { statistics, 
+          selectedStatus, 
+          setSelectedStatus, 
+          loading,
+          searchTerm, 
+          setSearchTerm,
+          employers,
+        } = useEmployers();
 
   const onCreate = () => {
     startTransition(() => {
@@ -23,7 +32,6 @@ export default function AdminEmployers() {
   };
 
   return (
-    <AmdinEmployersProvider>
       <PageContainer>
         <PageHeader
           title="Employers"
@@ -32,13 +40,28 @@ export default function AdminEmployers() {
           <PrimaryButton icon={<Plus />} text="Create" onClick={onCreate} />
         </PageHeader>
 
-        <StatisticsCards />
-        <Filters />
+        <StatisticsCards  
+          statistics={statistics}
+          selectedStatus={selectedStatus}
+          setSelectedStatus={setSelectedStatus}
+          loading={loading}
+        />
+        <Filters 
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          selectedStatus={selectedStatus}
+          setSelectedStatus={setSelectedStatus}
+        />
         <div className="flex flex-col gap-2">
-          <ResultsCount />
-          <List />
+          <ResultsCount 
+            employers={employers} 
+            loading={loading} 
+            selectedStatus={selectedStatus} 
+            searchTerm={searchTerm} />
+          <List 
+            employers={employers} 
+            loading={loading} />
         </div>
       </PageContainer>
-    </AmdinEmployersProvider>
   );
 }

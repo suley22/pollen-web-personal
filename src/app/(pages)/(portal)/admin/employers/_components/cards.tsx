@@ -2,12 +2,9 @@
 import { Building2, CheckCircle, Clock, XCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEmployerManagementContext } from "@/employers/_context/admin-employers-context";
 import { cn } from "@/lib/utils";
 
-export function StatisticsCards() {
-  const { statistics, selectedStatus, setSelectedStatus, loading } =
-    useEmployerManagementContext();
+export function StatisticsCards({statistics, selectedStatus, setSelectedStatus, loading}) {
 
   const handleCardClick = (status: string) => {
     setSelectedStatus(status);

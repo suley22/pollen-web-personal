@@ -1,6 +1,5 @@
 "use client";
 
-import { useEmployerManagementContext } from "@/employers/_context/admin-employers-context";
 import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmployerProfileHelper } from "@/types/employer-profile";
@@ -16,6 +15,11 @@ import {
   Edit,
   Trash2,
 } from "lucide-react";
+import {
+  PendingBadge,
+  ApprovedBadge,
+  RejectedBadge,
+} from "@/components/design-system/badge";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
@@ -23,10 +27,10 @@ import { AdminRoutes } from "@/admin/router";
 import { ListSkeleton } from "./list-skeleton";
 import { CompanyAvatar } from "@/components/ui/company-avatar";
 import { EmptyState } from "@/components/design-system/empty-state";
+import { useCallback } from "react";
 
-export function List() {
+export function List({employers, loading}) {
   const router = useRouter();
-  const { employers, getStatusBadge, loading } = useEmployerManagementContext();
   const [, startTransition] = useTransition();
 
   const handleDeleteClick = (company, e) => {
@@ -41,6 +45,18 @@ export function List() {
       router.push(AdminRoutes.employersView(company.id));
     });
   }
+  const getStatusBadge = useCallback((status) => {
+    switch (status) {
+      case "pending":
+        return <PendingBadge>Pending</PendingBadge>;
+      case "approved":
+        return <ApprovedBadge>Approved</ApprovedBadge>;
+      case "rejected":
+        return <RejectedBadge>Rejected</RejectedBadge>;
+      default:
+        return null;
+    }
+  }, []);
 
   if (loading) {
     return <ListSkeleton />;
@@ -55,6 +71,7 @@ export function List() {
       />
     );
   }
+  
 
   return (
     <div className="space-y-3">
@@ -251,4 +268,7 @@ export function List() {
       })}
     </div>
   );
+  
 }
+
+

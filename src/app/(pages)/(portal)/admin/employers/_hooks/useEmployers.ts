@@ -1,14 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { fetchEmployersAction } from "@/admin/employers/actions";
-import {
-  PendingBadge,
-  ApprovedBadge,
-  RejectedBadge,
-} from "@/components/design-system/badge";
+import { fetchEmployers, fetchEmployerById } from "../_services/employersService";
 
-export function useEmployersContext() {
+export function useEmployers() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -51,7 +46,7 @@ export function useEmployersContext() {
       // Si hay búsqueda activa, ignorar el filtro de status y buscar en todos
       const statusToUse = debouncedSearchTerm.trim() ? "all" : selectedStatus;
 
-      const result = await fetchEmployersAction({
+      const result = await fetchEmployers({
         status: statusToUse,
         searchTerm: debouncedSearchTerm.trim(),
       });
@@ -109,18 +104,10 @@ export function useEmployersContext() {
     setDebouncedSearchTerm("");
   }, []);
 
-  // Función para obtener el badge según el status
-  const getStatusBadge = useCallback((status) => {
-    switch (status) {
-      case "pending":
-        return <PendingBadge>Pending</PendingBadge>;
-      case "approved":
-        return <ApprovedBadge>Approved</ApprovedBadge>;
-      case "rejected":
-        return <RejectedBadge>Rejected</RejectedBadge>;
-      default:
-        return null;
-    }
+  
+
+  const getEmployerById = useCallback(async (id) => {
+    return await fetchEmployerById(id);
   }, []);
 
   return useMemo(
@@ -136,7 +123,7 @@ export function useEmployersContext() {
       setSearchTerm: setSearchTerm,
       loadApplications: loadApplications,
       addButtonOnClick: addButtonOnClick,
-      getStatusBadge: getStatusBadge,
+      getEmployerById: getEmployerById,
     }),
     [
       selectedStatus,
@@ -149,7 +136,7 @@ export function useEmployersContext() {
       handleStatusChange,
       loadApplications,
       addButtonOnClick,
-      getStatusBadge,
+      getEmployerById
     ],
   );
 }

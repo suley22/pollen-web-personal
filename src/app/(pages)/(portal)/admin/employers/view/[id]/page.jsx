@@ -1,11 +1,12 @@
+"use client";
 import EmployerProfileView from "@/employers/view/view";
-import { fetchEmployerByIdAction } from "@/employers/actions";
 
-export default async function EmployerReviewPage({ params }) {
-  const { id } = await params;
-  const { data, error } = await fetchEmployerByIdAction(id);
+import { use } from "react";
 
-  const employerData = data && !error ? data : null;
+export default function EmployerReviewPage({ params }) {
+  // Await the params to get the actual parameters
+  const resolvedParams = use(params);
+  const { id } = resolvedParams;
 
-  return <EmployerProfileView employerProfile={employerData} />;
+  return <EmployerProfileView id={id} />;
 }

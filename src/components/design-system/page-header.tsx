@@ -8,11 +8,11 @@ import { cn } from "@/lib/utils";
 export function PageHeader({
   title = "Page Title",
   titleSize = "text-2xl",
-  subtitle = null,
+  subtitle = "",
   showBackButton = false,
-  onBack = null,
+  onBack = () => {},
   children = null,
-  className = null,
+  className = "",
 }) {
   return (
     <div className={cn("w-full flex items-center justify-between", className)}>

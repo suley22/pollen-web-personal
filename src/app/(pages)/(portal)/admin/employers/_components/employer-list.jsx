@@ -1,4 +1,3 @@
-import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Card, CardContent } from "@/components/ui/card";
-import { useEmployersContext } from "../_hooks/useEmployersContext";
+import { useEmployers } from "../_hooks/useEmployers";
 import {
   Building2,
   Edit,
@@ -22,11 +21,9 @@ import {
   Trash2,
   Users,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 export function EmployerList() {
-  const { form } = useEmployersContext();
-  const router = useRouter();
+  const { form } = useEmployers();
 
   return (
     <div className="space-y-4">

@@ -14,7 +14,7 @@ import { useEmployerView } from "@/employers/view/hooks/useEmployerView";
 import { DescriptionCard } from "@/components/design-system";
 import { FileText, Users, Heart, GraduationCap } from "lucide-react";
 
-export default function EmployerProfileView({ employerProfile }) {
+export default function EmployerProfileView({ id  = null}) {
   const router = useRouter();
 
   const {
@@ -25,7 +25,7 @@ export default function EmployerProfileView({ employerProfile }) {
     handleSetLive,
     handleHideProfile,
     handleDelete,
-  } = useEmployerView(employerProfile);
+  } = useEmployerView(id);
 
   if (!profile) {
     return <EmployerProfileSkeleton />;

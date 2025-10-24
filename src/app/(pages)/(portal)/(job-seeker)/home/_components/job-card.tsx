@@ -6,7 +6,14 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { Building, Banknote, Clock, MapPin, Heart } from "lucide-react";
+import {
+  Building,
+  Banknote,
+  Clock,
+  MapPin,
+  Heart,
+  ExternalLink,
+} from "lucide-react";
 import { PrimaryButton } from "@/components/design-system";
 import { ApprovalSourceBadge } from "@/components/design-system/badge";
 import { SecondaryButton } from "@/components/design-system/primary-button";
@@ -92,12 +99,28 @@ export function JobCard({ job, isSaved, onToggleSave, onApply }) {
         </span>
       </CardContent>
 
-      <CardFooter className="w-full flex gap-2 justify-between flex-row px-0 border-t border-border/50 pt-4 mt-4">
-        <PrimaryButton className="grow" text="View and Apply" onClick={apply} />
+      <CardFooter className="w-full flex gap-1 justify-between flex-row px-0 border-t border-border/50 pt-4 mt-4">
+        {job.type === "pollen" && (
+          <PrimaryButton
+            className="grow"
+            text="View and Apply"
+            onClick={apply}
+          />
+        )}
+        {job.type === "hidden" && (
+          <PrimaryButton
+            className="grow"
+            style="outline"
+            icon={<ExternalLink className="w-4 h-4" />}
+            text="Apply"
+            onClick={apply}
+          />
+        )}
         <SecondaryButton
+          style="ghost"
           icon={
             <Heart
-              className={` ${isSaved ? "fill-pink-600 text-pink-600" : ""}`}
+              className={`${isSaved ? "fill-pink-600 text-pink-600" : ""}`}
             />
           }
           text=""

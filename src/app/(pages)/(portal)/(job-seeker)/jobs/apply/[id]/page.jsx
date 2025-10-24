@@ -1,16 +1,13 @@
 "use client";
-import { PageContainer } from "@/components/design-system";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { PageContainer, PrimaryButton } from "@/components/design-system";
+import { useApply } from "../_hook/useApply";
+
 import ApplyJobHeader from "../_components/apply-job-header";
 import ProgressSteps from "../_components/progress-steps";
 import JobDetails from "../_components/job-details";
+import WhatHappensNext from "../_components/what-happens-next";
 
-// Mock data para maquetado //
-const job = {
-  job_title: "Software Engineer",
-  company_name: "Tech Corp",
-};
+// Mocked data (to be replaced with real data fetching logic)
 
 const isSaved = false;
 const saveJobMutation = { isPending: false };
@@ -19,14 +16,14 @@ const removeSavedJobMutation = { isPending: false };
 // ----------------------- //
 
 export default function ApplyJobPage() {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [showCompanyProfile, setShowCompanyProfile] = useState(false);
-  const router = useRouter();
-
-  const handleSaveJob = () => {
-    // Lógica para guardar/quitar el trabajo de favoritos
-    console.log("Toggle save job");
-  };
+  const {
+    currentStep,
+    showCompanyProfile,
+    setShowCompanyProfile,
+    handleSaveJob,
+    handleBack,
+    job,
+  } = useApply();
 
   return (
     <PageContainer>
@@ -36,15 +33,17 @@ export default function ApplyJobPage() {
         showCompanyProfile={showCompanyProfile}
         setShowCompanyProfile={setShowCompanyProfile}
         onSaveJob={handleSaveJob}
-        onBack={() => router.back()}
+        onBack={handleBack}
         saveJobMutation={saveJobMutation}
         removeSavedJobMutation={removeSavedJobMutation}
       />
 
       <ProgressSteps currentStep={currentStep} />
       <JobDetails job={job} />
-
-      <div className="flex flex-col bg-white rounded-lg border border-gray-200 p-6"></div>
+      <WhatHappensNext />
+      <div className="flex flex-col items-end">
+        <PrimaryButton text="Start Assessment" className="px-6 py-4" />
+      </div>
     </PageContainer>
   );
 }

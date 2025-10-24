@@ -9,6 +9,7 @@ interface PrimaryButtonProps {
   icon?: ReactElement;
   onClick?: () => void;
   disabled?: boolean;
+  style?: string;
   loading?: boolean;
   className?: string;
   type?: "button" | "submit" | "reset";
@@ -18,6 +19,7 @@ export function PrimaryButton({
   text,
   icon,
   onClick,
+  style = "default",
   disabled = false,
   loading = false,
   className,
@@ -33,7 +35,7 @@ export function PrimaryButton({
   return (
     <Button
       type={type}
-      variant="default"
+      variant={style}
       size="default"
       onClick={onClick}
       disabled={disabled || loading}
@@ -52,6 +54,7 @@ export function SecondaryButton({
   disabled = false,
   loading = false,
   className,
+  style = "outline",
   type = "button",
 }: PrimaryButtonProps) {
   // Clone the icon and add default size
@@ -64,7 +67,39 @@ export function SecondaryButton({
   return (
     <Button
       type={type}
-      variant="outline"
+      variant={style}
+      size="default"
+      onClick={onClick}
+      disabled={disabled || loading}
+      className={cn("max-w-xs font-sora gap-2", className)}
+    >
+      {iconWithSize}
+      {loading ? "Loading..." : text}
+    </Button>
+  );
+}
+
+export function GhostButton({
+  text,
+  icon,
+  onClick,
+  disabled = false,
+  loading = false,
+  className,
+  style = "ghost",
+  type = "button",
+}: PrimaryButtonProps) {
+  // Clone the icon and add default size
+  const iconWithSize = icon
+    ? cloneElement(icon as ReactElement<any>, {
+        className: cn("w-4 h-4", (icon.props as any)?.className),
+      })
+    : null;
+
+  return (
+    <Button
+      type={type}
+      variant={style}
       size="default"
       onClick={onClick}
       disabled={disabled || loading}

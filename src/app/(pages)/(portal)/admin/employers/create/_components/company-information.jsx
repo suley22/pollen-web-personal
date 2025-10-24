@@ -80,12 +80,6 @@ export function CompanyInformation({
               <FileSelector
                 name="file_selector_logo" 
                 onFileSelect={(file, fileName) => {
-                  console.log("File selected:", {
-                    name: file.name,
-                    type: file.type, 
-                    size: file.size,
-                    isFile: file instanceof File
-                  });
                   
                   // Validar tamaño de archivo (máximo 5MB)
                   const maxSize = 5 * 1024 * 1024; // 5MB
@@ -108,15 +102,7 @@ export function CompanyInformation({
                     const dataTransfer = new DataTransfer();
                     dataTransfer.items.add(file);
                     hiddenFileInputRef.current.files = dataTransfer.files;
-                    console.log("File assigned to hidden input:", {
-                      fileName: file.name,
-                      fileType: file.type,
-                      fileSize: file.size,
-                      hiddenInputFiles: hiddenFileInputRef.current.files.length,
-                      hiddenInputFirstFile: hiddenFileInputRef.current.files[0],
-                      hiddenInputName: hiddenFileInputRef.current.name,
-                      inputExists: !!hiddenFileInputRef.current
-                    });
+                    
                   } else {
                     console.error("Hidden file input ref is not available!");
                   }

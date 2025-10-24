@@ -5,6 +5,9 @@ import {
   Clock,
   MapPin,
   PoundSterling,
+  Users,
+  Trophy,
+  Shield,
 } from "lucide-react";
 
 import { InfoCard, InfoListCard } from "./info-card";
@@ -60,6 +63,24 @@ export default function JobDetails({ job }) {
         title="Responsibilities"
         items={job?.responsibilities}
         icon={<Target className="w-6 h-6" />}
+      />
+
+      <InfoListCard
+        title="Who Would Love This Job"
+        items={job?.who_would_love}
+        icon={<Users className="w-6 h-6" />}
+      />
+
+      <InfoCard
+        title="Success In This Role Looks Like"
+        icon={<Trophy className="w-6 h-6" />}
+      >
+        {job?.success_looks ? job.success_looks : "Not specified"}
+      </InfoCard>
+      <InfoListCard
+        title="Pollen Approved Requirements"
+        items={job?.pollen_approved_requirements}
+        icon={<Shield className="w-6 h-6" />}
       />
     </div>
   );

@@ -1,10 +1,11 @@
 "use client";
-import { PageContainer } from "@/components/design-system";
+import { PageContainer, PrimaryButton } from "@/components/design-system";
 import { useApply } from "../_hook/useApply";
 
 import ApplyJobHeader from "../_components/apply-job-header";
 import ProgressSteps from "../_components/progress-steps";
 import JobDetails from "../_components/job-details";
+import WhatHappensNext from "../_components/what-happens-next";
 
 // Mocked data (to be replaced with real data fetching logic)
 
@@ -39,8 +40,10 @@ export default function ApplyJobPage() {
 
       <ProgressSteps currentStep={currentStep} />
       <JobDetails job={job} />
-
-      <div className="flex flex-col bg-white rounded-lg border border-gray-200 p-6"></div>
+      <WhatHappensNext />
+      <div className="flex flex-col items-end">
+        <PrimaryButton text="Start Assessment" className="px-6 py-4" />
+      </div>
     </PageContainer>
   );
 }

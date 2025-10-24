@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-function Card({ className, ...props }) {
+function Card({ className = null, ...props }) {
   return (
     <div
       data-slot="card"
@@ -13,7 +13,7 @@ function Card({ className, ...props }) {
   );
 }
 
-function CardHeader({ className, ...props }) {
+function CardHeader({ className = null, ...props }) {
   return (
     <div
       data-slot="card-header"
@@ -59,7 +59,7 @@ function CardAction({ className, ...props }) {
   );
 }
 
-function CardContent({ className, ...props }) {
+function CardContent({ className = null, ...props }) {
   return (
     <div data-slot="card-content" className={cn("", className)} {...props} />
   );

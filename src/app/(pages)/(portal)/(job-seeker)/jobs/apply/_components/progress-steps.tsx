@@ -1,6 +1,6 @@
 export default function ProgressSteps({ currentStep }) {
   return (
-    <div className="flex items-center gap-4 mb-8">
+    <div className="flex items-center gap-4">
       {[1, 2].map((step) => (
         <div key={step} className="flex items-center gap-2">
           <div

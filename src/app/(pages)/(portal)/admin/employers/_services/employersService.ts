@@ -263,7 +263,6 @@ export const fetchEmployers = async (
           ...transformedData,
           // System Fields for creation
           approval_status: "pending",
-          created_by: userId,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         })

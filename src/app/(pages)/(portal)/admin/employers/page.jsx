@@ -16,14 +16,18 @@ import { useEmployers } from "./_hooks/useEmployers";
 export default function AdminEmployers() {
   const router = useRouter();
 
-  const { statistics, 
-          selectedStatus, 
-          setSelectedStatus, 
-          loading,
-          searchTerm, 
-          setSearchTerm,
-          employers,
-        } = useEmployers();
+  const {
+    statistics,
+    selectedStatus,
+    setSelectedStatus,
+    loading,
+    searchTerm,
+    setSearchTerm,
+    employers,
+    pagination,
+    handlePageChange,
+    handlePageSizeChange,
+  } = useEmployers();
 
   const onCreate = () => {
     startTransition(() => {
@@ -32,36 +36,41 @@ export default function AdminEmployers() {
   };
 
   return (
-      <PageContainer>
-        <PageHeader
-          title="Employers"
-          subtitle="Manage and review employer company profiles"
-        >
-          <PrimaryButton icon={<Plus />} text="Create" onClick={onCreate} />
-        </PageHeader>
+    <PageContainer>
+      <PageHeader
+        title="Employers"
+        subtitle="Manage and review employer company profiles"
+      >
+        <PrimaryButton icon={<Plus />} text="Create" onClick={onCreate} />
+      </PageHeader>
 
-        <StatisticsCards  
-          statistics={statistics}
-          selectedStatus={selectedStatus}
-          setSelectedStatus={setSelectedStatus}
-          loading={loading}
+      <StatisticsCards
+        statistics={statistics}
+        selectedStatus={selectedStatus}
+        setSelectedStatus={setSelectedStatus}
+        loading={loading}
+      />
+      <Filters
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        selectedStatus={selectedStatus}
+        setSelectedStatus={setSelectedStatus}
+      />
+      <div className="flex flex-col gap-4">
+        <ResultsCount
+          pagination={pagination}
+          handlePageChange={handlePageChange}
+          handlePageSizeChange={handlePageSizeChange}
         />
-        <Filters 
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          selectedStatus={selectedStatus}
-          setSelectedStatus={setSelectedStatus}
+
+        <List employers={employers} loading={loading} />
+
+        <ResultsCount
+          pagination={pagination}
+          handlePageChange={handlePageChange}
+          handlePageSizeChange={handlePageSizeChange}
         />
-        <div className="flex flex-col gap-2">
-          <ResultsCount 
-            employers={employers} 
-            loading={loading} 
-            selectedStatus={selectedStatus} 
-            searchTerm={searchTerm} />
-          <List 
-            employers={employers} 
-            loading={loading} />
-        </div>
-      </PageContainer>
+      </div>
+    </PageContainer>
   );
 }

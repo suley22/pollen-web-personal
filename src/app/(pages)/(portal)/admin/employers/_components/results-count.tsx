@@ -1,54 +1,27 @@
 "use client";
 
-import { Skeleton } from "@/components/ui/skeleton";
+import { Pagination } from "@/components/design-system/pagination";
 
-export function ResultsCount({ employers, loading, selectedStatus, searchTerm }) {
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "approved":
-        return "approved";
-      case "pending":
-        return "pending";
-      case "rejected":
-        return "rejected";
-      default:
-        return "";
-    }
-  };
-
-  const getFilterDescription = () => {
-    const parts = [];
-
-    if (searchTerm.trim()) {
-      parts.push(`matching "${searchTerm}"`);
-    }
-
-    if (selectedStatus !== "all") {
-      parts.push(`with status ${getStatusLabel(selectedStatus)}`);
-    }
-
-    return parts.length > 0 ? ` ${parts.join(" and ")}` : "";
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-between">
-        <Skeleton className="h-5 w-48 bg-gray-200" />
-      </div>
-    );
-  }
-
+export function ResultsCount({
+  pagination,
+  handlePageChange,
+  handlePageSizeChange,
+}) {
   return (
-    <div className="flex pl-1 items-center justify-between">
-      <p className="text-sm text-muted-foreground">
-        Showing{" "}
-        <span className="font-semibold text-foreground">
-          {employers.length}
-        </span>{" "}
-        {employers.length === 1 ? "company" : "companies"}
-        {getFilterDescription()}
-      </p>
-    </div>
+    pagination &&
+    pagination.totalPages > 1 && (
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.totalItems}
+        pageSize={pagination.pageSize}
+        hasNextPage={pagination.hasNextPage}
+        hasPreviousPage={pagination.hasPreviousPage}
+        from={pagination.from}
+        to={pagination.to}
+        onPageChange={handlePageChange}
+        onPageSizeChange={handlePageSizeChange}
+      />
+    )
   );
 }

@@ -143,7 +143,7 @@ export function CompanyInformation({
             name="company_size"
             id="company_size"
             placeholder="Select company size"
-            defaultValue={initialData?.company_size}
+            defaultValue={initialData?.company_size?.trim()}
             options={COMPANY_SIZE_OPTIONS}
           />
 {console.log("Rendering Company Size Select with defaultValue:", initialData?.company_size)}

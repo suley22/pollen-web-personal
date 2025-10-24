@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { getRecommendedCompanies, getAllCompanies } from "../_services/companies-service";
+import { getRecommendedCompanies, getAllCompanies, fetchEmployerById } from "../_services/companies-service";
 
-export function useCompanies() {
+export function useCompanies(id = null) {
   const loadingRef = useRef(false);
   const [recommendedCompanies, setRecommendedCompanies] = useState([]);
   const [allCompanies, setAllCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [profile, setProfile] = useState(null);
 
 const loadCompanies = useCallback(async () => {
     // Evitar llamadas duplicadas
@@ -54,5 +55,26 @@ const loadCompanies = useCallback(async () => {
     loadCompanies();
   }, [loadCompanies]);
 
-  return { recommendedCompanies: recommendedCompanies, allCompanies: allCompanies, loading: loading, error: error };
+  useEffect(() => {
+      const loadProfile = async () => {
+        if (id) {
+          setIsLoading(true);
+          try {
+            const result = await fetchEmployerById(id);
+            setProfile(result.error ? [] : result.data);
+          } catch (error) {
+            console.error("Error fetching jobs:", error);
+            setProfile([]);
+          } finally {
+            setIsLoading(false);
+          }
+        } else {
+          setIsLoading(false);
+        }
+      };
+  
+      loadProfile();
+    }, [id]);
+
+  return { recommendedCompanies: recommendedCompanies, allCompanies: allCompanies, profile: profile, loading: loading, error: error };
 }

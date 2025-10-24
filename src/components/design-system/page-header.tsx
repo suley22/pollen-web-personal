@@ -1,12 +1,11 @@
 "use client";
 
-import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function PageHeader({
-  title = "Page Title",
+  title,
   titleSize = "text-2xl",
   subtitle = "",
   showBackButton = false,

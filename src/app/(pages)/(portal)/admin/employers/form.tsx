@@ -1,7 +1,7 @@
 "use client";
 
-import { TextAreaCard } from "@/components/design-system";
-import { Heart, FileText, Building } from "lucide-react";
+import { PrimaryButton, TextAreaCard } from "@/components/design-system";
+import { Heart, FileText, Building, Check, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/design-system/page-header";
 import { PageContainer } from "@/components/design-system/page-container";
@@ -44,7 +44,12 @@ export function ProfileForm({ id = null }) {
         }
         showBackButton={true}
         onBack={handleBack}
-      />
+      >
+        <CreateUpdateButton
+          isEditMode={isEditMode}
+          isLoading={isLoadingProfile}
+        />
+      </PageHeader>
 
       <FormContainer ref={formRef} onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -53,7 +58,6 @@ export function ProfileForm({ id = null }) {
               initialData={employer}
               logoUrl={logoUrl}
               onLogoUrlChange={setLogoUrl}
-              handleFileSelect={handleFileSelect}
             />
 
             <TextAreaCard
@@ -101,15 +105,10 @@ export function ProfileForm({ id = null }) {
         <FormActions>
           <ConfirmationDialog
             trigger={
-              <Button type="button" size="lg" disabled={isLoadingProfile}>
-                {isLoadingProfile
-                  ? isEditMode
-                    ? "Updating..."
-                    : "Creating..."
-                  : isEditMode
-                    ? "Update company profile"
-                    : "Create company profile"}
-              </Button>
+              <CreateUpdateButton
+                isEditMode={isEditMode}
+                isLoading={isLoadingProfile}
+              />
             }
             title={
               isEditMode
@@ -140,3 +139,12 @@ export function ProfileForm({ id = null }) {
     </PageContainer>
   );
 }
+
+const CreateUpdateButton = ({ isEditMode, isLoading }) => (
+  <PrimaryButton
+    icon={<CheckCircle className="h-5 w-5" />}
+    text={isEditMode ? "Update Company Profile" : "Create Company Profile"}
+    loading={isLoading}
+    disabled={isLoading}
+  />
+);

@@ -10,20 +10,20 @@ import { CheckboxGroup as BaseCheckboxGroup } from "./checkbox-group";
  * Similar al patrón de Input y Select del design system
  */
 export function InputCheckboxGroup({
+  name,
   label,
   subtitle = null,
-  error,
-  helperText,
+  error = null,
+  helperText = "",
   required = false,
   items = [],
-  name,
   initialSelectedItems = [],
-  onChange,
+  onChange = null,
   allowCustomItems = false,
   customItemsPlaceholder = "Add custom item and press Enter",
   columns = 3,
-  className,
-  id,
+  className = "",
+  id = null,
 }) {
   const generatedId = React.useId();
   const fieldId = id || generatedId;

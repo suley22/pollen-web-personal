@@ -9,25 +9,38 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select/select";
+} from "@/components/ui/select/select.jsx";
 
 export function Select({
   label,
-  error,
-  helperText,
+  error = null,
+  helperText = "",
   required = false,
   placeholder = "Select an option",
   options = [],
-  defaultValue,
-  onValueChange,
+  defaultValue = null,
+  onValueChange = null,
   disabled = false,
   name,
-  id,
-  className,
+  id = null,
+  className = "",
 }) {
   const generatedId = React.useId();
   const selectId = id || generatedId;
   const [selectedValue, setSelectedValue] = React.useState(defaultValue);
+
+  // Update selected value when defaultValue changes
+  React.useEffect(() => {
+    console.log("Select useEffect - defaultValue changed:", defaultValue);
+    setSelectedValue(defaultValue);
+  }, [defaultValue]);
+
+  console.log(
+    "Select render - defaultValue:",
+    defaultValue,
+    "selectedValue:",
+    selectedValue,
+  );
 
   return (
     <div className="w-full">
@@ -53,6 +66,7 @@ export function Select({
         disabled={disabled}
         name={name}
       >
+        {/* @ts-ignore */}
         <SelectTrigger
           id={selectId}
           className={cn(
@@ -71,6 +85,7 @@ export function Select({
         >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
+        {/* @ts-ignore */}
         <SelectContent>
           {options.map((option) => {
             // Support both string arrays and object arrays
@@ -79,6 +94,9 @@ export function Select({
             const optionLabel =
               typeof option === "string" ? option : option.label;
 
+            {
+              /* @ts-ignore */
+            }
             return (
               <SelectItem key={optionValue} value={optionValue}>
                 {optionLabel}

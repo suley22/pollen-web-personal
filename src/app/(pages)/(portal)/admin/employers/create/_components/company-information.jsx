@@ -14,7 +14,6 @@ export function CompanyInformation({
   initialData = null,
   logoUrl,
   onLogoUrlChange,
-  onIndustryValueChange,
 }) {
   // Estado para manejar la URL de previsualización temporal de la imagen
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -170,7 +169,6 @@ export function CompanyInformation({
           name="industries"
           items={INDUSTRY_OPTIONS}
           initialSelectedItems={initialData?.industries || []}
-          onChange={onIndustryValueChange}
           allowCustomItems={true}
           customItemsPlaceholder="Add your custom industry and press Enter"
           columns={3}

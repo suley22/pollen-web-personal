@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback} from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useActionState } from "react";
 import { useToastNotifications } from "@/hooks/useToastNotifications";
 import { useNavigation } from "@/hooks/useNavigation";
@@ -9,18 +9,20 @@ import { AdminRoutes } from "../../router";
 import { fetchEmployerById } from "../_services/employersService";
 import { uploadFile } from "@/services/storageService";
 import { getLoggedInUserId } from "@/services/userService";
-import { updateEmployer, createEmployer} from "../_services/employersService";
+import { updateEmployer, createEmployer } from "../_services/employersService";
+import { useRouter } from "next/navigation";
 
 /**
  * Custom hook to manage the employer form state and logic (create/edit)
  */
-export function useEmployersPage({ id = null}) {
+export function useEmployersPage({ id = null }) {
   const formRef = useRef(null);
+
   const { navigateTo, navigateWithDelay } = useNavigation();
   const { showSuccess, showError } = useToastNotifications();
-  const lastProcessedState = useRef(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const [employer, setEmployer] = useState(null);
+  const router = useRouter();
 
   // Pending file uploads
   const {
@@ -29,31 +31,48 @@ export function useEmployersPage({ id = null}) {
     isUploading: isUploadingFiles,
   } = usePendingFileUpload();
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+
+    console.log("Form submitted with data:", formData);
+
+    const result = id
+      ? await updateEmployerAction(id, formData)
+      : await createEmployerAction(formData);
+
+    if (result.error) {
+      console.error("Form submission error:", result.error);
+    } else {
+      console.log("Employer profile saved successfully");
+      router.push(AdminRoutes.employers);
+    }
+  };
+
   const loadEmployerProfile = useCallback(async () => {
-      if (id) {
-        setIsLoadingProfile(true);
-        try {
-          const result = await fetchEmployerById(id);
-          console.log("Fetched employer profileAAAAAA:", result);
-          setEmployer(result.error ? null : result.data);
-        } catch (error) {
-          console.error("Error fetching employer profile:", error);
-          setEmployer(null);
-        } finally {
-          setIsLoadingProfile(false);
-        }
-      } else {
-        console.log("No ID provided, clearing employer state");
-        setIsLoadingProfile(false);
+    if (id) {
+      setIsLoadingProfile(true);
+      try {
+        const result = await fetchEmployerById(id);
+        console.log("Fetched employer profileAAAAAA:", result);
+        setEmployer(result.error ? null : result.data);
+      } catch (error) {
+        console.error("Error fetching employer profile:", error);
         setEmployer(null);
+      } finally {
+        setIsLoadingProfile(false);
       }
-    }, [id]);
+    } else {
+      console.log("No ID provided, clearing employer state");
+      setIsLoadingProfile(false);
+      setEmployer(null);
+    }
+  }, [id]);
 
   useEffect(() => {
     loadEmployerProfile();
   }, [loadEmployerProfile]);
-
-    
 
   // Form field states - Initialize with employer data if in edit mode
   const [checked, setChecked] = useState(false);
@@ -77,12 +96,8 @@ export function useEmployersPage({ id = null}) {
     addPendingFile(fieldName, file, fileName);
   };
 
-  const updateEmployerAction = async (
-    id: string,
-    formData: FormData,
-  ) => {
+  const updateEmployerAction = async (id: string, formData: FormData) => {
     try {
-      
       const imageFieldName = "logo_url";
       const logoUrl = await getImageUrl(formData, imageFieldName);
       formData.set(imageFieldName, logoUrl);
@@ -93,10 +108,10 @@ export function useEmployersPage({ id = null}) {
         console.error("No authenticated user found");
         return { error: "User not authenticated" };
       }
-  
+
       // Use EmployerService to update the employer
       const result = await updateEmployer(id, formData, userId);
-  
+
       return result;
     } catch (error) {
       console.error("Action: Unexpected error updating company:", error);
@@ -105,23 +120,22 @@ export function useEmployersPage({ id = null}) {
         error: "Failed to update company profile",
       };
     }
-  }
+  };
 
   const createEmployerAction = async (formData: FormData) => {
     try {
-  
       const imageFieldName = "logo_url";
       const logoUrl = await getImageUrl(formData, imageFieldName);
       formData.set(imageFieldName, logoUrl);
-  
+
       // Get current user
       const userId = await getLoggedInUserId();
-  
+
       if (!userId) {
         console.error("No authenticated user found");
         return { error: "User not authenticated" };
       }
-  
+
       // Use EmployerService to create the employer
       const result = await createEmployer(formData, userId);
 
@@ -133,18 +147,17 @@ export function useEmployersPage({ id = null}) {
         error: "Failed to create company profile",
       };
     }
-  }
+  };
 
   const getImageUrl = async (formData: FormData, imageFieldName: string) => {
     const file = formData.get(imageFieldName);
     const bucketName = "images";
     const folder = "employer_logo";
-    
+
     if (file && file instanceof File && file.size > 0) {
-      
       // Validate file type
-      if (!file.type.startsWith('image/')) {
-        return ""
+      if (!file.type.startsWith("image/")) {
+        return "";
       }
 
       const publicUrl = await uploadFile(file, bucketName, folder);
@@ -155,7 +168,7 @@ export function useEmployersPage({ id = null}) {
       console.log("No valid file found");
       return "";
     }
-}
+  };
 
   return {
     // Refs
@@ -180,7 +193,6 @@ export function useEmployersPage({ id = null}) {
     handleFileSelect,
     // File upload state
     hasPendingFiles,
-    updateEmployerAction,
-    createEmployerAction,
+    handleSubmit,
   };
 }

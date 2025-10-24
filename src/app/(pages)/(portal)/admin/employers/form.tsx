@@ -14,48 +14,22 @@ import { ContactInformation } from "./create/_components/contact-information";
 import { SocialMedia } from "./create/_components/social-media";
 import { InternalPollenData } from "./create/_components/internal-pollen-data";
 import { useEmployersPage } from "./_hooks/useEmployersPage";
-import { useRouter } from "next/navigation";
-import { AdminRoutes } from "@/admin/router";
 
-export function ProfileForm({ id = null}) {
-  // Detect edit mode automatically based on employer presence
+export function ProfileForm({ id = null }) {
   const isEditMode = !!id;
-  const router = useRouter();
 
   const {
     employer,
     formRef,
     isLoadingProfile,
-    setIndustryValue,
     logoUrl,
     setLogoUrl,
     isDialogOpen,
     setIsDialogOpen,
     handleBack,
     handleFileSelect,
-    updateEmployerAction,
-    createEmployerAction,
+    handleSubmit,
   } = useEmployersPage({ id });
-
-  const handleSubmit = async (e) => {
-
-    e.preventDefault();
-    
-    const formData = new FormData(e.target);
-
-    console.log("Form submitted with data:", formData);
-
-    const result = isEditMode
-      ? await updateEmployerAction(id, formData)
-      : await createEmployerAction(formData);
-
-    if (result.error) {
-      console.error("Form submission error:", result.error);
-    } else {
-      console.log("Employer profile saved successfully");
-      router.push(AdminRoutes.employers);
-    }
-  };
 
   return (
     <PageContainer>
@@ -77,10 +51,9 @@ export function ProfileForm({ id = null}) {
           <div className="lg:col-span-2 space-y-6">
             <CompanyInformation
               initialData={employer}
-              onIndustryValueChange={setIndustryValue}
               logoUrl={logoUrl}
               onLogoUrlChange={setLogoUrl}
-              onFileSelect={handleFileSelect}
+              handleFileSelect={handleFileSelect}
             />
 
             <TextAreaCard

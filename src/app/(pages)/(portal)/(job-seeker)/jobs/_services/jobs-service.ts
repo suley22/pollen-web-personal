@@ -53,7 +53,7 @@ export async function getJobs(filters) {
   }
 }
 
-export async function getJobById(jobId: string) {
+export async function getJobById(jobId) {
   try {
     const { data, error } = await supabase
       .from("job")

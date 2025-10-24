@@ -30,13 +30,19 @@ export function CompanyInformation({ company }) {
             <InfoField
               label="Industry"
               value={
-                company.industries.length > 0
-                  ? company.industries.map((industry) => (
-                      <Badge key={industry} variant="outline">
-                        {industry}
-                      </Badge>
-                    ))
-                  : "Not specified"
+                <div className="flex flex-wrap gap-2">
+                  {company.industries.length > 0
+                    ? company.industries.map((industry) => (
+                        <Badge
+                          key={industry}
+                          variant="outline"
+                          className="flex flex-wrap"
+                        >
+                          {industry}
+                        </Badge>
+                      ))
+                    : "Not specified"}
+                </div>
               }
             />
 

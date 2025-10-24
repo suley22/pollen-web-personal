@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Input, Select} from "@/components/design-system";
+import { Input, Select } from "@/components/design-system";
 import { Building2, UploadIcon } from "lucide-react";
 import { CompanyAvatar } from "@/components/ui/company-avatar";
 import { FormCard } from "@/components/design-system/form-card";
@@ -78,16 +78,17 @@ export function CompanyInformation({
               />
 
               <FileSelector
-                name="file_selector_logo" 
+                name="file_selector_logo"
                 onFileSelect={(file, fileName) => {
-                  
                   // Validar tamaño de archivo (máximo 5MB)
                   const maxSize = 5 * 1024 * 1024; // 5MB
                   if (file.size > maxSize) {
-                    alert(`El archivo es demasiado grande. Máximo permitido: 5MB. Tamaño actual: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
+                    alert(
+                      `El archivo es demasiado grande. Máximo permitido: 5MB. Tamaño actual: ${(file.size / 1024 / 1024).toFixed(2)}MB`,
+                    );
                     return;
                   }
-                  
+
                   // Limpiar URL anterior si existe
                   if (previewUrl && previewUrl.startsWith("blob:")) {
                     URL.revokeObjectURL(previewUrl);
@@ -102,14 +103,13 @@ export function CompanyInformation({
                     const dataTransfer = new DataTransfer();
                     dataTransfer.items.add(file);
                     hiddenFileInputRef.current.files = dataTransfer.files;
-                    
                   } else {
                     console.error("Hidden file input ref is not available!");
                   }
 
                   // Set only the filename in the input field for display
                   onLogoUrlChange?.(fileName);
-                  
+
                   // NO usar pending files - el archivo se envía directamente via input hidden
                   // onFileSelect?.("logo_url", file, fileName);
                 }}
@@ -132,7 +132,7 @@ export function CompanyInformation({
             defaultValue={initialData?.company_size?.trim()}
             options={COMPANY_SIZE_OPTIONS}
           />
-{console.log("Rendering Company Size Select with defaultValue:", initialData?.company_size)}
+
           {/* Founded Year */}
           <Input
             label="Founded Year"
@@ -175,14 +175,14 @@ export function CompanyInformation({
           customItemsPlaceholder="Add your custom industry and press Enter"
           columns={3}
         />
-        
+
         {/* Hidden file input to send the actual file in FormData */}
         <input
           ref={hiddenFileInputRef}
           type="file"
           name="logo_url"
           accept="image/*"
-          style={{ display: 'none' }}
+          style={{ display: "none" }}
           onChange={() => {}} // Controlled by FileSelector
         />
       </div>

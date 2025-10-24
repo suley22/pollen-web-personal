@@ -18,7 +18,6 @@ export function Select({
   required = false,
   placeholder = "Select an option",
   options = [],
-  value,
   defaultValue,
   onValueChange,
   disabled = false,
@@ -28,6 +27,7 @@ export function Select({
 }) {
   const generatedId = React.useId();
   const selectId = id || generatedId;
+  const [selectedValue, setSelectedValue] = React.useState(defaultValue);
 
   return (
     <div className="w-full">
@@ -45,9 +45,11 @@ export function Select({
       )}
 
       <SelectRoot
-        value={value}
-        defaultValue={defaultValue}
-        onValueChange={onValueChange}
+        value={selectedValue}
+        onValueChange={(value) => {
+          setSelectedValue(value);
+          onValueChange?.(value);
+        }}
         disabled={disabled}
         name={name}
       >

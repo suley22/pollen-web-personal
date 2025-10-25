@@ -22,29 +22,28 @@ import {
 } from "@/components/design-system/badge";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
 import { AdminRoutes } from "@/admin/router";
 import { ListSkeleton } from "./list-skeleton";
 import { CompanyAvatar } from "@/components/ui/company-avatar";
 import { EmptyState } from "@/components/design-system/empty-state";
 import { useCallback } from "react";
 
-export function List({employers, loading}) {
+export function List({ employers, loading }) {
   const router = useRouter();
-  const [, startTransition] = useTransition();
 
   const handleDeleteClick = (company, e) => {
     e.preventDefault();
     e.stopPropagation();
-    // TODO: Implement updateCompanyMutation
+
     console.log("Would update company");
   };
 
-  function onEmployerClick(company) {
-    startTransition(() => {
+  const onEmployerClick = useCallback(
+    (company) => {
       router.push(AdminRoutes.employersView(company.id));
-    });
-  }
+    },
+    [router],
+  );
   const getStatusBadge = useCallback((status) => {
     switch (status) {
       case "pending":
@@ -71,7 +70,6 @@ export function List({employers, loading}) {
       />
     );
   }
-  
 
   return (
     <div className="space-y-3">
@@ -243,6 +241,12 @@ export function List({employers, loading}) {
                                 AdminRoutes.employersEdit(company.id),
                               );
                             }}
+                            onMouseEnter={() => {
+                              // Prefetch the edit page on hover for instant navigation
+                              router.prefetch(
+                                AdminRoutes.employersEdit(company.id),
+                              );
+                            }}
                           >
                             <Edit className="h-4 w-4 mr-1" />
                             <span className="text-xs">Edit</span>
@@ -268,7 +272,4 @@ export function List({employers, loading}) {
       })}
     </div>
   );
-  
 }
-
-

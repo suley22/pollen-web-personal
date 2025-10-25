@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useToastNotifications } from "@/hooks/useToastNotifications";
 import { useNavigation } from "@/hooks/useNavigation";
 import { AdminRoutes } from "../../../router";
@@ -20,46 +20,62 @@ export function useEmployersPage({ id = null }) {
   const router = useRouter();
   const formRef = useRef(null);
 
-  const { navigateTo, navigateWithDelay } = useNavigation();
+  const { navigateTo } = useNavigation();
   const { showSuccess, showError } = useToastNotifications();
-  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(!!id); // Start loading if ID exists
   const [employer, setEmployer] = useState(null);
 
-  // Form field states - Initialize with employer data if in edit mode
+  // Form field states - Initialize empty, update when employer loads
   const [checked, setChecked] = useState(false);
-  const [customIndustries, setCustomIndustries] = useState(() => {
-    if (employer?.industries) {
-      return employer.industries;
-    }
-    return [];
-  });
+  const [customIndustries, setCustomIndustries] = useState([]);
   const [industryValue, setIndustryValue] = useState("");
-  const [logoUrl, setLogoUrl] = useState(() => employer?.logo_url || "");
+  const [logoUrl, setLogoUrl] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const loadEmployerProfile = useCallback(async () => {
-    if (id) {
+  // Load employer profile on mount if ID exists
+  useEffect(() => {
+    if (!id) {
+      setIsLoadingProfile(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadEmployerProfile = async () => {
       setIsLoadingProfile(true);
 
       try {
         const result = await fetchEmployerById(id);
-        setEmployer(result.error ? null : result.data);
-      } catch (error) {
-        console.error("Error fetching employer profile:", error);
-        setEmployer(null);
-      } finally {
-        setIsLoadingProfile(false);
-      }
-    } else {
-      console.log("No ID provided, clearing employer state");
-      setIsLoadingProfile(false);
-      setEmployer(null);
-    }
-  }, [id]);
 
-  useEffect(() => {
+        if (cancelled) return;
+
+        if (result.error) {
+          setEmployer(null);
+        } else {
+          setEmployer(result.data);
+          // Update dependent states after data loads
+          setLogoUrl(result.data?.logo_url || "");
+          setCustomIndustries(result.data?.industries || []);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.error("Error fetching employer profile:", error);
+          setEmployer(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setIsLoadingProfile(false);
+        }
+      }
+    };
+
     loadEmployerProfile();
-  }, [loadEmployerProfile]);
+
+    // Cleanup function to prevent state updates on unmounted component
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
   // Handle navigation
   const handleBack = () => {

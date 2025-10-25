@@ -12,6 +12,7 @@ import { AccoladesAccreditations } from "../_components/accolades-accreditations
 import { ContactInformation } from "../_components/contact-information";
 import { SocialMedia } from "../_components/social-media";
 import { InternalPollenData } from "../_components/internal-pollen-data";
+import { EmployersCreateSkeleton } from "../_components/employers-create-skeleton";
 import { useEmployersPage } from "../_hooks/employer-create-hook";
 
 const CreateUpdateButton = ({ isEditMode, isLoading, onClick }) => (
@@ -61,55 +62,60 @@ export function ProfileForm({ id = null }) {
       </PageHeader>
 
       <FormContainer ref={formRef}>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2 space-y-6">
-            <CompanyInformation
-              initialData={employer}
-              logoUrl={logoUrl}
-              onLogoUrlChange={setLogoUrl}
-            />
+        {/* Show skeleton while loading in edit mode */}
+        {isEditMode && isLoadingProfile ? (
+          <EmployersCreateSkeleton />
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-2 space-y-6">
+              <CompanyInformation
+                initialData={employer}
+                logoUrl={logoUrl}
+                onLogoUrlChange={setLogoUrl}
+              />
 
-            <TextAreaCard
-              title="About the employer"
-              icon={<FileText className="h-5 w-5" />}
-              name="company_about"
-              placeholder="Describe the company, its mission, values, and what makes it unique..."
-              defaultValue={employer?.company_about || ""}
-            />
+              <TextAreaCard
+                title="About the employer"
+                icon={<FileText className="h-5 w-5" />}
+                name="company_about"
+                placeholder="Describe the company, its mission, values, and what makes it unique..."
+                defaultValue={employer?.company_about || ""}
+              />
 
-            <TextAreaCard
-              title="Work Environment"
-              icon={<Building className="h-5 w-5" />}
-              name="work_environment"
-              placeholder="Describe the work environment, office culture, team dynamics, and atmosphere..."
-              defaultValue={employer?.work_environment || ""}
-            />
+              <TextAreaCard
+                title="Work Environment"
+                icon={<Building className="h-5 w-5" />}
+                name="work_environment"
+                placeholder="Describe the work environment, office culture, team dynamics, and atmosphere..."
+                defaultValue={employer?.work_environment || ""}
+              />
 
-            <TextAreaCard
-              title="Pollen Loves"
-              icon={<Heart className="h-5 w-5" />}
-              name="company_loves"
-              placeholder="What does Pollen love about this company? Highlight unique benefits, values, or opportunities..."
-              defaultValue={employer?.company_loves || ""}
-            />
+              <TextAreaCard
+                title="Pollen Loves"
+                icon={<Heart className="h-5 w-5" />}
+                name="company_loves"
+                placeholder="What does Pollen love about this company? Highlight unique benefits, values, or opportunities..."
+                defaultValue={employer?.company_loves || ""}
+              />
 
-            <TextAreaCard
-              title="Entry-Level Support"
-              icon={<Building className="h-5 w-5" />}
-              name="entry_level_support"
-              placeholder="Describe the support and resources provided for entry-level employees, such as training programs, mentorship, onboarding..."
-              defaultValue={employer?.company_entry_level || ""}
-            />
+              <TextAreaCard
+                title="Entry-Level Support"
+                icon={<Building className="h-5 w-5" />}
+                name="entry_level_support"
+                placeholder="Describe the support and resources provided for entry-level employees, such as training programs, mentorship, onboarding..."
+                defaultValue={employer?.company_entry_level || ""}
+              />
 
-            <InternalPollenData employer={employer} />
+              <InternalPollenData employer={employer} />
+            </div>
+
+            <div className="space-y-6">
+              <ContactInformation employer={employer} />
+              <SocialMedia employer={employer} />
+              <AccoladesAccreditations employer={employer} />
+            </div>
           </div>
-
-          <div className="space-y-6">
-            <ContactInformation employer={employer} />
-            <SocialMedia employer={employer} />
-            <AccoladesAccreditations employer={employer} />
-          </div>
-        </div>
+        )}
 
         <FormActions>
           <ConfirmationDialog

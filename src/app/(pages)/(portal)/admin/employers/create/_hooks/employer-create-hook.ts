@@ -1,16 +1,13 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useToastNotifications } from "@/hooks/useToastNotifications";
-import { useNavigation } from "@/hooks/useNavigation";
-import { AdminRoutes } from "../../../router";
-import { fetchEmployerById } from "../../_services/employers-service";
+import {
+  useEmployer,
+  useCreateEmployer,
+  useUpdateEmployer,
+} from "../../_hooks/use-employers-query";
 import { uploadFile } from "@/services/storageService";
 import { getLoggedInUserId } from "@/services/userService";
-import {
-  updateEmployer,
-  createEmployer,
-} from "../../_services/employers-service";
 import { useRouter } from "next/navigation";
 
 /**
@@ -20,66 +17,24 @@ export function useEmployersPage({ id = null }) {
   const router = useRouter();
   const formRef = useRef(null);
 
-  const { navigateTo } = useNavigation();
-  const { showSuccess, showError } = useToastNotifications();
-  const [isLoadingProfile, setIsLoadingProfile] = useState(!!id); // Start loading if ID exists
-  const [employer, setEmployer] = useState(null);
+  // Use React Query hooks
+  const { data: employer, isLoading: isLoadingProfile } = useEmployer(id || "");
+  const createMutation = useCreateEmployer();
+  const updateMutation = useUpdateEmployer();
 
-  // Form field states - Initialize empty, update when employer loads
-  const [checked, setChecked] = useState(false);
-  const [customIndustries, setCustomIndustries] = useState([]);
-  const [industryValue, setIndustryValue] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  // Load employer profile on mount if ID exists
+  // Update logoUrl when employer data loads
   useEffect(() => {
-    if (!id) {
-      setIsLoadingProfile(false);
-      return;
+    if (employer?.logo_url) {
+      setLogoUrl(employer.logo_url);
     }
-
-    let cancelled = false;
-
-    const loadEmployerProfile = async () => {
-      setIsLoadingProfile(true);
-
-      try {
-        const result = await fetchEmployerById(id);
-
-        if (cancelled) return;
-
-        if (result.error) {
-          setEmployer(null);
-        } else {
-          setEmployer(result.data);
-          // Update dependent states after data loads
-          setLogoUrl(result.data?.logo_url || "");
-          setCustomIndustries(result.data?.industries || []);
-        }
-      } catch (error) {
-        if (!cancelled) {
-          console.error("Error fetching employer profile:", error);
-          setEmployer(null);
-        }
-      } finally {
-        if (!cancelled) {
-          setIsLoadingProfile(false);
-        }
-      }
-    };
-
-    loadEmployerProfile();
-
-    // Cleanup function to prevent state updates on unmounted component
-    return () => {
-      cancelled = true;
-    };
-  }, [id]);
+  }, [employer]);
 
   // Handle navigation
   const handleBack = () => {
-    navigateTo(AdminRoutes.employers);
+    router.back();
   };
 
   const saveEmployer = async () => {
@@ -95,11 +50,13 @@ export function useEmployersPage({ id = null }) {
         return { error: "User not authenticated" };
       }
 
+      // Use mutations instead of direct service calls
       const result = id
-        ? await updateEmployer(id, formData, userId)
-        : await createEmployer(formData, userId);
+        ? await updateMutation.mutateAsync({ id, formData, userId })
+        : await createMutation.mutateAsync({ formData, userId });
 
-      router.push(AdminRoutes.employers);
+      // Go back after successful save
+      router.back();
 
       return result;
     } catch (error) {
@@ -141,24 +98,14 @@ export function useEmployersPage({ id = null }) {
   };
 
   return {
-    // Refs
     formRef,
-    // Data
     employer,
-    // Form state
-    isLoadingProfile,
-    // Field states
-    checked,
-    setChecked,
-    customIndustries,
-    setCustomIndustries,
-    industryValue,
-    setIndustryValue,
+    isLoadingProfile:
+      isLoadingProfile || createMutation.isPending || updateMutation.isPending,
     logoUrl,
     setLogoUrl,
     isDialogOpen,
     setIsDialogOpen,
-    // Handlers
     handleBack,
     handleSubmit: saveEmployer,
   };

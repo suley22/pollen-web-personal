@@ -137,23 +137,6 @@ export const fetchEmployers = async (
       return { success: false, error: error.message };
     }
 
-    // Transform data and fetch job counts
-    const employersWithJobCounts = await Promise.all(
-      data.map(async (employer) => {
-        const transformedEmployer = transformEmployerDataWithDefaults(employer);
-        const jobCounts = await fetchJobCounts(employer.id);
-
-        return {
-          ...transformedEmployer,
-          ...jobCounts,
-        };
-      }),
-    );
-
-    console.log(
-      `EmployerService: Successfully fetched ${employersWithJobCounts.length} employers (page ${page} of ${Math.ceil((count || 0) / pageSize)})`,
-    );
-
     // Calculate pagination metadata
     const totalPages = Math.ceil((count || 0) / pageSize);
     const hasNextPage = page < totalPages;
@@ -161,7 +144,7 @@ export const fetchEmployers = async (
 
     return {
       success: true,
-      data: employersWithJobCounts,
+      data: data,
       pagination: {
         currentPage: page,
         pageSize,
@@ -170,7 +153,7 @@ export const fetchEmployers = async (
         hasNextPage,
         hasPreviousPage,
         from: from + 1,
-        to: Math.min(from + employersWithJobCounts.length, count || 0),
+        to: Math.min(from + data.length, count || 0),
       },
     };
   } catch (error) {
@@ -200,38 +183,6 @@ const transformEmployerDataWithDefaults = (employer) => {
   };
 };
 
-const fetchJobCounts = async (employerId) => {
-  try {
-    // Count live jobs
-    const { count: liveCount } = await supabase
-      .from("job")
-      .select("*", { count: "exact", head: true })
-      .eq("company_id", employerId)
-      .eq("status", "live");
-
-    // Count draft jobs
-    const { count: draftCount } = await supabase
-      .from("job")
-      .select("*", { count: "exact", head: true })
-      .eq("company_id", employerId)
-      .eq("status", "pending");
-
-    return {
-      live_jobs_count: liveCount || 0,
-      draft_jobs_count: draftCount || 0,
-    };
-  } catch (error) {
-    console.error(
-      `Error fetching job counts for employer ${employerId}:`,
-      error,
-    );
-    return {
-      live_jobs_count: 0,
-      draft_jobs_count: 0,
-    };
-  }
-};
-
 /**
  * Fetches a single employer by ID with raw values (for editing)
  */
@@ -251,14 +202,10 @@ export const fetchEmployerById = async (id) => {
     }
 
     const transformedEmployer = transformEmployerDataRaw(data);
-    const jobCounts = await fetchJobCounts(id);
 
     return {
       success: true,
-      data: {
-        ...transformedEmployer,
-        ...jobCounts,
-      },
+      data: transformedEmployer,
     };
   } catch (error) {
     console.error(

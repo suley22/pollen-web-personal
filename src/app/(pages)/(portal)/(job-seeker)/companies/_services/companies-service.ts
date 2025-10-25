@@ -1,5 +1,8 @@
 import { createClient } from "@/lib/utils/supabase/client";
-import { EmployerProfileHelper, EmployerProfile } from "@/types/employer-profile";
+import {
+  EmployerProfileHelper,
+  EmployerProfile,
+} from "@/types/employer-profile";
 
 const supabase = await createClient();
 
@@ -52,87 +55,52 @@ export async function getAllCompanies() {
 }
 
 const transformEmployerDataRaw = (employer: any): EmployerProfile => {
-    return {
-      ...employer,
-      // Keep original values as-is for editing
-      live_jobs_count: employer.live_jobs_count || 0,
-      draft_jobs_count: employer.draft_jobs_count || 0,
-      profile_completeness:
-        EmployerProfileHelper.calculateProfileCompleteness(employer),
-    };
-  }
+  return {
+    ...employer,
+    // Keep original values as-is for editing
+    live_jobs_count: employer.live_jobs_count || 0,
+    draft_jobs_count: employer.draft_jobs_count || 0,
+    profile_completeness:
+      EmployerProfileHelper.calculateProfileCompleteness(employer),
+  };
+};
 
 export const fetchEmployerById = async (id) => {
-    try {
-      console.log("EmployerService: Fetching employer by ID (raw):", id);
+  try {
+    console.log("EmployerService: Fetching employer by ID (raw):", id);
 
-      const { data, error } = await supabase
-        .from("employer_profile")
-        .select("*")
-        .eq("id", id)
-        .single();
+    const { data, error } = await supabase
+      .from("employer_profile")
+      .select("*")
+      .eq("id", id)
+      .single();
 
-      if (error) {
-        console.error("EmployerService: Error fetching employer by ID:", error);
-        return { success: false, error: error.message };
-      }
-
-      const transformedEmployer = transformEmployerDataRaw(data);
-      const jobCounts = await fetchJobCounts(id);
-
-      return {
-        success: true,
-        data: {
-          ...transformedEmployer,
-          ...jobCounts,
-        },
-      };
-    } catch (error) {
-      console.error(
-        "EmployerService: Unexpected error fetching employer:",
-        error,
-      );
-      return { success: false, error: "Failed to fetch employer" };
+    if (error) {
+      console.error("EmployerService: Error fetching employer by ID:", error);
+      return { success: false, error: error.message };
     }
+
+    const transformedEmployer = transformEmployerDataRaw(data);
+
+    return {
+      success: true,
+      data: transformedEmployer,
+    };
+  } catch (error) {
+    console.error(
+      "EmployerService: Unexpected error fetching employer:",
+      error,
+    );
+    return { success: false, error: "Failed to fetch employer" };
   }
-
-  const fetchJobCounts = async (employerId) => {
-    try {
-      // Count live jobs
-      const { count: liveCount } = await supabase
-        .from("job")
-        .select("*", { count: "exact", head: true })
-        .eq("company_id", employerId)
-        .eq("status", "live");
-
-      // Count draft jobs
-      const { count: draftCount } = await supabase
-        .from("job")
-        .select("*", { count: "exact", head: true })
-        .eq("company_id", employerId)
-        .eq("status", "pending");
-
-      return {
-        live_jobs_count: liveCount || 0,
-        draft_jobs_count: draftCount || 0,
-      };
-    } catch (error) {
-      console.error(
-        `Error fetching job counts for employer ${employerId}:`,
-        error,
-      );
-      return {
-        live_jobs_count: 0,
-        draft_jobs_count: 0,
-      };
-    }
-  }
+};
 
 // Map admin job shape -> JobCard shape
 const mapAdminCompanyToCardCompany = (company) => ({
   id: String(company.id),
   name: company.company_name,
-  industry: company.industries.length > 0 ? company.industries[0] : "Not specified",
+  industry:
+    company.industries.length > 0 ? company.industries[0] : "Not specified",
   rating: company.rating || 0,
   description: company.company_about || "No description available.",
   //TODO: Replace open_roles_count with actual count from jobs table

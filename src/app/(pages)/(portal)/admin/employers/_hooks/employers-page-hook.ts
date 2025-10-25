@@ -1,19 +1,18 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   fetchEmployers,
   fetchEmployerById,
   fetchEmployerStatistics,
   EmployerPaginationInfo,
-} from "../_services/employers-service";
+} from "@/employers/_services/employers-service";
 
 export function useEmployersPage() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [employers, setEmployers] = useState([]);
-  const [allEmployers, setAllEmployers] = useState([]);
 
   const [statistics, setStatistics] = useState({
     total: 0,
@@ -29,15 +28,12 @@ export function useEmployersPage() {
   const [pagination, setPagination] = useState<EmployerPaginationInfo | null>(
     null,
   );
-  const loadingRef = useRef(false);
 
-  // Debounce search term y resetear filtros cuando se busca
+  // Debounce search term
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-      // Si hay término de búsqueda, resetear el filtro de status y pagination
       if (searchTerm.trim()) {
-        setSelectedStatus("all");
         setCurrentPage(1);
       }
     }, 500);
@@ -45,84 +41,69 @@ export function useEmployersPage() {
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
 
-  const loadEmployers = useCallback(
-    async (resetPage = false) => {
-      // Evitar llamadas duplicadas
-      if (loadingRef.current) {
-        return;
-      }
+  // Load employers when filters change
+  useEffect(() => {
+    let cancelled = false;
 
-      loadingRef.current = true;
+    const loadData = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        // Si hay búsqueda activa, ignorar el filtro de status y buscar en todos
         const statusToUse = debouncedSearchTerm.trim() ? "all" : selectedStatus;
-        const pageToUse = resetPage ? 1 : currentPage;
-
-        if (resetPage) {
-          setCurrentPage(1);
-        }
 
         const result = await fetchEmployers({
           status: statusToUse,
           searchTerm: debouncedSearchTerm.trim(),
-          page: pageToUse,
+          page: currentPage,
           pageSize: pageSize,
         });
 
-        const employersResult = result.data || [];
+        if (cancelled) return;
 
         if (result.success) {
-          setEmployers(employersResult);
+          setEmployers(result.data || []);
           setPagination(result.pagination || null);
-
-          // Para estadísticas, hacemos una consulta separada cuando no hay filtros
-          if (
-            selectedStatus === "all" &&
-            !debouncedSearchTerm.trim() &&
-            pageToUse === 1
-          ) {
-            const statsResult = await fetchEmployerStatistics();
-            if (statsResult.success && statsResult.data) {
-              setStatistics(statsResult.data);
-            }
-          }
           setError(null);
         } else {
-          console.error("❌ Error from server:", result.error);
           setError(result.error);
         }
-      } catch (err) {
-        console.error("💥 Exception caught:", err);
-        setError("Failed to load employers: " + err.message);
+      } catch (err: any) {
+        if (!cancelled) {
+          setError("Failed to load employers: " + err.message);
+        }
       } finally {
-        setLoading(false);
-        loadingRef.current = false;
+        if (!cancelled) {
+          setLoading(false);
+        }
       }
-    },
-    [selectedStatus, debouncedSearchTerm, currentPage, pageSize],
-  );
+    };
 
-  // Load employers when loadApplications function changes
+    loadData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedStatus, debouncedSearchTerm, currentPage, pageSize]);
+
+  // Load statistics on mount
   useEffect(() => {
-    loadEmployers();
-  }, [loadEmployers]);
+    let cancelled = false;
 
-  const addButtonOnClick = useCallback(() => {
-    console.log("Funciona");
-  }, []);
+    const loadStats = async () => {
+      const statsResult = await fetchEmployerStatistics();
 
-  // Función personalizada para cambiar el status y limpiar el buscador
-  const handleStatusChange = useCallback((status) => {
-    setSelectedStatus(status);
-    setSearchTerm("");
-    setDebouncedSearchTerm("");
-    setCurrentPage(1); // Reset to first page when changing status
-  }, []);
+      if (!cancelled && statsResult.success && statsResult.data) {
+        setStatistics(statsResult.data);
+      }
+    };
 
-  // Pagination functions
+    loadStats();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []); // Pagination functions
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
   }, []);
@@ -148,47 +129,22 @@ export function useEmployersPage() {
     return await fetchEmployerById(id);
   }, []);
 
-  return useMemo(
-    () => ({
-      selectedStatus: selectedStatus,
-      searchTerm: searchTerm,
-      employers: employers,
-      allEmployers: allEmployers,
-      statistics: statistics,
-      loading: loading,
-      error: error,
-      pagination: pagination,
-      currentPage: currentPage,
-      pageSize: pageSize,
-      setSelectedStatus: handleStatusChange,
-      setSearchTerm: setSearchTerm,
-      loadApplications: loadEmployers,
-      addButtonOnClick: addButtonOnClick,
-      getEmployerById: getEmployerById,
-      handlePageChange: handlePageChange,
-      handlePageSizeChange: handlePageSizeChange,
-      goToNextPage: goToNextPage,
-      goToPreviousPage: goToPreviousPage,
-    }),
-    [
-      selectedStatus,
-      searchTerm,
-      employers,
-      allEmployers,
-      statistics,
-      loading,
-      error,
-      pagination,
-      currentPage,
-      pageSize,
-      handleStatusChange,
-      loadEmployers,
-      addButtonOnClick,
-      getEmployerById,
-      handlePageChange,
-      handlePageSizeChange,
-      goToNextPage,
-      goToPreviousPage,
-    ],
-  );
+  return {
+    selectedStatus,
+    searchTerm,
+    employers,
+    statistics,
+    loading,
+    error,
+    pagination,
+    currentPage,
+    pageSize,
+    setSelectedStatus,
+    setSearchTerm,
+    getEmployerById,
+    handlePageChange,
+    handlePageSizeChange,
+    goToNextPage,
+    goToPreviousPage,
+  };
 }

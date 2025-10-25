@@ -6,12 +6,12 @@ import { ResultsCount } from "@/admin/employers/_components/results-count";
 import { List } from "@/admin/employers/_components/list";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { startTransition } from "react";
 import { AdminRoutes } from "@/admin/router";
 import { PageHeader } from "@/components/design-system/page-header";
 import { PrimaryButton } from "@/components/design-system/primary-button";
 import { PageContainer } from "@/components/design-system";
-import { useEmployersPage } from "./_hooks/employers-page-hook";
+import { useEmployersPageWithQuery } from "./_hooks/employers-page-hook-query";
+import { useCallback } from "react";
 
 export default function AdminEmployers() {
   const router = useRouter();
@@ -27,13 +27,11 @@ export default function AdminEmployers() {
     pagination,
     handlePageChange,
     handlePageSizeChange,
-  } = useEmployersPage();
+  } = useEmployersPageWithQuery();
 
-  const onCreate = () => {
-    startTransition(() => {
-      router.push(AdminRoutes.employersCreate);
-    });
-  };
+  const onCreate = useCallback(() => {
+    router.push(AdminRoutes.employersCreate);
+  }, [router]);
 
   return (
     <PageContainer>

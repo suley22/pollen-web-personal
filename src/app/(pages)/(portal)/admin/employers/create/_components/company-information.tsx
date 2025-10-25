@@ -47,7 +47,6 @@ export function CompanyInformation({
           </div>
 
           <div className="w-full flex flex-col gap-3">
-            {/* Company Name */}
             <Input
               label="Company Name"
               type="text"
@@ -60,21 +59,14 @@ export function CompanyInformation({
             {/* Company Logo URL - Right Side */}
             <div className="flex flex-row gap-4 items-end">
               <Input
-                disabled={true}
+                readOnly={true}
                 label="Company Logo"
                 type="text"
                 name="logo_url"
                 id="logo_url"
-                placeholder="Local file name"
+                placeholder="No logo selected"
                 value={logoUrl || initialData?.logo_url || ""}
-                onChange={(e) => {
-                  // Limpiar previsualización cuando se cambia manualmente la URL
-                  if (previewUrl && previewUrl.startsWith("blob:")) {
-                    URL.revokeObjectURL(previewUrl);
-                    setPreviewUrl(null);
-                  }
-                  onLogoUrlChange?.(e.target.value);
-                }}
+                className="cursor-not-allowed bg-gray-50"
               />
 
               <FileSelector
@@ -108,6 +100,14 @@ export function CompanyInformation({
                   }
 
                   // Set only the filename in the input field for display
+                  console.log("🔍 DEBUG: Actualizando logo_url en form:", {
+                    fileName,
+                    fileSize: file.size,
+                    fileType: file.type,
+                    hiddenInputHasFiles:
+                      hiddenFileInputRef.current?.files?.length || 0,
+                    currentLogoUrl: logoUrl,
+                  });
                   onLogoUrlChange?.(fileName);
 
                   // NO usar pending files - el archivo se envía directamente via input hidden
@@ -182,7 +182,12 @@ export function CompanyInformation({
           name="logo_url_file"
           accept="image/*"
           style={{ display: "none" }}
-          onChange={() => {}} // Controlled by FileSelector
+          onChange={() => {
+            console.log("🔍 DEBUG: Hidden file input changed:", {
+              filesCount: hiddenFileInputRef.current?.files?.length || 0,
+              fileName: hiddenFileInputRef.current?.files?.[0]?.name || "none",
+            });
+          }}
         />
       </div>
     </FormCard>

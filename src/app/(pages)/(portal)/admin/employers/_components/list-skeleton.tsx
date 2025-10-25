@@ -1,11 +1,14 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ResultsCountSkeleton } from "./results-count-skeleton";
 
 export function ListSkeleton() {
   const skeletonItems = [1, 2, 3];
 
   return (
     <div className="space-y-4">
+      {/* Skeleton de paginación/Resultados arriba */}
+      <ResultsCountSkeleton />
       {skeletonItems.map((id) => (
         <Card key={`skeleton-${id}`} className="">
           <CardContent className="p-6">
@@ -62,6 +65,8 @@ export function ListSkeleton() {
           </CardContent>
         </Card>
       ))}
+      {/* Skeleton de paginación/Resultados abajo */}
+      <ResultsCountSkeleton />
     </div>
   );
 }

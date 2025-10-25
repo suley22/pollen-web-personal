@@ -8,8 +8,7 @@ export function ResultsCount({
   handlePageSizeChange,
 }) {
   return (
-    pagination &&
-    pagination.totalPages > 1 && (
+    pagination && (
       <Pagination
         currentPage={pagination.currentPage}
         totalPages={pagination.totalPages}

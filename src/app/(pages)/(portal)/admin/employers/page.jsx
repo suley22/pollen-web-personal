@@ -2,7 +2,6 @@
 
 import { Filters } from "@/admin/employers/_components/filters";
 import { StatisticsCards } from "@/admin/employers/_components/cards";
-import { ResultsCount } from "@/admin/employers/_components/results-count";
 import { List } from "@/admin/employers/_components/list";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -55,15 +54,9 @@ export default function AdminEmployers() {
         setSelectedStatus={setSelectedStatus}
       />
       <div className="flex flex-col gap-4">
-        <ResultsCount
-          pagination={pagination}
-          handlePageChange={handlePageChange}
-          handlePageSizeChange={handlePageSizeChange}
-        />
-
-        <List employers={employers} loading={loading} />
-
-        <ResultsCount
+        <List
+          employers={employers}
+          loading={loading}
           pagination={pagination}
           handlePageChange={handlePageChange}
           handlePageSizeChange={handlePageSizeChange}

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useActionState } from "react";
 import { useToastNotifications } from "@/hooks/useToastNotifications";
 import { useNavigation } from "@/hooks/useNavigation";
 import { usePendingFileUpload } from "@/hooks/usePendingFileUpload";
@@ -16,46 +15,36 @@ import { useRouter } from "next/navigation";
  * Custom hook to manage the employer form state and logic (create/edit)
  */
 export function useEmployersPage({ id = null }) {
+  const router = useRouter();
   const formRef = useRef(null);
 
   const { navigateTo, navigateWithDelay } = useNavigation();
   const { showSuccess, showError } = useToastNotifications();
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const [employer, setEmployer] = useState(null);
-  const router = useRouter();
+
+  // Form field states - Initialize with employer data if in edit mode
+  const [checked, setChecked] = useState(false);
+  const [customIndustries, setCustomIndustries] = useState(() => {
+    if (employer?.industries) {
+      return employer.industries;
+    }
+    return [];
+  });
+  const [industryValue, setIndustryValue] = useState("");
+  const [logoUrl, setLogoUrl] = useState(() => employer?.logo_url || "");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Pending file uploads
-  const {
-    addPendingFile,
-    hasPendingFiles,
-    isUploading: isUploadingFiles,
-  } = usePendingFileUpload();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData(e.target);
-
-    console.log("Form submitted with data:", formData);
-
-    const result = id
-      ? await updateEmployerAction(id, formData)
-      : await createEmployerAction(formData);
-
-    if (result.error) {
-      console.error("Form submission error:", result.error);
-    } else {
-      console.log("Employer profile saved successfully");
-      router.push(AdminRoutes.employers);
-    }
-  };
+  const { addPendingFile, hasPendingFiles, isUploading } =
+    usePendingFileUpload();
 
   const loadEmployerProfile = useCallback(async () => {
     if (id) {
       setIsLoadingProfile(true);
+
       try {
         const result = await fetchEmployerById(id);
-        console.log("Fetched employer profileAAAAAA:", result);
         setEmployer(result.error ? null : result.data);
       } catch (error) {
         console.error("Error fetching employer profile:", error);
@@ -74,18 +63,6 @@ export function useEmployersPage({ id = null }) {
     loadEmployerProfile();
   }, [loadEmployerProfile]);
 
-  // Form field states - Initialize with employer data if in edit mode
-  const [checked, setChecked] = useState(false);
-  const [customIndustries, setCustomIndustries] = useState(() => {
-    if (employer?.industries) {
-      return employer.industries;
-    }
-    return [];
-  });
-  const [industryValue, setIndustryValue] = useState("");
-  const [logoUrl, setLogoUrl] = useState(() => employer?.logo_url || "");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
   // Handle navigation
   const handleBack = () => {
     navigateTo(AdminRoutes.employers);
@@ -96,12 +73,12 @@ export function useEmployersPage({ id = null }) {
     addPendingFile(fieldName, file, fileName);
   };
 
-  const updateEmployerAction = async (id: string, formData: FormData) => {
+  const saveEmployer = async (id: string) => {
     try {
-      const imageFieldName = "logo_url";
-      const logoUrl = await getImageUrl(formData, imageFieldName);
-      formData.set(imageFieldName, logoUrl);
-      // Get current user
+      const formData = new FormData(formRef.current);
+
+      formData.set("logo_url", await getImageUrl(formData));
+
       const userId = await getLoggedInUserId();
 
       if (!userId) {
@@ -109,8 +86,11 @@ export function useEmployersPage({ id = null }) {
         return { error: "User not authenticated" };
       }
 
-      // Use EmployerService to update the employer
-      const result = await updateEmployer(id, formData, userId);
+      const result = id
+        ? await updateEmployer(id, formData, userId)
+        : await createEmployer(formData, userId);
+
+      router.push(AdminRoutes.employers);
 
       return result;
     } catch (error) {
@@ -122,11 +102,10 @@ export function useEmployersPage({ id = null }) {
     }
   };
 
-  const createEmployerAction = async (formData: FormData) => {
+  const createEmployerAction = async () => {
     try {
-      const imageFieldName = "logo_url";
-      const logoUrl = await getImageUrl(formData, imageFieldName);
-      formData.set(imageFieldName, logoUrl);
+      const formData = new FormData(formRef.current);
+      formData.set("logo_url", await getImageUrl(formData));
 
       // Get current user
       const userId = await getLoggedInUserId();
@@ -149,8 +128,16 @@ export function useEmployersPage({ id = null }) {
     }
   };
 
-  const getImageUrl = async (formData: FormData, imageFieldName: string) => {
-    const file = formData.get(imageFieldName);
+  const getImageUrl = async (formData) => {
+    const imageFileUrl = formData.get("logo_url");
+
+    if (imageFileUrl && imageFileUrl.startsWith("http")) {
+      return formData.get("logo_url") || "";
+    }
+
+    const imageFile = formData.get("logo_url_file");
+    const file = imageFile instanceof File ? imageFile : null;
+
     const bucketName = "images";
     const folder = "employer_logo";
 
@@ -193,6 +180,6 @@ export function useEmployersPage({ id = null }) {
     handleFileSelect,
     // File upload state
     hasPendingFiles,
-    handleSubmit,
+    handleSubmit: saveEmployer,
   };
 }

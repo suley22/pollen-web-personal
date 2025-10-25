@@ -2,7 +2,6 @@
 
 import { PrimaryButton, TextAreaCard } from "@/components/design-system";
 import { Heart, FileText, Building, Check, CheckCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/design-system/page-header";
 import { PageContainer } from "@/components/design-system/page-container";
 import { FormContainer } from "@/components/design-system/form-container";
@@ -14,6 +13,16 @@ import { ContactInformation } from "./create/_components/contact-information";
 import { SocialMedia } from "./create/_components/social-media";
 import { InternalPollenData } from "./create/_components/internal-pollen-data";
 import { useEmployersPage } from "./_hooks/useEmployersPage";
+
+const CreateUpdateButton = ({ isEditMode, isLoading, onClick }) => (
+  <PrimaryButton
+    icon={<CheckCircle className="h-5 w-5" />}
+    text={isEditMode ? "Update Company Profile" : "Create Company Profile"}
+    loading={isLoading}
+    disabled={isLoading}
+    onClick={onClick}
+  />
+);
 
 export function ProfileForm({ id = null }) {
   const isEditMode = !!id;
@@ -27,7 +36,6 @@ export function ProfileForm({ id = null }) {
     isDialogOpen,
     setIsDialogOpen,
     handleBack,
-    handleFileSelect,
     handleSubmit,
   } = useEmployersPage({ id });
 
@@ -48,10 +56,11 @@ export function ProfileForm({ id = null }) {
         <CreateUpdateButton
           isEditMode={isEditMode}
           isLoading={isLoadingProfile}
+          onClick={() => setIsDialogOpen(true)}
         />
       </PageHeader>
 
-      <FormContainer ref={formRef} onSubmit={handleSubmit}>
+      <FormContainer ref={formRef}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <div className="lg:col-span-2 space-y-6">
             <CompanyInformation
@@ -108,6 +117,7 @@ export function ProfileForm({ id = null }) {
               <CreateUpdateButton
                 isEditMode={isEditMode}
                 isLoading={isLoadingProfile}
+                onClick={() => setIsDialogOpen(true)}
               />
             }
             title={
@@ -126,25 +136,10 @@ export function ProfileForm({ id = null }) {
             loadingText={isEditMode ? "Updating..." : "Creating..."}
             open={isDialogOpen}
             onOpenChange={setIsDialogOpen}
-            onConfirm={() => {
-              // Enviar el formulario directamente
-              if (formRef.current) {
-                console.log("Submitting form with FormData...");
-                formRef.current.requestSubmit();
-              }
-            }}
+            onConfirm={() => handleSubmit()}
           />
         </FormActions>
       </FormContainer>
     </PageContainer>
   );
 }
-
-const CreateUpdateButton = ({ isEditMode, isLoading }) => (
-  <PrimaryButton
-    icon={<CheckCircle className="h-5 w-5" />}
-    text={isEditMode ? "Update Company Profile" : "Create Company Profile"}
-    loading={isLoading}
-    disabled={isLoading}
-  />
-);

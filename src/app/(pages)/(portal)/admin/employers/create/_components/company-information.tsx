@@ -28,6 +28,7 @@ export function CompanyInformation({
       }
     };
   }, [previewUrl]);
+
   return (
     <FormCard
       title="Company Information"
@@ -63,7 +64,6 @@ export function CompanyInformation({
                 label="Company Logo"
                 type="text"
                 name="logo_url"
-                id="logo_url"
                 placeholder="Local file name"
                 value={logoUrl || initialData?.logo_url || ""}
                 onChange={(e) => {
@@ -178,7 +178,7 @@ export function CompanyInformation({
         <input
           ref={hiddenFileInputRef}
           type="file"
-          name="logo_url"
+          name="logo_url_file"
           accept="image/*"
           style={{ display: "none" }}
           onChange={() => {}} // Controlled by FileSelector

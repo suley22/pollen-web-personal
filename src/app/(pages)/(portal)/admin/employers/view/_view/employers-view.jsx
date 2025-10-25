@@ -10,11 +10,11 @@ import { InternalPollenData } from "@/employers/view/_components/internal-pollen
 import { JobPostings } from "@/employers/view/_components/job-postings";
 import { EmployerProfileHeader } from "@/employers/view/_components/header";
 import { EmployerProfileSkeleton } from "@/employers/view/view-skeleton";
-import { useEmployerView } from "@/employers/view/hooks/useEmployerView";
+import { useEmployerView } from "@/employers/view/_hooks/useEmployerView";
 import { DescriptionCard } from "@/components/design-system";
 import { FileText, Users, Heart, GraduationCap } from "lucide-react";
 
-export default function EmployerProfileView({ id  = null}) {
+export default function EmployerProfileView({ id = null }) {
   const router = useRouter();
 
   const {

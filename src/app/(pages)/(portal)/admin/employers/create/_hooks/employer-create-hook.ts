@@ -3,12 +3,14 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useToastNotifications } from "@/hooks/useToastNotifications";
 import { useNavigation } from "@/hooks/useNavigation";
-import { usePendingFileUpload } from "@/hooks/usePendingFileUpload";
-import { AdminRoutes } from "../../router";
-import { fetchEmployerById } from "../_services/employersService";
+import { AdminRoutes } from "../../../router";
+import { fetchEmployerById } from "../../_services/employers-service";
 import { uploadFile } from "@/services/storageService";
 import { getLoggedInUserId } from "@/services/userService";
-import { updateEmployer, createEmployer } from "../_services/employersService";
+import {
+  updateEmployer,
+  createEmployer,
+} from "../../_services/employers-service";
 import { useRouter } from "next/navigation";
 
 /**
@@ -34,10 +36,6 @@ export function useEmployersPage({ id = null }) {
   const [industryValue, setIndustryValue] = useState("");
   const [logoUrl, setLogoUrl] = useState(() => employer?.logo_url || "");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  // Pending file uploads
-  const { addPendingFile, hasPendingFiles, isUploading } =
-    usePendingFileUpload();
 
   const loadEmployerProfile = useCallback(async () => {
     if (id) {
@@ -68,12 +66,7 @@ export function useEmployersPage({ id = null }) {
     navigateTo(AdminRoutes.employers);
   };
 
-  // Handle file selection
-  const handleFileSelect = (fieldName, file, fileName) => {
-    addPendingFile(fieldName, file, fileName);
-  };
-
-  const saveEmployer = async (id: string) => {
+  const saveEmployer = async () => {
     try {
       const formData = new FormData(formRef.current);
 
@@ -98,32 +91,6 @@ export function useEmployersPage({ id = null }) {
       return {
         success: false,
         error: "Failed to update company profile",
-      };
-    }
-  };
-
-  const createEmployerAction = async () => {
-    try {
-      const formData = new FormData(formRef.current);
-      formData.set("logo_url", await getImageUrl(formData));
-
-      // Get current user
-      const userId = await getLoggedInUserId();
-
-      if (!userId) {
-        console.error("No authenticated user found");
-        return { error: "User not authenticated" };
-      }
-
-      // Use EmployerService to create the employer
-      const result = await createEmployer(formData, userId);
-
-      return result;
-    } catch (error) {
-      console.error("Action: Unexpected error creating company:", error);
-      return {
-        success: false,
-        error: "Failed to create company profile",
       };
     }
   };
@@ -177,9 +144,6 @@ export function useEmployersPage({ id = null }) {
     setIsDialogOpen,
     // Handlers
     handleBack,
-    handleFileSelect,
-    // File upload state
-    hasPendingFiles,
     handleSubmit: saveEmployer,
   };
 }

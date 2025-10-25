@@ -6,20 +6,22 @@ import {
   fetchEmployerById,
   fetchEmployerStatistics,
   EmployerPaginationInfo,
-} from "../_services/employersService";
+} from "../_services/employers-service";
 
-export function useEmployers() {
+export function useEmployersPage() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [employers, setEmployers] = useState([]);
   const [allEmployers, setAllEmployers] = useState([]);
+
   const [statistics, setStatistics] = useState({
     total: 0,
     approved: 0,
     pending: 0,
     rejected: 0,
   });
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);

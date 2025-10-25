@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select/select.jsx";
 
 export function Select({
-  label,
+  label = null,
   error = null,
   helperText = "",
   required = false,
@@ -70,7 +70,7 @@ export function Select({
         <SelectTrigger
           id={selectId}
           className={cn(
-            "w-full",
+            "w-full h-9 !px-4 gap-2",
             error && "border-destructive ring-destructive/20",
             className,
           )}
@@ -86,7 +86,7 @@ export function Select({
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         {/* @ts-ignore */}
-        <SelectContent>
+        <SelectContent className="w-full">
           {options.map((option) => {
             // Support both string arrays and object arrays
             const optionValue =

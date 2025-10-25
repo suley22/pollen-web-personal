@@ -1,5 +1,5 @@
 "use client";
-import EmployerProfileView from "@/employers/view/view";
+import EmployerProfileView from "@/app/(pages)/(portal)/admin/employers/view/_view/employers-view";
 
 import { use } from "react";
 

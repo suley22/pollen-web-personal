@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Card, CardContent } from "@/components/ui/card";
-import { useEmployers } from "../_hooks/useEmployers";
+import { useEmployersPage } from "../_hooks/employers-page-hook";
 import {
   Building2,
   Edit,
@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 
 export function EmployerList() {
-  const { form } = useEmployers();
+  const { form } = useEmployersPage();
 
   return (
     <div className="space-y-4">

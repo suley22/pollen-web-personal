@@ -1,10 +1,10 @@
 "use client";
-import { ProfileForm } from "@/employers/form";
+
 import { use } from "react";
 import { notFound } from "next/navigation";
+import { ProfileForm } from "@/app/(pages)/(portal)/admin/employers/create/_view/employers-create-form";
 
 export default function Page({ params }) {
-  // Await the params to get the actual parameters
   const resolvedParams = use(params);
   const { id } = resolvedParams;
 

@@ -1,4 +1,4 @@
-import { ProfileForm } from "@/employers/form";
+import { ProfileForm } from "@/employers/create/form";
 
 export default async function Page() {
   return <ProfileForm id={null} />;

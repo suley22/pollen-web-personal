@@ -64,6 +64,7 @@ export function CompanyInformation({
                 label="Company Logo"
                 type="text"
                 name="logo_url"
+                id="logo_url"
                 placeholder="Local file name"
                 value={logoUrl || initialData?.logo_url || ""}
                 onChange={(e) => {

@@ -41,7 +41,7 @@ import {
   FormCard,
   DescriptionCard,
 } from "@/components/design-system";
-import Page from "../../employers/create/page";
+import Page from "../../employers/(crud)/create/page";
 import { JobViewHeader } from "./_components/header";
 import {
   LiveBadge,

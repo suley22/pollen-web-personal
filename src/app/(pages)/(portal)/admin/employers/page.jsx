@@ -11,7 +11,7 @@ import { AdminRoutes } from "@/admin/router";
 import { PageHeader } from "@/components/design-system/page-header";
 import { PrimaryButton } from "@/components/design-system/primary-button";
 import { PageContainer } from "@/components/design-system";
-import { useEmployers } from "./_hooks/useEmployers";
+import { useEmployersPage } from "./_hooks/employers-page-hook";
 
 export default function AdminEmployers() {
   const router = useRouter();
@@ -27,7 +27,7 @@ export default function AdminEmployers() {
     pagination,
     handlePageChange,
     handlePageSizeChange,
-  } = useEmployers();
+  } = useEmployersPage();
 
   const onCreate = () => {
     startTransition(() => {

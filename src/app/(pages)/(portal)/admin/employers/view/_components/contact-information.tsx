@@ -2,7 +2,7 @@
 
 import { FormCard } from "@/components/design-system";
 import { User, Mail, Phone } from "lucide-react";
-import { InfoField } from "../../../../../../../../components/design-system/info-field";
+import { InfoField } from "@/components/design-system/info-field";
 
 interface ContactInformationProps {
   contactName?: string;

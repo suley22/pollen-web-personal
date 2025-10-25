@@ -4,7 +4,7 @@ import { FormCard } from "@/components/design-system/form-card";
 import { Badge } from "@/components/ui/badge";
 import { Building2, MapPin, Globe } from "lucide-react";
 import { CompanyAvatar } from "@/components/ui/company-avatar";
-import { InfoField } from "../../../../../../../../components/design-system/info-field";
+import { InfoField } from "@/components/design-system/info-field";
 import { UrlHelper } from "@/helpers/url-helper";
 
 export function CompanyInformation({ company }) {

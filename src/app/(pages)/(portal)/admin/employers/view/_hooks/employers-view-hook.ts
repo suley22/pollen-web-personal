@@ -1,13 +1,15 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AdminRoutes } from "@/admin/router";
+import { useNavigation } from "@/hooks/useNavigation";
 import {
   fetchEmployerById,
   fetchJobsByEmployer,
 } from "@/employers/_services/employers-service";
 
 export function useEmployerView(id = null) {
-  const router = useRouter();
+  const { navigateTo } = useNavigation();
+
   const [jobs, setJobs] = useState([]);
   const [isLoadingJobs, setIsLoadingJobs] = useState(false);
   const [profile, setProfile] = useState(null);
@@ -55,7 +57,7 @@ export function useEmployerView(id = null) {
   }, [profile?.id]);
 
   const handleEdit = () => {
-    router.push(AdminRoutes.employersEdit(profile.id));
+    navigateTo(AdminRoutes.employersEdit(profile.id));
   };
 
   const handleSetLive = () => {

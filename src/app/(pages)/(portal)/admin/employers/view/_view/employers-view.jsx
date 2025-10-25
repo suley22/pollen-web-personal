@@ -9,8 +9,8 @@ import { ProfileStatus } from "@/employers/view/_components/profile-status";
 import { InternalPollenData } from "@/employers/view/_components/internal-pollen-data";
 import { JobPostings } from "@/employers/view/_components/job-postings";
 import { EmployerProfileHeader } from "@/employers/view/_components/header";
-import { EmployerProfileSkeleton } from "@/employers/view/view-skeleton";
-import { useEmployerView } from "@/employers/view/_hooks/useEmployerView";
+import { EmployerProfileSkeleton } from "@/employers/view/_view/employers-view-skeleton";
+import { useEmployerView } from "@/employers/view/_hooks/employers-view-hook";
 import { DescriptionCard } from "@/components/design-system";
 import { FileText, Users, Heart, GraduationCap } from "lucide-react";
 

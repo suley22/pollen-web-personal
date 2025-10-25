@@ -1,23 +1,19 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AdminRoutes } from "@/admin/router";
-import { useNavigation } from "@/hooks/useNavigation";
-import {
-  fetchEmployerById,
-  fetchJobsByEmployer,
-} from "@/employers/_services/employers-service";
+
+import { fetchEmployerById } from "@/employers/_services/employers-service";
 
 export function useEmployerView(id = null) {
-  const { navigateTo } = useNavigation();
+  const router = useRouter();
 
-  const [jobs, setJobs] = useState([]);
-  const [isLoadingJobs, setIsLoadingJobs] = useState(false);
   const [profile, setProfile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
       if (id) {
-        setIsLoadingJobs(true);
+        setIsLoading(true);
         try {
           const result = await fetchEmployerById(id);
           setProfile(result.error ? [] : result.data);
@@ -25,39 +21,16 @@ export function useEmployerView(id = null) {
           console.error("Error fetching jobs:", error);
           setProfile([]);
         } finally {
-          setIsLoadingJobs(false);
+          setIsLoading(false);
         }
-      } else {
-        setIsLoadingJobs(false);
       }
     };
 
     loadProfile();
   }, [id]);
 
-  useEffect(() => {
-    const loadJobs = async () => {
-      if (profile?.id) {
-        setIsLoadingJobs(true);
-        try {
-          const result = await fetchJobsByEmployer(profile.id);
-          setJobs(result.error ? [] : result.data);
-        } catch (error) {
-          console.error("Error fetching jobs:", error);
-          setJobs([]);
-        } finally {
-          setIsLoadingJobs(false);
-        }
-      } else {
-        setIsLoadingJobs(false);
-      }
-    };
-
-    loadJobs();
-  }, [profile?.id]);
-
   const handleEdit = () => {
-    navigateTo(AdminRoutes.employersEdit(profile.id));
+    router.push(AdminRoutes.employersEdit(profile.id));
   };
 
   const handleSetLive = () => {
@@ -77,10 +50,7 @@ export function useEmployerView(id = null) {
 
   return {
     profile,
-    jobs,
-    isLoadingJobs,
-    setJobs,
-    setIsLoadingJobs,
+    isLoading,
     handleEdit,
     handleSetLive,
     handleHideProfile,

@@ -1,11 +1,12 @@
-"use client";
 import EmployerProfileView from "@/app/(pages)/(portal)/admin/employers/view/_view/employers-view";
+import { notFound } from "next/navigation";
 
-import { use } from "react";
+export default async function Page({ params }) {
+  const { id } = await params;
 
-export default function EmployerReviewPage({ params }) {
-  const resolvedParams = use(params);
-  const { id } = resolvedParams;
+  if (!id) {
+    return notFound();
+  }
 
   return <EmployerProfileView id={id} />;
 }

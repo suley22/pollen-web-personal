@@ -7,7 +7,6 @@ import { SocialMedia } from "@/employers/view/_components/social-media";
 import { ContactInformation } from "@/employers/view/_components/contact-information";
 import { ProfileStatus } from "@/employers/view/_components/profile-status";
 import { InternalPollenData } from "@/employers/view/_components/internal-pollen-data";
-import { JobPostings } from "@/employers/view/_components/job-postings";
 import { EmployerProfileHeader } from "@/employers/view/_components/header";
 import { EmployerProfileSkeleton } from "@/employers/view/_view/employers-view-skeleton";
 import { useEmployerView } from "@/employers/view/_hooks/employers-view-hook";
@@ -19,15 +18,14 @@ export default function EmployerProfileView({ id = null }) {
 
   const {
     profile,
-    jobs,
-    isLoadingJobs,
+    isLoading,
     handleEdit,
     handleSetLive,
     handleHideProfile,
     handleDelete,
   } = useEmployerView(id);
 
-  if (!profile) {
+  if (!profile || isLoading) {
     return <EmployerProfileSkeleton />;
   }
 
@@ -103,13 +101,6 @@ export default function EmployerProfileView({ id = null }) {
           />
         </div>
       </div>
-
-      {/* Job Postings Section - Full Width */}
-      <JobPostings
-        jobs={jobs}
-        isLoading={isLoadingJobs}
-        companyId={profile.id}
-      />
     </div>
   );
 }

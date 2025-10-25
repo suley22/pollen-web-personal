@@ -181,22 +181,6 @@ export function List({ employers, loading }) {
                       {/* Job Counts and Admin */}
                       <div className="flex flex-row justify-between">
                         <div className="flex  items-center gap-2 flex-wrap">
-                          {(company.live_jobs_count || 0) > 0 && (
-                            <Badge
-                              variant="outline"
-                              className="bg-green-50 text-green-700 border-green-200 font-medium"
-                            >
-                              {company.live_jobs_count} Live Jobs
-                            </Badge>
-                          )}
-                          {(company.draft_jobs_count || 0) > 0 && (
-                            <Badge
-                              variant="outline"
-                              className="bg-orange-50 text-orange-700 border-orange-200 font-medium"
-                            >
-                              {company.draft_jobs_count} Draft Jobs
-                            </Badge>
-                          )}
                           {company.assignedAdmin ? (
                             <Badge
                               variant="outline"

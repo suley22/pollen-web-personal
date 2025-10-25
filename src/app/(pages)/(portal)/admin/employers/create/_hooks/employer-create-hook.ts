@@ -19,6 +19,7 @@ export function useEmployersPage({ id = null }) {
 
   // Use React Query hooks
   const { data: employer, isLoading: isLoadingProfile } = useEmployer(id || "");
+
   const createMutation = useCreateEmployer();
   const updateMutation = useUpdateEmployer();
 

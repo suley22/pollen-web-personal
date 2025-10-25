@@ -26,7 +26,7 @@ export function SocialMedia({ employer = null }) {
             required: true,
           },
         ]}
-        initialItems={employer?.social_media || []}
+        initialItems={employer?.social_medias || []}
       />
     </FormCard>
   );

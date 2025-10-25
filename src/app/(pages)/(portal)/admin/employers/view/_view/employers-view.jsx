@@ -12,22 +12,33 @@ import { EmployerProfileSkeleton } from "@/employers/view/_view/employers-view-s
 import { useEmployerView } from "@/employers/view/_hooks/employers-view-hook";
 import { DescriptionCard } from "@/components/design-system";
 import { FileText, Users, Heart, GraduationCap } from "lucide-react";
+import { AdminRoutes } from "@/admin/router";
 
 export default function EmployerProfileView({ id = null }) {
   const router = useRouter();
 
-  const {
-    profile,
-    isLoading,
-    handleEdit,
-    handleSetLive,
-    handleHideProfile,
-    handleDelete,
-  } = useEmployerView(id);
+  const { profile, isLoading } = useEmployerView(id);
 
   if (!profile || isLoading) {
     return <EmployerProfileSkeleton />;
   }
+
+  // Handlers - simple and direct
+  const handleEdit = () => {
+    router.push(AdminRoutes.employersEdit(id));
+  };
+
+  const handleSetLive = () => {
+    console.log("Set live functionality - TODO");
+  };
+
+  const handleHideProfile = () => {
+    console.log("Hide profile functionality - TODO");
+  };
+
+  const handleDelete = () => {
+    console.log("Delete functionality - TODO");
+  };
 
   return (
     <div className="flex flex-col w-full mx-auto py-6 gap-6">

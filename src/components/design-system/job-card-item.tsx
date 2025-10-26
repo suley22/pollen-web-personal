@@ -1,15 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Eye, Building2, Calendar, UserCircle, Users } from "lucide-react";
+import { Eye, Building2, Calendar, Users } from "lucide-react";
+import { JobStatusBadge } from "./job-status-badge";
 
-export default function JobCardItem({
-  job,
-  form,
-  router,
-  routes,
-  showAdminBadge,
-}) {
+export default function JobCardItem({ job, router, routes, showAdminBadge }) {
   return (
     <Card
       key={job.id}
@@ -28,7 +23,7 @@ export default function JobCardItem({
                   <h3 className="text-lg font-semibold text-foreground truncate">
                     {job.job_title}
                   </h3>
-                  {form.getStatusBadge(job.status)}
+                  <JobStatusBadge status={job.status} />
                 </div>
 
                 {/* Company and Date */}

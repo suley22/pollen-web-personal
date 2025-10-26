@@ -1,14 +1,21 @@
+"use client";
+
 import { Card, CardContent } from "@/components/ui/card";
-import { Eye } from "lucide-react";
+import { Pagination } from "@/components/design-system";
 import { useRouter } from "next/navigation";
 import { AdminRoutes } from "../../router";
 import { Skeleton } from "@/components/ui/skeleton";
-import React from "react";
 import JobCardItem from "@/components/design-system/job-card-item";
 
-export default function JobListSection({ form }) {
+export default function JobListSection({
+  jobs,
+  isLoading,
+  pagination,
+  handlePageChange,
+  handlePageSizeChange,
+}) {
   const router = useRouter();
-  if (form.loading) {
+  if (isLoading) {
     // Skeleton loading state
     return (
       <div className="space-y-3">
@@ -38,49 +45,48 @@ export default function JobListSection({ form }) {
   }
 
   return (
-    <div className="space-y-3 mb-6">
+    <div className="flex flex-col w-full gap-4">
       <div className="items-center justify-between">
-        <div className="pl-1 items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Showing{" "}
-            <span className="font-semibold text-foreground">
-              {form.jobs.length}
-            </span>{" "}
-            {form.jobs.length === 1 ? "job" : "jobs"}
-          </p>
-        </div>
-
-        {form.activeTab === "management" && form.jobs.length > 0 && (
-          <div className="text-sm text-gray-600 bg-green-50 px-3 py-1 rounded-full border border-green-200">
-            <Eye className="h-4 w-4 inline mr-1" />
-            {
-              form.jobs.filter(
-                (j) =>
-                  j.newApplicationsToReview > 0 || j.pollenInterviewsBooked > 0,
-              ).length
-            }{" "}
-            job
-            {form.jobs.filter(
-              (j) =>
-                j.newApplicationsToReview > 0 || j.pollenInterviewsBooked > 0,
-            ).length !== 1
-              ? "s"
-              : ""}{" "}
-            need attention
-          </div>
+        {pagination && (
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            totalItems={pagination.totalItems}
+            pageSize={pagination.pageSize}
+            hasNextPage={pagination.hasNextPage}
+            hasPreviousPage={pagination.hasPreviousPage}
+            from={pagination.from}
+            to={pagination.to}
+            onPageChange={handlePageChange}
+            onPageSizeChange={handlePageSizeChange}
+          />
         )}
       </div>
 
-      {form.jobs.map((job) => (
+      {jobs.map((job) => (
         <JobCardItem
           key={job.id}
           job={job}
-          form={form}
           router={router}
           routes={AdminRoutes}
           showAdminBadge={true}
         />
       ))}
+
+      {pagination && (
+        <Pagination
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          totalItems={pagination.totalItems}
+          pageSize={pagination.pageSize}
+          hasNextPage={pagination.hasNextPage}
+          hasPreviousPage={pagination.hasPreviousPage}
+          from={pagination.from}
+          to={pagination.to}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+        />
+      )}
     </div>
   );
 }

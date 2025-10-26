@@ -27,6 +27,7 @@ export { Divider } from "./divider";
 export { Pagination } from "./pagination";
 export { Filters } from "./filters";
 export { EmployerStatusBadge } from "./employer-status-badge";
+export { JobStatusBadge } from "./job-status-badge";
 export {
   SuccessBadge,
   WarningBadge,

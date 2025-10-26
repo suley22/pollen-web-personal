@@ -1,7 +1,7 @@
 import { CheckCircle, Award } from "lucide-react";
 import { FormCard, DynamicListInput } from "@/components/design-system";
 
-export function Requirement({ editedJob, updateEditedJob }) {
+export function Requirement({ editedJob }) {
   return (
     <FormCard
       title="Pollen Approved Requirements"
@@ -19,7 +19,7 @@ export function Requirement({ editedJob, updateEditedJob }) {
             type: "text",
           },
         ]}
-        initialItems={editedJob.pollen_approved_requirements.map((p, i) => ({
+        initialItems={editedJob?.pollen_approved_requirements?.map((p, i) => ({
           id: `req-${i}`,
           value: p,
         }))}

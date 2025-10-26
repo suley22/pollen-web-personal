@@ -13,20 +13,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface FiltersProps {
-  form: any;
-}
-
-const Filters: React.FC<FiltersProps> = ({ form }) => {
-  const {
-    searchTerm,
-    setSearchTerm,
-    selectedAssignment,
-    setSelectedAssignment,
-    selectedStatus,
-    setSelectedStatus,
-  } = form;
-
+const Filters = ({
+  searchTerm,
+  setSearchTerm,
+  selectedAssignment,
+  setSelectedAssignment,
+  selectedStatus,
+  setSelectedStatus,
+}) => {
   const handleClearSearch = () => {
     setSearchTerm("");
   };

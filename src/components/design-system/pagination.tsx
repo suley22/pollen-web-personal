@@ -100,7 +100,7 @@ export function Pagination({
             </span>{" "}
             of{" "}
             <span className="font-semibold text-foreground">{totalItems}</span>{" "}
-            {totalItems === 1 ? "company" : "companies"}
+            {totalItems === 1 ? "result" : "results"}
           </div>
         </div>
       )}

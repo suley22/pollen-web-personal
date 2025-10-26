@@ -1,7 +1,7 @@
 import { Users } from "lucide-react";
 import { FormCard, DynamicListInput } from "@/components/design-system";
 
-export function WhoWouldLove({ editedJob, updateEditedJob }) {
+export function WhoWouldLove({ editedJob }) {
   return (
     <FormCard
       title="Who Would Love This Role"
@@ -19,7 +19,7 @@ export function WhoWouldLove({ editedJob, updateEditedJob }) {
             type: "text",
           },
         ]}
-        initialItems={editedJob.who_would_love.map((trait, i) => ({
+        initialItems={editedJob?.who_would_love?.map((trait, i) => ({
           id: `trait-${i}`,
           value: trait,
         }))}

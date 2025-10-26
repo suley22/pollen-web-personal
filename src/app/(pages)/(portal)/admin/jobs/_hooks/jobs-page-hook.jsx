@@ -1,141 +1,105 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { getJobList } from "@/admin/jobs/actions";
-import { Badge } from "@/components/ui/badge";
+"use client";
 
-export function useJobManagement() {
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useJobsList, useJobsStatistics } from "../_services/jobs-page-service";
+import { JobStatusBadge } from "@/components/design-system";
+import {
+  JOB_STATUS_OPTIONS,
+  JOB_ASSIGNMENT_OPTIONS,
+} from "@/constants/filters";
+
+export function useJobManagement(debouncedSearchTerm) {
   const [selectedStatus, setSelectedStatus] = useState("all");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-  const [jobs, setJobs] = useState([]);
   const [selectedAssignment, setSelectedAssignment] = useState("all");
   const [activeTab, setActiveTab] = useState("all");
-  const [error, setError] = useState(null);
-  const loadingRef = useRef(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
-  // Debug: Log filter changes
+  // Reset page when search term or filters change
   useEffect(() => {
-    console.log("🔄 Filters changed:", {
+    setCurrentPage(1);
+  }, [debouncedSearchTerm, selectedStatus, selectedAssignment]);
+
+  // Filter configurations for Filters component
+  const filterConfigs = useMemo(
+    () => [
+      {
+        name: "assignment",
+        placeholder: "Filter by assignment",
+        defaultValue: selectedAssignment,
+        options: JOB_ASSIGNMENT_OPTIONS,
+        onValueChange: setSelectedAssignment,
+      },
+      {
+        name: "status",
+        placeholder: "Filter by status",
+        defaultValue: selectedStatus,
+        options: JOB_STATUS_OPTIONS,
+        onValueChange: setSelectedStatus,
+      },
+    ],
+    [selectedAssignment, selectedStatus],
+  );
+
+  // Build filters for React Query
+  const fetchFilters = useMemo(
+    () => ({
+      status: selectedStatus,
+      assignment: selectedAssignment,
+      searchTerm: debouncedSearchTerm.trim(),
+      page: currentPage,
+      pageSize: pageSize,
+    }),
+    [
       selectedStatus,
       selectedAssignment,
       debouncedSearchTerm,
-    });
-  }, [selectedStatus, selectedAssignment, debouncedSearchTerm]);
+      currentPage,
+      pageSize,
+    ],
+  );
 
-  // Debounce search term y resetear filtros cuando se busca
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-      // Si hay término de búsqueda, resetear los filtros
-      if (searchTerm.trim()) {
-        setSelectedStatus("all");
-        setSelectedAssignment("all");
-      }
-    }, 500);
+  // React Query: Fetch jobs list
+  const {
+    data: { jobs = [], pagination = null } = {},
+    isLoading,
+    error,
+  } = useJobsList(fetchFilters);
 
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm]);
+  // React Query: Fetch statistics - only filter by search term
+  const statisticsFilters = useMemo(
+    () => ({
+      searchTerm: debouncedSearchTerm.trim(),
+    }),
+    [debouncedSearchTerm],
+  );
 
-  const loadJobs = useCallback(async () => {
-    // Evitar llamadas duplicadas
-    if (loadingRef.current) {
-      return;
+  const { data: statisticsData } = useJobsStatistics(statisticsFilters);
+
+  // Pagination functions
+  const handlePageChange = useCallback((page) => {
+    setCurrentPage(page);
+  }, []);
+
+  const handlePageSizeChange = useCallback((newPageSize) => {
+    setPageSize(newPageSize);
+    setCurrentPage(1);
+  }, []);
+
+  const goToNextPage = useCallback(() => {
+    if (pagination?.hasNextPage) {
+      setCurrentPage((prev) => prev + 1);
     }
+  }, [pagination?.hasNextPage]);
 
-    loadingRef.current = true;
-    setError(null);
-
-    try {
-      // Si hay búsqueda activa, ignorar los filtros y buscar en todos
-      const statusToUse = debouncedSearchTerm.trim() ? "all" : selectedStatus;
-      const assignmentToUse = debouncedSearchTerm.trim()
-        ? "all"
-        : selectedAssignment;
-
-      const result = await getJobList({
-        status: statusToUse,
-        searchTerm: debouncedSearchTerm.trim(),
-        assignment: assignmentToUse,
-      });
-
-      if (result.success) {
-        const jobsResult = result.data.map((job) => ({
-          ...job,
-          assigned_date: job.published_at || job.created_at,
-          total_applications: 2,
-          newApplicationsToReview: 10,
-          pollenInterviewsBooked: 5,
-          needsApproval: job.needs_approval || false,
-          company_name: job.company_name || "Unknown Company",
-          responsibilities: job.responsibilities || [],
-          candidatesMatchedToEmployer: 15,
-          feedbackSent: 8,
-          interviewsScheduled: 4,
-          offersExtended: 2,
-          hiresMade: 1,
-        }));
-        console.log(
-          `✅ Loaded ${jobsResult.length} jobs:`,
-          jobsResult.map((j) => ({
-            id: j.id,
-            title: j.job_title,
-            status: j.status,
-            assigned_to: j.assigned_to,
-          })),
-        );
-        setJobs(jobsResult || []);
-        setError(null);
-      } else {
-        console.error("❌ Error from server:", result.error);
-        setError(result.error);
-      }
-    } catch (err) {
-      console.error("💥 Exception caught:", err);
-      setError("Failed to load employers: " + err.message);
-    } finally {
-      loadingRef.current = false;
+  const goToPreviousPage = useCallback(() => {
+    if (pagination?.hasPreviousPage) {
+      setCurrentPage((prev) => prev - 1);
     }
-  }, [selectedStatus, debouncedSearchTerm, selectedAssignment]);
-
-  // Load jobs when filters change
-  useEffect(() => {
-    loadJobs();
-  }, [loadJobs]);
+  }, [pagination?.hasPreviousPage]);
 
   const getStatusBadge = useCallback((status) => {
-    switch (status) {
-      case "live":
-        return (
-          <Badge className="bg-green-100 text-green-800 status-badge-compact">
-            Live
-          </Badge>
-        );
-      case "paused":
-        return (
-          <Badge className="bg-orange-100 text-orange-800 status-badge-compact">
-            Paused
-          </Badge>
-        );
-      case "cancelled":
-        return (
-          <Badge className="bg-red-100 text-red-800 status-badge-medium">
-            Cancelled
-          </Badge>
-        );
-      case "complete":
-        return (
-          <Badge className="bg-blue-100 text-blue-800 status-badge-medium">
-            Complete
-          </Badge>
-        );
-      case "draft":
-        return <Badge className="bg-yellow-100 text-yellow-800 ">Draft</Badge>;
-      default:
-        return (
-          <Badge variant="outline" className="status-badge-compact">
-            {status}
-          </Badge>
-        );
-    }
+    return <JobStatusBadge status={status} />;
   }, []);
 
   const hasActionRequired = useCallback((job) => {
@@ -146,52 +110,35 @@ export function useJobManagement() {
     );
   }, []);
 
-  // Función personalizada para cambiar el status y limpiar el buscador
-  const handleStatusChange = useCallback((status) => {
-    setSelectedStatus(status);
-    setSearchTerm("");
-    setDebouncedSearchTerm("");
-  }, []);
-
-  // Función personalizada para cambiar el assignment y limpiar el buscador
-  const handleAssignmentChange = useCallback((assignment) => {
-    setSelectedAssignment(assignment);
-    setSearchTerm("");
-    setDebouncedSearchTerm("");
-  }, []);
-
-  return useMemo(
-    () => ({
-      form: {
-        selectedStatus: selectedStatus,
-        selectedAssignment: selectedAssignment,
-        activeTab: activeTab,
-        searchTerm: searchTerm,
-        jobs: jobs,
-        loading: loadingRef.current,
-        error: error,
-        setSelectedStatus: handleStatusChange,
-        setSearchTerm: setSearchTerm,
-        loadJobs: loadJobs,
-        getStatusBadge: getStatusBadge,
-        setSelectedAssignment: handleAssignmentChange,
-        setActiveTab: setActiveTab,
-        hasActionRequired: hasActionRequired,
-      },
-    }),
-    [
-      selectedStatus,
-      selectedAssignment,
-      activeTab,
-      searchTerm,
-      jobs,
-      loadingRef.current,
-      error,
-      loadJobs,
-      getStatusBadge,
-      hasActionRequired,
-      handleStatusChange,
-      handleAssignmentChange,
-    ],
-  );
+  return {
+    selectedStatus,
+    selectedAssignment,
+    activeTab,
+    jobs,
+    loading: isLoading,
+    error: error?.message || null,
+    statistics: statisticsData || {
+      total: 0,
+      draft: 0,
+      live: 0,
+      paused: 0,
+      complete: 0,
+      cancelled: 0,
+      assigned: 0,
+      unassigned: 0,
+    },
+    pagination,
+    currentPage,
+    pageSize,
+    filterConfigs,
+    setSelectedStatus,
+    setSelectedAssignment,
+    setActiveTab,
+    getStatusBadge,
+    hasActionRequired,
+    handlePageChange,
+    handlePageSizeChange,
+    goToNextPage,
+    goToPreviousPage,
+  };
 }

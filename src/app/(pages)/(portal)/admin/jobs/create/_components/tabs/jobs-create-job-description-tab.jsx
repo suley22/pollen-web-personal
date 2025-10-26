@@ -93,7 +93,6 @@ export function JobDescriptionTab({ initialData: editedJob, formRef }) {
                 id="startDate"
                 name="start_date"
                 defaultValue={editedJob?.start_date || ""}
-                onChange={(e) => updateEditedJob("start_date", e.target.value)}
                 placeholder="e.g. ASAP, January 2025"
               />
 
@@ -135,11 +134,8 @@ export function JobDescriptionTab({ initialData: editedJob, formRef }) {
         defaultValue={editedJob?.description || ""}
       />
 
-      <Responsibilities
-        editedJob={editedJob}
-        updateEditedJob={updateEditedJob}
-      />
-      <WhoWouldLove editedJob={editedJob} updateEditedJob={updateEditedJob} />
+      <Responsibilities editedJob={editedJob} />
+      <WhoWouldLove editedJob={editedJob} />
 
       <TextAreaCard
         title="Success In This Role Looks Like"
@@ -149,7 +145,7 @@ export function JobDescriptionTab({ initialData: editedJob, formRef }) {
         defaultValue={editedJob?.success_looks || ""}
       />
 
-      <Requirement editedJob={editedJob} updateEditedJob={updateEditedJob} />
+      <Requirement editedJob={editedJob} />
 
       <TextAreaCard
         title="Internal Notes"

@@ -8,6 +8,145 @@ const supabase = createClient();
 
 const jobsQueryKey = "jobs";
 
+export interface JobFilters {
+  status?: string;
+  assignment?: string;
+  searchTerm?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export function useJobsList(filters: JobFilters) {
+  return useQuery({
+    queryKey: [jobsQueryKey, "list", filters],
+    queryFn: async () => {
+      const page = filters.page || 1;
+      const pageSize = filters.pageSize || 10;
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
+
+      // Count query
+      let countQuery = supabase
+        .from("job")
+        .select("*", { count: "exact", head: true })
+        .filter("deleted_at", "is", null);
+
+      if (filters.status && filters.status !== "all") {
+        countQuery = countQuery.eq("status", filters.status);
+      }
+
+      if (filters.assignment && filters.assignment !== "all") {
+        countQuery = countQuery.eq("assigned_to", filters.assignment);
+      }
+
+      if (filters.searchTerm) {
+        countQuery = countQuery.or(
+          `job_title.ilike.%${filters.searchTerm}%,company_name.ilike.%${filters.searchTerm}%`,
+        );
+      }
+
+      const { count, error: countError } = await countQuery;
+
+      if (countError) {
+        throw new Error(countError.message);
+      }
+
+      // Data query
+      let query = supabase
+        .from("job")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .filter("deleted_at", "is", null)
+        .range(from, to);
+
+      if (filters.status && filters.status !== "all") {
+        query = query.eq("status", filters.status);
+      }
+
+      if (filters.assignment && filters.assignment !== "all") {
+        query = query.eq("assigned_to", filters.assignment);
+      }
+
+      if (filters.searchTerm) {
+        query = query.or(
+          `job_title.ilike.%${filters.searchTerm}%,company_name.ilike.%${filters.searchTerm}%`,
+        );
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const totalPages = Math.ceil((count || 0) / pageSize);
+
+      // Normalize jobs data
+      const normalizedJobs =
+        data?.map((job) => ({
+          ...job,
+          assigned_date: job.published_at || job.created_at,
+          total_applications: job.total_applications || 0,
+          newApplicationsToReview: job.new_applications_to_review || 0,
+          pollenInterviewsBooked: job.pollen_interviews_booked || 0,
+          needsApproval: job.needs_approval || false,
+          company_name: job.company_name || "Unknown Company",
+          responsibilities: job.responsibilities || [],
+          who_would_love: job.who_would_love || [],
+        })) || [];
+
+      return {
+        jobs: normalizedJobs,
+        pagination: {
+          currentPage: page,
+          pageSize,
+          totalItems: count || 0,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+          from: from + 1,
+          to: Math.min(from + data.length, count || 0),
+        },
+      };
+    },
+  });
+}
+
+export function useJobsStatistics(filters?: JobFilters) {
+  return useQuery({
+    queryKey: [jobsQueryKey, "statistics", filters],
+    queryFn: async () => {
+      let query = supabase
+        .from("job")
+        .select("status, assigned_to")
+        .filter("deleted_at", "is", null);
+
+      if (filters?.searchTerm) {
+        query = query.or(
+          `job_title.ilike.%${filters.searchTerm}%,company_name.ilike.%${filters.searchTerm}%`,
+        );
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return {
+        total: data?.length || 0,
+        draft: data?.filter((j) => j.status === "draft").length || 0,
+        live: data?.filter((j) => j.status === "live").length || 0,
+        paused: data?.filter((j) => j.status === "paused").length || 0,
+        complete: data?.filter((j) => j.status === "complete").length || 0,
+        cancelled: data?.filter((j) => j.status === "cancelled").length || 0,
+        assigned: data?.filter((j) => j.assigned_to).length || 0,
+        unassigned: data?.filter((j) => !j.assigned_to).length || 0,
+      };
+    },
+  });
+}
+
 export function useSearchEmployers(searchTerm: string) {
   return useQuery({
     queryKey: ["employers", "search", searchTerm],

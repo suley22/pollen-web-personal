@@ -1,30 +1,64 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import {
-  useEmployer,
-  useCreateEmployer,
-  useUpdateEmployer,
-} from "../../_hooks/use-employers-query";
-import { uploadFile } from "@/services/storageService";
-import { getLoggedInUserId } from "@/services/userService";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import {
+  fetchEmployerById,
+  createEmployer,
+  updateEmployer,
+} from "../_services/employer-create-service";
+import { processImageFromFormData } from "@/services/storageService";
+import { getLoggedInUserId } from "@/services/userService";
+import { EMPLOYERS_QUERY_KEYS as QueryKeys } from "@/employers/_queries/employers-query-keys";
+import { AdminRoutes } from "@/admin/router";
 
-/**
- * Custom hook to manage the employer form state and logic (create/edit)
- */
 export function useEmployersPage({ id = null }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const formRef = useRef(null);
-
-  // Use React Query hooks
-  const { data: employer, isLoading: isLoadingProfile } = useEmployer(id || "");
-
-  const createMutation = useCreateEmployer();
-  const updateMutation = useUpdateEmployer();
 
   const [logoUrl, setLogoUrl] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Query para obtener employer (solo si hay id - modo edición)
+  const { data: employer, isLoading } = useQuery({
+    queryKey: QueryKeys.profile(id || ""),
+    queryFn: () => fetchEmployerById(id || ""),
+    enabled: !!id,
+  });
+
+  // Mutation para crear
+  const createMutation = useMutation({
+    mutationFn: ({
+      formData,
+      userId,
+    }: {
+      formData: FormData;
+      userId: string;
+    }) => createEmployer(formData, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.all });
+      router.push(AdminRoutes.employers);
+    },
+  });
+
+  // Mutation para actualizar
+  const updateMutation = useMutation({
+    mutationFn: ({
+      id,
+      formData,
+      userId,
+    }: {
+      id: string;
+      formData: FormData;
+      userId: string;
+    }) => updateEmployer(id, formData, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QueryKeys.all });
+      router.push(AdminRoutes.employers);
+    },
+  });
 
   // Update logoUrl when employer data loads
   useEffect(() => {
@@ -33,7 +67,6 @@ export function useEmployersPage({ id = null }) {
     }
   }, [employer]);
 
-  // Handle navigation
   const handleBack = () => {
     router.back();
   };
@@ -42,59 +75,30 @@ export function useEmployersPage({ id = null }) {
     try {
       const formData = new FormData(formRef.current);
 
-      formData.set("logo_url", await getImageUrl(formData));
+      // Procesar y subir la imagen si es necesario
+      const logoUrl = await processImageFromFormData(
+        formData,
+        "logo_url",
+        "logo_url_file",
+        "images",
+        "employer_logo",
+      );
+      formData.set("logo_url", logoUrl);
 
       const userId = await getLoggedInUserId();
 
       if (!userId) {
-        console.error("No authenticated user found");
-        return { error: "User not authenticated" };
+        throw new Error("User not authenticated");
       }
 
-      // Use mutations instead of direct service calls
-      const result = id
-        ? await updateMutation.mutateAsync({ id, formData, userId })
-        : await createMutation.mutateAsync({ formData, userId });
-
-      // Go back after successful save
-      router.back();
-
-      return result;
+      if (id) {
+        await updateMutation.mutateAsync({ id, formData, userId });
+      } else {
+        await createMutation.mutateAsync({ formData, userId });
+      }
     } catch (error) {
-      console.error("Action: Unexpected error updating company:", error);
-      return {
-        success: false,
-        error: "Failed to update company profile",
-      };
-    }
-  };
-
-  const getImageUrl = async (formData) => {
-    const imageFileUrl = formData.get("logo_url");
-
-    if (imageFileUrl && imageFileUrl.startsWith("http")) {
-      return formData.get("logo_url") || "";
-    }
-
-    const imageFile = formData.get("logo_url_file");
-    const file = imageFile instanceof File ? imageFile : null;
-
-    const bucketName = "images";
-    const folder = "employer_logo";
-
-    if (file && file instanceof File && file.size > 0) {
-      // Validate file type
-      if (!file.type.startsWith("image/")) {
-        return "";
-      }
-
-      const publicUrl = await uploadFile(file, bucketName, folder);
-
-      console.log("Image uploaded successfully to:", publicUrl);
-      return publicUrl;
-    } else {
-      console.log("No valid file found");
-      return "";
+      console.error("Error saving employer:", error);
+      throw error;
     }
   };
 
@@ -102,7 +106,7 @@ export function useEmployersPage({ id = null }) {
     formRef,
     employer,
     isLoadingProfile:
-      isLoadingProfile || createMutation.isPending || updateMutation.isPending,
+      isLoading || createMutation.isPending || updateMutation.isPending,
     logoUrl,
     setLogoUrl,
     isDialogOpen,

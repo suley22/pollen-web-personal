@@ -5,7 +5,7 @@ import * as AvatarPrimitive from "@radix-ui/react-avatar";
 
 import { cn } from "@/lib/utils";
 
-function Avatar({ className, ...props }) {
+function Avatar({ className = "", ...props }) {
   return (
     <AvatarPrimitive.Root
       data-slot="avatar"
@@ -18,7 +18,7 @@ function Avatar({ className, ...props }) {
   );
 }
 
-function AvatarImage({ className, ...props }) {
+function AvatarImage({ className = "", ...props }) {
   return (
     <AvatarPrimitive.Image
       data-slot="avatar-image"

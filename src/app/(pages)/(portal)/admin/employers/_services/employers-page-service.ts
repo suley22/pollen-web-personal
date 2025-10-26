@@ -165,8 +165,31 @@ export function useEmployerById(id: string) {
         throw new Error(error.message);
       }
 
+      // Get user information from profile table
+      let createdBy = null;
+      if (data.user_id) {
+        const { data: profileData } = await supabase
+          .from("profile")
+          .select("first_name, last_name, email")
+          .eq("id", data.user_id)
+          .single();
+
+        if (profileData) {
+          createdBy = {
+            id: data.user_id,
+            email: profileData.email,
+            full_name:
+              `${profileData.first_name || ""} ${profileData.last_name || ""}`.trim() ||
+              profileData.email,
+            first_name: profileData.first_name,
+            last_name: profileData.last_name,
+          };
+        }
+      }
+
       return {
         ...data,
+        created_by: createdBy,
         updated_at: DateHelper.formatDate(data.updated_at),
         created_at: DateHelper.formatDate(data.created_at),
         profile_completeness:

@@ -89,8 +89,10 @@ export default function EmployerProfileView({ id = null }) {
         <div className="space-y-6">
           <ProfileStatus
             status={profile.approval_status}
+            createdBy={profile.created_by?.full_name}
             createdDate={profile.created_at}
-            lastUpdated={profile.updated_at}
+            lastUpdatedBy={profile.updated_by?.full_name}
+            lastUpdatedDate={profile.updated_at}
             profileCompleteness={profile.profile_completeness}
           />
 

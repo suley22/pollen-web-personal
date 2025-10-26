@@ -27,10 +27,15 @@ export function useEmployersPage() {
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
 
-  // Build filters for React Query
-  const filters = useMemo(
+  // Reset page when status changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedStatus]);
+
+  // Build filters for React Query - combines search term AND status
+  const fetchFilters = useMemo(
     () => ({
-      status: debouncedSearchTerm.trim() ? "all" : selectedStatus,
+      status: selectedStatus, // Use selected status from cards or dropdown
       searchTerm: debouncedSearchTerm.trim(),
       page: currentPage,
       pageSize: pageSize,
@@ -40,14 +45,21 @@ export function useEmployersPage() {
 
   // React Query: Fetch employers list
   const { data, isLoading, error } = useQuery({
-    queryKey: EMPLOYERS_QUERY_KEYS.list(filters),
-    queryFn: () => fetchEmployers(filters),
+    queryKey: EMPLOYERS_QUERY_KEYS.list(fetchFilters),
+    queryFn: () => fetchEmployers(fetchFilters),
   });
 
-  // React Query: Fetch statistics
+  // React Query: Fetch statistics - only filter by search term, NOT by status
+  const statisticsFilters = useMemo(
+    () => ({
+      searchTerm: debouncedSearchTerm.trim(),
+    }),
+    [debouncedSearchTerm],
+  );
+
   const { data: statisticsData } = useQuery({
-    queryKey: EMPLOYERS_QUERY_KEYS.statistics,
-    queryFn: fetchEmployerStatistics,
+    queryKey: EMPLOYERS_QUERY_KEYS.statistics(statisticsFilters),
+    queryFn: () => fetchEmployerStatistics(statisticsFilters),
   });
 
   // Pagination functions

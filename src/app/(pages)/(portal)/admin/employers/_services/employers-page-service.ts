@@ -89,11 +89,24 @@ export const fetchEmployers = async (filters: EmployerFilters) => {
   };
 };
 
-export const fetchEmployerStatistics = async () => {
-  const { data, error } = await supabase
+export const fetchEmployerStatistics = async (filters?: EmployerFilters) => {
+  let query = supabase
     .from("employer_profile")
     .select("approval_status")
     .filter("deleted_at", "is", null);
+
+  // Apply filters if provided
+  if (filters?.status && filters.status !== "all") {
+    query = query.eq("approval_status", filters.status);
+  }
+
+  if (filters?.searchTerm) {
+    query = query.or(
+      `company_name.ilike.%${filters.searchTerm}%,company_location.ilike.%${filters.searchTerm}%`,
+    );
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     throw new Error(error.message);

@@ -16,9 +16,12 @@ import { useSidebar } from "@/components/sidebar/sidebar";
 import { Logo } from "../icons/icons";
 import { NavigationItems } from "@/components/sidebar/navigation-items";
 import { Divider } from "../design-system";
+import { NavUser } from "./nav-user";
+import { useLogout } from "@/hooks/useLogout";
 
 export function AppSidebar({ ...props }) {
   const { state } = useSidebar();
+  const handleLogout = useLogout();
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -54,7 +57,9 @@ export function AppSidebar({ ...props }) {
           <NavigationItems />
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter></SidebarFooter>
+      <SidebarFooter>
+        <NavUser onLogout={handleLogout} />
+      </SidebarFooter>
     </Sidebar>
   );
 }

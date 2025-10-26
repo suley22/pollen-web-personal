@@ -5,9 +5,10 @@ import type { AssessmentCategory } from "@/types/assessment-category";
 
 interface CategoryCardProps {
   category: AssessmentCategory;
+  optionsCount?: number;
 }
 
-export function CategoryCard({ category }: CategoryCardProps) {
+export function CategoryCard({ category, optionsCount }: CategoryCardProps) {
   return (
     <Card
       className="p-4"
@@ -17,12 +18,22 @@ export function CategoryCard({ category }: CategoryCardProps) {
         backgroundColor: `${category.color}10`, // 10% opacity
       }}
     >
-      <h3
-        className="font-semibold text-lg mb-2"
-        style={{ color: category.color }}
-      >
-        {category.name}
-      </h3>
+      <div className="flex items-start justify-between mb-2">
+        <h3 className="font-semibold text-lg" style={{ color: category.color }}>
+          {category.name}
+        </h3>
+        {optionsCount !== undefined && (
+          <span
+            className="text-xs font-medium px-2 py-1 rounded"
+            style={{
+              backgroundColor: category.color,
+              color: "white",
+            }}
+          >
+            {optionsCount} {optionsCount === 1 ? "option" : "options"}
+          </span>
+        )}
+      </div>
       <p className="text-sm text-gray-600">{category.description}</p>
     </Card>
   );

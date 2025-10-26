@@ -25,7 +25,6 @@ import type {
   AssessmentCategory,
   CategoryStats,
 } from "@/types/assessment-category";
-import { CategoryDistributionChart } from "@/components/assessment/category-distribution-chart";
 import { CategoryCard } from "@/components/assessments/category-card";
 
 import {
@@ -321,18 +320,27 @@ export default function AdminFormsPage() {
           {/* Display categories */}
           {categories.length > 0 && (
             <div className="grid grid-cols-2 gap-3 mt-2">
-              {categories.map((category) => (
-                <div key={category.id} className="relative">
-                  <CategoryCard category={category} />
-                  <button
-                    onClick={() => handleRemoveCategory(category.id)}
-                    className="absolute top-2 right-2 p-1 rounded bg-white hover:bg-red-50 text-red-600 border"
-                    title="Remove category"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
+              {categories.map((category) => {
+                const categoryOptionsCount = questions
+                  .flatMap((q) => q.options)
+                  .filter((opt) => opt.categoryId === category.id).length;
+
+                return (
+                  <div key={category.id} className="relative">
+                    <CategoryCard
+                      category={category}
+                      optionsCount={categoryOptionsCount}
+                    />
+                    <button
+                      onClick={() => handleRemoveCategory(category.id)}
+                      className="absolute top-2 right-2 p-1 rounded bg-white hover:bg-red-50 text-red-600 border"
+                      title="Remove category"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -510,67 +518,6 @@ export default function AdminFormsPage() {
               </div>
             ))}
           </div>
-        </div>
-      )}
-
-      {/* Category Report */}
-      {categories.length > 0 && questions.length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-6">Category Report</h2>
-
-          {/* Category Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-            {categories.map((category) => {
-              const categoryOptions = questions
-                .flatMap((q) => q.options)
-                .filter((opt) => opt.categoryId === category.id);
-              const optionsCount = categoryOptions.length;
-
-              return (
-                <Card
-                  key={category.id}
-                  className="p-6"
-                  style={{
-                    borderColor: category.color,
-                    borderWidth: "2px",
-                    backgroundColor: `${category.color}10`,
-                  }}
-                >
-                  <div className="flex items-start justify-between mb-2">
-                    <h3
-                      className="font-semibold text-lg"
-                      style={{ color: category.color }}
-                    >
-                      {category.name}
-                    </h3>
-                    <span
-                      className="text-sm px-2 py-1 rounded"
-                      style={{
-                        backgroundColor: category.color,
-                        color: "white",
-                      }}
-                    >
-                      {optionsCount} options
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    {category.description}
-                  </p>
-                </Card>
-              );
-            })}
-          </div>
-
-          {/* Category Distribution Chart */}
-          <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">
-              Category Distribution
-            </h3>
-            <CategoryDistributionChart
-              categories={categories}
-              questions={questions}
-            />
-          </Card>
         </div>
       )}
     </PageContainer>

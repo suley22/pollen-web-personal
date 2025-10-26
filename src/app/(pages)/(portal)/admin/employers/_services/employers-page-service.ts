@@ -28,10 +28,12 @@ export interface EmployerPaginationInfo {
   to: number;
 }
 
+const employersQueryKey = "employers";
+
 // React Query Hooks
 export function useEmployersList(filters: EmployerFilters) {
   return useQuery({
-    queryKey: ["employers", "list", filters],
+    queryKey: [employersQueryKey, "list", filters],
     queryFn: async () => {
       const page = filters.page || 1;
       const pageSize = filters.pageSize || 10;
@@ -154,7 +156,7 @@ export function useEmployersStatistics(filters?: EmployerFilters) {
 
 export function useEmployerById(id: string) {
   return useQuery({
-    queryKey: ["employers", "profile", id],
+    queryKey: [employersQueryKey, "profile", id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("employer_profile")
@@ -260,10 +262,10 @@ export function useUpdateEmployerStatus() {
     onSuccess: (_data, variables) => {
       // Invalidate the specific profile
       queryClient.invalidateQueries({
-        queryKey: ["employers", "profile", variables.id],
+        queryKey: [employersQueryKey, "profile", variables.id],
       });
       // Invalidate all employers lists and statistics
-      queryClient.invalidateQueries({ queryKey: ["employers"] });
+      queryClient.invalidateQueries({ queryKey: [employersQueryKey] });
     },
   });
 }
@@ -294,7 +296,7 @@ export function useDeleteEmployer() {
     },
     onSuccess: () => {
       // Invalidate all employers queries to refresh the lists and statistics
-      queryClient.invalidateQueries({ queryKey: ["employers"] });
+      queryClient.invalidateQueries({ queryKey: [employersQueryKey] });
     },
   });
 }
@@ -333,7 +335,7 @@ export function useCreateEmployer() {
     },
     onSuccess: () => {
       // Invalidate all employers queries to refresh the lists and statistics
-      queryClient.invalidateQueries({ queryKey: ["employers"] });
+      queryClient.invalidateQueries({ queryKey: [employersQueryKey] });
     },
   });
 }
@@ -377,10 +379,10 @@ export function useUpdateEmployer() {
     onSuccess: (_data, variables) => {
       // Invalidate the specific profile
       queryClient.invalidateQueries({
-        queryKey: ["employers", "profile", variables.id],
+        queryKey: [employersQueryKey, "profile", variables.id],
       });
       // Invalidate all employers queries to refresh the lists and statistics
-      queryClient.invalidateQueries({ queryKey: ["employers"] });
+      queryClient.invalidateQueries({ queryKey: [employersQueryKey] });
     },
   });
 }

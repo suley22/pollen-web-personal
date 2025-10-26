@@ -9,7 +9,7 @@ import { AdminRoutes } from "@/admin/router";
 import { PageHeader } from "@/components/design-system/page-header";
 import { PrimaryButton } from "@/components/design-system/primary-button";
 import { PageContainer } from "@/components/design-system";
-import { useEmployersPageWithQuery } from "./_hooks/employers-page-hook-query";
+import { useEmployersPage } from "./_hooks/employers-page-hook";
 import { useCallback } from "react";
 
 export default function AdminEmployers() {
@@ -26,7 +26,7 @@ export default function AdminEmployers() {
     pagination,
     handlePageChange,
     handlePageSizeChange,
-  } = useEmployersPageWithQuery();
+  } = useEmployersPage();
 
   const onCreate = useCallback(() => {
     router.push(AdminRoutes.employersCreate);

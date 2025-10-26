@@ -1,64 +1,56 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   fetchEmployers,
   fetchEmployerStatistics,
-  EmployerFilters,
 } from "../_services/employers-page-service";
-import { EMPLOYERS_QUERY_KEYS as QueryKeys } from "@/employers/_queries/employers-query-keys";
+import { EMPLOYERS_QUERY_KEYS } from "../_queries/employers-query-keys";
 
 export function useEmployersPage() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  // Filters para la query
-  const filters: EmployerFilters = {
-    status: searchTerm.trim() ? "all" : selectedStatus,
-    searchTerm: searchTerm.trim(),
-    page: currentPage,
-    pageSize: pageSize,
-  };
+  // Debounce search term
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+      if (searchTerm.trim()) {
+        setCurrentPage(1);
+      }
+    }, 500);
 
-  // Query para employers list
-  const {
-    data,
-    isLoading: loading,
-    error,
-  } = useQuery({
-    queryKey: QueryKeys.list(filters),
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
+
+  // Build filters for React Query
+  const filters = useMemo(
+    () => ({
+      status: debouncedSearchTerm.trim() ? "all" : selectedStatus,
+      searchTerm: debouncedSearchTerm.trim(),
+      page: currentPage,
+      pageSize: pageSize,
+    }),
+    [selectedStatus, debouncedSearchTerm, currentPage, pageSize],
+  );
+
+  // React Query: Fetch employers list
+  const { data, isLoading, error } = useQuery({
+    queryKey: EMPLOYERS_QUERY_KEYS.list(filters),
     queryFn: () => fetchEmployers(filters),
   });
 
-  // Query para statistics
-  const { data: statistics } = useQuery({
-    queryKey: QueryKeys.statistics,
+  // React Query: Fetch statistics
+  const { data: statisticsData } = useQuery({
+    queryKey: EMPLOYERS_QUERY_KEYS.statistics,
     queryFn: fetchEmployerStatistics,
-    initialData: {
-      total: 0,
-      approved: 0,
-      pending: 0,
-      rejected: 0,
-    },
   });
 
-  const employers = data?.employers || [];
-  const pagination = data?.pagination || null;
-
-  // Handlers
-  const handleStatusChange = useCallback((status: string) => {
-    setSelectedStatus(status);
-    setCurrentPage(1);
-  }, []);
-
-  const handleSearchChange = useCallback((search: string) => {
-    setSearchTerm(search);
-    setCurrentPage(1);
-  }, []);
-
+  // Pagination functions
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
   }, []);
@@ -69,29 +61,34 @@ export function useEmployersPage() {
   }, []);
 
   const goToNextPage = useCallback(() => {
-    if (pagination?.hasNextPage) {
+    if (data?.pagination?.hasNextPage) {
       setCurrentPage((prev) => prev + 1);
     }
-  }, [pagination?.hasNextPage]);
+  }, [data?.pagination?.hasNextPage]);
 
   const goToPreviousPage = useCallback(() => {
-    if (pagination?.hasPreviousPage) {
+    if (data?.pagination?.hasPreviousPage) {
       setCurrentPage((prev) => prev - 1);
     }
-  }, [pagination?.hasPreviousPage]);
+  }, [data?.pagination?.hasPreviousPage]);
 
   return {
     selectedStatus,
     searchTerm,
-    employers,
-    statistics,
-    loading,
+    employers: data?.employers || [],
+    statistics: statisticsData || {
+      total: 0,
+      approved: 0,
+      pending: 0,
+      rejected: 0,
+    },
+    loading: isLoading,
     error: error?.message || null,
-    pagination,
+    pagination: data?.pagination || null,
     currentPage,
     pageSize,
-    handleStatusChange,
-    handleSearchChange,
+    setSelectedStatus,
+    setSearchTerm,
     handlePageChange,
     handlePageSizeChange,
     goToNextPage,

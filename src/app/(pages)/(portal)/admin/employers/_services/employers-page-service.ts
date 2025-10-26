@@ -106,3 +106,21 @@ export const fetchEmployerStatistics = async () => {
     rejected: data?.filter((e) => e.approval_status === "rejected").length || 0,
   };
 };
+
+export const deleteEmployer = async (id: string) => {
+  const { data, error } = await supabase
+    .from("employer_profile")
+    .update({
+      deleted_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};

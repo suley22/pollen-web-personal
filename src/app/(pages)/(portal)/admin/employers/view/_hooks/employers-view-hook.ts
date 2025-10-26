@@ -1,7 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
-import { fetchEmployerById } from "../_services/employers-view-service";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import {
+  fetchEmployerById,
+  updateEmployerStatus,
+  deleteEmployer,
+  EmployerApprovalStatus,
+} from "../_services/employers-view-service";
+import { AdminRoutes } from "../../../router";
 
 export function useEmployerView(id: string) {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
   const getEmployerProfileKey = ["employer", id];
 
   const {
@@ -14,19 +24,36 @@ export function useEmployerView(id: string) {
     enabled: !!id,
   });
 
+  const updateStatus = useMutation({
+    mutationFn: (status: EmployerApprovalStatus) =>
+      updateEmployerStatus(id, status),
+    onSuccess: () => {
+      // Invalidar el detalle actual
+      queryClient.invalidateQueries({ queryKey: getEmployerProfileKey });
+      // Invalidar el listado de employers para que se actualice cuando vuelvas
+      queryClient.invalidateQueries({ queryKey: ["employers"] });
+    },
+  });
+
+  const deleteQuery = useMutation({
+    mutationFn: () => deleteEmployer(id),
+    onSuccess: () => {
+      // Invalidar el listado antes de navegar
+      queryClient.invalidateQueries({ queryKey: ["employers"] });
+      router.push(AdminRoutes.employers);
+    },
+  });
+
   const handleSetLive = () => {
-    //status: live
-    console.log("Set live functionality - TODO");
+    updateStatus.mutate("approved");
   };
 
   const handleHideProfile = () => {
-    //status: pending
-    console.log("Hide profile functionality - TODO");
+    updateStatus.mutate("pending");
   };
 
   const handleDelete = () => {
-    //status: deleted_at = now()
-    console.log("Delete functionality - TODO");
+    deleteQuery.mutate();
   };
 
   return {
@@ -36,5 +63,7 @@ export function useEmployerView(id: string) {
     handleSetLive,
     handleHideProfile,
     handleDelete,
+    isUpdating: updateStatus.isPending,
+    isDeleting: deleteQuery.isPending,
   };
 }

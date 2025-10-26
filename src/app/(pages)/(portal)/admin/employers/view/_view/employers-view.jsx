@@ -17,8 +17,15 @@ import { AdminRoutes } from "@/admin/router";
 export default function EmployerProfileView({ id = null }) {
   const router = useRouter();
 
-  const { profile, isLoading, handleSetLive, handleHideProfile, handleDelete } =
-    useEmployerView(id);
+  const {
+    profile,
+    isLoading,
+    handleSetLive,
+    handleHideProfile,
+    handleDelete,
+    isUpdating,
+    isDeleting,
+  } = useEmployerView(id);
 
   if (!profile || isLoading) {
     return <EmployerProfileSkeleton />;
@@ -34,12 +41,14 @@ export default function EmployerProfileView({ id = null }) {
       {/* Header */}
       <EmployerProfileHeader
         companyName={profile.company_name}
-        companyStatus={profile.status}
+        approvalStatus={profile.approval_status}
         onBack={() => router.back()}
         onEdit={handleEdit}
         onSetLive={handleSetLive}
         onHideProfile={handleHideProfile}
         onDelete={handleDelete}
+        isUpdating={isUpdating}
+        isDeleting={isDeleting}
       />
 
       {/* Main Content */}

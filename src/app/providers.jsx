@@ -2,6 +2,7 @@
 
 import { createContext, useContext } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { JobSeekerRoutes } from "@/job-seeker/router";
 import { AdminRoutes } from "@/admin/router";
 import { LoginRoutes } from "@/public/router";
@@ -64,6 +65,7 @@ export function Providers({ children, user }) {
   return (
     <QueryClientProvider client={queryClient}>
       <UserContext.Provider value={userData}>{children}</UserContext.Provider>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

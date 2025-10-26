@@ -6,7 +6,7 @@ import {
   ASSESSMENT_SCORING_PLACEHOLDER,
 } from "@/lib/configs/constants/jobs-constants";
 
-export function AssessmentTab({ assessment, updateEditedAssessment }) {
+export function AssessmentTab({ assessment }) {
   return (
     <FormCard
       icon={<Brain className="h-5 w-5 text-gray-500" />}

@@ -1,5 +1,5 @@
 import { fetchJobByIdAction, updateJobAction } from "../../actions";
-import { JobForm } from "../../form";
+import { JobForm } from "../../create/_view/jobs-create-view";
 import { notFound } from "next/navigation";
 
 export default async function Page({ params }) {

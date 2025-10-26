@@ -1,22 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Plus, ArrowLeft } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { useJobManagement } from "./useJobManagement";
-import {
-  Users,
-  Eye,
-  Search,
-  Star,
-  Building2,
-  Calendar,
-  UserCircle,
-} from "lucide-react";
+import { Plus } from "lucide-react";
+
+import { useJobManagement } from "./_hooks/jobs-page-hook";
 import Filters from "./_components/filters";
 import JobListSection from "./_components/JobListSection";
-import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { AdminRoutes } from "../router";
 import { PageHeader } from "@/components/design-system/page-header";

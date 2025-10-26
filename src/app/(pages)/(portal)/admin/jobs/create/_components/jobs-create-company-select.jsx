@@ -4,29 +4,34 @@ import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Search } from "lucide-react";
-import { getEmployerProfiles } from "../../actions";
+import { useSearchEmployers } from "../../_services/jobs-page-service";
 
-export function CompanySearchSelect({ value, onValueChange, name }) {
+export function CompanySearchSelect({
+  initialCompanyId = null,
+  initialCompanyName = "",
+  onValueChange,
+}) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [companies, setCompanies] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [companyId, setCompanyId] = useState(initialCompanyId);
+  const [companyName, setCompanyName] = useState(initialCompanyName);
+
   const inputRef = useRef(null);
   const dropdownRef = useRef(null);
 
-  // Fetch companies on mount and when search term changes
+  // Debounce search term
   useEffect(() => {
-    const fetchCompanies = async () => {
-      setLoading(true);
-      const result = await getEmployerProfiles(searchTerm);
-      if (result.success) {
-        setCompanies(result.data);
-      }
-      setLoading(false);
-    };
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
 
-    fetchCompanies();
+    return () => clearTimeout(timer);
   }, [searchTerm]);
+
+  // Use React Query hook for fetching employers
+  const { data: companies = [], isLoading } =
+    useSearchEmployers(debouncedSearchTerm);
 
   // Handle clicking outside to close dropdown
   useEffect(() => {
@@ -49,25 +54,37 @@ export function CompanySearchSelect({ value, onValueChange, name }) {
   const handleInputChange = (e) => {
     const newValue = e.target.value;
     setSearchTerm(newValue);
-    onValueChange(newValue);
     setShowDropdown(true);
+
+    // Clear selection if user is typing
+    if (companyId) {
+      setCompanyId(null);
+      setCompanyName("");
+      if (onValueChange) {
+        onValueChange("");
+      }
+    }
   };
 
-  const handleCompanySelect = (companyName) => {
-    onValueChange(companyName);
-    setSearchTerm("");
+  const handleCompanySelect = (company) => {
+    setCompanyId(company.id);
+    setCompanyName(company.company_name);
+    setSearchTerm(company.company_name);
     setShowDropdown(false);
+
+    if (onValueChange) {
+      onValueChange(company.company_name);
+    }
+
     inputRef.current?.blur();
   };
 
-  const filteredCompanies = companies.filter((company) =>
-    company.company_name
-      .toLowerCase()
-      .includes((value || searchTerm).toLowerCase()),
-  );
-
   return (
     <div className="flex flex-col space-y-2 relative">
+      {/* Hidden inputs for form submission */}
+      <input type="hidden" name="company_id" value={companyId || ""} />
+      <input type="hidden" name="company_name" value={companyName || ""} />
+
       <Label htmlFor="companyName">Company Name</Label>
       <div className="relative">
         <div className="relative">
@@ -76,7 +93,7 @@ export function CompanySearchSelect({ value, onValueChange, name }) {
             ref={inputRef}
             type="text"
             placeholder="Search and select company..."
-            value={value || searchTerm}
+            value={searchTerm}
             onChange={handleInputChange}
             onFocus={() => setShowDropdown(true)}
             className="pl-10"
@@ -88,14 +105,14 @@ export function CompanySearchSelect({ value, onValueChange, name }) {
             ref={dropdownRef}
             className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto"
           >
-            {loading ? (
+            {isLoading ? (
               <div className="px-3 py-2 text-sm text-gray-500">Loading...</div>
-            ) : filteredCompanies.length > 0 ? (
+            ) : companies.length > 0 ? (
               <ul className="py-1">
-                {filteredCompanies.map((company) => (
+                {companies.map((company) => (
                   <li
                     key={company.id}
-                    onClick={() => handleCompanySelect(company.company_name)}
+                    onClick={() => handleCompanySelect(company)}
                     className="px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 transition-colors"
                   >
                     {company.company_name}
@@ -104,7 +121,7 @@ export function CompanySearchSelect({ value, onValueChange, name }) {
               </ul>
             ) : (
               <div className="px-3 py-2 text-sm text-gray-500">
-                {searchTerm || value
+                {searchTerm
                   ? "No companies found"
                   : "Start typing to search companies"}
               </div>
@@ -112,9 +129,6 @@ export function CompanySearchSelect({ value, onValueChange, name }) {
           </div>
         )}
       </div>
-
-      {/* Hidden input for form submission */}
-      <input type="hidden" name={name} value={value} />
     </div>
   );
 }

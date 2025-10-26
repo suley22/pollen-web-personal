@@ -1,39 +1,25 @@
-import {
-  Target,
-  FileText,
-  Lightbulb,
-  Award,
-  CheckCircle,
-  Users,
-  Briefcase,
-} from "lucide-react";
+import { Target, FileText, Lightbulb, Briefcase } from "lucide-react";
 import {
   FormCard,
   FormContainer,
   Input,
   TextAreaCard,
-  DynamicListInput,
   Select,
 } from "@/components/design-system";
-import { CompanySearchSelect } from "../CompanySearchSelect";
+import { CompanySearchSelect } from "../jobs-create-company-select";
 import {
   WORK_ARRANGEMENT_OPTIONS,
   EMPLOYMENT_TYPE_OPTIONS,
   WORK_AUTHORIZATION_OPTIONS,
   WORKING_HOURS_OPTIONS,
 } from "@/lib/configs/constants/jobs-constants";
-import { Responsibilities } from "./_components/responsabilities";
-import { WhoWouldLove } from "./_components/who_would_love";
-import { Requirement } from "./_components/requirement";
+import { Responsibilities } from "./_components/jobs-create-responsabilities";
+import { WhoWouldLove } from "./_components/jobs-create-who_would_love";
+import { Requirement } from "./_components/jobs-create-requirement";
 
-export function JobDescriptionTab({
-  editedJob,
-  formRef,
-  formAction,
-  updateEditedJob,
-}) {
+export function JobDescriptionTab({ initialData: editedJob, formRef }) {
   return (
-    <FormContainer ref={formRef} action={formAction}>
+    <FormContainer ref={formRef}>
       <FormCard
         icon={<Briefcase className="h-5 w-5 text-gray-500" />}
         title="Job Overview"
@@ -41,9 +27,9 @@ export function JobDescriptionTab({
         <div className="w-full flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-4">
             <CompanySearchSelect
-              name="company_name"
+              name="company"
               value={editedJob?.company_name || ""}
-              onValueChange={(value) => updateEditedJob("company_name", value)}
+              // TODO: Guardar el company id
             />
             <Input
               label="Job Title"

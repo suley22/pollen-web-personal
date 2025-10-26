@@ -156,6 +156,7 @@ export function useEmployersStatistics(filters?: EmployerFilters) {
 
 export function useEmployerById(id: string) {
   return useQuery({
+    enabled: !!id,
     queryKey: [employersQueryKey, "profile", id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -225,7 +226,6 @@ export function useEmployerById(id: string) {
           EmployerProfileHelper.calculateProfileCompleteness(data),
       };
     },
-    enabled: !!id,
   });
 }
 

@@ -33,7 +33,8 @@
       "@/hooks/*": ["./src/hooks/*"],
       "@/employers/*": ["./src/app/(pages)/(portal)/admin/employers/*"],
       "@/types/*": ["./src/types/*"],
-      "@/ds/*": ["./src/components/design-system/*"]
+      "@/ds/*": ["./src/components/design-system/*"],
+      "@/jobs/*": ["./src/app/(pages)/(portal)/admin/jobs/*"]
     },
     "moduleResolution": "bundler",
     "resolveJsonModule": true,

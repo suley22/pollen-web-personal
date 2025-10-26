@@ -1,75 +1,34 @@
 "use client";
 
-import {
-  Target,
-  FileText,
-  Lightbulb,
-  Award,
-  UserCheck,
-  Briefcase,
-  Brain,
-  CheckCircle,
-  Eye,
-  Users,
-  Info,
-} from "lucide-react";
+import { FileText, UserCheck, Brain } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+
 import {
-  FormCard,
   PageContainer,
   PageHeader,
-  FormContainer,
   FormActions,
   ConfirmationDialog,
-  Input,
-  Textarea,
-  TextAreaCard,
-  DynamicListInput,
-  Select,
-  InfoField,
 } from "@/components/design-system";
-import {
-  WORK_ARRANGEMENT_OPTIONS,
-  EMPLOYMENT_TYPE_OPTIONS,
-  WORK_AUTHORIZATION_OPTIONS,
-  ASSESSMENT_PLACEHOLDER_CONSTANT,
-  ASSESSMENT_SCORING_PLACEHOLDER,
-  WORKING_HOURS_OPTIONS,
-} from "@/lib/configs/constants/jobs-constants";
-import { JobDescriptionTab } from "./create/_components/tabs/job-description-tab";
-import { PersonaTab } from "./create/_components/tabs/persona-tab";
-import { AssessmentTab } from "./create/_components/tabs/assessment-tab";
-import { useJobsPage } from "./_hooks/useJobsPage";
+import { JobDescriptionTab } from "../_components/tabs/jobs-create-job-description-tab";
+import { PersonaTab } from "../_components/tabs/jobs-create-persona-tab";
+import { AssessmentTab } from "../_components/tabs/jobs-create-assessment-tab";
+import { useJobsCreatePage } from "../_hook/jobs-create-hook";
 
-export function JobForm({ job = null, action }) {
+export function JobForm({ id = null }) {
   // ✅ Usa el hook para obtener toda la lógica
   const {
+    job,
     formRef,
-    formAction,
-    isPending,
-    editedJob,
-    setEditedJob,
-    editedAssessment,
-    setEditedAssessment,
-    editedPersonaData,
+    isLoading,
     activeTab,
-    setActiveTab,
+    isEditMode,
     isDialogOpen,
+    setActiveTab,
     setIsDialogOpen,
     handleBack,
-    handleConfirmSubmit,
-    updateEditedJob,
-    updateEditedAssessment,
-    updateAssessmentNestedField,
-    updateArrayField,
-    removeArrayItem,
-    addArrayItem,
-    isEditMode,
-  } = useJobsPage({ job, action });
+    saveJob,
+  } = useJobsCreatePage({ id });
 
   return (
     <PageContainer>
@@ -109,31 +68,23 @@ export function JobForm({ job = null, action }) {
         </TabsList>
 
         <TabsContent value="description" className="space-y-6">
-          <JobDescriptionTab
-            editedJob={editedJob}
-            formRef={formRef}
-            formAction={formAction}
-            updateEditedJob={updateEditedJob}
-          />
+          <JobDescriptionTab initialData={job} formRef={formRef} />
         </TabsContent>
 
         <TabsContent value="persona" className="space-y-6">
-          <PersonaTab personaData={editedPersonaData} />
+          <PersonaTab personaData={null} />
         </TabsContent>
 
         <TabsContent value="assessment" className="space-y-6">
-          <AssessmentTab
-            assessment={editedAssessment}
-            updateEditedAssessment={updateEditedAssessment}
-          />
+          <AssessmentTab assessment={null} />
         </TabsContent>
       </Tabs>
 
       <FormActions>
         <ConfirmationDialog
           trigger={
-            <Button type="button" size="lg" disabled={isPending}>
-              {isPending
+            <Button type="button" size="lg" disabled={isLoading}>
+              {isLoading
                 ? isEditMode
                   ? "Updating..."
                   : "Creating..."
@@ -150,8 +101,8 @@ export function JobForm({ job = null, action }) {
           }
           confirmText="Confirm"
           cancelText="Cancel"
-          onConfirm={handleConfirmSubmit}
-          isLoading={isPending}
+          onConfirm={saveJob}
+          isLoading={isLoading}
           loadingText={isEditMode ? "Updating..." : "Creating..."}
           open={isDialogOpen}
           onOpenChange={setIsDialogOpen}

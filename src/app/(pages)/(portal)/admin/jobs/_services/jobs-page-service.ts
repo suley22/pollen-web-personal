@@ -1,0 +1,283 @@
+"use client";
+
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { createClient } from "@/lib/utils/supabase/client";
+import { DateHelper } from "@/lib/helpers/date-helper";
+
+const supabase = createClient();
+
+const jobsQueryKey = "jobs";
+
+export function useSearchEmployers(searchTerm: string) {
+  return useQuery({
+    queryKey: ["employers", "search", searchTerm],
+    queryFn: async () => {
+      let query = supabase
+        .from("employer_profile")
+        .select("id, company_name, logo_url")
+        .filter("deleted_at", "is", null)
+        .eq("approval_status", "live")
+        .order("company_name", { ascending: true });
+
+      if (searchTerm && searchTerm.trim()) {
+        query = query.ilike("company_name", `%${searchTerm}%`);
+      }
+
+      const { data, error } = await query.limit(50);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data || [];
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
+
+export function useJobById(id: string) {
+  return useQuery({
+    enabled: !!id,
+    queryKey: [jobsQueryKey, "profile", id],
+    queryFn: async () => {
+      try {
+        console.log("JobService: Fetching job by ID:", id);
+
+        const { data, error } = await this.supabase
+          .from("job")
+          .select("*")
+          .eq("id", id)
+          .single();
+
+        if (error) {
+          console.error("JobService: Error fetching job by ID:", error);
+          return { success: false, error: error.message };
+        }
+
+        // Normalize the job data
+        const job = {
+          ...data,
+          who_would_love: data?.who_would_love || [],
+          candidate_counts: data?.candidate_counts || {},
+          candidateCounts: {
+            total: data?.candidate_counts?.total || 15,
+            new: data?.candidate_counts?.new || 10,
+            inProgress: data?.candidate_counts?.inProgress || 5,
+            complete: data?.candidate_counts?.complete || 8,
+            hired: data?.candidate_counts?.hired || 2,
+          },
+        };
+
+        return { success: true, data: job };
+      } catch (error) {
+        console.error("JobService: Unexpected error fetching job:", error);
+        return { success: false, error: "Failed to fetch job" };
+      }
+    },
+  });
+}
+
+export const useCreateJob = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ formData }: { formData: FormData }) => {
+      try {
+        const transformedData = transformFormDataToDatabase(formData);
+
+        // Validate required fields
+        if (
+          !transformedData.job_title ||
+          !transformedData.job_title.toString().trim()
+        ) {
+          return {
+            success: false,
+            error: "Job title is required",
+          };
+        }
+
+        // 1. Create the job
+        const { data: jobData, error: jobError } = await supabase
+          .from("job")
+          .insert(transformedData)
+          .select()
+          .single();
+
+        if (jobError) {
+          console.error("JobService: Error creating job:", jobError);
+          return {
+            success: false,
+            error: jobError.message || "Failed to create job",
+          };
+        }
+
+        console.log("JobService: Created job:", jobData);
+
+        // 2. Create assessment if there's assessment data
+        const formJobData = Object.fromEntries(formData.entries());
+        const hasAssessmentData =
+          formJobData.assessment_title ||
+          formJobData.assessment_content ||
+          formJobData.assessment_scoring_criteria;
+
+        if (hasAssessmentData && jobData.id) {
+          const assessmentData = transformAssessmentDataToDatabase(
+            formData,
+            jobData.id,
+          );
+
+          const { data: assessmentResult, error: assessmentError } =
+            await supabase
+              .from("job_assessment")
+              .insert(assessmentData)
+              .select()
+              .single();
+
+          if (assessmentError) {
+            console.error(
+              "JobService: Error creating assessment:",
+              assessmentError,
+            );
+            console.warn(
+              "Job was created but assessment failed:",
+              assessmentError.message,
+            );
+          } else {
+            console.log("JobService: Created assessment:", assessmentResult);
+          }
+        }
+
+        return {
+          success: true,
+          data: { job: jobData, hasAssessment: hasAssessmentData },
+          message: "Job created successfully",
+        };
+      } catch (error) {
+        console.error("JobService: Unexpected error creating job:", error);
+        return {
+          success: false,
+          error: "Failed to create job",
+        };
+      }
+    },
+    onSuccess: () => {
+      // Invalidate all jobs lists and statistics
+      queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
+    },
+  });
+};
+
+const transformFormDataToDatabase = (formData: FormData) => {
+  const formJobData = Object.fromEntries(formData.entries());
+
+  // Parse array fields
+  const responsibilities = parseArrayField(formJobData.responsibilities);
+  const who_would_love = parseArrayField(formJobData.who_would_love);
+  const pollen_approved_requirements = parseArrayField(
+    formJobData.pollen_approved_requirements,
+  );
+
+  return {
+    job_title: formJobData.job_title,
+    company_name: formJobData.company_name,
+    location: formJobData.location,
+    job_type: formJobData.job_type,
+    salary_range: formJobData.salary_range,
+    work_arrangement: formJobData.work_arrangement,
+    employment_type: formJobData.employment_type,
+    employment_type_details: formJobData.employment_type_details,
+    start_date: formJobData.start_date,
+    application_deadline: formJobData.application_deadline,
+    work_authorization: formJobData.work_authorization,
+    description: formJobData.description,
+    responsibilities: responsibilities,
+    who_would_love: who_would_love,
+    success_looks: formJobData.success_looks,
+    pollen_approved_requirements: pollen_approved_requirements,
+    internal_notes: formJobData.internal_notes,
+  };
+};
+
+const transformAssessmentDataToDatabase = (
+  formData: FormData,
+  jobId: string,
+) => {
+  const formJobData = Object.fromEntries(formData.entries());
+
+  // Prepare structured_questions as JSONB
+  const structuredQuestions = {
+    title: formJobData.assessment_title || "",
+    estimatedTime: formJobData.assessment_estimated_time
+      ? parseInt(formJobData.assessment_estimated_time as string)
+      : formJobData.estimated_time
+        ? parseInt(formJobData.estimated_time as string)
+        : null,
+    totalQuestions: formJobData.assessment_total_questions
+      ? parseInt(formJobData.assessment_total_questions as string)
+      : formJobData.total_questions
+        ? parseInt(formJobData.total_questions as string)
+        : null,
+    instructions: formJobData.assessment_instructions || "",
+    openingQuestion: {
+      title:
+        formJobData.assessment_opening_question_title ||
+        formJobData.opening_question_title ||
+        "",
+      content:
+        formJobData.assessment_opening_question_content ||
+        formJobData.opening_question_content ||
+        "",
+    },
+    guidelines: {
+      timeGuideline: formJobData.assessment_estimated_time
+        ? `${formJobData.assessment_estimated_time} minutes`
+        : formJobData.estimated_time
+          ? `${formJobData.estimated_time} minutes`
+          : null,
+    },
+  };
+
+  return {
+    job_id: jobId,
+    assessment_type: "skills_assessment",
+    estimated_duration: formJobData.assessment_estimated_time
+      ? `${formJobData.assessment_estimated_time} minutes`
+      : formJobData.estimated_time
+        ? `${formJobData.estimated_time} minutes`
+        : null,
+    generated_content:
+      formJobData.assessment_content || formJobData.generated_content || "",
+    structured_questions: structuredQuestions,
+    scoring_criteria:
+      formJobData.assessment_scoring_criteria ||
+      formJobData.scoring_criteria ||
+      "",
+  };
+};
+
+const parseArrayField = (fieldData: any): string[] => {
+  if (!fieldData) return [];
+  try {
+    const parsed = JSON.parse(fieldData);
+    // If it's an array of objects with 'value', extract the values
+    if (
+      Array.isArray(parsed) &&
+      parsed.length > 0 &&
+      parsed[0].value !== undefined
+    ) {
+      return parsed.map((item) => item.value).filter((v) => v && v.trim());
+    }
+    // If it's already a simple array, return it
+    if (Array.isArray(parsed)) {
+      return parsed.filter((v) => v && v.trim());
+    }
+    return [];
+  } catch (e) {
+    // If it's not JSON, try parsing as CSV (backward compatibility)
+    console.log("Parsing field as CSV for backward compatibility:", e);
+    return fieldData
+      .split(",")
+      .map((item: string) => item.trim())
+      .filter((item: string) => item);
+  }
+};

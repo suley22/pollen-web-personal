@@ -1,4 +1,4 @@
-import { JobForm } from "../form";
+import { JobForm } from "./_view/jobs-create-view";
 import { createJobAction } from "../actions";
 
 export default function Page() {

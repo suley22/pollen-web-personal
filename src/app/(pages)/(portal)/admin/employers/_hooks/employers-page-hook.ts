@@ -44,11 +44,10 @@ export function useEmployersPage(debouncedSearchTerm: string) {
   );
 
   // React Query: Fetch employers list
-  const {
-    data: { employers, pagination },
-    isLoading,
-    error,
-  } = useEmployersList(fetchFilters);
+  const { data, isLoading, error } = useEmployersList(fetchFilters);
+
+  const employers = data?.employers || [];
+  const pagination = data?.pagination || null;
 
   // React Query: Fetch statistics - only filter by search term, NOT by status
   const statisticsFilters = useMemo(
@@ -70,18 +69,6 @@ export function useEmployersPage(debouncedSearchTerm: string) {
     setCurrentPage(1);
   }, []);
 
-  const goToNextPage = useCallback(() => {
-    if (pagination?.hasNextPage) {
-      setCurrentPage((prev) => prev + 1);
-    }
-  }, [pagination?.hasNextPage]);
-
-  const goToPreviousPage = useCallback(() => {
-    if (pagination?.hasPreviousPage) {
-      setCurrentPage((prev) => prev - 1);
-    }
-  }, [pagination?.hasPreviousPage]);
-
   return {
     selectedStatus,
     employers: employers || [],
@@ -100,7 +87,5 @@ export function useEmployersPage(debouncedSearchTerm: string) {
     setSelectedStatus,
     handlePageChange,
     handlePageSizeChange,
-    goToNextPage,
-    goToPreviousPage,
   };
 }

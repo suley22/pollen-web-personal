@@ -3,45 +3,29 @@
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 import {
   Target,
   FileText,
   Badge,
   Lightbulb,
-  Award,
-  Pause,
   UserCheck,
   Briefcase,
   Brain,
   Building2,
   CheckCircle,
-  Edit,
   Eye,
-  Play,
   X,
   MapPin,
   Clock,
   Users,
-  ArrowLeft,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import {
   PageContainer,
   FormCard,
   DescriptionCard,
 } from "@/components/design-system";
-import Page from "../../employers/(crud)/create/page";
 import { JobViewHeader } from "./_components/header";
 import {
   LiveBadge,
@@ -56,11 +40,8 @@ export default function JobsManagmentReviewPage({
   personaData,
   assessmentData,
 }) {
-  const [submittedToEmployer, setSubmittedToEmployer] = useState(false);
   const [editedAssessment, setEditedAssessment] = useState(null);
   const [editedJob, setEditedJob] = useState(null);
-  const [showCancelDialog, setShowCancelDialog] = useState(false);
-  const [showSubmitDialog, setShowSubmitDialog] = useState(false);
   const [isEditingAssessment, setIsEditingAssessment] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentJobStatus, setCurrentJobStatus] = useState(null);

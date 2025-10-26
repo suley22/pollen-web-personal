@@ -30,12 +30,8 @@ export default function JobsPageView() {
     error,
     pagination,
     filterConfigs,
-    getStatusBadge,
-    hasActionRequired,
     handlePageChange,
     handlePageSizeChange,
-    goToNextPage,
-    goToPreviousPage,
   } = useJobManagement(debouncedSearchTerm);
 
   const handleSearchChange = (term: string) => {

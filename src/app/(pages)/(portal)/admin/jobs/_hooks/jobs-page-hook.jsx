@@ -86,18 +86,6 @@ export function useJobManagement(debouncedSearchTerm) {
     setCurrentPage(1);
   }, []);
 
-  const goToNextPage = useCallback(() => {
-    if (pagination?.hasNextPage) {
-      setCurrentPage((prev) => prev + 1);
-    }
-  }, [pagination?.hasNextPage]);
-
-  const goToPreviousPage = useCallback(() => {
-    if (pagination?.hasPreviousPage) {
-      setCurrentPage((prev) => prev - 1);
-    }
-  }, [pagination?.hasPreviousPage]);
-
   const getStatusBadge = useCallback((status) => {
     return <JobStatusBadge status={status} />;
   }, []);
@@ -138,7 +126,5 @@ export function useJobManagement(debouncedSearchTerm) {
     hasActionRequired,
     handlePageChange,
     handlePageSizeChange,
-    goToNextPage,
-    goToPreviousPage,
   };
 }

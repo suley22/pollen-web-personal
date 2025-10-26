@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { getJobList } from "@/admin/jobs/actions";
 import { Badge } from "@/components/ui/badge";
 
 export function useHome() {
@@ -33,10 +32,13 @@ export function useHome() {
     setError(null);
 
     try {
-      const result = await getJobList({
-        status: selectedStatus,
-        searchTerm: debouncedSearchTerm.trim(),
-      });
+      // TODO: Agregar función real para obtener la lista de trabajos
+      // const result = await getJobList({
+      //   status: selectedStatus,
+      //   searchTerm: debouncedSearchTerm.trim(),
+      // });
+
+      const result = { success: true, data: [] }; // Placeholder
 
       if (result.success) {
         const assignedJobs = result.data.map((job) => ({

@@ -34,13 +34,6 @@ export function List({
 }) {
   const router = useRouter();
 
-  const handleDeleteClick = (company, e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    console.log("Would update company");
-  };
-
   const onEmployerClick = useCallback(
     (company) => {
       router.push(AdminRoutes.employersView(company.id));
@@ -232,15 +225,6 @@ export function List({
                           >
                             <Edit className="h-4 w-4 mr-1" />
                             <span className="text-xs">Edit</span>
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-                            onClick={(e) => handleDeleteClick(company, e)}
-                          >
-                            <Trash2 className="h-4 w-4 mr-1" />
-                            <span className="text-xs">Delete</span>
                           </Button>
                         </div>
                       </div>

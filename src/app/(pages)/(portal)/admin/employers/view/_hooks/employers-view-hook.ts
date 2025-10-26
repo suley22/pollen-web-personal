@@ -34,7 +34,7 @@ export function useEmployerView(id: string) {
         queryKey: QueryKeys.profile(id),
       });
       // Invalidar el listado de employers para que se actualice cuando vuelvas
-      queryClient.invalidateQueries({ queryKey: QueryKeys.list });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.all });
     },
   });
 
@@ -42,7 +42,7 @@ export function useEmployerView(id: string) {
     mutationFn: () => deleteEmployer(id),
     onSuccess: () => {
       // Invalidar el listado antes de navegar
-      queryClient.invalidateQueries({ queryKey: QueryKeys.list });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.all });
       router.push(AdminRoutes.employers);
     },
   });
@@ -55,6 +55,7 @@ export function useEmployerView(id: string) {
     updateStatus.mutate(StatusEnum.Pending);
   };
 
+  // TODO: Mover al hook de la page
   const handleDelete = () => {
     deleteQuery.mutate();
   };

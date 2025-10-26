@@ -1,4 +1,8 @@
 export const EMPLOYERS_QUERY_KEYS = {
-  list: ["employers"],
-  profile: (id: string) => ["employer", id],
+  all: ["employers"] as const,
+  list: (filters?: any) =>
+    [...EMPLOYERS_QUERY_KEYS.all, "list", filters] as const,
+  profile: (id: string) =>
+    [...EMPLOYERS_QUERY_KEYS.all, "profile", id] as const,
+  statistics: [...["employers"], "statistics"] as const,
 };

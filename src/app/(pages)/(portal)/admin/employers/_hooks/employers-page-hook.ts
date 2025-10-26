@@ -1,116 +1,71 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
   fetchEmployers,
-  fetchEmployerById,
   fetchEmployerStatistics,
-  EmployerPaginationInfo,
-} from "@/employers/_services/employers-service";
+  EmployerFilters,
+} from "../_services/employers-page-service";
+import { EMPLOYERS_QUERY_KEYS as QueryKeys } from "@/employers/_queries/employers-query-keys";
 
 export function useEmployersPage() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-  const [employers, setEmployers] = useState([]);
-
-  const [statistics, setStatistics] = useState({
-    total: 0,
-    approved: 0,
-    pending: 0,
-    rejected: 0,
-  });
-
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [pagination, setPagination] = useState<EmployerPaginationInfo | null>(
-    null,
-  );
 
-  // Debounce search term
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-      if (searchTerm.trim()) {
-        setCurrentPage(1);
-      }
-    }, 500);
+  // Filters para la query
+  const filters: EmployerFilters = {
+    status: searchTerm.trim() ? "all" : selectedStatus,
+    searchTerm: searchTerm.trim(),
+    page: currentPage,
+    pageSize: pageSize,
+  };
 
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm]);
+  // Query para employers list
+  const {
+    data,
+    isLoading: loading,
+    error,
+  } = useQuery({
+    queryKey: QueryKeys.list(filters),
+    queryFn: () => fetchEmployers(filters),
+  });
 
-  // Load employers when filters change
-  useEffect(() => {
-    let cancelled = false;
+  // Query para statistics
+  const { data: statistics } = useQuery({
+    queryKey: QueryKeys.statistics,
+    queryFn: fetchEmployerStatistics,
+    initialData: {
+      total: 0,
+      approved: 0,
+      pending: 0,
+      rejected: 0,
+    },
+  });
 
-    const loadData = async () => {
-      setLoading(true);
-      setError(null);
+  const employers = data?.employers || [];
+  const pagination = data?.pagination || null;
 
-      try {
-        const statusToUse = debouncedSearchTerm.trim() ? "all" : selectedStatus;
+  // Handlers
+  const handleStatusChange = useCallback((status: string) => {
+    setSelectedStatus(status);
+    setCurrentPage(1);
+  }, []);
 
-        const result = await fetchEmployers({
-          status: statusToUse,
-          searchTerm: debouncedSearchTerm.trim(),
-          page: currentPage,
-          pageSize: pageSize,
-        });
+  const handleSearchChange = useCallback((search: string) => {
+    setSearchTerm(search);
+    setCurrentPage(1);
+  }, []);
 
-        if (cancelled) return;
-
-        if (result.success) {
-          setEmployers(result.data || []);
-          setPagination(result.pagination || null);
-          setError(null);
-        } else {
-          setError(result.error);
-        }
-      } catch (err: any) {
-        if (!cancelled) {
-          setError("Failed to load employers: " + err.message);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadData();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [selectedStatus, debouncedSearchTerm, currentPage, pageSize]);
-
-  // Load statistics on mount
-  useEffect(() => {
-    let cancelled = false;
-
-    const loadStats = async () => {
-      const statsResult = await fetchEmployerStatistics();
-
-      if (!cancelled && statsResult.success && statsResult.data) {
-        setStatistics(statsResult.data);
-      }
-    };
-
-    loadStats();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []); // Pagination functions
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
   }, []);
 
   const handlePageSizeChange = useCallback((newPageSize: number) => {
     setPageSize(newPageSize);
-    setCurrentPage(1); // Reset to first page when changing page size
+    setCurrentPage(1);
   }, []);
 
   const goToNextPage = useCallback(() => {
@@ -125,23 +80,18 @@ export function useEmployersPage() {
     }
   }, [pagination?.hasPreviousPage]);
 
-  const getEmployerById = useCallback(async (id) => {
-    return await fetchEmployerById(id);
-  }, []);
-
   return {
     selectedStatus,
     searchTerm,
     employers,
     statistics,
     loading,
-    error,
+    error: error?.message || null,
     pagination,
     currentPage,
     pageSize,
-    setSelectedStatus,
-    setSearchTerm,
-    getEmployerById,
+    handleStatusChange,
+    handleSearchChange,
     handlePageChange,
     handlePageSizeChange,
     goToNextPage,

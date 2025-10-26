@@ -24,6 +24,7 @@ import {
   Palette,
   HelpCircle,
   FileText,
+  Pencil,
 } from "lucide-react";
 import { SecondaryButton } from "@/components/design-system/primary-button";
 import type {
@@ -67,6 +68,11 @@ export default function AdminFormsPage() {
   const [currentOptionCategory, setCurrentOptionCategory] = useState<
     string | undefined
   >();
+
+  // Estado para editar preguntas
+  const [editingQuestionIndex, setEditingQuestionIndex] = useState<
+    number | null
+  >(null);
 
   // Estado para el preview del assessment
   const [previewAnswers, setPreviewAnswers] = useState<Record<string, string>>(
@@ -183,6 +189,29 @@ export default function AdminFormsPage() {
   // Función para eliminar una pregunta
   const handleRemoveQuestion = (index: number) => {
     setQuestions(questions.filter((_, i) => i !== index));
+    // Si estamos editando esta pregunta, limpiar el formulario
+    if (editingQuestionIndex === index) {
+      handleClearForm();
+      setEditingQuestionIndex(null);
+    }
+  };
+
+  // Función para editar una pregunta
+  const handleEditQuestion = (index: number) => {
+    const question = questions[index];
+    setTitle(question.title);
+    setDescription(question.description);
+    setOptionsTitle(question.options_title);
+    setOptions(question.options);
+    setEditingQuestionIndex(index);
+    // Scroll al campo de título de la pregunta
+    setTimeout(() => {
+      const titleInput = document.getElementById("question_title");
+      if (titleInput) {
+        titleInput.scrollIntoView({ behavior: "smooth", block: "center" });
+        titleInput.focus();
+      }
+    }, 100);
   };
 
   // Función para mover una pregunta hacia arriba
@@ -214,23 +243,33 @@ export default function AdminFormsPage() {
     setOptionsTitle("");
     setOptions([]);
     setCurrentOption("");
+    setEditingQuestionIndex(null);
   };
 
-  // Función para crear la pregunta
+  // Función para crear o actualizar la pregunta
   const handleAddQuestion = () => {
     if (!title.trim() || !optionsTitle.trim() || options.length === 0) {
       alert("Please fill in all required fields and add at least one option");
       return;
     }
 
-    const newQuestion: MultipleChoiceQuestion = {
+    const questionData: MultipleChoiceQuestion = {
       title: title.trim(),
       description: description.trim(),
       options_title: optionsTitle.trim(),
       options: options,
     };
 
-    setQuestions([...questions, newQuestion]);
+    if (editingQuestionIndex !== null) {
+      // Actualizar pregunta existente
+      const newQuestions = [...questions];
+      newQuestions[editingQuestionIndex] = questionData;
+      setQuestions(newQuestions);
+    } else {
+      // Agregar nueva pregunta
+      setQuestions([...questions, questionData]);
+    }
+
     handleClearForm();
   };
 
@@ -373,7 +412,11 @@ export default function AdminFormsPage() {
 
       <div className="flex flex-row gap-4">
         <FormCard
-          title="Question Details"
+          title={
+            editingQuestionIndex !== null
+              ? `Editing Question ${editingQuestionIndex + 1}`
+              : "Question Details"
+          }
           icon={<Building2 className="h-5 w-5" />}
           className="flex-1"
         >
@@ -499,8 +542,18 @@ export default function AdminFormsPage() {
 
             <Divider />
 
-            <div className="flex flex-row justify-end">
-              <PrimaryButton text="Add Question" onClick={handleAddQuestion} />
+            <div className="flex flex-row justify-end gap-3">
+              {editingQuestionIndex !== null && (
+                <SecondaryButton text="Cancel" onClick={handleClearForm} />
+              )}
+              <PrimaryButton
+                text={
+                  editingQuestionIndex !== null
+                    ? "Update Question"
+                    : "Add Question"
+                }
+                onClick={handleAddQuestion}
+              />
             </div>
           </div>
         </FormCard>
@@ -591,6 +644,14 @@ export default function AdminFormsPage() {
                         title="Move down"
                       >
                         <ChevronDown className="h-4 w-4" />
+                      </button>
+
+                      <button
+                        onClick={() => handleEditQuestion(index)}
+                        className="p-2 rounded bg-white hover:bg-blue-50 text-blue-600 hover:text-blue-700 transition-colors"
+                        title="Edit question"
+                      >
+                        <Pencil className="h-4 w-4" />
                       </button>
 
                       <button

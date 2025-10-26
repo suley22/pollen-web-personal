@@ -1,12 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
 import {
-  fetchEmployers,
-  fetchEmployerStatistics,
+  useEmployersList,
+  useEmployersStatistics,
 } from "../_services/employers-page-service";
-import { EMPLOYERS_QUERY_KEYS } from "../_queries/employers-query-keys";
 
 export function useEmployersPage() {
   const [selectedStatus, setSelectedStatus] = useState("all");
@@ -44,10 +42,7 @@ export function useEmployersPage() {
   );
 
   // React Query: Fetch employers list
-  const { data, isLoading, error } = useQuery({
-    queryKey: EMPLOYERS_QUERY_KEYS.list(fetchFilters),
-    queryFn: () => fetchEmployers(fetchFilters),
-  });
+  const { data, isLoading, error } = useEmployersList(fetchFilters);
 
   // React Query: Fetch statistics - only filter by search term, NOT by status
   const statisticsFilters = useMemo(
@@ -57,10 +52,7 @@ export function useEmployersPage() {
     [debouncedSearchTerm],
   );
 
-  const { data: statisticsData } = useQuery({
-    queryKey: EMPLOYERS_QUERY_KEYS.statistics(statisticsFilters),
-    queryFn: () => fetchEmployerStatistics(statisticsFilters),
-  });
+  const { data: statisticsData } = useEmployersStatistics(statisticsFilters);
 
   // Pagination functions
   const handlePageChange = useCallback((page: number) => {

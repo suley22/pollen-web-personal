@@ -1,13 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { CompanyInformation } from "@/employers/view/_components/company-information";
-import { AccoladesAccreditations } from "@/employers/view/_components/accolades-accreditations";
-import { SocialMedia } from "@/employers/view/_components/social-media";
-import { ContactInformation } from "@/employers/view/_components/contact-information";
-import { ProfileStatus } from "@/employers/view/_components/profile-status";
-import { InternalPollenData } from "@/employers/view/_components/internal-pollen-data";
-import { EmployerProfileViewHeader } from "@/employers/view/_components/header";
+import { CompanyInformation } from "@/app/(pages)/(portal)/admin/employers/view/_components/employers-view-company-information";
+import { AccoladesAccreditations } from "@/app/(pages)/(portal)/admin/employers/view/_components/employers-view-accolades";
+import { SocialMedia } from "@/app/(pages)/(portal)/admin/employers/view/_components/employers-view-social-media";
+import { ContactInformation } from "@/app/(pages)/(portal)/admin/employers/view/_components/employers-view-contact-information";
+import { ProfileStatus } from "@/app/(pages)/(portal)/admin/employers/view/_components/employers-view-profile-status";
+import { InternalPollenData } from "@/app/(pages)/(portal)/admin/employers/view/_components/employers-view-internal-pollen-data";
+import { EmployerProfileViewHeader } from "@/app/(pages)/(portal)/admin/employers/view/_components/employers-view-header";
 import { EmployerProfileSkeleton } from "@/employers/view/_view/employers-view-skeleton";
 import { useEmployerView } from "@/employers/view/_hooks/employers-view-hook";
 import { DescriptionCard } from "@/components/design-system";

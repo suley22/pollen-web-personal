@@ -123,7 +123,7 @@ export function List({
                             <span className="truncate">
                               {EmployerProfileHelper.getIndustriesDisplay(
                                 company.industries,
-                              )}
+                              ) || "Not specified"}
                             </span>
                           </div>
 
@@ -132,13 +132,13 @@ export function List({
                             <div className="flex items-center gap-2 text-muted-foreground">
                               <Globe className="w-4 h-4 flex-shrink-0" />
                               <span className="truncate">
-                                {company.company_location}
+                                {company.company_location || "Not specified"}
                               </span>
                             </div>
                             <div className="flex items-center gap-2 text-muted-foreground">
                               <Users className="w-4 h-4 flex-shrink-0" />
                               <span className="truncate">
-                                {company.company_size}
+                                {company.company_size || "Not specified"}
                               </span>
                             </div>
                           </div>
@@ -148,20 +148,20 @@ export function List({
                             <div className="flex items-center gap-2 text-muted-foreground">
                               <User className="w-4 h-4 flex-shrink-0" />
                               <span className="truncate">
-                                {company.contact_name}
+                                {company.contact_name || "Not specified"}
                               </span>
                             </div>
                             <div className="flex items-center gap-2 text-muted-foreground">
                               <Mail className="w-4 h-4 flex-shrink-0" />
                               <span className="truncate">
-                                {company.contact_email}
+                                {company.contact_email || "Not specified"}
                               </span>
                             </div>
                             {company.contact_phone && (
                               <div className="flex items-center gap-2 text-muted-foreground">
                                 <Phone className="w-4 h-4 flex-shrink-0" />
                                 <span className="truncate">
-                                  {company.contact_phone}
+                                  {company.contact_phone || "Not specified"}
                                 </span>
                               </div>
                             )}

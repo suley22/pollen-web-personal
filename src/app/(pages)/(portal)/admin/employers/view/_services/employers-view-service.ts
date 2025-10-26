@@ -42,21 +42,3 @@ export const updateEmployerStatus = async (
 
   return data;
 };
-
-export const deleteEmployer = async (id: string) => {
-  const { data, error } = await supabase
-    .from("employer_profile")
-    .update({
-      deleted_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    throw new Error(error.message);
-  }
-
-  return data;
-};

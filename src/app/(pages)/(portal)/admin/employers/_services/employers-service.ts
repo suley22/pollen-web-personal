@@ -31,6 +31,24 @@ export interface FetchEmployersResponse {
   error?: string;
 }
 
+export const deleteEmployer = async (id: string) => {
+  const { data, error } = await supabase
+    .from("employer_profile")
+    .update({
+      deleted_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+};
+
 // Fetch statistics for all employers (not paginated)
 export const fetchEmployerStatistics = async (): Promise<{
   success: boolean;

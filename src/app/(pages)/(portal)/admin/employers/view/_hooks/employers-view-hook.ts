@@ -3,8 +3,8 @@ import { useRouter } from "next/navigation";
 import {
   fetchEmployerById,
   updateEmployerStatus,
-  deleteEmployer,
 } from "../_services/employers-view-service";
+import { deleteEmployer } from "@/employers/_services/employers-service";
 import { AdminRoutes } from "@/admin/router";
 import { EMPLOYERS_QUERY_KEYS as QueryKeys } from "@/employers/_queries/employers-query-keys";
 import {

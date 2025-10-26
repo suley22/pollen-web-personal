@@ -7,24 +7,52 @@ import {
   Input,
   PrimaryButton,
   Divider,
+  TextareaInput,
 } from "@/components/design-system";
 import { Card } from "@/components/ui/card";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { Building2, Plus, ChevronUp, ChevronDown, Trash2 } from "lucide-react";
+import { useState, useMemo } from "react";
+import {
+  Building2,
+  Plus,
+  ChevronUp,
+  ChevronDown,
+  Trash2,
+  Palette,
+} from "lucide-react";
 import { SecondaryButton } from "@/components/design-system/primary-button";
+import type {
+  AssessmentCategory,
+  CategoryStats,
+} from "@/types/assessment-category";
+import { CategoryDistributionChart } from "@/components/assessment/category-distribution-chart";
+import { CategoryCard } from "@/components/assessments/category-card";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface MultipleChoiceQuestion {
   title: string;
   description: string;
   options_title: string;
-  options: { value: string; label: string }[];
+  options: { value: string; label: string; categoryId?: string }[];
+  categoryId?: string;
 }
 
 export default function AdminFormsPage() {
   // Estado para las preguntas creadas
   const [questions, setQuestions] = useState<MultipleChoiceQuestion[]>([]);
+
+  // Estado para categorías
+  const [categories, setCategories] = useState<AssessmentCategory[]>([]);
+  const [categoryName, setCategoryName] = useState("");
+  const [categoryDescription, setCategoryDescription] = useState("");
+  const [categoryColor, setCategoryColor] = useState("#3B82F6");
 
   // Estado para el formulario de nueva pregunta
   const [title, setTitle] = useState("");
@@ -32,10 +60,79 @@ export default function AdminFormsPage() {
   const [optionsTitle, setOptionsTitle] = useState("");
   const [assessmentTitle, setAssessmentTitle] = useState("");
   const [assessmentDescription, setAssessmentDescription] = useState("");
-  const [options, setOptions] = useState<{ value: string; label: string }[]>(
-    [],
-  );
+  const [options, setOptions] = useState<
+    { value: string; label: string; categoryId?: string }[]
+  >([]);
   const [currentOption, setCurrentOption] = useState("");
+  const [currentOptionCategory, setCurrentOptionCategory] = useState<
+    string | undefined
+  >();
+
+  // Preview - respuestas seleccionadas para preview
+  const [selectedAnswers, setSelectedAnswers] = useState<
+    Record<number, string>
+  >({});
+
+  // Calcular estadísticas de categorías
+  const categoryStats = useMemo<CategoryStats[]>(() => {
+    const answerCounts = new Map<string, number>();
+
+    // Contar respuestas por categoría
+    Object.values(selectedAnswers).forEach((answerId) => {
+      questions.forEach((question) => {
+        const selectedOption = question.options.find(
+          (opt) => opt.value === answerId,
+        );
+        if (selectedOption?.categoryId) {
+          answerCounts.set(
+            selectedOption.categoryId,
+            (answerCounts.get(selectedOption.categoryId) || 0) + 1,
+          );
+        }
+      });
+    });
+
+    const total = Array.from(answerCounts.values()).reduce(
+      (sum, count) => sum + count,
+      0,
+    );
+
+    return categories
+      .map((category) => ({
+        categoryId: category.id,
+        categoryName: category.name,
+        color: category.color,
+        count: answerCounts.get(category.id) || 0,
+        percentage:
+          total > 0 ? ((answerCounts.get(category.id) || 0) / total) * 100 : 0,
+      }))
+      .filter((stat) => stat.count > 0)
+      .sort((a, b) => b.count - a.count);
+  }, [selectedAnswers, questions, categories]);
+
+  // Función para agregar una categoría
+  const handleAddCategory = () => {
+    if (!categoryName.trim()) return;
+
+    const newCategory: AssessmentCategory = {
+      id: Date.now().toString(),
+      name: categoryName.trim(),
+      description: categoryDescription.trim(),
+      color: categoryColor,
+    };
+
+    setCategories([...categories, newCategory]);
+    setCategoryName("");
+    setCategoryDescription("");
+    setCategoryColor("#3B82F6");
+  };
+
+  // Función para eliminar una categoría
+  const handleRemoveCategory = (categoryId: string) => {
+    setCategories(categories.filter((cat) => cat.id !== categoryId));
+  };
+
+  // Estado para el formulario de nueva pregunta
 
   // Función para agregar una opción
   const handleAddOption = () => {
@@ -44,10 +141,12 @@ export default function AdminFormsPage() {
     const newOption = {
       value: (options.length + 1).toString(),
       label: currentOption.trim(),
+      categoryId: currentOptionCategory,
     };
 
     setOptions([...options, newOption]);
     setCurrentOption("");
+    setCurrentOptionCategory(undefined);
   };
 
   // Función para eliminar una opción
@@ -121,7 +220,6 @@ export default function AdminFormsPage() {
       <FormCard
         title="Assessment Details"
         icon={<Building2 className="h-5 w-5" />}
-        className="flex-1"
       >
         <div className="flex flex-col gap-4">
           {/* Assessment Title */}
@@ -136,15 +234,83 @@ export default function AdminFormsPage() {
           />
 
           {/* Assessment Description */}
-          <Input
+          <TextareaInput
             label="Description"
-            type="text"
             name="assessment_description"
             id="assessment_description"
             placeholder="Enter assessment description"
             value={assessmentDescription}
             onChange={(e) => setAssessmentDescription(e.target.value)}
+            rows={3}
           />
+        </div>
+      </FormCard>
+
+      {/* Categories Section */}
+      <FormCard title="Categories" icon={<Palette className="h-5 w-5" />}>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-row gap-4">
+              <Input
+                label="Category Name"
+                type="text"
+                name="category_name"
+                id="category_name"
+                placeholder="Enter category name"
+                value={categoryName}
+                onChange={(e) => setCategoryName(e.target.value)}
+              />
+              <div className="flex flex-col gap-2 w-20">
+                <Label className="">Color</Label>
+                <input
+                  type="color"
+                  value={categoryColor}
+                  onChange={(e) => setCategoryColor(e.target.value)}
+                  className="w-full h-10 rounded border border-gray-300 cursor-pointer p-1"
+                />
+              </div>
+            </div>
+
+            <div className="flex-1">
+              <TextareaInput
+                label="Category Description"
+                name="category_description"
+                id="category_description"
+                placeholder="Enter category description"
+                value={categoryDescription}
+                onChange={(e) => setCategoryDescription(e.target.value)}
+                rows={3}
+              />
+            </div>
+
+            <Divider />
+
+            <div className="flex justify-end">
+              <SecondaryButton
+                icon={<Plus />}
+                text="Add Category"
+                onClick={handleAddCategory}
+              />
+            </div>
+          </div>
+
+          {/* Display categories */}
+          {categories.length > 0 && (
+            <div className="grid grid-cols-2 gap-3 mt-2">
+              {categories.map((category) => (
+                <div key={category.id} className="relative">
+                  <CategoryCard category={category} />
+                  <button
+                    onClick={() => handleRemoveCategory(category.id)}
+                    className="absolute top-2 right-2 p-1 rounded bg-white hover:bg-red-50 text-red-600 border"
+                    title="Remove category"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </FormCard>
 
@@ -192,18 +358,43 @@ export default function AdminFormsPage() {
                   <Label className="text-sm font-semibold text-gray-700">
                     Added Options:
                   </Label>
-                  {options.map((option) => (
-                    <div
-                      key={option.value}
-                      className="flex items-center justify-between px-2 py-1 border rounded"
-                    >
-                      <span className="text-sm">{option.label}</span>
-                      <SecondaryButton
-                        text="Remove"
-                        onClick={() => handleRemoveOption(option.value)}
-                      />
-                    </div>
-                  ))}
+                  {options.map((option) => {
+                    const category = categories.find(
+                      (c) => c.id === option.categoryId,
+                    );
+                    return (
+                      <div
+                        key={option.value}
+                        className="flex items-center justify-between px-3 py-2 border rounded"
+                        style={
+                          category
+                            ? {
+                                borderColor: category.color,
+                                backgroundColor: `${category.color}10`,
+                              }
+                            : {}
+                        }
+                      >
+                        <div className="flex flex-col gap-1">
+                          <span className="text-sm font-medium">
+                            {option.label}
+                          </span>
+                          {category && (
+                            <span
+                              className="text-xs"
+                              style={{ color: category.color }}
+                            >
+                              {category.name}
+                            </span>
+                          )}
+                        </div>
+                        <SecondaryButton
+                          text="Remove"
+                          onClick={() => handleRemoveOption(option.value)}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               )}
 
@@ -223,6 +414,39 @@ export default function AdminFormsPage() {
                     }
                   }}
                 />
+                {categories.length > 0 && (
+                  <div className="w-48">
+                    <Label className="">Category (Optional)</Label>
+                    <Select
+                      value={currentOptionCategory}
+                      onValueChange={setCurrentOptionCategory}
+                    >
+                      <SelectTrigger className="">
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent className="">
+                        <SelectItem className="" value="none">
+                          No category
+                        </SelectItem>
+                        {categories.map((category) => (
+                          <SelectItem
+                            className=""
+                            key={category.id}
+                            value={category.id}
+                          >
+                            <div className="flex items-center gap-2">
+                              <div
+                                className="w-3 h-3 rounded-full"
+                                style={{ backgroundColor: category.color }}
+                              />
+                              {category.name}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
                 <SecondaryButton
                   icon={<Plus />}
                   text="Add Option"
@@ -262,6 +486,67 @@ export default function AdminFormsPage() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Category Report */}
+      {categories.length > 0 && questions.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold mb-6">Category Report</h2>
+
+          {/* Category Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            {categories.map((category) => {
+              const categoryOptions = questions
+                .flatMap((q) => q.options)
+                .filter((opt) => opt.categoryId === category.id);
+              const optionsCount = categoryOptions.length;
+
+              return (
+                <Card
+                  key={category.id}
+                  className="p-6"
+                  style={{
+                    borderColor: category.color,
+                    borderWidth: "2px",
+                    backgroundColor: `${category.color}10`,
+                  }}
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <h3
+                      className="font-semibold text-lg"
+                      style={{ color: category.color }}
+                    >
+                      {category.name}
+                    </h3>
+                    <span
+                      className="text-sm px-2 py-1 rounded"
+                      style={{
+                        backgroundColor: category.color,
+                        color: "white",
+                      }}
+                    >
+                      {optionsCount} options
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    {category.description}
+                  </p>
+                </Card>
+              );
+            })}
+          </div>
+
+          {/* Category Distribution Chart */}
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold mb-4">
+              Category Distribution
+            </h3>
+            <CategoryDistributionChart
+              categories={categories}
+              questions={questions}
+            />
+          </Card>
         </div>
       )}
     </PageContainer>
@@ -340,25 +625,23 @@ export function AdminMultipleChoiceQuestionCard({
         <div className="flex">Options</div>
       </div>
       <div id="content-title" className="font-medium mt-2 mb-3">
-        {/* @ts-ignore */}
-        <RadioGroup
-          className="flex flex-col gap-3 pl-2"
-          value="1"
-          onValueChange={() => {}}
-        >
+        <div className="flex flex-col gap-3 pl-2">
           {options.map((option) => (
             <div key={option.value} className="flex items-center space-x-2">
-              {/* @ts-ignore */}
-              <RadioGroupItem
+              <input
+                type="radio"
                 value={option.value}
-                id={`impact-${option.value}`}
+                id={option.value}
+                name={`question-${index}`}
+                className="h-4 w-4"
+                disabled
               />
-              <Label htmlFor={`impact-${option.value}`} className="font-normal">
+              <Label htmlFor={option.value} className="font-normal">
                 {option.label}
               </Label>
             </div>
           ))}
-        </RadioGroup>
+        </div>
       </div>
     </Card>
   );

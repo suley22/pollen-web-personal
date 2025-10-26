@@ -1,17 +1,24 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Search, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/design-system";
 
-export function Filters({
-  searchTerm,
-  setSearchTerm,
-  selectedStatus,
-  setSelectedStatus,
-}) {
+export function Filters({ onSearchChange, selectedStatus, setSelectedStatus }) {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Debounce search term
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      onSearchChange(searchTerm.trim());
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, onSearchChange]);
+
   const handleClearSearch = () => {
     setSearchTerm("");
   };

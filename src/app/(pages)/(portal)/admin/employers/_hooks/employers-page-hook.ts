@@ -6,29 +6,15 @@ import {
   useEmployersStatistics,
 } from "../_services/employers-page-service";
 
-export function useEmployersPage() {
+export function useEmployersPage(debouncedSearchTerm: string) {
   const [selectedStatus, setSelectedStatus] = useState("all");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  // Debounce search term
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-      if (searchTerm.trim()) {
-        setCurrentPage(1);
-      }
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm]);
-
-  // Reset page when status changes
+  // Reset page when search term or status changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedStatus]);
+  }, [debouncedSearchTerm, selectedStatus]);
 
   // Build filters for React Query - combines search term AND status
   const fetchFilters = useMemo(
@@ -78,7 +64,6 @@ export function useEmployersPage() {
 
   return {
     selectedStatus,
-    searchTerm,
     employers: data?.employers || [],
     statistics: statisticsData || {
       total: 0,
@@ -92,7 +77,6 @@ export function useEmployersPage() {
     currentPage,
     pageSize,
     setSelectedStatus,
-    setSearchTerm,
     handlePageChange,
     handlePageSizeChange,
     goToNextPage,

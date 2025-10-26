@@ -10,23 +10,22 @@ import { PageHeader } from "@/components/design-system/page-header";
 import { PrimaryButton } from "@/components/design-system/primary-button";
 import { PageContainer } from "@/components/design-system";
 import { useEmployersPage } from "./_hooks/employers-page-hook";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 export default function AdminEmployers() {
   const router = useRouter();
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
   const {
     statistics,
     selectedStatus,
     setSelectedStatus,
     loading,
-    searchTerm,
-    setSearchTerm,
     employers,
     pagination,
     handlePageChange,
     handlePageSizeChange,
-  } = useEmployersPage();
+  } = useEmployersPage(debouncedSearchTerm);
 
   const onCreate = useCallback(() => {
     router.push(AdminRoutes.employersCreate);
@@ -48,8 +47,7 @@ export default function AdminEmployers() {
         loading={loading}
       />
       <Filters
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
+        onSearchChange={setDebouncedSearchTerm}
         selectedStatus={selectedStatus}
         setSelectedStatus={setSelectedStatus}
       />

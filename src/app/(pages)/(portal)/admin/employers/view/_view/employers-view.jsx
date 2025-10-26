@@ -7,7 +7,7 @@ import { SocialMedia } from "@/employers/view/_components/social-media";
 import { ContactInformation } from "@/employers/view/_components/contact-information";
 import { ProfileStatus } from "@/employers/view/_components/profile-status";
 import { InternalPollenData } from "@/employers/view/_components/internal-pollen-data";
-import { EmployerProfileHeader } from "@/employers/view/_components/header";
+import { EmployerProfileViewHeader } from "@/employers/view/_components/header";
 import { EmployerProfileSkeleton } from "@/employers/view/_view/employers-view-skeleton";
 import { useEmployerView } from "@/employers/view/_hooks/employers-view-hook";
 import { DescriptionCard } from "@/components/design-system";
@@ -39,7 +39,7 @@ export default function EmployerProfileView({ id = null }) {
   return (
     <div className="flex flex-col w-full mx-auto py-6 gap-6">
       {/* Header */}
-      <EmployerProfileHeader
+      <EmployerProfileViewHeader
         companyName={profile.company_name}
         approvalStatus={profile.approval_status}
         onBack={() => router.back()}

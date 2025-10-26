@@ -10,7 +10,7 @@ import {
 import { DeleteConfirmationDialog } from "@/components/design-system/delete-confirmation-dialog";
 import { Edit, CheckCircle, EyeOff, Trash2 } from "lucide-react";
 
-export function EmployerProfileHeader({
+export function EmployerProfileViewHeader({
   companyName,
   approvalStatus,
   onBack,

@@ -16,11 +16,7 @@ import {
   Edit,
   Trash2,
 } from "lucide-react";
-import {
-  PendingBadge,
-  ApprovedBadge,
-  RejectedBadge,
-} from "@/components/design-system/badge";
+import { EmployerStatusBadge } from "@/components/design-system";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { AdminRoutes } from "@/admin/router";
@@ -51,18 +47,6 @@ export function List({
     },
     [router],
   );
-  const getStatusBadge = useCallback((status) => {
-    switch (status) {
-      case "pending":
-        return <PendingBadge>Pending</PendingBadge>;
-      case "approved":
-        return <ApprovedBadge>Approved</ApprovedBadge>;
-      case "rejected":
-        return <RejectedBadge>Rejected</RejectedBadge>;
-      default:
-        return null;
-    }
-  }, []);
 
   if (loading) {
     return <ListSkeleton />;
@@ -112,7 +96,9 @@ export function List({
                           <h3 className="text-lg font-semibold text-foreground truncate">
                             {company.company_name}
                           </h3>
-                          {getStatusBadge(company.approval_status)}
+                          <EmployerStatusBadge
+                            status={company.approval_status}
+                          />
                         </div>
 
                         {/* Company Details - 3 Rows */}

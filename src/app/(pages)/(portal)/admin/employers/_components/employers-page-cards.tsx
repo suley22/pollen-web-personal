@@ -1,11 +1,16 @@
 "use client";
-import { Building2, CheckCircle, Clock, XCircle } from "lucide-react";
+import { Building2, FileText, Eye, EyeOff } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { EMPLOYER_STATUS } from "@/constants/filters";
 
-export function StatisticsCards({statistics, selectedStatus, setSelectedStatus, loading}) {
-
+export function StatisticsCards({
+  statistics,
+  selectedStatus,
+  setSelectedStatus,
+  loading,
+}) {
   const handleCardClick = (status: string) => {
     setSelectedStatus(status);
   };
@@ -56,31 +61,10 @@ export function StatisticsCards({statistics, selectedStatus, setSelectedStatus, 
         <Card
           className={cn(
             "w-full cursor-pointer transition-all hover:shadow-md hover:scale-[1.02]",
-            selectedStatus === "approved" && "ring-2 ring-green-500",
+            selectedStatus === EMPLOYER_STATUS.DRAFT &&
+              "ring-2 ring-yellow-500",
           )}
-          onClick={() => handleCardClick("approved")}
-        >
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  Approved
-                </p>
-                <p className="text-2xl font-bold text-green-600">
-                  {statistics.approved}
-                </p>
-              </div>
-              <CheckCircle className="h-8 w-8 text-green-600" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card
-          className={cn(
-            "w-full cursor-pointer transition-all hover:shadow-md hover:scale-[1.02]",
-            selectedStatus === "pending" && "ring-2 ring-yellow-500",
-          )}
-          onClick={() => handleCardClick("pending")}
+          onClick={() => handleCardClick(EMPLOYER_STATUS.DRAFT)}
         >
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -89,10 +73,10 @@ export function StatisticsCards({statistics, selectedStatus, setSelectedStatus, 
                   Draft
                 </p>
                 <p className="text-2xl font-bold text-yellow-600">
-                  {statistics.pending}
+                  {statistics.draft}
                 </p>
               </div>
-              <Clock className="h-8 w-8 text-yellow-600" />
+              <FileText className="h-8 w-8 text-yellow-600" />
             </div>
           </CardContent>
         </Card>
@@ -100,21 +84,43 @@ export function StatisticsCards({statistics, selectedStatus, setSelectedStatus, 
         <Card
           className={cn(
             "w-full cursor-pointer transition-all hover:shadow-md hover:scale-[1.02]",
-            selectedStatus === "rejected" && "ring-2 ring-red-500",
+            selectedStatus === EMPLOYER_STATUS.LIVE && "ring-2 ring-green-500",
           )}
-          onClick={() => handleCardClick("rejected")}
+          onClick={() => handleCardClick(EMPLOYER_STATUS.LIVE)}
         >
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-muted-foreground">
-                  Rejected
+                  Live
                 </p>
-                <p className="text-2xl font-bold text-red-600">
-                  {statistics.rejected}
+                <p className="text-2xl font-bold text-green-600">
+                  {statistics.live}
                 </p>
               </div>
-              <XCircle className="h-8 w-8 text-red-600" />
+              <Eye className="h-8 w-8 text-green-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card
+          className={cn(
+            "w-full cursor-pointer transition-all hover:shadow-md hover:scale-[1.02]",
+            selectedStatus === EMPLOYER_STATUS.HIDDEN && "ring-2 ring-gray-500",
+          )}
+          onClick={() => handleCardClick(EMPLOYER_STATUS.HIDDEN)}
+        >
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Hidden
+                </p>
+                <p className="text-2xl font-bold text-gray-600">
+                  {statistics.hidden}
+                </p>
+              </div>
+              <EyeOff className="h-8 w-8 text-gray-600" />
             </div>
           </CardContent>
         </Card>

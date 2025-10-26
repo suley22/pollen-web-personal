@@ -7,7 +7,7 @@ import {
 } from "@/employers/_services/employers-page-service";
 
 import { AdminRoutes } from "@/admin/router";
-import { EmployerApprovalStatusEnum as StatusEnum } from "@/types/employers-types";
+import { EMPLOYER_STATUS } from "@/constants/filters";
 
 export function useEmployerView(id: string) {
   const router = useRouter();
@@ -18,11 +18,11 @@ export function useEmployerView(id: string) {
   const deleteQuery = useDeleteEmployer();
 
   const handleSetLive = () => {
-    updateStatus.mutate({ id, status: StatusEnum.Approved });
+    updateStatus.mutate({ id, status: EMPLOYER_STATUS.LIVE });
   };
 
   const handleHideProfile = () => {
-    updateStatus.mutate({ id, status: StatusEnum.Pending });
+    updateStatus.mutate({ id, status: EMPLOYER_STATUS.HIDDEN });
   };
 
   const handleDelete = () => {

@@ -1,18 +1,10 @@
 "use client";
 
 import { FormCard } from "@/components/design-system";
-import {
-  LiveBadge,
-  DraftBadge,
-  HiddenBadge,
-} from "@/components/design-system/badge";
+import { EmployerStatusBadge } from "@/components/design-system";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Calendar, CheckCircle, Clock, EyeOff } from "lucide-react";
-import { useCallback } from "react";
-import { ApprovedBadge } from "@/components/design-system/badge";
-import { PendingBadge } from "@/components/design-system/badge";
-import { RejectedBadge } from "@/components/design-system/badge";
+import { Shield, Calendar } from "lucide-react";
 
 interface ProfileStatusProps {
   status?: string;
@@ -27,19 +19,6 @@ export function ProfileStatus({
   lastUpdated,
   profileCompleteness = 85,
 }: ProfileStatusProps) {
-  const getStatusBadge = useCallback((status: string) => {
-    switch (status) {
-      case "pending":
-        return <PendingBadge>Pending</PendingBadge>;
-      case "approved":
-        return <ApprovedBadge>Approved</ApprovedBadge>;
-      case "rejected":
-        return <RejectedBadge>Rejected</RejectedBadge>;
-      default:
-        return null;
-    }
-  }, []);
-
   return (
     <FormCard title="Profile Status" icon={<Shield className="h-5 w-5" />}>
       <div className="space-y-4">
@@ -47,7 +26,9 @@ export function ProfileStatus({
           <Label className="text-sm font-medium text-muted-foreground">
             Status
           </Label>
-          <div className="mt-1">{getStatusBadge(status)}</div>
+          <div className="mt-1">
+            <EmployerStatusBadge status={status} />
+          </div>
         </div>
 
         <div className="space-y-2">

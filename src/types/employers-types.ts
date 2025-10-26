@@ -1,11 +1,11 @@
 import { SocialMediaLink } from "@/types/social-media-links";
 
-export type EmployerApprovalStatus = "approved" | "pending" | "rejected";
+export type EmployerApprovalStatus = "draft" | "live" | "hidden";
 
 export enum EmployerApprovalStatusEnum {
-  Approved = "approved",
-  Pending = "pending",
-  Rejected = "rejected",
+  Draft = "draft",
+  Live = "live",
+  Hidden = "hidden",
 }
 
 export interface EmployerProfile {
@@ -28,7 +28,7 @@ export interface EmployerProfile {
   contact_phone?: string;
   created_at?: string;
   updated_at?: string;
-  approval_status?: "draft" | "live" | "hidden" | "pending";
+  approval_status?: EmployerApprovalStatus;
   how_did_you_hear_about_us?: string;
   more_info?: string;
   hiring_frequency?: string;

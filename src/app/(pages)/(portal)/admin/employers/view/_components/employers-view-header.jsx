@@ -9,6 +9,7 @@ import {
 } from "@/components/design-system/status-buttons";
 import { DeleteConfirmationDialog } from "@/components/design-system/delete-confirmation-dialog";
 import { Edit, CheckCircle, EyeOff, Trash2 } from "lucide-react";
+import { EMPLOYER_STATUS } from "@/constants/filters";
 
 export function EmployerProfileViewHeader({
   companyName,
@@ -21,13 +22,14 @@ export function EmployerProfileViewHeader({
   isUpdating = false,
   isDeleting = false,
 }) {
-  const isApproved = approvalStatus === "approved";
+  const isDraft = approvalStatus === EMPLOYER_STATUS.DRAFT;
+  const isLive = approvalStatus === EMPLOYER_STATUS.LIVE;
+  const isHidden = approvalStatus === EMPLOYER_STATUS.HIDDEN;
 
   return (
     <PageHeader title={companyName} showBackButton={true} onBack={onBack}>
-      {/* Status Actions */}
-
-      {!isApproved && (
+      {/* Status Actions - Show Set Live button when Draft */}
+      {(isDraft || isHidden) && (
         <SuccessButton
           text="Set Live"
           icon={<CheckCircle />}
@@ -36,7 +38,8 @@ export function EmployerProfileViewHeader({
         />
       )}
 
-      {isApproved && (
+      {/* Show Hide button when Live or Draft */}
+      {(isLive || isDraft) && (
         <WarningButton
           text="Hide Profile"
           icon={<EyeOff />}

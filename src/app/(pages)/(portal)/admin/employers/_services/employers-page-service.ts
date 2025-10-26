@@ -4,6 +4,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/utils/supabase/client";
 import { EmployerProfileHelper } from "@/types/employers-types";
 import type { EmployerApprovalStatus } from "@/types/employers-types";
+import { EMPLOYER_STATUS } from "@/constants/filters";
+import type { EmployerStatus } from "@/constants/filters";
 
 const supabase = createClient();
 
@@ -135,12 +137,15 @@ export function useEmployersStatistics(filters?: EmployerFilters) {
 
       return {
         total: data?.length || 0,
-        approved:
-          data?.filter((e) => e.approval_status === "approved").length || 0,
-        pending:
-          data?.filter((e) => e.approval_status === "pending").length || 0,
-        rejected:
-          data?.filter((e) => e.approval_status === "rejected").length || 0,
+        draft:
+          data?.filter((e) => e.approval_status === EMPLOYER_STATUS.DRAFT)
+            .length || 0,
+        live:
+          data?.filter((e) => e.approval_status === EMPLOYER_STATUS.LIVE)
+            .length || 0,
+        hidden:
+          data?.filter((e) => e.approval_status === EMPLOYER_STATUS.HIDDEN)
+            .length || 0,
       };
     },
   });
@@ -257,7 +262,7 @@ export function useCreateEmployer() {
         .from("employer_profile")
         .insert({
           ...transformedData,
-          approval_status: "pending",
+          approval_status: EMPLOYER_STATUS.DRAFT,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         })

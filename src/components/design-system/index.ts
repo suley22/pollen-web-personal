@@ -26,6 +26,7 @@ export { InfoField } from "./info-field";
 export { Divider } from "./divider";
 export { Pagination } from "./pagination";
 export { Filters } from "./filters";
+export { EmployerStatusBadge } from "./employer-status-badge";
 export {
   SuccessBadge,
   WarningBadge,

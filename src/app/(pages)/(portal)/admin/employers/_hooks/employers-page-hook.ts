@@ -83,9 +83,9 @@ export function useEmployersPage(debouncedSearchTerm: string) {
     employers: data?.employers || [],
     statistics: statisticsData || {
       total: 0,
-      approved: 0,
-      pending: 0,
-      rejected: 0,
+      draft: 0,
+      live: 0,
+      hidden: 0,
     },
     loading: isLoading,
     error: error?.message || null,

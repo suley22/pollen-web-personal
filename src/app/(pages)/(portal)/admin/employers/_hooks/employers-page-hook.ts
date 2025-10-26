@@ -6,6 +6,8 @@ import {
   useEmployersStatistics,
 } from "../_services/employers-page-service";
 
+import { EMPLOYER_STATUS_OPTIONS } from "@/constants/filters";
+
 export function useEmployersPage(debouncedSearchTerm: string) {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,6 +27,20 @@ export function useEmployersPage(debouncedSearchTerm: string) {
       pageSize: pageSize,
     }),
     [selectedStatus, debouncedSearchTerm, currentPage, pageSize],
+  );
+
+  // Filter configurations for Filters component
+  const filterOptionsConfigs = useMemo(
+    () => [
+      {
+        name: "status",
+        placeholder: "Select status",
+        defaultValue: selectedStatus,
+        options: EMPLOYER_STATUS_OPTIONS,
+        onValueChange: setSelectedStatus,
+      },
+    ],
+    [selectedStatus],
   );
 
   // React Query: Fetch employers list
@@ -76,6 +92,7 @@ export function useEmployersPage(debouncedSearchTerm: string) {
     pagination: data?.pagination || null,
     currentPage,
     pageSize,
+    filterConfigs: filterOptionsConfigs,
     setSelectedStatus,
     handlePageChange,
     handlePageSizeChange,

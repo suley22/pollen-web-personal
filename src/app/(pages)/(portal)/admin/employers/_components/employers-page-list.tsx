@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmployerProfileHelper } from "@/types/employers-types";
 import { Building2 } from "lucide-react";
-import { ResultsCount } from "@/employers/_components/results-count";
+import { ResultsCount } from "@/app/(pages)/(portal)/admin/employers/_components/employers-page-results-count";
 
 import {
   User,
@@ -24,7 +24,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { AdminRoutes } from "@/admin/router";
-import { ListSkeleton } from "./list-skeleton";
+import { ListSkeleton } from "./employers-page-list-skeleton";
 import { CompanyAvatar } from "@/components/ui/company-avatar";
 import { EmptyState } from "@/components/design-system/empty-state";
 import { useCallback } from "react";

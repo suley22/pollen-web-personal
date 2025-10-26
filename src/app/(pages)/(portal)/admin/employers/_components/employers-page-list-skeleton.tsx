@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ResultsCountSkeleton } from "./results-count-skeleton";
+import { ResultsCountSkeleton } from "./employers-page-results-count-skeleton";
 
 export function ListSkeleton() {
   const skeletonItems = [1, 2, 3];

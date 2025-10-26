@@ -25,6 +25,7 @@ export { DescriptionCard } from "./description-card";
 export { InfoField } from "./info-field";
 export { Divider } from "./divider";
 export { Pagination } from "./pagination";
+export { Filters } from "./filters";
 export {
   SuccessBadge,
   WarningBadge,

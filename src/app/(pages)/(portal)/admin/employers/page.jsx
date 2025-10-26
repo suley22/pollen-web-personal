@@ -1,14 +1,13 @@
 "use client";
 
-import { Filters } from "@/admin/employers/_components/filters";
-import { StatisticsCards } from "@/admin/employers/_components/cards";
-import { List } from "@/admin/employers/_components/list";
+import { StatisticsCards } from "@/employers/_components/employers-page-cards";
+import { List } from "@/employers/_components/employers-page-list";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { AdminRoutes } from "@/admin/router";
 import { PageHeader } from "@/components/design-system/page-header";
 import { PrimaryButton } from "@/components/design-system/primary-button";
-import { PageContainer } from "@/components/design-system";
+import { PageContainer, Filters } from "@/components/design-system";
 import { useEmployersPage } from "./_hooks/employers-page-hook";
 import { useCallback, useState } from "react";
 
@@ -23,6 +22,7 @@ export default function AdminEmployers() {
     loading,
     employers,
     pagination,
+    filterConfigs,
     handlePageChange,
     handlePageSizeChange,
   } = useEmployersPage(debouncedSearchTerm);
@@ -48,8 +48,8 @@ export default function AdminEmployers() {
       />
       <Filters
         onSearchChange={setDebouncedSearchTerm}
-        selectedStatus={selectedStatus}
-        setSelectedStatus={setSelectedStatus}
+        searchPlaceholder="Search companies, industries, or locations..."
+        filters={filterConfigs}
       />
       <div className="flex flex-col gap-4">
         <List

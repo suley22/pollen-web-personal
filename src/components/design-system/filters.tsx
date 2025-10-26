@@ -6,18 +6,24 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/design-system";
+import type { FilterOption, FilterConfig, FiltersProps } from "@/types/filters";
 
-export function Filters({ onSearchChange, selectedStatus, setSelectedStatus }) {
+export function Filters({
+  onSearchChange,
+  searchPlaceholder = "Search...",
+  filters = [],
+  debounceMs = 500,
+}: FiltersProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
   // Debounce search term
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       onSearchChange(searchTerm.trim());
-    }, 500);
+    }, debounceMs);
 
     return () => clearTimeout(timeoutId);
-  }, [searchTerm, onSearchChange]);
+  }, [searchTerm, onSearchChange, debounceMs]);
 
   const handleClearSearch = () => {
     setSearchTerm("");
@@ -27,11 +33,12 @@ export function Filters({ onSearchChange, selectedStatus, setSelectedStatus }) {
     <Card className="w-full">
       <CardContent className="p-6">
         <div className="flex flex-col sm:flex-row gap-4">
+          {/* Search Input */}
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Search companies, industries, or locations..."
+              placeholder={searchPlaceholder}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 pr-10"
@@ -47,21 +54,23 @@ export function Filters({ onSearchChange, selectedStatus, setSelectedStatus }) {
               </Button>
             )}
           </div>
-          <div className="flex gap-2 items-center">
-            <Select
-              id="filter-by-status"
-              name="filter-by-status"
-              placeholder="Select company size"
-              onValueChange={setSelectedStatus}
-              defaultValue={selectedStatus}
-              options={[
-                { label: "All Statuses", value: "all" },
-                { label: "Approved", value: "approved" },
-                { label: "Pending", value: "pending" },
-                { label: "Rejected", value: "rejected" },
-              ]}
-            />
-          </div>
+
+          {/* Dynamic Filters */}
+          {filters.length > 0 && (
+            <div className="flex gap-2 items-center">
+              {filters.map((filter) => (
+                <Select
+                  key={filter.name}
+                  id={`filter-${filter.name}`}
+                  name={`filter-${filter.name}`}
+                  placeholder={filter.placeholder || "Select..."}
+                  onValueChange={filter.onValueChange}
+                  defaultValue={filter.defaultValue}
+                  options={filter.options}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

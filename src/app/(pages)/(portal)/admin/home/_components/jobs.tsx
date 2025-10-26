@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { ListSkeleton } from "@/admin/employers/_components/list-skeleton";
+import { ListSkeleton } from "@/app/(pages)/(portal)/admin/employers/_components/employers-page-list-skeleton";
 import { useRouter } from "next/navigation";
 import { useHome } from "@/admin/home/useHome";
 import { AdminRoutes } from "@/admin/router";

@@ -9,6 +9,10 @@ import {
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Shield, Calendar, CheckCircle, Clock, EyeOff } from "lucide-react";
+import { useCallback } from "react";
+import { ApprovedBadge } from "@/components/design-system/badge";
+import { PendingBadge } from "@/components/design-system/badge";
+import { RejectedBadge } from "@/components/design-system/badge";
 
 interface ProfileStatusProps {
   status?: string;
@@ -23,33 +27,18 @@ export function ProfileStatus({
   lastUpdated,
   profileCompleteness = 85,
 }: ProfileStatusProps) {
-  const getStatusBadge = (status?: string) => {
+  const getStatusBadge = useCallback((status: string) => {
     switch (status) {
-      case "live":
-        return (
-          <LiveBadge>
-            <CheckCircle className="h-3 w-3 mr-1" />
-            Live
-          </LiveBadge>
-        );
-      case "draft":
-        return (
-          <DraftBadge>
-            <Clock className="h-3 w-3 mr-1" />
-            Draft
-          </DraftBadge>
-        );
-      case "hidden":
-        return (
-          <HiddenBadge>
-            <EyeOff className="h-3 w-3 mr-1" />
-            Hidden
-          </HiddenBadge>
-        );
+      case "pending":
+        return <PendingBadge>Pending</PendingBadge>;
+      case "approved":
+        return <ApprovedBadge>Approved</ApprovedBadge>;
+      case "rejected":
+        return <RejectedBadge>Rejected</RejectedBadge>;
       default:
-        return <Badge variant="secondary">{status || "Draft"}</Badge>;
+        return null;
     }
-  };
+  }, []);
 
   return (
     <FormCard title="Profile Status" icon={<Shield className="h-5 w-5" />}>

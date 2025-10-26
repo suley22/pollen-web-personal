@@ -17,7 +17,8 @@ import { AdminRoutes } from "@/admin/router";
 export default function EmployerProfileView({ id = null }) {
   const router = useRouter();
 
-  const { profile, isLoading } = useEmployerView(id);
+  const { profile, isLoading, handleSetLive, handleHideProfile, handleDelete } =
+    useEmployerView(id);
 
   if (!profile || isLoading) {
     return <EmployerProfileSkeleton />;
@@ -26,18 +27,6 @@ export default function EmployerProfileView({ id = null }) {
   // Handlers - simple and direct
   const handleEdit = () => {
     router.push(AdminRoutes.employersEdit(id));
-  };
-
-  const handleSetLive = () => {
-    console.log("Set live functionality - TODO");
-  };
-
-  const handleHideProfile = () => {
-    console.log("Hide profile functionality - TODO");
-  };
-
-  const handleDelete = () => {
-    console.log("Delete functionality - TODO");
   };
 
   return (

@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { EmployerProfileHelper } from "@/types/employer-profile";
+import { EmployerProfileHelper } from "@/types/employers-types";
 import { Building2 } from "lucide-react";
 import { ResultsCount } from "@/employers/_components/results-count";
 

@@ -4,34 +4,37 @@ import {
   fetchEmployerById,
   updateEmployerStatus,
   deleteEmployer,
-  EmployerApprovalStatus,
 } from "../_services/employers-view-service";
-import { AdminRoutes } from "../../../router";
+import { AdminRoutes } from "@/admin/router";
+import { EMPLOYERS_QUERY_KEYS as QueryKeys } from "@/employers/_queries/employers-query-keys";
+import {
+  EmployerApprovalStatusEnum as StatusEnum,
+  EmployerApprovalStatus as Status,
+} from "@/types/employers-types";
 
 export function useEmployerView(id: string) {
   const queryClient = useQueryClient();
   const router = useRouter();
-
-  const getEmployerProfileKey = ["employer", id];
 
   const {
     data: profile,
     isLoading,
     error,
   } = useQuery({
-    queryKey: getEmployerProfileKey,
+    queryKey: QueryKeys.profile(id),
     queryFn: () => fetchEmployerById(id),
     enabled: !!id,
   });
 
   const updateStatus = useMutation({
-    mutationFn: (status: EmployerApprovalStatus) =>
-      updateEmployerStatus(id, status),
+    mutationFn: (status: Status) => updateEmployerStatus(id, status),
     onSuccess: () => {
       // Invalidar el detalle actual
-      queryClient.invalidateQueries({ queryKey: getEmployerProfileKey });
+      queryClient.invalidateQueries({
+        queryKey: QueryKeys.profile(id),
+      });
       // Invalidar el listado de employers para que se actualice cuando vuelvas
-      queryClient.invalidateQueries({ queryKey: ["employers"] });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.list });
     },
   });
 
@@ -39,17 +42,17 @@ export function useEmployerView(id: string) {
     mutationFn: () => deleteEmployer(id),
     onSuccess: () => {
       // Invalidar el listado antes de navegar
-      queryClient.invalidateQueries({ queryKey: ["employers"] });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.list });
       router.push(AdminRoutes.employers);
     },
   });
 
   const handleSetLive = () => {
-    updateStatus.mutate("approved");
+    updateStatus.mutate(StatusEnum.Approved);
   };
 
   const handleHideProfile = () => {
-    updateStatus.mutate("pending");
+    updateStatus.mutate(StatusEnum.Pending);
   };
 
   const handleDelete = () => {

@@ -2,7 +2,7 @@ import { createClient } from "@/lib/utils/supabase/client";
 import {
   EmployerProfileHelper,
   EmployerProfile,
-} from "@/types/employer-profile";
+} from "@/types/employers-types";
 
 const supabase = await createClient();
 

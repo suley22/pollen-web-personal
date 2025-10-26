@@ -1,5 +1,13 @@
 import { SocialMediaLink } from "@/types/social-media-links";
 
+export type EmployerApprovalStatus = "approved" | "pending" | "rejected";
+
+export enum EmployerApprovalStatusEnum {
+  Approved = "approved",
+  Pending = "pending",
+  Rejected = "rejected",
+}
+
 export interface EmployerProfile {
   id: number;
   company_name?: string;

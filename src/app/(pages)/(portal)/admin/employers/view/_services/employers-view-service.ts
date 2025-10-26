@@ -1,9 +1,8 @@
 import { createClient } from "@/lib/utils/supabase/client";
-import { EmployerProfileHelper } from "@/types/employer-profile";
+import { EmployerProfileHelper } from "@/types/employers-types";
+import type { EmployerApprovalStatus } from "@/types/employers-types";
 
 const supabase = createClient();
-
-export type EmployerApprovalStatus = "approved" | "pending" | "rejected";
 
 export const fetchEmployerById = async (id: string) => {
   const { data, error } = await supabase

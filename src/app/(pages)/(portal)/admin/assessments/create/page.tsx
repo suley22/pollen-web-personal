@@ -19,6 +19,8 @@ import {
   ChevronDown,
   Trash2,
   Palette,
+  HelpCircle,
+  FileText,
 } from "lucide-react";
 import { SecondaryButton } from "@/components/design-system/primary-button";
 import type {
@@ -26,6 +28,8 @@ import type {
   CategoryStats,
 } from "@/types/assessment-category";
 import { CategoryCard } from "@/components/assessments/category-card";
+import { AssessmentQuestionCard } from "../test/_components/assessment-question-card";
+import { AssessmentProgress } from "../test/_components/assessment-progress";
 
 import {
   Select,
@@ -80,6 +84,32 @@ export default function AdminFormsPage() {
   const [currentOptionCategory, setCurrentOptionCategory] = useState<
     string | undefined
   >();
+
+  // Estado para el preview del assessment
+  const [previewAnswers, setPreviewAnswers] = useState<Record<string, string>>(
+    {},
+  );
+
+  // Funciones para el preview
+  const handlePreviewAnswerChange = (
+    questionId: string,
+    optionValue: string,
+  ) => {
+    setPreviewAnswers((prev) => ({
+      ...prev,
+      [questionId]: optionValue,
+    }));
+  };
+
+  const getPreviewAnsweredCount = () => {
+    return Object.keys(previewAnswers).length;
+  };
+
+  const getPreviewPercentage = () => {
+    const total = questions.length;
+    if (total === 0) return 0;
+    return Math.round((getPreviewAnsweredCount() / total) * 100);
+  };
 
   // Preview - respuestas seleccionadas para preview
   const [selectedAnswers, setSelectedAnswers] = useState<
@@ -264,33 +294,43 @@ export default function AdminFormsPage() {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4">
             <div className="flex flex-row gap-4">
-              <Input
-                label="Category Name"
-                type="text"
-                name="category_name"
-                id="category_name"
-                placeholder="Enter category name"
-                value={categoryName}
-                onChange={(e) => setCategoryName(e.target.value)}
-              />
-              <div className="flex flex-col gap-2">
-                <Label className="">Color</Label>
-                <div className="flex gap-2">
-                  {PRESET_COLORS.map((color) => (
-                    <button
-                      key={color.value}
-                      type="button"
-                      onClick={() => setCategoryColor(color.value)}
-                      className={`w-10 h-10 rounded-lg border-2 transition-all hover:scale-110 ${
-                        categoryColor === color.value
-                          ? "border-gray-900 ring-2 ring-gray-400"
-                          : "border-gray-300"
-                      }`}
-                      style={{ backgroundColor: color.value }}
-                      title={color.name}
-                    />
-                  ))}
-                </div>
+              <div className="">
+                <Label className="text-sm font-medium text-gray-700 mb-1.5 block">
+                  Color
+                </Label>
+                <Select value={categoryColor} onValueChange={setCategoryColor}>
+                  <SelectTrigger className="h-10">
+                    <SelectValue placeholder="Select color" />
+                  </SelectTrigger>
+                  <SelectContent className="">
+                    {PRESET_COLORS.map((color) => (
+                      <SelectItem
+                        className=""
+                        key={color.value}
+                        value={color.value}
+                      >
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="w-4 h-4 rounded-full border border-gray-300"
+                            style={{ backgroundColor: color.value }}
+                          />
+                          {color.name}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex-1">
+                <Input
+                  label="Category Name"
+                  type="text"
+                  name="category_name"
+                  id="category_name"
+                  placeholder="Enter category name"
+                  value={categoryName}
+                  onChange={(e) => setCategoryName(e.target.value)}
+                />
               </div>
             </div>
 
@@ -496,124 +536,108 @@ export default function AdminFormsPage() {
         </FormCard>
       </div>
 
-      {/* Lista de preguntas creadas */}
+      {/* Assessment Preview */}
       {questions.length > 0 && (
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">
-              Questions ({questions.length})
+              Assessment Preview ({questions.length} question
+              {questions.length !== 1 ? "s" : ""})
             </h2>
           </div>
-          <div className="flex flex-col gap-4">
-            {questions.map((question, index) => (
-              <div key={index}>
-                <AdminMultipleChoiceQuestionCard
-                  questionsLength={questions.length}
-                  question={question}
-                  index={index}
-                  handleMoveQuestionUp={handleMoveQuestionUp}
-                  handleMoveQuestionDown={handleMoveQuestionDown}
-                  handleRemoveQuestion={handleRemoveQuestion}
-                />
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Questions Section - 2/3 width */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Assessment Info Card */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <div className="flex items-start gap-3">
+                  <FileText className="h-5 w-5 text-blue-600 mt-1" />
+                  <div>
+                    <h3 className="font-semibold text-blue-900 mb-1">
+                      Preview Mode
+                    </h3>
+                    <p className="text-sm text-blue-800">
+                      This is how your assessment will look to users. Try
+                      answering the questions to see the progress tracking. You
+                      can still edit questions using the action buttons.
+                    </p>
+                  </div>
+                </div>
               </div>
-            ))}
+
+              {/* Questions */}
+              {questions.map((question, index) => {
+                // Convert question to AssessmentQuestion format
+                const assessmentQuestion = {
+                  id: `q-${index}`,
+                  title: question.title,
+                  description: question.description,
+                  options_title: question.options_title,
+                  options: question.options,
+                };
+
+                return (
+                  <div key={index} className="relative">
+                    <AssessmentQuestionCard
+                      question={assessmentQuestion}
+                      questionNumber={index + 1}
+                      selectedValue={previewAnswers[`q-${index}`]}
+                      onAnswerChange={handlePreviewAnswerChange}
+                    />
+
+                    {/* Action Buttons Overlay */}
+                    <div className="absolute top-6 right-6 flex flex-row gap-1 bg-white rounded border shadow-sm p-1">
+                      <button
+                        onClick={() => handleMoveQuestionUp(index)}
+                        disabled={index === 0}
+                        className={`p-2 rounded transition-colors ${
+                          index === 0
+                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                            : "bg-white hover:bg-gray-50 text-gray-700"
+                        }`}
+                        title="Move up"
+                      >
+                        <ChevronUp className="h-4 w-4" />
+                      </button>
+
+                      <button
+                        onClick={() => handleMoveQuestionDown(index)}
+                        disabled={index === questions.length - 1}
+                        className={`p-2 rounded transition-colors ${
+                          index === questions.length - 1
+                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                            : "bg-white hover:bg-gray-50 text-gray-700"
+                        }`}
+                        title="Move down"
+                      >
+                        <ChevronDown className="h-4 w-4" />
+                      </button>
+
+                      <button
+                        onClick={() => handleRemoveQuestion(index)}
+                        className="p-2 rounded bg-white hover:bg-red-50 text-red-600 hover:text-red-700 transition-colors"
+                        title="Remove question"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Progress Sidebar - 1/3 width */}
+            <div className="space-y-6">
+              <AssessmentProgress
+                answeredCount={getPreviewAnsweredCount()}
+                totalCount={questions.length}
+                percentage={getPreviewPercentage()}
+              />
+            </div>
           </div>
         </div>
       )}
     </PageContainer>
-  );
-}
-
-export function AdminMultipleChoiceQuestionCard({
-  question,
-  index,
-  questionsLength,
-  handleMoveQuestionUp,
-  handleMoveQuestionDown,
-  handleRemoveQuestion,
-}: {
-  question?: MultipleChoiceQuestion;
-  index: number;
-  questionsLength: number;
-  handleMoveQuestionUp: (index: number) => void;
-  handleMoveQuestionDown: (index: number) => void;
-  handleRemoveQuestion: (index: number) => void;
-}) {
-  const options = question?.options || [];
-
-  return (
-    <Card id="multiple-choice" className="p-6 gap-3">
-      <div className="flex flex-row justify-between ">
-        <div className="flex flex-col gap-1">
-          <div className="flex flex-row gap-4 font-semibold text-xl">
-            {question?.title}
-          </div>
-          <div className="text-sm text-gray-600">{question?.description}</div>
-        </div>
-        <div className="flex flex-row gap-2">
-          {/* Botón para mover hacia arriba */}
-          <button
-            onClick={() => handleMoveQuestionUp(index)}
-            disabled={index === 0}
-            className={`p-4 rounded border ${
-              index === 0
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-white hover:bg-gray-50 text-gray-700"
-            }`}
-            title="Move up"
-          >
-            <ChevronUp className="h-4 w-4" />
-          </button>
-
-          {/* Botón para mover hacia abajo */}
-          <button
-            onClick={() => handleMoveQuestionDown(index)}
-            disabled={index === questionsLength - 1}
-            className={`p-4 rounded border ${
-              index === questionsLength - 1
-                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-white hover:bg-gray-50 text-gray-700"
-            }`}
-            title="Move down"
-          >
-            <ChevronDown className="h-4 w-4" />
-          </button>
-
-          {/* Botón para eliminar */}
-          <button
-            onClick={() => handleRemoveQuestion(index)}
-            className="p-4 rounded border bg-white hover:bg-red-50 text-red-600 hover:text-red-700"
-            title="Remove question"
-          >
-            <Trash2 className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
-
-      <Divider />
-      <div id="content" className="flex flex-col gap-1 mt-2 text-md">
-        <div className="flex">{question?.options_title}</div>
-        <div className="flex">Options</div>
-      </div>
-      <div id="content-title" className="font-medium mt-2 mb-3">
-        <div className="flex flex-col gap-3 pl-2">
-          {options.map((option) => (
-            <div key={option.value} className="flex items-center space-x-2">
-              <input
-                type="radio"
-                value={option.value}
-                id={option.value}
-                name={`question-${index}`}
-                className="h-4 w-4"
-                disabled
-              />
-              <Label htmlFor={option.value} className="font-normal">
-                {option.label}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </div>
-    </Card>
   );
 }

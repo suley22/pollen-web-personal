@@ -5,7 +5,7 @@ import { createClient } from "@/lib/utils/supabase/client";
 import { EmployerProfileHelper } from "@/types/employers-types";
 import type { EmployerApprovalStatus } from "@/types/employers-types";
 import { EMPLOYER_STATUS } from "@/constants/filters";
-import type { EmployerStatus } from "@/constants/filters";
+import { DateHelper } from "@/lib/helpers/date-helper";
 
 const supabase = createClient();
 
@@ -167,6 +167,8 @@ export function useEmployerById(id: string) {
 
       return {
         ...data,
+        updated_at: DateHelper.formatDate(data.updated_at),
+        created_at: DateHelper.formatDate(data.created_at),
         profile_completeness:
           EmployerProfileHelper.calculateProfileCompleteness(data),
       };

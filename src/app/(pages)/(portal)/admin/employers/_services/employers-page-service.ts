@@ -6,6 +6,7 @@ import { EmployerProfileHelper } from "@/types/employers-types";
 import type { EmployerApprovalStatus } from "@/types/employers-types";
 import { EMPLOYER_STATUS } from "@/constants/filters";
 import { DateHelper } from "@/lib/helpers/date-helper";
+import { getLoggedInUserId } from "@/services/userService";
 
 const supabase = createClient();
 
@@ -165,31 +166,57 @@ export function useEmployerById(id: string) {
         throw new Error(error.message);
       }
 
-      // Get user information from profile table
+      // Get both creator and updater information in a single query
       let createdBy = null;
-      if (data.user_id) {
-        const { data: profileData } = await supabase
-          .from("profile")
-          .select("first_name, last_name, email")
-          .eq("id", data.user_id)
-          .single();
+      let updatedBy = null;
 
-        if (profileData) {
-          createdBy = {
-            id: data.user_id,
-            email: profileData.email,
-            full_name:
-              `${profileData.first_name || ""} ${profileData.last_name || ""}`.trim() ||
-              profileData.email,
-            first_name: profileData.first_name,
-            last_name: profileData.last_name,
-          };
+      const userIds = [data.user_id, data.updated_by].filter(Boolean);
+
+      if (userIds.length > 0) {
+        const { data: profilesData } = await supabase
+          .from("profile")
+          .select("id, first_name, last_name, email")
+          .in("id", userIds);
+
+        if (profilesData && profilesData.length > 0) {
+          // Map creator
+          const creatorProfile = profilesData.find(
+            (p) => p.id === data.user_id,
+          );
+          if (creatorProfile) {
+            createdBy = {
+              id: creatorProfile.id,
+              email: creatorProfile.email,
+              full_name:
+                `${creatorProfile.first_name || ""} ${creatorProfile.last_name || ""}`.trim() ||
+                creatorProfile.email,
+              first_name: creatorProfile.first_name,
+              last_name: creatorProfile.last_name,
+            };
+          }
+
+          // Map updater
+          const updaterProfile = profilesData.find(
+            (p) => p.id === data.updated_by,
+          );
+          if (updaterProfile) {
+            updatedBy = {
+              id: updaterProfile.id,
+              email: updaterProfile.email,
+              full_name:
+                `${updaterProfile.first_name || ""} ${updaterProfile.last_name || ""}`.trim() ||
+                updaterProfile.email,
+              first_name: updaterProfile.first_name,
+              last_name: updaterProfile.last_name,
+            };
+          }
         }
       }
 
       return {
         ...data,
         created_by: createdBy,
+        updated_by: updatedBy,
         updated_at: DateHelper.formatDate(data.updated_at),
         created_at: DateHelper.formatDate(data.created_at),
         profile_completeness:
@@ -211,11 +238,14 @@ export function useUpdateEmployerStatus() {
       id: string;
       status: EmployerApprovalStatus;
     }) => {
+      const userId = await getLoggedInUserId();
+
       const { data, error } = await supabase
         .from("employer_profile")
         .update({
           approval_status: status,
           updated_at: new Date().toISOString(),
+          updated_by: userId,
         })
         .eq("id", id)
         .select()
@@ -242,12 +272,15 @@ export function useDeleteEmployer() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async ({ id }: { id: string }) => {
+      const userId = await getLoggedInUserId();
+
       const { data, error } = await supabase
         .from("employer_profile")
         .update({
           deleted_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
+          updated_by: userId,
         })
         .eq("id", id)
         .select()
@@ -270,13 +303,9 @@ export function useCreateEmployer() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      formData,
-      userId,
-    }: {
-      formData: FormData;
-      userId: string;
-    }) => {
+    mutationFn: async ({ formData }: { formData: FormData }) => {
+      const userId = await getLoggedInUserId();
+
       const transformedData = transformFormDataToDatabase(formData, userId);
 
       if (!transformedData.company_name?.toString().trim()) {
@@ -290,6 +319,8 @@ export function useCreateEmployer() {
           approval_status: EMPLOYER_STATUS.DRAFT,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
+          user_id: userId,
+          updated_by: userId,
         })
         .select()
         .single();
@@ -314,12 +345,12 @@ export function useUpdateEmployer() {
     mutationFn: async ({
       id,
       formData,
-      userId,
     }: {
       id: string;
       formData: FormData;
-      userId: string;
     }) => {
+      const userId = await getLoggedInUserId();
+
       const transformedData = transformFormDataToDatabase(formData, userId);
 
       if (!transformedData.company_name?.toString().trim()) {
@@ -331,6 +362,7 @@ export function useUpdateEmployer() {
         .update({
           ...transformedData,
           updated_at: new Date().toISOString(),
+          updated_by: userId,
         })
         .eq("id", id)
         .select()

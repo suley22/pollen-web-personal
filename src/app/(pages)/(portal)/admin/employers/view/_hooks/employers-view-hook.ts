@@ -22,15 +22,21 @@ export function useEmployerView(id: string) {
   };
 
   const handleHideProfile = () => {
-    updateStatus.mutate({ id, status: EMPLOYER_STATUS.HIDDEN });
+    updateStatus.mutate({
+      id,
+      status: EMPLOYER_STATUS.HIDDEN,
+    });
   };
 
   const handleDelete = () => {
-    deleteQuery.mutate(id, {
-      onSuccess: () => {
-        router.push(AdminRoutes.employers);
+    deleteQuery.mutate(
+      { id },
+      {
+        onSuccess: () => {
+          router.push(AdminRoutes.employers);
+        },
       },
-    });
+    );
   };
 
   return {

@@ -59,9 +59,9 @@ export function useEmployersPage({ id = null }) {
       }
 
       if (id) {
-        await updateMutation.mutateAsync({ id, formData, userId });
+        await updateMutation.mutateAsync({ id, formData });
       } else {
-        await createMutation.mutateAsync({ formData, userId });
+        await createMutation.mutateAsync({ formData });
       }
 
       // Redirect to employers list after success

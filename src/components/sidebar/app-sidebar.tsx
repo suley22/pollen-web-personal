@@ -15,6 +15,7 @@ import {
 import { useSidebar } from "@/components/sidebar/sidebar";
 import { Logo } from "../icons/icons";
 import { NavigationItems } from "@/components/sidebar/navigation-items";
+import { Divider } from "../design-system";
 
 export function AppSidebar({ ...props }) {
   const { state } = useSidebar();
@@ -26,27 +27,24 @@ export function AppSidebar({ ...props }) {
         <SidebarMenu>
           <SidebarMenuItem>
             {state === "collapsed" ? (
-              <a
-                href="#"
-                data-slot="sidebar-menu-button"
-                className="flex items-center justify-center"
-                aria-label="Acme Inc"
-              >
-                <div className="flex items-center justify-center rounded-lg">
-                  <Logo className="!size-9" />
-                </div>
-              </a>
+              <div className="flex flex-col items-center justify-center pt-2">
+                <SidebarTrigger />
+                <Divider />
+              </div>
             ) : (
-              <SidebarMenuButton size="lg" asChild>
-                <a href="#" className="gap-0">
-                  <div className="flex aspect-square rounded-lg">
-                    <Logo className="size-11" />
-                  </div>
-                  <div className="grid flex-1 text-left text-3xl leading-tight">
-                    <span className="truncate font-bold">Pollen</span>
-                  </div>
-                </a>
-              </SidebarMenuButton>
+              <div className="flex items-center justify-between w-full px-2">
+                <SidebarMenuButton size="lg" asChild>
+                  <a href="#" className="gap-0">
+                    <div className="flex aspect-square rounded-lg">
+                      <Logo className="size-11" />
+                    </div>
+                    <div className="grid flex-1 text-left text-3xl leading-tight">
+                      <span className="truncate font-bold">Pollen</span>
+                    </div>
+                  </a>
+                </SidebarMenuButton>
+                <SidebarTrigger />
+              </div>
             )}
           </SidebarMenuItem>
         </SidebarMenu>
@@ -56,9 +54,7 @@ export function AppSidebar({ ...props }) {
           <NavigationItems />
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <SidebarTrigger />
-      </SidebarFooter>
+      <SidebarFooter></SidebarFooter>
     </Sidebar>
   );
 }

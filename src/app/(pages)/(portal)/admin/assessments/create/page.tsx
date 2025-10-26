@@ -44,6 +44,20 @@ interface MultipleChoiceQuestion {
   categoryId?: string;
 }
 
+// Colores predefinidos con buen contraste
+const PRESET_COLORS = [
+  { name: "Blue", value: "#3B82F6" },
+  { name: "Green", value: "#10B981" },
+  { name: "Purple", value: "#8B5CF6" },
+  { name: "Orange", value: "#F97316" },
+  { name: "Red", value: "#EF4444" },
+  { name: "Pink", value: "#EC4899" },
+  { name: "Teal", value: "#14B8A6" },
+  { name: "Indigo", value: "#6366F1" },
+  { name: "Yellow", value: "#F59E0B" },
+  { name: "Slate", value: "#64748B" },
+];
+
 export default function AdminFormsPage() {
   // Estado para las preguntas creadas
   const [questions, setQuestions] = useState<MultipleChoiceQuestion[]>([]);
@@ -260,14 +274,24 @@ export default function AdminFormsPage() {
                 value={categoryName}
                 onChange={(e) => setCategoryName(e.target.value)}
               />
-              <div className="flex flex-col gap-2 w-20">
+              <div className="flex flex-col gap-2">
                 <Label className="">Color</Label>
-                <input
-                  type="color"
-                  value={categoryColor}
-                  onChange={(e) => setCategoryColor(e.target.value)}
-                  className="w-full h-10 rounded border border-gray-300 cursor-pointer p-1"
-                />
+                <div className="flex gap-2">
+                  {PRESET_COLORS.map((color) => (
+                    <button
+                      key={color.value}
+                      type="button"
+                      onClick={() => setCategoryColor(color.value)}
+                      className={`w-10 h-10 rounded-lg border-2 transition-all hover:scale-110 ${
+                        categoryColor === color.value
+                          ? "border-gray-900 ring-2 ring-gray-400"
+                          : "border-gray-300"
+                      }`}
+                      style={{ backgroundColor: color.value }}
+                      title={color.name}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
 

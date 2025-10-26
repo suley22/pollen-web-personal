@@ -24,7 +24,7 @@ export function CompanyInformation({ company }) {
         </div>
 
         {/* Company Information - Right Side (Two Columns) */}
-        <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-6 flex-1">
           {/* Location */}
           <InfoField
             label="Location"

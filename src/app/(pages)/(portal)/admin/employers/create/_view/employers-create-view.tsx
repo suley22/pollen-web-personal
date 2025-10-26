@@ -7,13 +7,13 @@ import { PageContainer } from "@/components/design-system/page-container";
 import { FormContainer } from "@/components/design-system/form-container";
 import { FormActions } from "@/components/design-system/form-actions";
 import { ConfirmationDialog } from "@/components/design-system/confirmation-dialog";
-import { CompanyInformation } from "../_components/company-information";
-import { AccoladesAccreditations } from "../_components/accolades-accreditations";
-import { ContactInformation } from "../_components/contact-information";
-import { SocialMedia } from "../_components/social-media";
-import { InternalPollenData } from "../_components/internal-pollen-data";
+import { CompanyInformation } from "../_components/employers-create-company-information";
+import { AccoladesAccreditations } from "../_components/employers-create-accolades";
+import { ContactInformation } from "../_components/employers-create-contact-information";
+import { SocialMedia } from "../_components/employers-create-social-media";
+import { InternalPollenData } from "../_components/employers-create-internal-pollen-data";
 import { EmployersCreateSkeleton } from "../_components/employers-create-skeleton";
-import { useEmployersPage } from "../_hooks/employer-create-hook";
+import { useEmployersPage } from "../_hooks/employers-create-hook";
 
 const CreateUpdateButton = ({ isEditMode, isLoading, onClick }) => (
   <PrimaryButton

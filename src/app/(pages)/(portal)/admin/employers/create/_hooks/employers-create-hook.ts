@@ -1,64 +1,31 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import {
-  fetchEmployerById,
-  createEmployer,
-  updateEmployer,
-} from "../_services/employer-create-service";
+  useEmployerById,
+  useCreateEmployer,
+  useUpdateEmployer,
+} from "../../_services/employers-page-service";
 import { processImageFromFormData } from "@/services/storageService";
 import { getLoggedInUserId } from "@/services/userService";
-import { EMPLOYERS_QUERY_KEYS as QueryKeys } from "@/employers/_queries/employers-query-keys";
 import { AdminRoutes } from "@/admin/router";
 
 export function useEmployersPage({ id = null }) {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const formRef = useRef(null);
 
   const [logoUrl, setLogoUrl] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Query para obtener employer (solo si hay id - modo edición)
-  const { data: employer, isLoading } = useQuery({
-    queryKey: QueryKeys.profile(id || ""),
-    queryFn: () => fetchEmployerById(id || ""),
-    enabled: !!id,
-  });
+  const { data: employer, isLoading } = useEmployerById(id || "");
 
   // Mutation para crear
-  const createMutation = useMutation({
-    mutationFn: ({
-      formData,
-      userId,
-    }: {
-      formData: FormData;
-      userId: string;
-    }) => createEmployer(formData, userId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QueryKeys.all });
-      router.push(AdminRoutes.employers);
-    },
-  });
+  const createMutation = useCreateEmployer();
 
   // Mutation para actualizar
-  const updateMutation = useMutation({
-    mutationFn: ({
-      id,
-      formData,
-      userId,
-    }: {
-      id: string;
-      formData: FormData;
-      userId: string;
-    }) => updateEmployer(id, formData, userId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QueryKeys.all });
-      router.push(AdminRoutes.employers);
-    },
-  });
+  const updateMutation = useUpdateEmployer();
 
   // Update logoUrl when employer data loads
   useEffect(() => {
@@ -96,6 +63,9 @@ export function useEmployersPage({ id = null }) {
       } else {
         await createMutation.mutateAsync({ formData, userId });
       }
+
+      // Redirect to employers list after success
+      router.push(AdminRoutes.employers);
     } catch (error) {
       console.error("Error saving employer:", error);
       throw error;

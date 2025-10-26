@@ -18,6 +18,8 @@ export { Input } from "./input";
 export { Textarea } from "./textarea";
 export { TextareaInput } from "./textarea-input";
 export { Select } from "./select";
+export { ColorSelector } from "./color-selector";
+export { CategorySelector } from "./category-selector";
 export { CheckboxGroup } from "./checkbox-group";
 export { InputCheckboxGroup } from "./input-checkbox-group";
 export { TextAreaCard } from "./textarea-card";

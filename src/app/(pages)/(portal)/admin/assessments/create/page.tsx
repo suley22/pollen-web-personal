@@ -8,6 +8,9 @@ import {
   PrimaryButton,
   Divider,
   TextareaInput,
+  Select as DSSelect,
+  ColorSelector,
+  CategorySelector,
 } from "@/components/design-system";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -31,14 +34,6 @@ import { CategoryCard } from "@/components/assessments/category-card";
 import { AssessmentQuestionCard } from "../test/_components/assessment-question-card";
 import { AssessmentProgress } from "../test/_components/assessment-progress";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
 interface MultipleChoiceQuestion {
   title: string;
   description: string;
@@ -46,20 +41,6 @@ interface MultipleChoiceQuestion {
   options: { value: string; label: string; categoryId?: string }[];
   categoryId?: string;
 }
-
-// Colores predefinidos con buen contraste
-const PRESET_COLORS = [
-  { name: "Blue", value: "#3B82F6" },
-  { name: "Green", value: "#10B981" },
-  { name: "Purple", value: "#8B5CF6" },
-  { name: "Orange", value: "#F97316" },
-  { name: "Red", value: "#EF4444" },
-  { name: "Pink", value: "#EC4899" },
-  { name: "Teal", value: "#14B8A6" },
-  { name: "Indigo", value: "#6366F1" },
-  { name: "Yellow", value: "#F59E0B" },
-  { name: "Slate", value: "#64748B" },
-];
 
 export default function AdminFormsPage() {
   // Estado para las preguntas creadas
@@ -77,6 +58,8 @@ export default function AdminFormsPage() {
   const [optionsTitle, setOptionsTitle] = useState("");
   const [assessmentTitle, setAssessmentTitle] = useState("");
   const [assessmentDescription, setAssessmentDescription] = useState("");
+  const [instructionsTitle, setInstructionsTitle] = useState("");
+  const [instructionsDescription, setInstructionsDescription] = useState("");
   const [options, setOptions] = useState<
     { value: string; label: string; categoryId?: string }[]
   >([]);
@@ -286,6 +269,28 @@ export default function AdminFormsPage() {
             onChange={(e) => setAssessmentDescription(e.target.value)}
             rows={3}
           />
+
+          {/* Instructions Title */}
+          <Input
+            label="Instructions Title"
+            type="text"
+            name="instructions_title"
+            id="instructions_title"
+            placeholder="Enter instructions title (e.g., 'Assessment Instructions')"
+            value={instructionsTitle}
+            onChange={(e) => setInstructionsTitle(e.target.value)}
+          />
+
+          {/* Instructions Description */}
+          <TextareaInput
+            label="Instructions Description"
+            name="instructions_description"
+            id="instructions_description"
+            placeholder="Enter instructions for the assessment (e.g., 'Please answer all questions below...')"
+            value={instructionsDescription}
+            onChange={(e) => setInstructionsDescription(e.target.value)}
+            rows={3}
+          />
         </div>
       </FormCard>
 
@@ -294,32 +299,12 @@ export default function AdminFormsPage() {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-4">
             <div className="flex flex-row gap-4">
-              <div className="">
-                <Label className="text-sm font-medium text-gray-700 mb-1.5 block">
-                  Color
-                </Label>
-                <Select value={categoryColor} onValueChange={setCategoryColor}>
-                  <SelectTrigger className="h-10">
-                    <SelectValue placeholder="Select color" />
-                  </SelectTrigger>
-                  <SelectContent className="">
-                    {PRESET_COLORS.map((color) => (
-                      <SelectItem
-                        className=""
-                        key={color.value}
-                        value={color.value}
-                      >
-                        <div className="flex items-center gap-2">
-                          <div
-                            className="w-4 h-4 rounded-full border border-gray-300"
-                            style={{ backgroundColor: color.value }}
-                          />
-                          {color.name}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="w-48">
+                <ColorSelector
+                  label="Color"
+                  value={categoryColor}
+                  onValueChange={setCategoryColor}
+                />
               </div>
               <div className="flex-1">
                 <Input
@@ -470,55 +455,40 @@ export default function AdminFormsPage() {
                 </div>
               )}
 
-              <div className="flex flex-row gap-2 items-end mt-1">
-                <Input
-                  label="Add Option"
-                  type="text"
-                  name="current_option"
-                  id="current_option"
-                  placeholder="Enter option text"
-                  value={currentOption}
-                  onChange={(e) => setCurrentOption(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddOption();
-                    }
-                  }}
-                />
+              <div className="w-full flex flex-row gap-4 mt-1">
+                {/* Category Selector */}
                 {categories.length > 0 && (
                   <div className="w-48">
-                    <Label className="">Category (Optional)</Label>
-                    <Select
+                    <CategorySelector
+                      label="Category (Optional)"
                       value={currentOptionCategory}
                       onValueChange={setCurrentOptionCategory}
-                    >
-                      <SelectTrigger className="">
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent className="">
-                        <SelectItem className="" value="none">
-                          No category
-                        </SelectItem>
-                        {categories.map((category) => (
-                          <SelectItem
-                            className=""
-                            key={category.id}
-                            value={category.id}
-                          >
-                            <div className="flex items-center gap-2">
-                              <div
-                                className="w-3 h-3 rounded-full"
-                                style={{ backgroundColor: category.color }}
-                              />
-                              {category.name}
-                            </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                      categories={categories}
+                      placeholder="Select category"
+                    />
                   </div>
                 )}
+
+                <div className="flex-1">
+                  <Input
+                    label="Add Option"
+                    type="text"
+                    name="current_option"
+                    id="current_option"
+                    placeholder="Enter option text"
+                    value={currentOption}
+                    onChange={(e) => setCurrentOption(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleAddOption();
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end">
                 <SecondaryButton
                   icon={<Plus />}
                   text="Add Option"
@@ -538,33 +508,42 @@ export default function AdminFormsPage() {
 
       {/* Assessment Preview */}
       {questions.length > 0 && (
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">
-              Assessment Preview ({questions.length} question
-              {questions.length !== 1 ? "s" : ""})
-            </h2>
+        <div className="flex flex-col gap-6">
+          {/* Preview Header */}
+          <div className="border-b pb-4">
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="text-2xl font-bold text-gray-900">
+                {assessmentTitle || "Untitled Assessment"}
+              </h2>
+              <span className="text-sm text-gray-500 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+                Preview Mode
+              </span>
+            </div>
+            {assessmentDescription && (
+              <p className="text-gray-600">{assessmentDescription}</p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Questions Section - 2/3 width */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Assessment Info Card */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                <div className="flex items-start gap-3">
-                  <FileText className="h-5 w-5 text-blue-600 mt-1" />
-                  <div>
-                    <h3 className="font-semibold text-blue-900 mb-1">
-                      Preview Mode
-                    </h3>
-                    <p className="text-sm text-blue-800">
-                      This is how your assessment will look to users. Try
-                      answering the questions to see the progress tracking. You
-                      can still edit questions using the action buttons.
-                    </p>
+              {/* Assessment Instructions Card */}
+              {(instructionsTitle || instructionsDescription) && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                  <div className="flex items-start gap-3">
+                    <FileText className="h-5 w-5 text-blue-600 mt-1" />
+                    <div>
+                      <h3 className="font-semibold text-blue-900 mb-1">
+                        {instructionsTitle || "Assessment Instructions"}
+                      </h3>
+                      <p className="text-sm text-blue-800">
+                        {instructionsDescription ||
+                          "Please answer all questions below. Your responses will help us understand your preferences and provide better recommendations. You can change your answers before submitting."}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Questions */}
               {questions.map((question, index) => {

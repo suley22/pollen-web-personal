@@ -22,6 +22,7 @@ export function AppSidebar({ ...props }) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
+        <SidebarRail />
         <SidebarMenu>
           <SidebarMenuItem>
             {state === "collapsed" ? (
@@ -58,7 +59,6 @@ export function AppSidebar({ ...props }) {
       <SidebarFooter>
         <SidebarTrigger />
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   );
 }

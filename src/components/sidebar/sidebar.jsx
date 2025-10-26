@@ -144,7 +144,7 @@ function Sidebar({
   side = "left",
   variant = "sidebar",
   collapsible = "offcanvas",
-  className,
+  className = "",
   children,
   ...props
 }) {
@@ -236,7 +236,7 @@ function Sidebar({
   );
 }
 
-function SidebarTrigger({ className, onClick, ...props }) {
+function SidebarTrigger({ className = "", onClick = () => {}, ...props }) {
   const { toggleSidebar } = useSidebar();
 
   return (
@@ -257,7 +257,7 @@ function SidebarTrigger({ className, onClick, ...props }) {
   );
 }
 
-function SidebarRail({ className, ...props }) {
+function SidebarRail({ className = "", ...props }) {
   const { toggleSidebar } = useSidebar();
 
   return (
@@ -307,7 +307,7 @@ function SidebarInput({ className, ...props }) {
   );
 }
 
-function SidebarHeader({ className, ...props }) {
+function SidebarHeader({ className = "", ...props }) {
   return (
     <div
       data-slot="sidebar-header"
@@ -318,7 +318,7 @@ function SidebarHeader({ className, ...props }) {
   );
 }
 
-function SidebarFooter({ className, ...props }) {
+function SidebarFooter({ className = "", ...props }) {
   return (
     <div
       data-slot="sidebar-footer"
@@ -340,7 +340,7 @@ function SidebarSeparator({ className, ...props }) {
   );
 }
 
-function SidebarContent({ className, ...props }) {
+function SidebarContent({ className = "", ...props }) {
   return (
     <div
       data-slot="sidebar-content"
@@ -354,7 +354,7 @@ function SidebarContent({ className, ...props }) {
   );
 }
 
-function SidebarGroup({ className, ...props }) {
+function SidebarGroup({ className = "", ...props }) {
   return (
     <div
       data-slot="sidebar-group"
@@ -412,7 +412,7 @@ function SidebarGroupContent({ className, ...props }) {
   );
 }
 
-function SidebarMenu({ className, ...props }) {
+function SidebarMenu({ className = "", ...props }) {
   return (
     <ul
       data-slot="sidebar-menu"
@@ -423,7 +423,7 @@ function SidebarMenu({ className, ...props }) {
   );
 }
 
-function SidebarMenuItem({ className, ...props }) {
+function SidebarMenuItem({ className = "", ...props }) {
   return (
     <li
       data-slot="sidebar-menu-item"
@@ -460,8 +460,8 @@ function SidebarMenuButton({
   asChild = false,
   isActive = false,
   size = "default",
-  tooltip,
-  className,
+  tooltip = "",
+  className = "",
   ...props
 }) {
   const Comp = asChild ? Slot : "button";

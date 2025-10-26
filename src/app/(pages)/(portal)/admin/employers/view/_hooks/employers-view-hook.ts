@@ -1,8 +1,18 @@
-import { useEffect, useState } from "react";
-import { useEmployer } from "../../_hooks/use-employers-query";
+import { useQuery } from "@tanstack/react-query";
+import { fetchEmployerById } from "../_services/employers-view-service";
 
 export function useEmployerView(id: string) {
-  const { data: profile, isLoading, error } = useEmployer(id);
+  const getEmployerProfileKey = ["employer", id];
+
+  const {
+    data: profile,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: getEmployerProfileKey,
+    queryFn: () => fetchEmployerById(id),
+    enabled: !!id,
+  });
 
   return {
     profile,

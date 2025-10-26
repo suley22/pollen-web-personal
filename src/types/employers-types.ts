@@ -38,9 +38,6 @@ export interface EmployerProfile {
   entry_level_support?: string;
   social_medias?: Array<SocialMediaLink>;
   how_hired_previously?: string[];
-  // Additional computed fields for display
-  live_jobs_count?: number;
-  draft_jobs_count?: number;
   profile_completeness?: number;
 }
 
@@ -58,8 +55,6 @@ export class EmployerProfileHelper {
       industries: employer.industries?.length ? employer.industries : [],
       contact_email: employer.contact_email || "No email provided",
       contact_phone: employer.contact_phone || "No phone provided",
-      live_jobs_count: employer.live_jobs_count || 0,
-      draft_jobs_count: employer.draft_jobs_count || 0,
       profile_completeness:
         EmployerProfileHelper.calculateProfileCompleteness(employer),
       updated_at: employer.updated_at || "N/A",
@@ -77,9 +72,6 @@ export class EmployerProfileHelper {
   static fromDatabaseRaw(employer: any): EmployerProfile {
     return {
       ...employer,
-      // Keep original values as-is for editing
-      live_jobs_count: employer.live_jobs_count || 0,
-      draft_jobs_count: employer.draft_jobs_count || 0,
       profile_completeness:
         EmployerProfileHelper.calculateProfileCompleteness(employer),
     };
@@ -87,27 +79,38 @@ export class EmployerProfileHelper {
 
   /**
    * Calculates profile completeness percentage based on filled fields
+   * Excludes "Internal Pollen Data" fields as they don't count toward profile completeness
    */
   static calculateProfileCompleteness(employer: any): number {
     const requiredFields = [
+      // Company Information
       "company_name",
       "company_location",
-      "contact_email",
-      "contact_name",
-      "company_about",
-      "industries",
       "company_size",
       "founded_year",
       "logo_url",
       "website_url",
+      "industries",
+      // Company Details (TextAreaCards)
+      "company_about",
       "work_environment",
       "company_loves",
-      "company_entry_level",
+      "company_entry_level", // Database field name (form uses entry_level_support)
+      // Accolades
       "company_accolades",
+      // Contact Information
+      "contact_name",
       "job_title",
+      "contact_email",
       "contact_phone",
-      "entry_level_support",
+      // Social Media
       "social_medias",
+      // NOTE: Internal Pollen Data fields are NOT included:
+      // - how_did_you_hear_about_us
+      // - more_info
+      // - hiring_frequency
+      // - previous_hiring_methods
+      // - additional_notes
     ];
 
     const filledFields = requiredFields.filter(

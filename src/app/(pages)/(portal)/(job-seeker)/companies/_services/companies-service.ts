@@ -57,9 +57,6 @@ export async function getAllCompanies() {
 const transformEmployerDataRaw = (employer: any): EmployerProfile => {
   return {
     ...employer,
-    // Keep original values as-is for editing
-    live_jobs_count: employer.live_jobs_count || 0,
-    draft_jobs_count: employer.draft_jobs_count || 0,
     profile_completeness:
       EmployerProfileHelper.calculateProfileCompleteness(employer),
   };

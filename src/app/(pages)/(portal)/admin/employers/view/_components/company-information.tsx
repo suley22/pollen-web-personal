@@ -24,46 +24,22 @@ export function CompanyInformation({ company }) {
         </div>
 
         {/* Company Information - Right Side (Two Columns) */}
-        <div className="flex-1 p-6">
-          <div className="grid grid-cols-2 gap-x-8 gap-y-6">
-            {/* Industry */}
-            <InfoField
-              label="Industry"
-              value={
-                <div className="flex flex-wrap gap-2">
-                  {company.industries.length > 0
-                    ? company.industries.map((industry) => (
-                        <Badge
-                          key={industry}
-                          variant="outline"
-                          className="flex flex-wrap"
-                        >
-                          {industry}
-                        </Badge>
-                      ))
-                    : "Not specified"}
-                </div>
-              }
-            />
+        <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+          {/* Location */}
+          <InfoField
+            label="Location"
+            value={company.company_location}
+            icon={<MapPin className="h-4 w-4 text-muted-foreground" />}
+          />
+          {/* Company Size */}
+          <InfoField label="Company Size" value={company.company_size} />
 
-            {/* Company Size */}
-            <InfoField label="Company Size" value={company.company_size} />
-
-            {/* Location */}
-            <InfoField
-              label="Location"
-              value={company.company_location}
-              icon={<MapPin className="h-4 w-4 text-muted-foreground" />}
-            />
-
-            {/* Founded */}
-            <InfoField label="Founded" value={company.founded_year} />
-
-            {/* Website */}
-            <InfoField
-              label="Website"
-              value={
-                company.website_url ? (
+          {/* Website */}
+          <InfoField
+            label="Website"
+            value={
+              company.website_url ? (
+                <div className="flex">
                   <a
                     href={UrlHelper.formatUrl(company.website_url)}
                     target="_blank"
@@ -72,16 +48,39 @@ export function CompanyInformation({ company }) {
                   >
                     {company.website_url.replace(/^https?:\/\//, "")}
                   </a>
-                ) : null
-              }
-              icon={
-                company.website_url ? (
-                  <Globe className="h-4 w-4 text-muted-foreground" />
-                ) : undefined
-              }
-              className="col-span-2"
-            />
-          </div>
+                </div>
+              ) : null
+            }
+            icon={
+              company.website_url ? (
+                <Globe className="h-4 w-4 text-muted-foreground" />
+              ) : undefined
+            }
+          />
+
+          {/* Founded */}
+          <InfoField label="Founded" value={company.founded_year} />
+
+          {/* Industry */}
+          <InfoField
+            label="Industry"
+            className="col-span-2"
+            value={
+              <div className="flex flex-wrap gap-2">
+                {company.industries.length > 0
+                  ? company.industries.map((industry) => (
+                      <Badge
+                        key={industry}
+                        variant="outline"
+                        className="flex flex-wrap"
+                      >
+                        {industry}
+                      </Badge>
+                    ))
+                  : "Not specified"}
+              </div>
+            }
+          />
         </div>
       </div>
     </FormCard>

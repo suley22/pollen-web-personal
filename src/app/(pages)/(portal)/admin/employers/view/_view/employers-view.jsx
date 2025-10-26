@@ -87,18 +87,18 @@ export default function EmployerProfileView({ id = null }) {
 
         {/* Right Column - Contact & Meta Information */}
         <div className="space-y-6">
-          <ContactInformation
-            contactName={profile.contact_name}
-            contactJobTitle={profile.job_title}
-            contactEmail={profile.contact_email}
-            contactPhone={profile.contact_phone}
-          />
-
           <ProfileStatus
             status={profile.approval_status}
             createdDate={profile.created_at}
             lastUpdated={profile.updated_at}
             profileCompleteness={profile.profile_completeness}
+          />
+
+          <ContactInformation
+            contactName={profile.contact_name}
+            contactJobTitle={profile.job_title}
+            contactEmail={profile.contact_email}
+            contactPhone={profile.contact_phone}
           />
 
           <InternalPollenData

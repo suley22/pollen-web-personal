@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/utils/supabase/client";
+import { EmployerProfileHelper } from "@/types/employers-types";
 
 const supabase = createClient();
 
@@ -19,6 +20,24 @@ export interface EmployerPaginationInfo {
   from: number;
   to: number;
 }
+
+export const fetchEmployerById = async (id: string) => {
+  const { data, error } = await supabase
+    .from("employer_profile")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return {
+    ...data,
+    profile_completeness:
+      EmployerProfileHelper.calculateProfileCompleteness(data),
+  };
+};
 
 export const fetchEmployers = async (filters: EmployerFilters) => {
   const page = filters.page || 1;
@@ -74,8 +93,15 @@ export const fetchEmployers = async (filters: EmployerFilters) => {
 
   const totalPages = Math.ceil((count || 0) / pageSize);
 
+  const employersWithCompleteness =
+    data?.map((employer) => ({
+      ...employer,
+      profile_completeness:
+        EmployerProfileHelper.calculateProfileCompleteness(employer),
+    })) || [];
+
   return {
-    employers: data || [],
+    employers: employersWithCompleteness,
     pagination: {
       currentPage: page,
       pageSize,

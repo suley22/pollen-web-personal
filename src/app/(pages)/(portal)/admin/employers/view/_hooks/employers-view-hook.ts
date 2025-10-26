@@ -1,10 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { updateEmployerStatus } from "../_services/employers-view-service";
+
 import {
+  deleteEmployer,
   fetchEmployerById,
-  updateEmployerStatus,
-} from "../_services/employers-view-service";
-import { deleteEmployer } from "@/employers/_services/employers-service";
+} from "@/employers/_services/employers-page-service";
+
 import { AdminRoutes } from "@/admin/router";
 import { EMPLOYERS_QUERY_KEYS as QueryKeys } from "@/employers/_queries/employers-query-keys";
 import {

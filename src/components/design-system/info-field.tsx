@@ -16,7 +16,7 @@ export function InfoField({
   className = "",
 }: InfoFieldProps) {
   return (
-    <div className={`space-y-2 ${className}`}>
+    <div className={`flex flex-col space-y-2 ${className}`}>
       <Label className="text-sm font-medium text-muted-foreground">
         {label}
       </Label>

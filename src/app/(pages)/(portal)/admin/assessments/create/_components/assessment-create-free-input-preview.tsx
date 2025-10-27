@@ -8,9 +8,11 @@ import {
   PageHeader,
   WarningBadge,
   Divider,
+  PrimaryButton,
 } from "@/components/design-system";
 import { QuestionActionButtons } from "./question-action-buttons";
-import { HelpCircle } from "lucide-react";
+import { AssessmentProgress } from "../../test/_components/assessment-progress";
+import { HelpCircle, CheckCircle } from "lucide-react";
 
 interface FreeInputQuestion {
   title: string;
@@ -48,6 +50,11 @@ export function AssessmentCreateFreeInputPreview({
     {},
   );
 
+  // Estado para las respuestas enviadas
+  const [submittedAnswers, setSubmittedAnswers] = useState<Set<number>>(
+    new Set(),
+  );
+
   const handleAnswerChange = (index: number, value: string) => {
     setPreviewAnswers((prev) => ({
       ...prev,
@@ -55,14 +62,36 @@ export function AssessmentCreateFreeInputPreview({
     }));
   };
 
+  const handleSubmitAnswer = (index: number) => {
+    if (previewAnswers[index]?.trim()) {
+      setSubmittedAnswers((prev) => new Set(prev).add(index));
+    }
+  };
+
+  const handleEditAnswer = (index: number) => {
+    setSubmittedAnswers((prev) => {
+      const newSet = new Set(prev);
+      newSet.delete(index);
+      return newSet;
+    });
+  };
+
+  const getAnsweredCount = () => {
+    return submittedAnswers.size;
+  };
+
+  const getPercentage = () => {
+    const total = questions.length;
+    if (total === 0) return 0;
+    return Math.round((getAnsweredCount() / total) * 100);
+  };
+
   if (questions.length === 0) {
     return null;
   }
 
   return (
-    <>
-      {/* Assessment Header */}
-
+    <div className="flex flex-col gap-6">
       <Divider />
 
       <WarningBadge className="h-8 justify-center">
@@ -77,61 +106,102 @@ export function AssessmentCreateFreeInputPreview({
         subtitle={assessmentDescription}
       ></PageHeader>
 
-      {/* Instructions */}
-      {instructionsTitle && instructionsDescription && (
-        <InfoCard
-          title={instructionsTitle}
-          description={instructionsDescription}
-          color="blue"
-        />
-      )}
-
-      {/* Questions */}
-      {questions.map((question, index) => (
-        <FormCard
-          key={index}
-          title={`Question ${index + 1}: ${question.title}`}
-          icon={<HelpCircle className="h-5 w-5" />}
-        >
-          {/* Action Buttons */}
-          {isEditMode &&
-            onMoveQuestionUp &&
-            onMoveQuestionDown &&
-            onEditQuestion &&
-            onRemoveQuestion && (
-              <QuestionActionButtons
-                index={index}
-                totalQuestions={questions.length}
-                onMoveUp={onMoveQuestionUp}
-                onMoveDown={onMoveQuestionDown}
-                onEdit={onEditQuestion}
-                onRemove={onRemoveQuestion}
-              />
-            )}
-
-          <div className="flex flex-col gap-4">
-            {/* Question Subtitle */}
-            {question.subtitle && (
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {question.subtitle}
-              </p>
-            )}
-
-            {/* Answer Textarea */}
-            <TextareaInput
-              label=""
-              name={`question_${index}_answer`}
-              id={`question_${index}_answer`}
-              placeholder={question.placeholder || "Type your answer here..."}
-              value={previewAnswers[index] || ""}
-              onChange={(e) => handleAnswerChange(index, e.target.value)}
-              rows={5}
-              maxLength={1000}
-              showCharacterCount={true}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Questions Section - 2/3 width */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Instructions */}
+          {instructionsTitle && instructionsDescription && (
+            <InfoCard
+              title={instructionsTitle}
+              description={instructionsDescription}
+              color="blue"
             />
-          </div>
-        </FormCard>
-      ))}
-    </>
+          )}
+
+          {/* Questions */}
+          {questions.map((question, index) => {
+            const isSubmitted = submittedAnswers.has(index);
+            const hasAnswer = previewAnswers[index]?.trim();
+
+            return (
+              <FormCard
+                key={index}
+                title={`Question ${index + 1}: ${question.title}`}
+                icon={<HelpCircle className="h-5 w-5" />}
+              >
+                {/* Action Buttons */}
+                {isEditMode &&
+                  onMoveQuestionUp &&
+                  onMoveQuestionDown &&
+                  onEditQuestion &&
+                  onRemoveQuestion && (
+                    <QuestionActionButtons
+                      index={index}
+                      totalQuestions={questions.length}
+                      onMoveUp={onMoveQuestionUp}
+                      onMoveDown={onMoveQuestionDown}
+                      onEdit={onEditQuestion}
+                      onRemove={onRemoveQuestion}
+                    />
+                  )}
+
+                <div className="flex flex-col gap-4">
+                  {/* Question Subtitle */}
+                  {question.subtitle && (
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {question.subtitle}
+                    </p>
+                  )}
+
+                  {/* Answer Textarea */}
+                  <TextareaInput
+                    label=""
+                    name={`question_${index}_answer`}
+                    id={`question_${index}_answer`}
+                    placeholder={
+                      question.placeholder || "Type your answer here..."
+                    }
+                    value={previewAnswers[index] || ""}
+                    onChange={(e) => handleAnswerChange(index, e.target.value)}
+                    rows={5}
+                    maxLength={1000}
+                    showCharacterCount={true}
+                    disabled={isSubmitted}
+                  />
+
+                  {/* Submit/Edit Button */}
+                  <div className="flex justify-end">
+                    {isSubmitted ? (
+                      <PrimaryButton
+                        text="Edit Answer"
+                        icon={<CheckCircle />}
+                        onClick={() => handleEditAnswer(index)}
+                        className="w-full sm:w-auto"
+                      />
+                    ) : (
+                      <PrimaryButton
+                        text="Check Answer"
+                        onClick={() => handleSubmitAnswer(index)}
+                        disabled={!hasAnswer}
+                        className="w-full sm:w-auto"
+                      />
+                    )}
+                  </div>
+                </div>
+              </FormCard>
+            );
+          })}
+        </div>
+
+        {/* Progress Sidebar - 1/3 width */}
+        <div className="space-y-6">
+          <AssessmentProgress
+            answeredCount={getAnsweredCount()}
+            totalCount={questions.length}
+            percentage={getPercentage()}
+          />
+        </div>
+      </div>
+    </div>
   );
 }

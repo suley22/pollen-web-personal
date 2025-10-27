@@ -4,7 +4,12 @@ import { useState, useMemo } from "react";
 import { FileText } from "lucide-react";
 import { AssessmentQuestionCard } from "../../test/_components/assessment-question-card";
 import { AssessmentProgress } from "../../test/_components/assessment-progress";
-import { PageHeader, InfoCard } from "@/components/design-system";
+import {
+  PageHeader,
+  InfoCard,
+  Divider,
+  WarningBadge,
+} from "@/components/design-system";
 import { QuestionActionButtons } from "./question-action-buttons";
 import type { AssessmentCategory } from "@/types/assessment-category";
 
@@ -118,21 +123,30 @@ export function AssessmentCreateMultipleChoicePreview({
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title={assessmentTitle} subtitle={assessmentDescription} />
+      <Divider />
+
+      <WarningBadge className="h-8 justify-center">
+        This is a preview of the multiple choice assessment. In edit mode,
+        answers cannot be submitted.
+      </WarningBadge>
+
+      <Divider />
+
+      <PageHeader
+        title={assessmentTitle}
+        subtitle={assessmentDescription}
+      ></PageHeader>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Questions Section - 2/3 width */}
         <div className="lg:col-span-2 space-y-6">
           {/* Assessment Instructions Card */}
-          {(instructionsTitle || instructionsDescription) && (
+          {/* Instructions */}
+          {instructionsTitle && instructionsDescription && (
             <InfoCard
-              icon={FileText}
+              title={instructionsTitle}
+              description={instructionsDescription}
               color="blue"
-              title={instructionsTitle || "Assessment Instructions"}
-              description={
-                instructionsDescription ||
-                "Please answer all questions below. Your responses will help us understand your preferences and provide better recommendations. You can change your answers before submitting."
-              }
             />
           )}
 

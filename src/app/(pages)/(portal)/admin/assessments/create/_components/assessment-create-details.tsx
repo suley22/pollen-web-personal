@@ -16,7 +16,7 @@ interface AssessmentCreateHeaderProps {
   onInstructionsDescriptionChange: (value: string) => void;
 }
 
-export function AssessmentCreateHeader({
+export function AssessmentCreateDetails({
   internalPollenTitle,
   assessmentTitle,
   assessmentDescription,

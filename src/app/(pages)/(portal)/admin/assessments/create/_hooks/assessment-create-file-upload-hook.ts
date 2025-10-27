@@ -13,7 +13,6 @@ export interface FileUploadQuestion {
   title: string;
   subtitle: string;
   referenceFiles: ReferenceFile[]; // Multiple reference files
-  allowMultipleUploads: boolean; // Can job seeker upload multiple files?
 }
 
 export function useAssessmentCreateFileUpload() {
@@ -23,7 +22,6 @@ export function useAssessmentCreateFileUpload() {
   const [questionTitle, setQuestionTitle] = useState("");
   const [questionSubtitle, setQuestionSubtitle] = useState("");
   const [referenceFiles, setReferenceFiles] = useState<ReferenceFile[]>([]);
-  const [allowMultipleUploads, setAllowMultipleUploads] = useState(false);
   const [editingQuestionIndex, setEditingQuestionIndex] = useState<
     number | null
   >(null);
@@ -59,7 +57,6 @@ export function useAssessmentCreateFileUpload() {
       title: questionTitle.trim(),
       subtitle: questionSubtitle.trim(),
       referenceFiles: [...referenceFiles],
-      allowMultipleUploads,
     };
 
     if (editingQuestionIndex !== null) {
@@ -74,6 +71,16 @@ export function useAssessmentCreateFileUpload() {
     }
 
     handleClearForm();
+
+    // Scroll to preview after adding question
+    setTimeout(() => {
+      const previewElement = document.getElementById(
+        "file-upload-preview-section",
+      );
+      if (previewElement) {
+        previewElement.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 100);
   };
 
   const handleEditQuestion = (index: number) => {
@@ -81,7 +88,6 @@ export function useAssessmentCreateFileUpload() {
     setQuestionTitle(question.title);
     setQuestionSubtitle(question.subtitle);
     setReferenceFiles([...question.referenceFiles]);
-    setAllowMultipleUploads(question.allowMultipleUploads);
     setEditingQuestionIndex(index);
 
     // Scroll to form
@@ -126,7 +132,6 @@ export function useAssessmentCreateFileUpload() {
     setQuestionTitle("");
     setQuestionSubtitle("");
     setReferenceFiles([]);
-    setAllowMultipleUploads(false);
     setEditingQuestionIndex(null);
   };
 
@@ -144,8 +149,6 @@ export function useAssessmentCreateFileUpload() {
     questionSubtitle,
     setQuestionSubtitle,
     referenceFiles,
-    allowMultipleUploads,
-    setAllowMultipleUploads,
     editingQuestionIndex,
 
     // Reference file handlers

@@ -25,8 +25,6 @@ export function AssessmentCreateFileUploadView({
     questionSubtitle,
     setQuestionSubtitle,
     referenceFiles,
-    allowMultipleUploads,
-    setAllowMultipleUploads,
     editingQuestionIndex,
     handleAddReferenceFile,
     handleRemoveReferenceFile,
@@ -50,14 +48,17 @@ export function AssessmentCreateFileUploadView({
         questionSubtitle={questionSubtitle}
         setQuestionSubtitle={setQuestionSubtitle}
         referenceFiles={referenceFiles}
-        allowMultipleUploads={allowMultipleUploads}
-        setAllowMultipleUploads={setAllowMultipleUploads}
         editingQuestionIndex={editingQuestionIndex}
+        questions={questions}
         onAddReferenceFile={handleAddReferenceFile}
         onRemoveReferenceFile={handleRemoveReferenceFile}
         onUpdateReferenceFileName={handleUpdateReferenceFileName}
         onAddQuestion={handleAddQuestion}
         onCancelEdit={handleCancelEdit}
+        onEditQuestion={handleEditQuestion}
+        onRemoveQuestion={handleRemoveQuestion}
+        onMoveQuestionUp={handleMoveQuestionUp}
+        onMoveQuestionDown={handleMoveQuestionDown}
       />
 
       {/* Preview */}

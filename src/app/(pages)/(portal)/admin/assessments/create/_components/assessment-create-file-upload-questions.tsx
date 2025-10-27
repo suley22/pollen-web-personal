@@ -7,8 +7,10 @@ import {
   TextareaInput,
   PrimaryButton,
 } from "@/components/design-system";
-import { FileUp, X, Edit2, Link as LinkIcon } from "lucide-react";
+import { FileUp, X, Edit2, Link as LinkIcon, HelpCircle } from "lucide-react";
 import type { ReferenceFile } from "../_hooks/assessment-create-file-upload-hook";
+import { useToastNotifications } from "@/hooks/useToastNotifications";
+import { QuestionActionButtons } from "./question-action-buttons";
 
 interface AssessmentCreateFileUploadQuestionsProps {
   questionTitle: string;
@@ -16,14 +18,21 @@ interface AssessmentCreateFileUploadQuestionsProps {
   questionSubtitle: string;
   setQuestionSubtitle: (value: string) => void;
   referenceFiles: ReferenceFile[];
-  allowMultipleUploads: boolean;
-  setAllowMultipleUploads: (value: boolean) => void;
   editingQuestionIndex: number | null;
+  questions: Array<{
+    title: string;
+    subtitle: string;
+    referenceFiles: ReferenceFile[];
+  }>;
   onAddReferenceFile: (name: string, file: File) => void;
   onRemoveReferenceFile: (id: string) => void;
   onUpdateReferenceFileName: (id: string, newName: string) => void;
   onAddQuestion: () => void;
   onCancelEdit: () => void;
+  onEditQuestion: (index: number) => void;
+  onRemoveQuestion: (index: number) => void;
+  onMoveQuestionUp: (index: number) => void;
+  onMoveQuestionDown: (index: number) => void;
 }
 
 export function AssessmentCreateFileUploadQuestions({
@@ -32,24 +41,43 @@ export function AssessmentCreateFileUploadQuestions({
   questionSubtitle,
   setQuestionSubtitle,
   referenceFiles,
-  allowMultipleUploads,
-  setAllowMultipleUploads,
   editingQuestionIndex,
+  questions,
   onAddReferenceFile,
   onRemoveReferenceFile,
   onUpdateReferenceFileName,
   onAddQuestion,
   onCancelEdit,
+  onEditQuestion,
+  onRemoveQuestion,
+  onMoveQuestionUp,
+  onMoveQuestionDown,
 }: AssessmentCreateFileUploadQuestionsProps) {
+  const { showError } = useToastNotifications();
   const [newFileName, setNewFileName] = useState("");
   const [editingFileId, setEditingFileId] = useState<string | null>(null);
   const [editingFileName, setEditingFileName] = useState("");
+
+  // Maximum file size: 10MB
+  const MAX_FILE_SIZE = 10 * 1024 * 1024;
+  const MAX_FILE_SIZE_MB = 10;
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
     const file = files[0];
+
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
+      showError(
+        "File Too Large",
+        `The file size exceeds the maximum limit of ${MAX_FILE_SIZE_MB}MB. Please select a smaller file.`,
+      );
+      e.target.value = "";
+      return;
+    }
+
     // Use the file name without extension as default display name
     const defaultName = file.name.replace(/\.[^/.]+$/, "");
     const displayName = newFileName.trim() || defaultName;
@@ -110,23 +138,6 @@ export function AssessmentCreateFileUploadQuestions({
             rows={3}
           />
 
-          {/* Multiple Uploads Toggle */}
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              id="allow_multiple_uploads"
-              checked={allowMultipleUploads}
-              onChange={(e) => setAllowMultipleUploads(e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700"
-            />
-            <label
-              htmlFor="allow_multiple_uploads"
-              className="text-sm font-medium text-gray-700 dark:text-gray-300"
-            >
-              Allow job seekers to upload multiple files
-            </label>
-          </div>
-
           {/* Reference Files Section */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -155,10 +166,15 @@ export function AssessmentCreateFileUploadQuestions({
                   htmlFor="reference_file_input"
                   className="flex-1 cursor-pointer"
                 >
-                  <div className="flex items-center justify-center gap-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                    <FileUp className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Select File to Upload
+                  <div className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <div className="flex items-center gap-2">
+                      <FileUp className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Select File to Upload
+                      </span>
+                    </div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      Max {MAX_FILE_SIZE_MB}MB
                     </span>
                   </div>
                   <input
@@ -264,6 +280,61 @@ export function AssessmentCreateFileUploadQuestions({
           </div>
         </div>
       </FormCard>
+
+      {/* Questions List */}
+      {questions.length > 0 && (
+        <div className="space-y-4">
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+            Questions Added ({questions.length})
+          </h3>
+          {questions.map((question, index) => (
+            <FormCard
+              key={index}
+              title={`Question ${index + 1}: ${question.title}`}
+              icon={<HelpCircle className="h-5 w-5" />}
+            >
+              <QuestionActionButtons
+                index={index}
+                totalQuestions={questions.length}
+                onMoveUp={onMoveQuestionUp}
+                onMoveDown={onMoveQuestionDown}
+                onEdit={onEditQuestion}
+                onRemove={onRemoveQuestion}
+              />
+
+              <div className="flex flex-col gap-3">
+                {question.subtitle && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {question.subtitle}
+                  </p>
+                )}
+
+                {question.referenceFiles.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                      Reference Files:
+                    </p>
+                    <div className="space-y-1">
+                      {question.referenceFiles.map((file) => (
+                        <div
+                          key={file.id}
+                          className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300"
+                        >
+                          <LinkIcon className="h-3 w-3 text-gray-400" />
+                          <span className="truncate">{file.name}</span>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            ({file.fileName})
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </FormCard>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -267,6 +267,9 @@ export function useUpdateEmployerStatus() {
       // Invalidate all employers lists and statistics
       queryClient.invalidateQueries({ queryKey: [employersQueryKey] });
     },
+    onError: (error) => {
+      console.error("Error updating employer status:", error);
+    },
   });
 }
 

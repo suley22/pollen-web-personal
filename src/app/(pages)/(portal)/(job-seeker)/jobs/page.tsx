@@ -5,7 +5,7 @@ import { PageContainer, PageHeader } from "@/components/design-system";
 import PollenApprovedJobs from "./_components/pollen-approved";
 import ExternalJobs from "./_components/external-jobs";
 import JobListSection from "./_components/job-list-section";
-import JobDetailsDialog from "./_components/job-details-dialog";
+
 import { useJobs } from "./_hooks/useJobPage";
 
 export default function JobsPage() {
@@ -21,6 +21,8 @@ export default function JobsPage() {
     setJobLocationsFilter,
     jobContractTypesFilter,
     setJobContractTypesFilter,
+    isSaved,
+    saveFavoriteJob,
   } = useJobs();
 
   return (
@@ -48,7 +50,11 @@ export default function JobsPage() {
           jobContractTypesFilter={jobContractTypesFilter}
           onContractTypesChange={setJobContractTypesFilter}
         />
-        <JobListSection jobs={jobs} />
+        <JobListSection
+          jobs={jobs}
+          isSaved={isSaved}
+          saveFavoriteJob={saveFavoriteJob}
+        />
       </div>
     </PageContainer>
   );

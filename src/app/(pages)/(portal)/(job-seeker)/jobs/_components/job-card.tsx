@@ -2,13 +2,13 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Building, Heart, Eye } from "lucide-react";
-import { Button } from "@/components/ui/button";
+
 import { PrimaryButton } from "@/components/design-system";
 import { SecondaryButton } from "@/components/design-system/primary-button";
 import { useRouter } from "next/navigation";
 import { JobSeekerRoutes } from "../../router";
 
-export function JobCard({ job }) {
+export function JobCard({ job, isSaved, onToggleSave }) {
   const router = useRouter();
 
   return (
@@ -56,9 +56,16 @@ export function JobCard({ job }) {
         </div>
 
         <div className=" flex flex-col justify-start items-end gap-2">
-          <Button variant="ghost" className="hover:bg-gray-100" size="icon">
-            <Heart />
-          </Button>
+          <SecondaryButton
+            style="ghost"
+            icon={
+              <Heart
+                className={`${isSaved ? "fill-pink-600 text-pink-600" : ""}`}
+              />
+            }
+            text=""
+            onClick={onToggleSave}
+          />
           <div className="flex flex-row gap-4 text-sm">
             <PrimaryButton
               text="View & Apply"

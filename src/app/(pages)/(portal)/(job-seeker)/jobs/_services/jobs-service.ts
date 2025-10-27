@@ -53,6 +53,11 @@ export async function getJobs(filters) {
   }
 }
 
+export function saveSavedJob(jobId) {
+  console.log("Simulando guardado de trabajo favorito:", jobId);
+  return { success: true, error: null };
+}
+
 export async function getJobById(jobId) {
   try {
     const { data, error } = await supabase

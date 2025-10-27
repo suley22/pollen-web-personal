@@ -1,7 +1,5 @@
 "use client";
 
-import { PageContainer, PageHeader } from "@/components/design-system";
-import { AssessmentCreateDetails } from "../_components/assessment-create-details";
 import { AssessmentCreatePreview } from "../_components/assessment-create-preview";
 import { AssessmentCreateCategories } from "../_components/assessment-create-categories";
 import { AssessmentCreateQuestions } from "../_components/assessment-create-questions";
@@ -9,18 +7,6 @@ import { useAssessmentCreate } from "../_hooks/assessment-create-hook";
 
 export default function AssessmentCreateMultipleChoiceView() {
   const {
-    // Assessment data
-    internalPollenTitle,
-    setInternalPollenTitle,
-    assessmentTitle,
-    setAssessmentTitle,
-    assessmentDescription,
-    setAssessmentDescription,
-    instructionsTitle,
-    setInstructionsTitle,
-    instructionsDescription,
-    setInstructionsDescription,
-
     // Categories
     categories,
     categoryName,
@@ -56,33 +42,10 @@ export default function AssessmentCreateMultipleChoiceView() {
     handleMoveQuestionUp,
     handleMoveQuestionDown,
     handleClearForm,
-
-    // Navigation
-    handleBack,
   } = useAssessmentCreate({});
 
   return (
-    <PageContainer>
-      <PageHeader
-        showBackButton={true}
-        title="Create Multiple Choice Assessment"
-        subtitle="Create an assessment with multiple choice questions and categories"
-        onBack={handleBack}
-      />
-
-      <AssessmentCreateDetails
-        internalPollenTitle={internalPollenTitle}
-        assessmentTitle={assessmentTitle}
-        assessmentDescription={assessmentDescription}
-        instructionsTitle={instructionsTitle}
-        instructionsDescription={instructionsDescription}
-        onInternalPollenTitleChange={setInternalPollenTitle}
-        onAssessmentTitleChange={setAssessmentTitle}
-        onAssessmentDescriptionChange={setAssessmentDescription}
-        onInstructionsTitleChange={setInstructionsTitle}
-        onInstructionsDescriptionChange={setInstructionsDescription}
-      />
-
+    <div className="flex flex-col gap-6">
       <AssessmentCreateCategories
         categories={categories}
         categoryName={categoryName}
@@ -119,10 +82,10 @@ export default function AssessmentCreateMultipleChoiceView() {
 
       {/* Assessment Preview */}
       <AssessmentCreatePreview
-        assessmentTitle={assessmentTitle}
-        assessmentDescription={assessmentDescription}
-        instructionsTitle={instructionsTitle}
-        instructionsDescription={instructionsDescription}
+        assessmentTitle=""
+        assessmentDescription=""
+        instructionsTitle=""
+        instructionsDescription=""
         questions={questions}
         categories={categories}
         isEditMode={true}
@@ -131,6 +94,6 @@ export default function AssessmentCreateMultipleChoiceView() {
         onEditQuestion={handleEditQuestion}
         onRemoveQuestion={handleRemoveQuestion}
       />
-    </PageContainer>
+    </div>
   );
 }

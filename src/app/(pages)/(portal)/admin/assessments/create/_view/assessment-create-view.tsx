@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   PageContainer,
   PageHeader,
   FormCard,
+  ConfirmationDialog,
 } from "@/components/design-system";
 import { AssessmentCreateDetails } from "../_components/assessment-create-details";
 import { ListChecks, FileText } from "lucide-react";
@@ -14,6 +15,7 @@ import AssessmentCreateQuestionaryView from "./assessment-create-questionary-vie
 
 export default function AssessmentCreateView() {
   const router = useRouter();
+  const contentRef = useRef<HTMLDivElement>(null);
 
   // Assessment data state
   const [internalPollenTitle, setInternalPollenTitle] = useState("");
@@ -24,23 +26,50 @@ export default function AssessmentCreateView() {
   const [selectedType, setSelectedType] = useState<
     "multiple_choice" | "free_input" | null
   >(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [pendingType, setPendingType] = useState<
+    "multiple_choice" | "free_input" | null
+  >(null);
 
   const handleBack = () => {
     router.back();
   };
 
   const handleSelectType = (type: "multiple_choice" | "free_input") => {
-    setSelectedType(type);
+    // If there's already a type selected and user is changing it, show confirmation
+    if (selectedType && selectedType !== type) {
+      setPendingType(type);
+      setShowConfirmDialog(true);
+    } else {
+      // First selection or same type, just set it
+      setSelectedType(type);
+    }
   };
 
-  // If a type is selected, show the corresponding view
-  if (selectedType === "multiple_choice") {
-    return <AssessmentCreateMultipleChoiceView />;
-  }
+  const handleConfirmChange = () => {
+    if (pendingType) {
+      setSelectedType(pendingType);
+      setPendingType(null);
+    }
+    setShowConfirmDialog(false);
+  };
 
-  if (selectedType === "free_input") {
-    return <AssessmentCreateQuestionaryView />;
-  }
+  const handleCancelChange = () => {
+    setPendingType(null);
+    setShowConfirmDialog(false);
+  };
+
+  // Scroll to content when type is selected
+  useEffect(() => {
+    if (selectedType && contentRef.current) {
+      setTimeout(() => {
+        contentRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
+    }
+  }, [selectedType]);
 
   return (
     <PageContainer>
@@ -179,6 +208,31 @@ export default function AssessmentCreateView() {
           </button>
         </div>
       </FormCard>
+
+      {/* Show type-specific content based on selection */}
+      {selectedType === "multiple_choice" && (
+        <div ref={contentRef} className="">
+          <AssessmentCreateMultipleChoiceView />
+        </div>
+      )}
+
+      {selectedType === "free_input" && (
+        <div ref={contentRef} className="">
+          <AssessmentCreateQuestionaryView />
+        </div>
+      )}
+
+      {/* Confirmation Dialog */}
+      <ConfirmationDialog
+        trigger={<div />}
+        open={showConfirmDialog}
+        onOpenChange={setShowConfirmDialog}
+        title="Change Assessment Type?"
+        description="Changing the assessment type will clear all your current progress. This action cannot be undone. Are you sure you want to continue?"
+        confirmText="Change Type"
+        cancelText="Keep Current Type"
+        onConfirm={handleConfirmChange}
+      />
     </PageContainer>
   );
 }

@@ -164,6 +164,28 @@ export default function AdminFormsPage() {
     setCategories(categories.filter((cat) => cat.id !== categoryId));
   };
 
+  // Función para mover una categoría hacia arriba
+  const handleMoveCategoryUp = (index: number) => {
+    if (index === 0) return; // No se puede mover la primera categoría hacia arriba
+
+    const newCategories = [...categories];
+    const temp = newCategories[index];
+    newCategories[index] = newCategories[index - 1];
+    newCategories[index - 1] = temp;
+    setCategories(newCategories);
+  };
+
+  // Función para mover una categoría hacia abajo
+  const handleMoveCategoryDown = (index: number) => {
+    if (index === categories.length - 1) return; // No se puede mover la última categoría hacia abajo
+
+    const newCategories = [...categories];
+    const temp = newCategories[index];
+    newCategories[index] = newCategories[index + 1];
+    newCategories[index + 1] = temp;
+    setCategories(newCategories);
+  };
+
   // Estado para el formulario de nueva pregunta
 
   // Función para agregar una opción
@@ -384,10 +406,12 @@ export default function AdminFormsPage() {
           {/* Display categories */}
           {categories.length > 0 && (
             <div className="grid grid-cols-2 gap-3 mt-2">
-              {categories.map((category) => {
+              {categories.map((category, index) => {
                 const categoryOptionsCount = questions
                   .flatMap((q) => q.options)
                   .filter((opt) => opt.categoryId === category.id).length;
+
+                const hasOptionsInUse = categoryOptionsCount > 0;
 
                 return (
                   <div key={category.id} className="relative">
@@ -395,13 +419,40 @@ export default function AdminFormsPage() {
                       category={category}
                       optionsCount={categoryOptionsCount}
                     />
-                    <button
-                      onClick={() => handleRemoveCategory(category.id)}
-                      className="absolute top-2 right-2 p-1 rounded bg-white hover:bg-red-50 text-red-600 border"
-                      title="Remove category"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                    </button>
+                    {/* Action Buttons */}
+                    <div className="absolute top-4 right-4 flex flex-row gap-2">
+                      {/* Move Up Button */}
+                      <button
+                        onClick={() => handleMoveCategoryUp(index)}
+                        disabled={index === 0}
+                        className={`p-2 rounded border shadow-sm transition-colors ${
+                          index === 0
+                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                            : "bg-white hover:bg-gray-50 text-gray-700"
+                        }`}
+                        title="Move up"
+                      >
+                        <ChevronUp className="h-3 w-3" />
+                      </button>
+
+                      {/* Remove Button */}
+                      <button
+                        onClick={() => handleRemoveCategory(category.id)}
+                        disabled={hasOptionsInUse}
+                        className={`p-2 rounded border shadow-sm transition-colors ${
+                          hasOptionsInUse
+                            ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                            : "bg-white hover:bg-red-50 text-red-600"
+                        }`}
+                        title={
+                          hasOptionsInUse
+                            ? "Cannot delete category with options in use"
+                            : "Remove category"
+                        }
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </button>
+                    </div>
                   </div>
                 );
               })}
@@ -619,7 +670,7 @@ export default function AdminFormsPage() {
                     />
 
                     {/* Action Buttons Overlay */}
-                    <div className="absolute top-6 right-6 flex flex-row gap-1 bg-white rounded border shadow-sm p-1">
+                    <div className="absolute top-3 right-4 flex flex-row gap-1 bg-white rounded border shadow-sm p-1">
                       <button
                         onClick={() => handleMoveQuestionUp(index)}
                         disabled={index === 0}

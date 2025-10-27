@@ -1,35 +1,48 @@
-import { Briefcase, CheckCircle } from "lucide-react";
+import {
+  Briefcase,
+  Building,
+  CalendarClock,
+  CheckCircle,
+  MapPin,
+  PoundSterling,
+} from "lucide-react";
 import { FormCard } from "@/components/design-system";
 
 export function JobOverviewCard({ job }) {
   return (
-    <FormCard
-      title="Job Overview"
-      icon={<Briefcase className="h-5 w-5 text-gray-500" />}
-    >
+    <FormCard title="Job Overview" icon={<Briefcase className="h-5 w-5 " />}>
       <div className="flex flex-col gap-4">
         <div>{job.job_title}</div>
-        <div>{job.company_name}</div>
+        <div className="flex flex-row font-light text-sm gap-1 items-center ">
+          <Building className="w-4 h-4" />
+          {job?.company_name}
+        </div>
         <div className="flex flex-row ">
           <div className="w-full flex flex-col gap-4">
-            <div>Location</div>
-            <div>Salary</div>
+            <div className="flex items-center gap-1  text-sm font-light">
+              <MapPin className="w-4 h-4" />
+              {job?.location ? job.location : "Not specified"}
+            </div>
+            <div className="flex items-center gap-1 text-sm font-light">
+              <PoundSterling className="w-4 h-4" />
+              {job?.salary_range ? job.salary_range : "Not specified"}
+            </div>
           </div>
           <div className="w-full flex flex-col gap-4">
-            <div>Time</div>
-            <div>Type</div>
+            <div>Full-time</div>
+            <div>Hybrid</div>
           </div>
         </div>
         <div className="flex flex-col bg-gray-50 rounded-md p-4 gap-4">
-          <div>Employment Detail</div>
+          <div>Employment Details</div>
           <div className="flex flex-row">
             <div className="w-full flex flex-col gap-4">
-              <div>Responsibilities</div>
-              <div>Qualifications</div>
+              <div>Type:</div>
+              <div>Application Deadline:</div>
             </div>
             <div className="w-full flex flex-col gap-4">
-              <div>Benefits</div>
-              <div>About Company</div>
+              <div>Start Date:</div>
+              <div>Authorisation:</div>
             </div>
           </div>
         </div>

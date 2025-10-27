@@ -1,24 +1,39 @@
 "use client";
-import { PageContainer } from "@/components/design-system";
+
+import { useRouter } from "next/navigation";
 import { JobViewHeader } from "../_components/job-view-header";
-import { useEmployerView } from "../_hooks/jobs-view-hook";
+import { useJobView } from "../_hooks/jobs-view-hook";
+import { JobViewSkeleton } from "@/jobs/view/_view/jobs-view-skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, UserCheck, Brain } from "lucide-react";
 import { JobDescriptionTab } from "../_components/job-view-description-tab";
 import { JobPersonaTab } from "../_components/job-view-persona-tab";
 import { JobAssessmentTab } from "../_components/job-view-assessment-tab";
+import { AdminRoutes } from "@/admin/router";
 
 export default function JobsViewComponent({ id = null }) {
-  const { job, activeTab, setActiveTab } = useEmployerView(id);
+  const router = useRouter();
+
+  const { job, isLoading, activeTab, setActiveTab } = useJobView(id);
+
+  if (!job || isLoading) {
+    return <JobViewSkeleton />;
+  }
+
+  // Handlers - simple and direct
+  const handleEdit = () => {
+    router.push(AdminRoutes.jobsEdit(id));
+  };
+
   return (
-    <PageContainer>
-      {/* TODO: completar props y dar funcionalidad a los botones */}
+    <div className="flex flex-col w-full mx-auto py-6 gap-6">
+      {/* Header */}
       <JobViewHeader
-        jobTitle="Job Details"
-        companyName="Company Name"
-        jobStatus="draft"
-        onBack={() => {}}
-        onEdit={() => {}}
+        jobTitle={job.job_title || "Job Details"}
+        companyName={job.company_name || "Company Name"}
+        jobStatus={job.status || "draft"}
+        onBack={() => router.back()}
+        onEdit={handleEdit}
         onSave={() => {}}
         onCancel={() => {}}
         onGoLive={() => {}}
@@ -26,9 +41,9 @@ export default function JobsViewComponent({ id = null }) {
         onComplete={() => {}}
         onCancelJob={() => {}}
         onDelete={() => {}}
-        isEditing={undefined}
-        isEditingAssessment={undefined}
-        canMarkComplete={undefined}
+        isEditing={false}
+        isEditingAssessment={false}
+        canMarkComplete={false}
       />
 
       <Tabs
@@ -54,19 +69,17 @@ export default function JobsViewComponent({ id = null }) {
         </TabsList>
 
         <TabsContent value="description" className="space-y-6">
-          <JobDescriptionTab />
+          <JobDescriptionTab job={job} />
         </TabsContent>
 
         <TabsContent value="persona" className="space-y-6">
-          <JobPersonaTab />
+          <JobPersonaTab job={job} />
         </TabsContent>
 
         <TabsContent value="assessment" className="space-y-6">
-          <JobAssessmentTab />
+          <JobAssessmentTab job={job} />
         </TabsContent>
       </Tabs>
-
-      {/* TODO: Implement job status */}
-    </PageContainer>
+    </div>
   );
 }

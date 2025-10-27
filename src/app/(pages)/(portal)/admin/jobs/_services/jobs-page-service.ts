@@ -179,39 +179,37 @@ export function useJobById(id: string) {
     enabled: !!id,
     queryKey: [jobsQueryKey, "profile", id],
     queryFn: async () => {
-      try {
-        console.log("JobService: Fetching job by ID:", id);
+      console.log("JobService: Fetching job by ID:", id);
 
-        const { data, error } = await this.supabase
-          .from("job")
-          .select("*")
-          .eq("id", id)
-          .single();
+      const { data, error } = await supabase
+        .from("job")
+        .select("*")
+        .eq("id", id)
+        .single();
 
-        if (error) {
-          console.error("JobService: Error fetching job by ID:", error);
-          return { success: false, error: error.message };
-        }
-
-        // Normalize the job data
-        const job = {
-          ...data,
-          who_would_love: data?.who_would_love || [],
-          candidate_counts: data?.candidate_counts || {},
-          candidateCounts: {
-            total: data?.candidate_counts?.total || 15,
-            new: data?.candidate_counts?.new || 10,
-            inProgress: data?.candidate_counts?.inProgress || 5,
-            complete: data?.candidate_counts?.complete || 8,
-            hired: data?.candidate_counts?.hired || 2,
-          },
-        };
-
-        return { success: true, data: job };
-      } catch (error) {
-        console.error("JobService: Unexpected error fetching job:", error);
-        return { success: false, error: "Failed to fetch job" };
+      if (error) {
+        console.error("JobService: Error fetching job by ID:", error);
+        throw new Error(error.message);
       }
+
+      // Normalize the job data
+      const job = {
+        ...data,
+        responsibilities: data?.responsibilities || [],
+        who_would_love: data?.who_would_love || [],
+        qualifications: data?.qualifications || [],
+        benefits: data?.benefits || [],
+        candidate_counts: data?.candidate_counts || {},
+        candidateCounts: {
+          total: data?.candidate_counts?.total || 15,
+          new: data?.candidate_counts?.new || 10,
+          inProgress: data?.candidate_counts?.inProgress || 5,
+          complete: data?.candidate_counts?.complete || 8,
+          hired: data?.candidate_counts?.hired || 2,
+        },
+      };
+
+      return job;
     },
   });
 }

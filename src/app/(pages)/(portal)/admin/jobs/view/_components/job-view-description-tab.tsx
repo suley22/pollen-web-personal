@@ -1,52 +1,59 @@
-import { FormCard } from "@/components/design-system";
-import { Briefcase } from "lucide-react";
+import { Award, FileText, Lightbulb, Target, Users } from "lucide-react";
+import { DescriptionCard, JobOverviewCard, ListCard } from "./job-view-cards";
 
-export function JobDescriptionTab() {
+export function JobDescriptionTab({ job }) {
+  if (!job) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-gray-500">Loading job details...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-6">
       {/* // Job Overview */}
-      <FormCard
-        title="Job Overview"
-        icon={<Briefcase className="h-5 w-5 text-gray-500" />}
-      >
-        <div className="flex flex-col gap-4">
-          <div>Job Title</div>
-          <div>Company</div>
-          <div className="flex flex-row ">
-            <div className="w-full flex flex-col gap-4">
-              <div>Location</div>
-              <div>Salary</div>
-            </div>
-            <div className="w-full flex flex-col gap-4">
-              <div>Time</div>
-              <div>Type</div>
-            </div>
-          </div>
-          <div className="flex flex-col bg-gray-50 rounded-md p-4 gap-4">
-            <div>Employment Detail</div>
-            <div className="flex flex-row">
-              <div className="w-full flex flex-col gap-4">
-                <div>Responsibilities</div>
-                <div>Qualifications</div>
-              </div>
-              <div className="w-full flex flex-col gap-4">
-                <div>Benefits</div>
-                <div>About Company</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </FormCard>
+      <JobOverviewCard job={job} />
 
       {/* //About this Role */}
-      <FormCard
+      <DescriptionCard
         title="About this Role"
-        icon={<Briefcase className="h-5 w-5 text-gray-500" />}
+        icon={<FileText className="h-5 w-5 text-gray-500" />}
       >
-        About this Role
-      </FormCard>
+        <p>{job.about_this_role || "No description provided."}</p>
+      </DescriptionCard>
 
-      {/* Key Responsibilities */}
+      <ListCard
+        title="Key Responsibilities"
+        items={job.responsibilities}
+        icon={<FileText className="h-5 w-5 text-gray-500" />}
+      />
+
+      <ListCard
+        title="Who Would Love This Job"
+        items={job.who_would_love}
+        icon={<Users className="h-5 w-5 text-gray-500" />}
+      />
+
+      <DescriptionCard
+        title="Success In This Role Looks Like"
+        icon={<Target className="h-5 w-5 text-gray-500" />}
+      >
+        <p>{job.success_looks || "No description provided."}</p>
+      </DescriptionCard>
+
+      <ListCard
+        title="Polle Approved Requirements"
+        icon={<Award className="h-5 w-5 text-gray-500" />}
+        items={job.pollen_approved_requirements}
+      />
+
+      <DescriptionCard
+        title="Internal Notes"
+        icon={<Lightbulb className="h-5 w-5 text-gray-500" />}
+      >
+        <p>{job.internal_notes || "No internal notes provided."}</p>
+      </DescriptionCard>
     </div>
   );
 }

@@ -2,11 +2,16 @@
 
 import { JobCard } from "./job-card";
 
-export default function JobListSection({ jobs }) {
+export default function JobListSection({ jobs, isSaved, saveFavoriteJob }) {
   return (
     <div className="space-y-4">
       {jobs?.map((job) => (
-        <JobCard key={job.id} job={job} />
+        <JobCard
+          key={job.id}
+          job={job}
+          isSaved={isSaved(job.id)}
+          onToggleSave={() => saveFavoriteJob(job.id)}
+        />
       ))}
     </div>
   );

@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/buttons/button";
+
 import {
   Card,
   CardContent,
@@ -15,7 +15,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { PrimaryButton } from "@/components/design-system";
-import { ApprovalSourceBadge } from "@/components/design-system/badge";
+
 import { SecondaryButton } from "@/components/design-system/primary-button";
 
 const clampText = (text: string, maxChars: number) => {

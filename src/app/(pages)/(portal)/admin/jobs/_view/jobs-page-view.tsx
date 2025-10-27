@@ -27,7 +27,7 @@ export default function JobsPageView() {
   const {
     jobs,
     loading,
-    error,
+
     pagination,
     filterConfigs,
     handlePageChange,

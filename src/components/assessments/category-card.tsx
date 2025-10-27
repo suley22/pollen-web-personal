@@ -25,6 +25,11 @@ export function CategoryCard({ category, optionsCount }: CategoryCardProps) {
         >
           {category.name}
         </div>
+      </div>
+
+      <div className="flex flex-row justify-between items-center">
+        <p className="text-sm text-gray-600">{category.description}</p>
+
         {optionsCount !== undefined && (
           <span
             className="text-xs font-medium px-2 py-1 rounded"
@@ -37,8 +42,6 @@ export function CategoryCard({ category, optionsCount }: CategoryCardProps) {
           </span>
         )}
       </div>
-
-      <p className="text-sm text-gray-600">{category.description}</p>
     </Card>
   );
 }

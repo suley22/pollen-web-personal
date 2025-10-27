@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { FileText } from "lucide-react";
 import { AssessmentQuestionCard } from "../../test/_components/assessment-question-card";
 import { AssessmentProgress } from "../../test/_components/assessment-progress";
 import { PageHeader, InfoCard } from "@/components/design-system";
 import { QuestionActionButtons } from "./question-action-buttons";
+import type { AssessmentCategory } from "@/types/assessment-category";
 
 interface AssessmentOption {
   value: string;
@@ -26,6 +27,7 @@ interface AssessmentCreatePreviewProps {
   instructionsTitle: string;
   instructionsDescription: string;
   questions: MultipleChoiceQuestion[];
+  categories?: AssessmentCategory[];
   // Edit mode props (optional - only for create page)
   isEditMode?: boolean;
   onMoveQuestionUp?: (index: number) => void;
@@ -40,6 +42,7 @@ export function AssessmentCreatePreview({
   instructionsTitle,
   instructionsDescription,
   questions,
+  categories = [],
   isEditMode = false,
   onMoveQuestionUp,
   onMoveQuestionDown,
@@ -71,6 +74,43 @@ export function AssessmentCreatePreview({
     if (total === 0) return 0;
     return Math.round((getPreviewAnsweredCount() / total) * 100);
   };
+
+  // Calcular porcentajes por categoría
+  const categoryBreakdown = useMemo(() => {
+    const categoryCounts = new Map<string, number>();
+    let totalAnswered = 0;
+
+    // Contar respuestas por categoría
+    Object.entries(previewAnswers).forEach(([questionId, optionValue]) => {
+      const questionIndex = parseInt(questionId.split("-")[1]);
+      const question = questions[questionIndex];
+      const selectedOption = question?.options.find(
+        (opt) => opt.value === optionValue,
+      );
+
+      if (selectedOption?.categoryId) {
+        categoryCounts.set(
+          selectedOption.categoryId,
+          (categoryCounts.get(selectedOption.categoryId) || 0) + 1,
+        );
+        totalAnswered++;
+      }
+    });
+
+    // Calcular porcentajes
+    return categories
+      .map((category) => {
+        const count = categoryCounts.get(category.id) || 0;
+        const percentage =
+          totalAnswered > 0 ? Math.round((count / totalAnswered) * 100) : 0;
+        return {
+          ...category,
+          count,
+          percentage,
+        };
+      })
+      .filter((cat) => cat.count > 0);
+  }, [previewAnswers, questions, categories]);
 
   if (questions.length === 0) {
     return null;
@@ -139,6 +179,35 @@ export function AssessmentCreatePreview({
             totalCount={questions.length}
             percentage={getPreviewPercentage()}
           />
+
+          {/* Category Breakdown */}
+          {categoryBreakdown.length > 0 && (
+            <div className="space-y-3">
+              {categoryBreakdown.map((category) => (
+                <div
+                  key={category.id}
+                  className="rounded-lg p-4 border-2"
+                  style={{
+                    borderColor: category.color,
+                    backgroundColor: `${category.color}10`,
+                  }}
+                >
+                  <div
+                    className="text-2xl font-bold mb-1"
+                    style={{ color: category.color }}
+                  >
+                    {category.percentage}%
+                  </div>
+                  <div className="font-semibold text-gray-900">
+                    {category.name}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {category.description}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

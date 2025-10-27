@@ -122,6 +122,7 @@ export default function AdminFormsPage() {
         instructionsTitle={instructionsTitle}
         instructionsDescription={instructionsDescription}
         questions={questions}
+        categories={categories}
         isEditMode={true}
         onMoveQuestionUp={handleMoveQuestionUp}
         onMoveQuestionDown={handleMoveQuestionDown}

@@ -101,7 +101,7 @@ export function AssessmentCreateCategories({
                     optionsCount={categoryOptionsCount}
                   />
                   {/* Action Buttons */}
-                  <div className="absolute top-4 right-4 flex flex-row gap-2">
+                  <div className="absolute top-2 right-6 flex flex-row gap-1">
                     {/* Move Up Button */}
                     <button
                       onClick={() => onMoveCategoryUp(index)}
@@ -113,7 +113,7 @@ export function AssessmentCreateCategories({
                       }`}
                       title="Move up"
                     >
-                      <ChevronUp className="h-3 w-3" />
+                      <ChevronUp className="h-3 w-3 " />
                     </button>
 
                     {/* Remove Button */}

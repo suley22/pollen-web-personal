@@ -16,6 +16,7 @@ export function useAssessmentCreate({ id = null }) {
   const router = useRouter();
 
   // Estado para el assessment
+  const [internalPollenTitle, setInternalPollenTitle] = useState("");
   const [assessmentTitle, setAssessmentTitle] = useState("");
   const [assessmentDescription, setAssessmentDescription] = useState("");
   const [instructionsTitle, setInstructionsTitle] = useState("");
@@ -206,6 +207,8 @@ export function useAssessmentCreate({ id = null }) {
 
   return {
     // Assessment data
+    internalPollenTitle,
+    setInternalPollenTitle,
     assessmentTitle,
     setAssessmentTitle,
     assessmentDescription,

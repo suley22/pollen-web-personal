@@ -4,10 +4,12 @@ import { FormCard, Input, TextareaInput } from "@/components/design-system";
 import { Building2 } from "lucide-react";
 
 interface AssessmentCreateHeaderProps {
+  internalPollenTitle: string;
   assessmentTitle: string;
   assessmentDescription: string;
   instructionsTitle: string;
   instructionsDescription: string;
+  onInternalPollenTitleChange: (value: string) => void;
   onAssessmentTitleChange: (value: string) => void;
   onAssessmentDescriptionChange: (value: string) => void;
   onInstructionsTitleChange: (value: string) => void;
@@ -15,10 +17,12 @@ interface AssessmentCreateHeaderProps {
 }
 
 export function AssessmentCreateHeader({
+  internalPollenTitle,
   assessmentTitle,
   assessmentDescription,
   instructionsTitle,
   instructionsDescription,
+  onInternalPollenTitleChange,
   onAssessmentTitleChange,
   onAssessmentDescriptionChange,
   onInstructionsTitleChange,
@@ -30,6 +34,18 @@ export function AssessmentCreateHeader({
       icon={<Building2 className="h-5 w-5" />}
     >
       <div className="flex flex-col gap-4">
+        {/* Internal Pollen Title */}
+        <Input
+          label="Internal Pollen Title"
+          type="text"
+          name="internal_pollen_title"
+          id="internal_pollen_title"
+          placeholder="Enter internal title (only visible to Pollen)"
+          value={internalPollenTitle}
+          onChange={(e) => onInternalPollenTitleChange(e.target.value)}
+          helperText="This title is only visible to Pollen administrators"
+        />
+
         {/* Assessment Title */}
         <Input
           label="Title"

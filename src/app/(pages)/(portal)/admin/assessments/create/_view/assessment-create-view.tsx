@@ -11,6 +11,7 @@ import { AssessmentCreateDetails } from "../_components/assessment-create-detail
 import { AssessmentTypeSelector } from "../_components/assessment-type-selector";
 import AssessmentCreateMultipleChoiceView from "./assessment-create-multiple-choice-view";
 import AssessmentCreateQuestionaryView from "./assessment-create-questionary-view";
+import { AssessmentCreateFileUploadView } from "./assessment-create-file-upload-view";
 
 export default function AssessmentCreateView() {
   const router = useRouter();
@@ -23,18 +24,20 @@ export default function AssessmentCreateView() {
   const [instructionsTitle, setInstructionsTitle] = useState("");
   const [instructionsDescription, setInstructionsDescription] = useState("");
   const [selectedType, setSelectedType] = useState<
-    "multiple_choice" | "free_input" | null
+    "multiple_choice" | "free_input" | "file_upload" | null
   >(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [pendingType, setPendingType] = useState<
-    "multiple_choice" | "free_input" | null
+    "multiple_choice" | "free_input" | "file_upload" | null
   >(null);
 
   const handleBack = () => {
     router.back();
   };
 
-  const handleSelectType = (type: "multiple_choice" | "free_input") => {
+  const handleSelectType = (
+    type: "multiple_choice" | "free_input" | "file_upload",
+  ) => {
     // If there's already a type selected and user is changing it, show confirmation
     if (selectedType && selectedType !== type) {
       setPendingType(type);
@@ -113,6 +116,17 @@ export default function AssessmentCreateView() {
       {selectedType === "free_input" && (
         <div ref={contentRef} className="">
           <AssessmentCreateQuestionaryView
+            assessmentTitle={assessmentTitle}
+            assessmentDescription={assessmentDescription}
+            instructionsTitle={instructionsTitle}
+            instructionsDescription={instructionsDescription}
+          />
+        </div>
+      )}
+
+      {selectedType === "file_upload" && (
+        <div ref={contentRef} className="">
+          <AssessmentCreateFileUploadView
             assessmentTitle={assessmentTitle}
             assessmentDescription={assessmentDescription}
             instructionsTitle={instructionsTitle}

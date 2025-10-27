@@ -1,11 +1,13 @@
 "use client";
 
 import { FormCard } from "@/components/design-system";
-import { ListChecks, FileText } from "lucide-react";
+import { ListChecks, FileText, Upload } from "lucide-react";
 
 interface AssessmentTypeSelectorProps {
-  selectedType: "multiple_choice" | "free_input" | null;
-  onSelectType: (type: "multiple_choice" | "free_input") => void;
+  selectedType: "multiple_choice" | "free_input" | "file_upload" | null;
+  onSelectType: (
+    type: "multiple_choice" | "free_input" | "file_upload",
+  ) => void;
 }
 
 export function AssessmentTypeSelector({
@@ -17,7 +19,7 @@ export function AssessmentTypeSelector({
       <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
         Choose the type of assessment you want to create
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Multiple Choice Button */}
         <button
           onClick={() => onSelectType("multiple_choice")}
@@ -106,6 +108,60 @@ export function AssessmentTypeSelector({
             </div>
           </div>
           {selectedType === "free_input" && (
+            <div className="absolute top-3 right-3">
+              <div className="h-6 w-6 rounded-full bg-blue-500 flex items-center justify-center">
+                <svg
+                  className="h-4 w-4 text-white"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+            </div>
+          )}
+        </button>
+
+        {/* File Upload Button */}
+        <button
+          onClick={() => onSelectType("file_upload")}
+          className={`
+            relative p-6 rounded-lg border-2 transition-all
+            ${
+              selectedType === "file_upload"
+                ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20"
+                : "border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700"
+            }
+          `}
+        >
+          <div className="flex flex-col items-center text-center gap-3">
+            <div
+              className={`
+              p-3 rounded-full 
+              ${
+                selectedType === "file_upload"
+                  ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+              }
+            `}
+            >
+              <Upload className="h-8 w-8" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-lg mb-1">File Upload</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Request file uploads from users with optional reference
+                materials
+              </p>
+            </div>
+          </div>
+          {selectedType === "file_upload" && (
             <div className="absolute top-3 right-3">
               <div className="h-6 w-6 rounded-full bg-blue-500 flex items-center justify-center">
                 <svg

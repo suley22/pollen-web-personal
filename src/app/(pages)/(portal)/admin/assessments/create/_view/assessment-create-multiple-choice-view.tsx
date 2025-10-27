@@ -1,11 +1,23 @@
 "use client";
 
-import { AssessmentCreatePreview } from "../_components/assessment-create-preview";
+import { AssessmentCreateMultipleChoicePreview } from "../_components/assessment-create-multiple-choice-preview";
 import { AssessmentCreateCategories } from "../_components/assessment-create-categories";
 import { AssessmentCreateQuestions } from "../_components/assessment-create-questions";
 import { useAssessmentCreate } from "../_hooks/assessment-create-hook";
 
-export default function AssessmentCreateMultipleChoiceView() {
+interface AssessmentCreateMultipleChoiceViewProps {
+  assessmentTitle: string;
+  assessmentDescription: string;
+  instructionsTitle: string;
+  instructionsDescription: string;
+}
+
+export default function AssessmentCreateMultipleChoiceView({
+  assessmentTitle,
+  assessmentDescription,
+  instructionsTitle,
+  instructionsDescription,
+}: AssessmentCreateMultipleChoiceViewProps) {
   const {
     // Categories
     categories,
@@ -81,11 +93,11 @@ export default function AssessmentCreateMultipleChoiceView() {
       />
 
       {/* Assessment Preview */}
-      <AssessmentCreatePreview
-        assessmentTitle=""
-        assessmentDescription=""
-        instructionsTitle=""
-        instructionsDescription=""
+      <AssessmentCreateMultipleChoicePreview
+        assessmentTitle={assessmentTitle}
+        assessmentDescription={assessmentDescription}
+        instructionsTitle={instructionsTitle}
+        instructionsDescription={instructionsDescription}
         questions={questions}
         categories={categories}
         isEditMode={true}

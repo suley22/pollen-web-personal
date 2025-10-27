@@ -21,7 +21,7 @@ interface MultipleChoiceQuestion {
   options: AssessmentOption[];
 }
 
-interface AssessmentCreatePreviewProps {
+interface AssessmentCreateMultipleChoicePreviewProps {
   assessmentTitle: string;
   assessmentDescription: string;
   instructionsTitle: string;
@@ -36,7 +36,7 @@ interface AssessmentCreatePreviewProps {
   onRemoveQuestion?: (index: number) => void;
 }
 
-export function AssessmentCreatePreview({
+export function AssessmentCreateMultipleChoicePreview({
   assessmentTitle,
   assessmentDescription,
   instructionsTitle,
@@ -48,7 +48,7 @@ export function AssessmentCreatePreview({
   onMoveQuestionDown,
   onEditQuestion,
   onRemoveQuestion,
-}: AssessmentCreatePreviewProps) {
+}: AssessmentCreateMultipleChoicePreviewProps) {
   // Estado para el preview del assessment
   const [previewAnswers, setPreviewAnswers] = useState<Record<string, string>>(
     {},

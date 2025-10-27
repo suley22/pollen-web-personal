@@ -1,12 +1,62 @@
 "use client";
 
-export default function AssessmentCreateQuestionaryView() {
+import { AssessmentCreateFreeInputQuestions } from "../_components/assessment-create-free-input-questions";
+import { AssessmentCreateFreeInputPreview } from "../_components/assessment-create-free-input-preview";
+import { useAssessmentCreateFreeInput } from "../_hooks/assessment-create-free-input-hook";
+
+interface AssessmentCreateQuestionaryViewProps {
+  assessmentTitle: string;
+  assessmentDescription: string;
+  instructionsTitle: string;
+  instructionsDescription: string;
+}
+
+export default function AssessmentCreateQuestionaryView({
+  assessmentTitle,
+  assessmentDescription,
+  instructionsTitle,
+  instructionsDescription,
+}: AssessmentCreateQuestionaryViewProps) {
+  const {
+    // Questions
+    questions,
+    title,
+    setTitle,
+    subtitle,
+    setSubtitle,
+    placeholder,
+    setPlaceholder,
+    handleAddQuestion,
+    handleEditQuestion,
+    handleMoveQuestionUp,
+    handleMoveQuestionDown,
+    handleRemoveQuestion,
+  } = useAssessmentCreateFreeInput();
+
   return (
-    <>
-      {/* TODO: Add free input questions section */}
-      <p className="text-gray-600 dark:text-gray-400">
-        Free input assessment configuration coming soon...
-      </p>
-    </>
+    <div className="flex flex-col gap-6">
+      <AssessmentCreateFreeInputQuestions
+        title={title}
+        subtitle={subtitle}
+        placeholder={placeholder}
+        onTitleChange={setTitle}
+        onSubtitleChange={setSubtitle}
+        onPlaceholderChange={setPlaceholder}
+        onAddQuestion={handleAddQuestion}
+      />
+
+      <AssessmentCreateFreeInputPreview
+        assessmentTitle={assessmentTitle}
+        assessmentDescription={assessmentDescription}
+        instructionsTitle={instructionsTitle}
+        instructionsDescription={instructionsDescription}
+        questions={questions}
+        isEditMode={true}
+        onMoveQuestionUp={handleMoveQuestionUp}
+        onMoveQuestionDown={handleMoveQuestionDown}
+        onEditQuestion={handleEditQuestion}
+        onRemoveQuestion={handleRemoveQuestion}
+      />
+    </div>
   );
 }

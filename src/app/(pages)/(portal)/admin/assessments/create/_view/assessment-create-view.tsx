@@ -101,13 +101,23 @@ export default function AssessmentCreateView() {
       {/* Show type-specific content based on selection */}
       {selectedType === "multiple_choice" && (
         <div ref={contentRef} className="">
-          <AssessmentCreateMultipleChoiceView />
+          <AssessmentCreateMultipleChoiceView
+            assessmentTitle={assessmentTitle}
+            assessmentDescription={assessmentDescription}
+            instructionsTitle={instructionsTitle}
+            instructionsDescription={instructionsDescription}
+          />
         </div>
       )}
 
       {selectedType === "free_input" && (
         <div ref={contentRef} className="">
-          <AssessmentCreateQuestionaryView />
+          <AssessmentCreateQuestionaryView
+            assessmentTitle={assessmentTitle}
+            assessmentDescription={assessmentDescription}
+            instructionsTitle={instructionsTitle}
+            instructionsDescription={instructionsDescription}
+          />
         </div>
       )}
 

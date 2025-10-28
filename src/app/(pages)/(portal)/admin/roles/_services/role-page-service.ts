@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/utils/supabase/client";
-import { supabaseAdmin } from "@/lib/utils/supabase/supabase-admin";
+import { updateUserRoleAction } from "../_actions/user-role-actions";
 
 const supabase = createClient();
 
@@ -136,19 +136,14 @@ export function useUpdateUserRole() {
         throw new Error(`Error updating profile: ${profileError.message}`);
       }
 
-      // Update user metadata using admin client
-      const { data: userData, error: userError } =
-        await supabaseAdmin.auth.admin.updateUserById(userId, {
-          user_metadata: {
-            role: newRole,
-          },
-        });
+      // Update user metadata using server action
+      const result = await updateUserRoleAction(userId, newRole);
 
-      if (userError) {
-        throw new Error(`Error updating user metadata: ${userError.message}`);
+      if (!result.success) {
+        throw new Error(result.error || "Error updating user metadata");
       }
 
-      return { profile: data, user: userData };
+      return { profile: data, user: result.data };
     },
     onSuccess: () => {
       // Invalidate all users queries to refresh the lists

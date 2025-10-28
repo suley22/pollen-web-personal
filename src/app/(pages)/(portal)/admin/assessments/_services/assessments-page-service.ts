@@ -102,7 +102,7 @@ export function useAssessmentsList(filters: AssessmentFilters) {
       ];
 
       // Apply filters
-      let filteredAssessments = [...mockAssessments];
+      let filteredAssessments = [...mockAssessments, ...mockAssessments];
 
       if (filters.status && filters.status !== "all") {
         filteredAssessments = filteredAssessments.filter(

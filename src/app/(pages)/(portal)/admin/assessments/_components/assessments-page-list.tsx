@@ -9,6 +9,8 @@ import { AdminRoutes } from "@/admin/router";
 import { EmptyState } from "@/components/design-system/empty-state";
 import { useCallback } from "react";
 import { cn } from "@/lib/utils";
+import { ResultsCount } from "./assessments-page-results-count";
+import { ListSkeleton } from "./assessments-page-list-skeleton";
 
 const ASSESSMENT_TYPE_LABELS = {
   multiple_choice: "Multiple Choice",
@@ -65,24 +67,7 @@ export function AssessmentsList({
   };
 
   if (loading) {
-    return (
-      <div className="flex flex-col w-full gap-4">
-        {[1, 2, 3].map((i) => (
-          <Card key={i} className="animate-pulse">
-            <CardContent className="px-5 py-6">
-              <div className="space-y-4">
-                <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                <div className="flex gap-2">
-                  <div className="h-6 bg-gray-200 rounded w-20"></div>
-                  <div className="h-6 bg-gray-200 rounded w-20"></div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-    );
+    return <ListSkeleton />;
   }
 
   if (assessments.length === 0) {
@@ -97,27 +82,11 @@ export function AssessmentsList({
 
   return (
     <div className="flex flex-col w-full gap-4">
-      {/* Results Count - Top */}
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
-        <span>
-          Showing {pagination.from} to {pagination.to} of{" "}
-          {pagination.totalItems} assessments
-        </span>
-        <div className="flex items-center gap-2">
-          <span>Items per page:</span>
-          <select
-            value={pagination.pageSize}
-            onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-            className="border rounded px-2 py-1 text-sm"
-          >
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Assessment Cards */}
+      <ResultsCount
+        pagination={pagination}
+        handlePageChange={handlePageChange}
+        handlePageSizeChange={handlePageSizeChange}
+      />
       {assessments.map((assessment) => {
         return (
           <Card
@@ -266,33 +235,11 @@ export function AssessmentsList({
           </Card>
         );
       })}
-
-      {/* Pagination - Bottom */}
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">
-          Page {pagination.currentPage} of {pagination.totalPages}
-        </span>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className=""
-            onClick={() => handlePageChange(pagination.currentPage - 1)}
-            disabled={!pagination.hasPreviousPage}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className=""
-            onClick={() => handlePageChange(pagination.currentPage + 1)}
-            disabled={!pagination.hasNextPage}
-          >
-            Next
-          </Button>
-        </div>
-      </div>
+      <ResultsCount
+        pagination={pagination}
+        handlePageChange={handlePageChange}
+        handlePageSizeChange={handlePageSizeChange}
+      />
     </div>
   );
 }

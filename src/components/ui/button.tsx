@@ -10,21 +10,24 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
+          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 hover:ring-ring/50 hover:ring-[3px]",
         destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          "bg-destructive text-white hover:bg-destructive/90 hover:ring-destructive/20 dark:hover:ring-destructive/40 hover:ring-[3px] focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground hover:ring-ring/50 hover:ring-[3px] dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
+          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80 hover:ring-ring/50 hover:ring-[3px]",
         ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+          "hover:bg-accent hover:text-accent-foreground hover:ring-ring/50 hover:ring-[3px] dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
-        findJobs: "bg-white text-pink-600 hover:bg-gray-100 shadow-xs",
-        findJobsSolid: "bg-pink-600 text-white hover:bg-pink-700 shadow-xs",
+        findJobs:
+          "bg-white text-pink-600 hover:bg-gray-100 shadow-xs hover:ring-ring/50 hover:ring-[3px]",
+        findJobsSolid:
+          "bg-pink-600 text-white hover:bg-pink-700 shadow-xs hover:ring-ring/50 hover:ring-[3px]",
         findJobsOutline:
-          "border border-pink-600 text-pink-600 hover:bg-pink-50 shadow-xs",
-        loginStatus: "bg-pink-600 text-white hover:bg-pink-700 shadow-xs",
+          "border border-pink-600 text-pink-600 hover:bg-pink-50 shadow-xs hover:ring-ring/50 hover:ring-[3px]",
+        loginStatus:
+          "bg-pink-600 text-white hover:bg-pink-700 shadow-xs hover:ring-ring/50 hover:ring-[3px]",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

@@ -34,7 +34,7 @@ export const TextareaInput = React.forwardRef<
       name,
       minHeight,
       rows = 3,
-      maxLength,
+      maxLength = 1000,
       showCharacterCount = false,
       value,
       ...props

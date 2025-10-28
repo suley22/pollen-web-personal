@@ -40,11 +40,22 @@ export function ConfirmationDialog({
         </DialogHeader>
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="secondary" type="button" disabled={isLoading}>
+            <Button
+              variant="secondary"
+              size="default"
+              type="button"
+              disabled={isLoading}
+            >
               {cancelText}
             </Button>
           </DialogClose>
-          <Button type="button" onClick={onConfirm} disabled={isLoading}>
+          <Button
+            variant="destructive"
+            size="default"
+            type="button"
+            onClick={onConfirm}
+            disabled={isLoading}
+          >
             {isLoading ? loadingText : confirmText}
           </Button>
         </DialogFooter>

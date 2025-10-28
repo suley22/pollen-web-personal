@@ -1,6 +1,7 @@
 "use client";
 
 import { TASK_COLUMNS } from "../_services/playground-service";
+import { TaskCard } from "./task-card";
 
 export function BoardView({
   tasks,
@@ -36,15 +37,13 @@ export function BoardView({
           >
             <div className="flex flex-col gap-2">
               {tasks[column.id]?.map((task) => (
-                <div
+                <TaskCard
                   key={task.id}
-                  draggable
-                  onDragStart={(e) => onDragStart(e, task, column.id)}
-                  onClick={() => onTaskClick(task, column.id)}
-                  className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
-                >
-                  <p className="text-sm">{task.content}</p>
-                </div>
+                  task={task}
+                  columnId={column.id}
+                  onDragStart={onDragStart}
+                  onClick={onTaskClick}
+                />
               ))}
             </div>
           </div>

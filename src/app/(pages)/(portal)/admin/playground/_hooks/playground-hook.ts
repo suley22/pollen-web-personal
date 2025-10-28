@@ -23,7 +23,7 @@ export function usePlaygroundHook() {
   /**
    * Maneja el click en una tarea para abrir el drawer
    */
-  const handleTaskClick = (task, status) => {
+  const handleClick = (task, status) => {
     const statusInfo = getColumnInfo(status);
     setSelectedTask({
       ...task,
@@ -100,7 +100,7 @@ export function usePlaygroundHook() {
     // Drawer state
     selectedTask,
     isDrawerOpen,
-    handleTaskClick,
+    handleTaskClick: handleClick,
     closeDrawer,
 
     // Drag & Drop

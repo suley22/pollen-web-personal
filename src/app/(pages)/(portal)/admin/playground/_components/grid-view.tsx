@@ -1,5 +1,7 @@
 "use client";
 
+import { GridRow } from "./grid-row";
+
 export function GridView({ tasks, onTaskClick }) {
   return (
     <div className="w-full">
@@ -13,20 +15,7 @@ export function GridView({ tasks, onTaskClick }) {
         {/* Table Rows */}
         <div className="divide-y divide-gray-200">
           {tasks.map((task) => (
-            <div
-              key={task.id}
-              onClick={() => onTaskClick(task, task.status)}
-              className="grid grid-cols-2 gap-4 p-4 hover:bg-gray-50 transition-colors cursor-pointer"
-            >
-              <div className="text-sm">{task.content}</div>
-              <div>
-                <span
-                  className={`${task.statusColor} text-white text-xs px-2 py-1 rounded-full`}
-                >
-                  {task.statusLabel}
-                </span>
-              </div>
-            </div>
+            <GridRow key={task.id} task={task} onClick={onTaskClick} />
           ))}
         </div>
       </div>

@@ -47,16 +47,12 @@ export function JobCardItem({ job, showAdminBadge }) {
                 </div>
               </div>
 
-              <div
-                className={`flex flex-col items-end justify-between text-right ${showAdminBadge ? "items-start" : "items-end"}`}
-              >
+              <div className={`flex flex-col items-end justify-end  `}>
                 {/* Right Section - Total Applications */}
 
-                <div
-                  className={`flex flex-col text-muted-foreground gap-2 my-2`}
-                >
+                <div className={`flex flex-col text-muted-foreground gap-2 `}>
                   {/* Total applications */}
-                  <div className="flex flex-row items-center justify-end gap-2">
+                  <div className="flex flex-col items-end justify-end gap-2">
                     <p className="text-sm text-gray-700 ">
                       Total Applications:
                     </p>
@@ -64,103 +60,64 @@ export function JobCardItem({ job, showAdminBadge }) {
                       {job.total_applications}
                     </p>
                   </div>
-
-                  {/* Assigned Admin */}
-                  {job.assigned_to ? (
-                    <Badge
-                      variant="outline"
-                      className={`bg-blue-50 text-blue-700 border-blue-200 font-medium ${showAdminBadge ? "" : "hidden"}`}
-                    >
-                      Assigned to: {job.assigned_to}
-                    </Badge>
-                  ) : (
-                    <Badge
-                      variant="outline"
-                      className="bg-gray-50 text-gray-600 border-gray-200 font-medium"
-                    >
-                      Unassigned{" "}
-                      <span className="text-gray-500">(No Admin Assigned)</span>
-                    </Badge>
-                  )}
                 </div>
               </div>
             </div>
 
             {/* Divider */}
-            <div className="border-t border-border/50">
-              {/* Status Breakdown and Actions */}
-              <div className="flex flex-row justify-between items-center pt-2">
-                <div className="flex items-center gap-2 text-sm flex-wrap ">
-                  <div className="flex items-center gap-1.5 font-medium">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                    <span>
-                      {job.new_applications_to_review ??
-                        job.newApplicationsToReview}{" "}
-                    </span>
-                    <span className="font-normal text-gray-500">New</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 font-medium">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full" />
-                    <span>
-                      {job.pollen_interviews_booked ??
-                        job.pollenInterviewsBooked}{" "}
-                    </span>
-                    <span className="font-normal text-gray-500">
-                      In Progress
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5 font-medium">
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <span>
-                      {job.candidates_matched_to_employer ??
-                        job.candidatesMatchedToEmployer}{" "}
-                    </span>
-                    <span className="font-normal text-gray-500">Matched</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 font-medium">
-                    <div className="w-2 h-2 bg-gray-500 rounded-full" />
-                    <span>{job.feedbackSent} </span>
-                    <span className="font-normal text-gray-500">Complete</span>
-                  </div>
-                </div>
+            <div className=" flex flex-row justify-between border-t border-border/50 p-2">
+              {/* Assigned Admin */}
+              {job.assigned_to ? (
+                <Badge
+                  variant="outline"
+                  className={`bg-blue-50 text-blue-700 border-blue-200 font-medium ${showAdminBadge ? "" : "hidden"}`}
+                >
+                  Assigned to: {job.assigned_to}
+                </Badge>
+              ) : (
+                <Badge
+                  variant="outline"
+                  className="bg-gray-50 text-gray-600 border-gray-200 font-medium"
+                >
+                  Unassigned{" "}
+                  <span className="text-gray-500">(No Admin Assigned)</span>
+                </Badge>
+              )}
 
-                {/* Action Buttons */}
-                <div className="flex items-center gap-1">
-                  {job.status !== "draft" && (
-                    <Button
-                      variant="pollen"
-                      size="sm"
-                      className="h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(AdminRoutes.jobsApplicants(job.id));
-                      }}
-                    >
-                      <Users className="h-4 w-4 mr-1" />
-                      <span className="text-xs">View Candidates</span>
-                    </Button>
-                  )}
+              {/* Action Buttons */}
+              <div className="flex items-center gap-1 p-1">
+                {job.status !== "draft" && (
                   <Button
                     variant="pollen"
                     size="sm"
-                    className={
-                      job.status === "draft"
-                        ? "h-8 px-2 bg-pink-600 hover:bg-pink-700 text-white"
-                        : "h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
-                    }
+                    className="h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(AdminRoutes.jobView(job.id));
+                      router.push(AdminRoutes.jobsApplicants(job.id));
                     }}
                   >
-                    <Eye className="h-4 w-4 mr-1" />
-                    <span className="text-xs">
-                      {job.status === "draft"
-                        ? "Review & Approve"
-                        : "Job Details"}
-                    </span>
+                    <Users className="h-4 w-4 mr-1" />
+                    <span className="text-xs">View Candidates</span>
                   </Button>
-                </div>
+                )}
+                <Button
+                  variant="pollen"
+                  size="sm"
+                  className={
+                    "h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
+                  }
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(AdminRoutes.jobView(job.id));
+                  }}
+                >
+                  <Eye className="h-4 w-4 mr-1" />
+                  <span className="text-xs">
+                    {job.status === "draft"
+                      ? "Review & Approve"
+                      : "Job Details"}
+                  </span>
+                </Button>
               </div>
             </div>
           </div>

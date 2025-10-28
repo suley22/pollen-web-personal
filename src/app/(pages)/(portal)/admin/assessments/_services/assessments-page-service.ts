@@ -23,6 +23,7 @@ export function useAssessmentsList(filters: AssessmentFilters) {
       const mockAssessments = [
         {
           id: "1",
+          internal_pollen_title: "Frontend Developer Skills Assessment",
           title: "Frontend Developer Skills Assessment",
           subtitle: "Evaluate React and TypeScript proficiency",
           type: "multiple_choice",
@@ -36,6 +37,7 @@ export function useAssessmentsList(filters: AssessmentFilters) {
         },
         {
           id: "2",
+          internal_pollen_title: "Product Management Case Study",
           title: "Product Management Case Study",
           subtitle: "Assess strategic thinking and problem-solving",
           type: "free_input",
@@ -49,6 +51,7 @@ export function useAssessmentsList(filters: AssessmentFilters) {
         },
         {
           id: "3",
+          internal_pollen_title: "Design Portfolio Review",
           title: "Design Portfolio Review",
           subtitle: "Upload and review design work samples",
           type: "file_upload",
@@ -62,6 +65,7 @@ export function useAssessmentsList(filters: AssessmentFilters) {
         },
         {
           id: "4",
+          internal_pollen_title: "Backend Engineering Assessment",
           title: "Backend Engineering Assessment",
           subtitle: "Test Node.js and database knowledge",
           type: "multiple_choice",
@@ -75,6 +79,7 @@ export function useAssessmentsList(filters: AssessmentFilters) {
         },
         {
           id: "5",
+          internal_pollen_title: "Sales Skills Evaluation",
           title: "Sales Skills Evaluation",
           subtitle: "Assess communication and persuasion abilities",
           type: "free_input",
@@ -88,6 +93,7 @@ export function useAssessmentsList(filters: AssessmentFilters) {
         },
         {
           id: "6",
+          internal_pollen_title: "Marketing Campaign Analysis",
           title: "Marketing Campaign Analysis",
           subtitle: "Upload campaign materials and strategy documents",
           type: "file_upload",

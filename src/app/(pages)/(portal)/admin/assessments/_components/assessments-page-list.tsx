@@ -11,6 +11,7 @@ import { useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { ResultsCount } from "./assessments-page-results-count";
 import { ListSkeleton } from "./assessments-page-list-skeleton";
+import { DateHelper } from "@/lib/helpers/date-helper";
 
 const ASSESSMENT_TYPE_LABELS = {
   multiple_choice: "Multiple Choice",
@@ -52,20 +53,6 @@ export function AssessmentsList({
     console.log("View assessment:", assessment.id);
   }, []);
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInDays = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24),
-    );
-
-    if (diffInDays === 0) return "Today";
-    if (diffInDays === 1) return "Yesterday";
-    if (diffInDays < 7) return `${diffInDays} days ago`;
-    if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
-    return date.toLocaleDateString();
-  };
-
   if (loading) {
     return <ListSkeleton />;
   }
@@ -94,22 +81,16 @@ export function AssessmentsList({
             className="hover:shadow-lg hover:border-primary/20 transition-all duration-200 cursor-pointer border-border/40"
             onClick={() => onAssessmentClick(assessment)}
           >
-            <CardContent className="px-5 py-4">
+            <CardContent className="px-6 py-4">
               <div className="flex items-start justify-between gap-4">
                 {/* Left Section - Icon and Info */}
                 <div className="flex gap-4 flex-1 min-w-0">
-                  <div className="flex flex-col justify-center">
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <FileText className="w-6 h-6 text-primary" />
-                    </div>
-                  </div>
-
                   <div className="flex-1 min-w-0 space-y-3">
                     {/* Title and Badges */}
                     <div className="flex flex-col gap-2">
-                      <div className="flex items-start gap-3 flex-wrap">
+                      <div className="flex items-center gap-3 flex-wrap">
                         <h3 className="text-lg font-semibold text-foreground">
-                          {assessment.title}
+                          {assessment.internal_pollen_title ?? assessment.title}
                         </h3>
                         <div className="flex items-center gap-2">
                           <Badge
@@ -133,16 +114,25 @@ export function AssessmentsList({
                         </div>
                       </div>
 
-                      {/* Subtitle */}
-                      {assessment.subtitle && (
-                        <p className="text-sm text-muted-foreground">
-                          {assessment.subtitle}
-                        </p>
-                      )}
+                      <div className="flex flex-col gap-2">
+                        {/* Title */}
+                        {assessment.internal_pollen_title && (
+                          <p className="text-sm">
+                            {assessment.internal_pollen_title}
+                          </p>
+                        )}
+
+                        {/* Subtitle */}
+                        {assessment.subtitle && (
+                          <p className="text-sm text-muted-foreground">
+                            {assessment.subtitle}
+                          </p>
+                        )}
+                      </div>
                     </div>
 
                     {/* Assessment Details - 2 Rows */}
-                    <div className="space-y-2 text-sm">
+                    <div className="flex flex-col gap-4 text-sm">
                       {/* First Row: Questions and Duration */}
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2 text-muted-foreground">
@@ -165,70 +155,72 @@ export function AssessmentsList({
                           </span>
                         </div>
                       </div>
-
-                      {/* Second Row: Created/Updated info */}
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span>Created {formatDate(assessment.created_at)}</span>
-                        <span>•</span>
-                        <span>Updated {formatDate(assessment.updated_at)}</span>
-                        <span>•</span>
-                        <span>by {assessment.created_by}</span>
-                      </div>
                     </div>
-
-                    {/* Divider and Actions */}
-                    <div className="border-t border-border/50 pt-3 mt-3">
-                      <div className="flex items-center justify-end gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            // TODO: Implement view action
-                            console.log("View assessment:", assessment.id);
-                          }}
-                        >
-                          <Eye className="h-4 w-4 mr-1" />
-                          <span className="text-xs">View</span>
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            // TODO: Implement edit action
-                            console.log("Edit assessment:", assessment.id);
-                          }}
-                        >
-                          <Edit className="h-4 w-4 mr-1" />
-                          <span className="text-xs">Edit</span>
-                        </Button>
+                  </div>
+                  {/* Right Section - Stats */}
+                  <div className="flex flex-col justify-end gap-3">
+                    <div className="text-right space-y-1 bg-muted/30 p-3 rounded-lg min-w-[120px]">
+                      <div className="text-xs text-muted-foreground">
+                        Completion Rate
+                      </div>
+                      <div className="text-xl font-bold text-foreground">
+                        {assessment.status === "draft"
+                          ? "—"
+                          : `${Math.round(Math.random() * 100)}%`}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {assessment.status === "draft"
+                          ? "Not published"
+                          : "Avg score"}
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
+              {/* Divider and Actions */}
+              <div className="flex flex-row justify-between border-t border-border/50 pt-3 mt-3">
+                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                  <span>
+                    Created:{" "}
+                    {DateHelper.formatRelativeDate(assessment.created_at)}
+                  </span>
+                  <span>
+                    Updated:{" "}
+                    {DateHelper.formatRelativeDate(assessment.updated_at)}
+                  </span>
+                  <span>by: {assessment.created_by}</span>
+                </div>
+                <div className="flex items-center justify-end gap-1">
+                  {/* Second Row: Created/Updated info */}
 
-                {/* Right Section - Stats */}
-                <div className="flex flex-col justify-start gap-3">
-                  <div className="text-right space-y-1 bg-muted/30 p-3 rounded-lg min-w-[120px]">
-                    <div className="text-xs text-muted-foreground">
-                      Completion Rate
-                    </div>
-                    <div className="text-xl font-bold text-foreground">
-                      {assessment.status === "draft"
-                        ? "—"
-                        : `${Math.round(Math.random() * 100)}%`}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {assessment.status === "draft"
-                        ? "Not published"
-                        : "Avg score"}
-                    </div>
-                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // TODO: Implement view action
+                      console.log("View assessment:", assessment.id);
+                    }}
+                  >
+                    <Eye className="h-4 w-4 mr-1" />
+                    <span className="text-xs">View</span>
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // TODO: Implement edit action
+                      console.log("Edit assessment:", assessment.id);
+                    }}
+                  >
+                    <Edit className="h-4 w-4 mr-1" />
+                    <span className="text-xs">Edit</span>
+                  </Button>
                 </div>
               </div>
             </CardContent>

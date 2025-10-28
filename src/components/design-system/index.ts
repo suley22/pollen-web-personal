@@ -4,7 +4,12 @@ export { PageHeader } from "./page-header";
 export { FormContainer } from "./form-container";
 export { FormActions } from "./form-actions";
 export { FormCard } from "./form-card";
-export { PrimaryButton } from "./primary-button";
+export {
+  PrimaryButton,
+  SecondaryButton,
+  GhostButton,
+  DangerButton as DangerButtonPrimary,
+} from "./primary-button";
 export {
   SuccessButton,
   WarningButton,

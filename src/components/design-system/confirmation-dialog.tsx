@@ -11,7 +11,11 @@ import {
   DialogClose,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Divider } from "./divider";
+import {
+  SecondaryButton,
+  DangerButton as DangerButtonPrimary,
+} from "./primary-button";
 
 export function ConfirmationDialog({
   trigger,
@@ -36,28 +40,24 @@ export function ConfirmationDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
+        <DialogDescription>{description}</DialogDescription>
+        <Divider />
         <DialogFooter>
           <DialogClose asChild>
-            <Button
-              variant="secondary"
-              size="default"
-              type="button"
+            <SecondaryButton
+              text={cancelText}
               disabled={isLoading}
-            >
-              {cancelText}
-            </Button>
+              type="button"
+            />
           </DialogClose>
-          <Button
-            variant="destructive"
-            size="default"
-            type="button"
+          <DangerButtonPrimary
+            text={isLoading ? loadingText : confirmText}
             onClick={onConfirm}
             disabled={isLoading}
-          >
-            {isLoading ? loadingText : confirmText}
-          </Button>
+            loading={isLoading}
+            type="button"
+          />
         </DialogFooter>
       </DialogContent>
     </Dialog>

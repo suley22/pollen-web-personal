@@ -20,7 +20,7 @@ const DialogOverlay = ({ className, ...props }) => (
   />
 );
 
-const DialogContent = ({ className, children, ...props }) => (
+const DialogContent = ({ className = "", children, ...props }) => (
   <DialogPortal>
     <DialogOverlay />
     <DialogPrimitive.Content
@@ -39,7 +39,7 @@ const DialogContent = ({ className, children, ...props }) => (
   </DialogPortal>
 );
 
-const DialogHeader = ({ className, ...props }) => (
+const DialogHeader = ({ className = "", ...props }) => (
   <div
     className={cn(
       "flex flex-col space-y-1.5 text-center sm:text-left",
@@ -49,7 +49,7 @@ const DialogHeader = ({ className, ...props }) => (
   />
 );
 
-const DialogFooter = ({ className, ...props }) => (
+const DialogFooter = ({ className = "", ...props }) => (
   <div
     className={cn(
       "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
@@ -59,7 +59,7 @@ const DialogFooter = ({ className, ...props }) => (
   />
 );
 
-const DialogTitle = ({ className, ...props }) => (
+const DialogTitle = ({ className = "", ...props }) => (
   <DialogPrimitive.Title
     className={cn(
       "text-lg font-semibold leading-none tracking-tight",
@@ -69,7 +69,7 @@ const DialogTitle = ({ className, ...props }) => (
   />
 );
 
-const DialogDescription = ({ className, ...props }) => (
+const DialogDescription = ({ className = "", ...props }) => (
   <DialogPrimitive.Description
     className={cn("text-sm text-muted-foreground", className)}
     {...props}

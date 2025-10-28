@@ -31,19 +31,11 @@ export function Select({
 
   // Update selected value when defaultValue changes
   React.useEffect(() => {
-    console.log("Select useEffect - defaultValue changed:", defaultValue);
     setSelectedValue(defaultValue);
   }, [defaultValue]);
 
-  console.log(
-    "Select render - defaultValue:",
-    defaultValue,
-    "selectedValue:",
-    selectedValue,
-  );
-
   return (
-    <div className="w-full">
+    <div className="flex flex-col">
       {label && (
         <Label
           htmlFor={selectId}
@@ -98,6 +90,7 @@ export function Select({
               /* @ts-ignore */
             }
             return (
+              // @ts-ignore
               <SelectItem key={optionValue} value={optionValue}>
                 {optionLabel}
               </SelectItem>

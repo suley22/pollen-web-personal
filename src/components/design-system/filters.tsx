@@ -32,9 +32,9 @@ export function Filters({
   return (
     <Card className="w-full">
       <CardContent className="p-6">
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-row gap-4 items-center">
           {/* Search Input */}
-          <div className="flex-1 relative">
+          <div className="flex flex-1 relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
@@ -56,21 +56,19 @@ export function Filters({
           </div>
 
           {/* Dynamic Filters */}
-          {filters.length > 0 && (
-            <div className="flex gap-2 items-center">
-              {filters.map((filter) => (
-                <Select
-                  key={filter.name}
-                  id={`filter-${filter.name}`}
-                  name={`filter-${filter.name}`}
-                  placeholder={filter.placeholder || "Select..."}
-                  onValueChange={filter.onValueChange}
-                  defaultValue={filter.defaultValue}
-                  options={filter.options}
-                />
-              ))}
-            </div>
-          )}
+
+          {filters.map((filter) => (
+            <Select
+              className="w-56"
+              key={filter.name}
+              id={`filter-${filter.name}`}
+              name={`filter-${filter.name}`}
+              placeholder={filter.placeholder || "Select..."}
+              onValueChange={filter.onValueChange}
+              defaultValue={filter.defaultValue}
+              options={filter.options}
+            />
+          ))}
         </div>
       </CardContent>
     </Card>

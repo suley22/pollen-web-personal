@@ -19,10 +19,7 @@ export function AssessmentQuestionCard({
   onAnswerChange,
 }: AssessmentQuestionCardProps) {
   return (
-    <FormCard
-      title={`Question ${questionNumber}: ${question.title}`}
-      icon={<HelpCircle className="h-5 w-5" />}
-    >
+    <FormCard title={question.title} icon={<HelpCircle className="h-5 w-5" />}>
       <div className="flex flex-col gap-4">
         {question.description && (
           <p className="text-sm text-gray-600">{question.description}</p>

@@ -155,12 +155,155 @@ export function AssessmentCreateFileUploadPreview({
             const hasFile = questionFile !== null && questionFile !== undefined;
 
             return (
-              <FormCard
-                key={index}
-                title={`Question ${index + 1}: ${question.title}`}
-                icon={<HelpCircle className="h-5 w-5" />}
-              >
-                {/* Action Buttons */}
+              <div key={index} className="relative">
+                <FormCard
+                  title={question.title}
+                  icon={<HelpCircle className="h-5 w-5" />}
+                >
+                  <div className="flex flex-col gap-4">
+                    {/* Question Subtitle */}
+                    {question.subtitle && (
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {question.subtitle}
+                      </p>
+                    )}
+
+                    {/* Reference Files - Download Links */}
+                    {question.referenceFiles.length > 0 && (
+                      <div className="rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 p-4 space-y-2">
+                        <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                          Reference Materials:
+                        </p>
+                        {question.referenceFiles.map((refFile) => (
+                          <button
+                            key={refFile.id}
+                            className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline"
+                            onClick={() => {
+                              // In production, this would download the file
+                              console.log("Download:", refFile.name);
+                            }}
+                          >
+                            <Download className="h-4 w-4" />
+                            <span>{refFile.name}</span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              ({refFile.fileName})
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* File Upload Area */}
+                    {!isSubmitted && (
+                      <div className="space-y-3">
+                        <label
+                          htmlFor={`file_upload_${index}`}
+                          className="block cursor-pointer"
+                        >
+                          <div className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 px-4 py-8 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                            <Upload className="h-8 w-8 text-gray-400" />
+                            <div className="text-center">
+                              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Click to upload a file
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                Maximum file size: {MAX_FILE_SIZE_MB}MB
+                              </p>
+                            </div>
+                          </div>
+                          <input
+                            type="file"
+                            id={`file_upload_${index}`}
+                            className="hidden"
+                            onChange={(e) => {
+                              if (e.target.files && e.target.files.length > 0) {
+                                const file = e.target.files[0];
+                                if (file.size > MAX_FILE_SIZE) {
+                                  showError(
+                                    "File Too Large",
+                                    `The file size exceeds the maximum limit of ${MAX_FILE_SIZE_MB}MB. Please select a smaller file.`,
+                                  );
+                                  e.target.value = "";
+                                  return;
+                                }
+                                handleFileUpload(index, file);
+                                e.target.value = ""; // Reset input
+                              }
+                            }}
+                          />
+                        </label>
+
+                        {/* Uploaded File */}
+                        {questionFile && (
+                          <div className="space-y-2">
+                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                              Selected File:
+                            </p>
+                            <div className="flex items-center gap-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 p-3">
+                              <Upload className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                                  {questionFile.name}
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                  {formatFileSize(questionFile.size)}
+                                </p>
+                              </div>
+                              <button
+                                onClick={() => handleRemoveFile(index)}
+                                className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 flex-shrink-0"
+                                title="Remove file"
+                              >
+                                <X className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Submitted File (Read-only) */}
+                    {isSubmitted && questionFile && (
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium text-green-700 dark:text-green-300">
+                          ✓ Submitted File:
+                        </p>
+                        <div className="flex items-center gap-3 rounded-lg border border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20 p-3">
+                          <Upload className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                              {questionFile.name}
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              {formatFileSize(questionFile.size)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Submit/Edit Button */}
+                    <div className="flex justify-end">
+                      {isSubmitted ? (
+                        <PrimaryButton
+                          text="Edit Answer"
+                          onClick={() => handleEditAnswer(index)}
+                          style="outline"
+                          className="w-full sm:w-auto"
+                        />
+                      ) : (
+                        <PrimaryButton
+                          text="Check Answer"
+                          onClick={() => handleSubmitAnswer(index)}
+                          disabled={!hasFile}
+                          className="w-full sm:w-auto"
+                        />
+                      )}
+                    </div>
+                  </div>
+                </FormCard>
+
+                {/* Action Buttons Overlay - Only in Edit Mode */}
                 {isEditMode &&
                   onMoveQuestionUp &&
                   onMoveQuestionDown &&
@@ -175,149 +318,7 @@ export function AssessmentCreateFileUploadPreview({
                       onRemove={onRemoveQuestion}
                     />
                   )}
-
-                <div className="flex flex-col gap-4">
-                  {/* Question Subtitle */}
-                  {question.subtitle && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {question.subtitle}
-                    </p>
-                  )}
-
-                  {/* Reference Files - Download Links */}
-                  {question.referenceFiles.length > 0 && (
-                    <div className="rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 p-4 space-y-2">
-                      <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                        Reference Materials:
-                      </p>
-                      {question.referenceFiles.map((refFile) => (
-                        <button
-                          key={refFile.id}
-                          className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline"
-                          onClick={() => {
-                            // In production, this would download the file
-                            console.log("Download:", refFile.name);
-                          }}
-                        >
-                          <Download className="h-4 w-4" />
-                          <span>{refFile.name}</span>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            ({refFile.fileName})
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* File Upload Area */}
-                  {!isSubmitted && (
-                    <div className="space-y-3">
-                      <label
-                        htmlFor={`file_upload_${index}`}
-                        className="block cursor-pointer"
-                      >
-                        <div className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 px-4 py-8 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                          <Upload className="h-8 w-8 text-gray-400" />
-                          <div className="text-center">
-                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                              Click to upload a file
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                              Maximum file size: {MAX_FILE_SIZE_MB}MB
-                            </p>
-                          </div>
-                        </div>
-                        <input
-                          type="file"
-                          id={`file_upload_${index}`}
-                          className="hidden"
-                          onChange={(e) => {
-                            if (e.target.files && e.target.files.length > 0) {
-                              const file = e.target.files[0];
-                              if (file.size > MAX_FILE_SIZE) {
-                                showError(
-                                  "File Too Large",
-                                  `The file size exceeds the maximum limit of ${MAX_FILE_SIZE_MB}MB. Please select a smaller file.`,
-                                );
-                                e.target.value = "";
-                                return;
-                              }
-                              handleFileUpload(index, file);
-                              e.target.value = ""; // Reset input
-                            }
-                          }}
-                        />
-                      </label>
-
-                      {/* Uploaded File */}
-                      {questionFile && (
-                        <div className="space-y-2">
-                          <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Selected File:
-                          </p>
-                          <div className="flex items-center gap-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 p-3">
-                            <Upload className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                                {questionFile.name}
-                              </p>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">
-                                {formatFileSize(questionFile.size)}
-                              </p>
-                            </div>
-                            <button
-                              onClick={() => handleRemoveFile(index)}
-                              className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 flex-shrink-0"
-                              title="Remove file"
-                            >
-                              <X className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Submitted File (Read-only) */}
-                  {isSubmitted && questionFile && (
-                    <div className="space-y-2">
-                      <p className="text-sm font-medium text-green-700 dark:text-green-300">
-                        ✓ Submitted File:
-                      </p>
-                      <div className="flex items-center gap-3 rounded-lg border border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20 p-3">
-                        <Upload className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                            {questionFile.name}
-                          </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {formatFileSize(questionFile.size)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Submit/Edit Button */}
-                  <div className="flex justify-end">
-                    {isSubmitted ? (
-                      <PrimaryButton
-                        text="Edit Answer"
-                        onClick={() => handleEditAnswer(index)}
-                        style="outline"
-                        className="w-full sm:w-auto"
-                      />
-                    ) : (
-                      <PrimaryButton
-                        text="Check Answer"
-                        onClick={() => handleSubmitAnswer(index)}
-                        disabled={!hasFile}
-                        className="w-full sm:w-auto"
-                      />
-                    )}
-                  </div>
-                </div>
-              </FormCard>
+              </div>
             );
           })}
         </div>

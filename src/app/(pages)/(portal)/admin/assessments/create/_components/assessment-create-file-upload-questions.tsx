@@ -252,7 +252,7 @@ export function AssessmentCreateFileUploadQuestions({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
             {editingQuestionIndex !== null ? (
               <>
                 <PrimaryButton
@@ -280,61 +280,6 @@ export function AssessmentCreateFileUploadQuestions({
           </div>
         </div>
       </FormCard>
-
-      {/* Questions List */}
-      {questions.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-            Questions Added ({questions.length})
-          </h3>
-          {questions.map((question, index) => (
-            <FormCard
-              key={index}
-              title={`Question ${index + 1}: ${question.title}`}
-              icon={<HelpCircle className="h-5 w-5" />}
-            >
-              <QuestionActionButtons
-                index={index}
-                totalQuestions={questions.length}
-                onMoveUp={onMoveQuestionUp}
-                onMoveDown={onMoveQuestionDown}
-                onEdit={onEditQuestion}
-                onRemove={onRemoveQuestion}
-              />
-
-              <div className="flex flex-col gap-3">
-                {question.subtitle && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {question.subtitle}
-                  </p>
-                )}
-
-                {question.referenceFiles.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                      Reference Files:
-                    </p>
-                    <div className="space-y-1">
-                      {question.referenceFiles.map((file) => (
-                        <div
-                          key={file.id}
-                          className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300"
-                        >
-                          <LinkIcon className="h-3 w-3 text-gray-400" />
-                          <span className="truncate">{file.name}</span>
-                          <span className="text-xs text-gray-500 dark:text-gray-400">
-                            ({file.fileName})
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </FormCard>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

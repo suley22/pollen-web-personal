@@ -14,7 +14,7 @@ export default function Home() {
   return (
     <PageContainer>
       <PageHeader
-        title={<>Welcome back, {user?.firstName}! 👋</>}
+        title={`Welcome back, ${user?.firstName}! 👋`}
         titleSize="text-5xl"
         subtitle={"Let's find you a job you love."}
       />

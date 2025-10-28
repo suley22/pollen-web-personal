@@ -9,6 +9,7 @@ import {
   WarningBadge,
   Divider,
   PrimaryButton,
+  SecondaryButton,
 } from "@/components/design-system";
 import { QuestionActionButtons } from "./question-action-buttons";
 import { AssessmentProgress } from "../../test/_components/assessment-progress";
@@ -124,12 +125,59 @@ export function AssessmentCreateFreeInputPreview({
             const hasAnswer = previewAnswers[index]?.trim();
 
             return (
-              <FormCard
-                key={index}
-                title={`Question ${index + 1}: ${question.title}`}
-                icon={<HelpCircle className="h-5 w-5" />}
-              >
-                {/* Action Buttons */}
+              <div key={index} className="relative">
+                <FormCard
+                  title={question.title}
+                  icon={<HelpCircle className="h-5 w-5" />}
+                >
+                  <div className="flex flex-col gap-4">
+                    {/* Question Subtitle */}
+                    {question.subtitle && (
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {question.subtitle}
+                      </p>
+                    )}
+
+                    {/* Answer Textarea */}
+                    <TextareaInput
+                      label=""
+                      name={`question_${index}_answer`}
+                      id={`question_${index}_answer`}
+                      placeholder={
+                        question.placeholder || "Type your answer here..."
+                      }
+                      value={previewAnswers[index] || ""}
+                      onChange={(e) =>
+                        handleAnswerChange(index, e.target.value)
+                      }
+                      rows={5}
+                      maxLength={1000}
+                      showCharacterCount={true}
+                      disabled={isSubmitted}
+                    />
+
+                    {/* Submit/Edit Button */}
+                    <div className="flex justify-end">
+                      {isSubmitted ? (
+                        <SecondaryButton
+                          text="Edit Answer"
+                          icon={<CheckCircle />}
+                          onClick={() => handleEditAnswer(index)}
+                          className="w-full sm:w-auto"
+                        />
+                      ) : (
+                        <PrimaryButton
+                          text="Check Answer"
+                          onClick={() => handleSubmitAnswer(index)}
+                          disabled={!hasAnswer}
+                          className="w-full sm:w-auto"
+                        />
+                      )}
+                    </div>
+                  </div>
+                </FormCard>
+
+                {/* Action Buttons Overlay - Only in Edit Mode */}
                 {isEditMode &&
                   onMoveQuestionUp &&
                   onMoveQuestionDown &&
@@ -144,51 +192,7 @@ export function AssessmentCreateFreeInputPreview({
                       onRemove={onRemoveQuestion}
                     />
                   )}
-
-                <div className="flex flex-col gap-4">
-                  {/* Question Subtitle */}
-                  {question.subtitle && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {question.subtitle}
-                    </p>
-                  )}
-
-                  {/* Answer Textarea */}
-                  <TextareaInput
-                    label=""
-                    name={`question_${index}_answer`}
-                    id={`question_${index}_answer`}
-                    placeholder={
-                      question.placeholder || "Type your answer here..."
-                    }
-                    value={previewAnswers[index] || ""}
-                    onChange={(e) => handleAnswerChange(index, e.target.value)}
-                    rows={5}
-                    maxLength={1000}
-                    showCharacterCount={true}
-                    disabled={isSubmitted}
-                  />
-
-                  {/* Submit/Edit Button */}
-                  <div className="flex justify-end">
-                    {isSubmitted ? (
-                      <PrimaryButton
-                        text="Edit Answer"
-                        icon={<CheckCircle />}
-                        onClick={() => handleEditAnswer(index)}
-                        className="w-full sm:w-auto"
-                      />
-                    ) : (
-                      <PrimaryButton
-                        text="Check Answer"
-                        onClick={() => handleSubmitAnswer(index)}
-                        disabled={!hasAnswer}
-                        className="w-full sm:w-auto"
-                      />
-                    )}
-                  </div>
-                </div>
-              </FormCard>
+              </div>
             );
           })}
         </div>

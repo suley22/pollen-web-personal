@@ -57,6 +57,8 @@ export function AssessmentCreateQuestions({
   onAddQuestion,
   onClearForm,
 }: AssessmentCreateQuestionsProps) {
+  const isFormValid = title.trim() !== "" && options.length >= 2;
+
   return (
     <div className="flex flex-row gap-4">
       <FormCard
@@ -70,7 +72,7 @@ export function AssessmentCreateQuestions({
       >
         <div className="w-full flex flex-col gap-4">
           <div className="w-full flex flex-col gap-3">
-            {/* Question Title */}
+            {/* Question Title - Required */}
             <Input
               label="Title"
               type="text"
@@ -79,32 +81,35 @@ export function AssessmentCreateQuestions({
               placeholder="Enter question title"
               value={title}
               onChange={(e) => onTitleChange(e.target.value)}
+              required
             />
-            {/* Question Description */}
+            {/* Question Subtitle - Optional */}
             <Input
-              label="Description"
+              label="Subtitle"
               type="text"
-              name="question_description"
-              id="question_description"
-              placeholder="Enter question description"
+              name="question_subtitle"
+              id="question_subtitle"
+              placeholder="Enter question subtitle (optional)"
               value={description}
               onChange={(e) => onDescriptionChange(e.target.value)}
             />
+            {/* Options Title - Optional */}
             <Input
               label="Options Title"
               type="text"
               name="options_title"
               id="options_title"
-              placeholder="Enter options title"
+              placeholder="Enter options title (optional)"
               value={optionsTitle}
               onChange={(e) => onOptionsTitleChange(e.target.value)}
             />
 
-            {/* Display added options */}
-            {options.length > 0 && (
+            {/* Display added options or show requirement */}
+            {options.length > 0 ? (
               <div className="flex flex-col gap-2 py-1">
                 <Label className="text-sm font-semibold text-gray-700">
-                  Added Options:
+                  Added Options ({options.length}/minimum 2)
+                  <span className="text-destructive ml-1">*</span>
                 </Label>
                 {options.map((option) => {
                   const category = categories.find(
@@ -143,6 +148,16 @@ export function AssessmentCreateQuestions({
                     </div>
                   );
                 })}
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2 py-1">
+                <Label className="text-sm font-semibold text-gray-700">
+                  Options (minimum 2 required)
+                  <span className="text-destructive ml-1">*</span>
+                </Label>
+                <p className="text-sm text-gray-500">
+                  No options added yet. Add at least 2 options below.
+                </p>
               </div>
             )}
 
@@ -201,6 +216,7 @@ export function AssessmentCreateQuestions({
                   : "Add Question"
               }
               onClick={onAddQuestion}
+              disabled={!isFormValid}
             />
           </div>
         </div>

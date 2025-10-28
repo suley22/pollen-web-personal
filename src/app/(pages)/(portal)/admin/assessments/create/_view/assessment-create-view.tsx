@@ -21,6 +21,7 @@ export default function AssessmentCreateView() {
   const [internalPollenTitle, setInternalPollenTitle] = useState("");
   const [assessmentTitle, setAssessmentTitle] = useState("");
   const [assessmentDescription, setAssessmentDescription] = useState("");
+  const [estimatedDuration, setEstimatedDuration] = useState("");
   const [instructionsTitle, setInstructionsTitle] = useState("");
   const [instructionsDescription, setInstructionsDescription] = useState("");
   const [selectedType, setSelectedType] = useState<
@@ -86,11 +87,13 @@ export default function AssessmentCreateView() {
         internalPollenTitle={internalPollenTitle}
         assessmentTitle={assessmentTitle}
         assessmentDescription={assessmentDescription}
+        estimatedDuration={estimatedDuration}
         instructionsTitle={instructionsTitle}
         instructionsDescription={instructionsDescription}
         onInternalPollenTitleChange={setInternalPollenTitle}
         onAssessmentTitleChange={setAssessmentTitle}
         onAssessmentDescriptionChange={setAssessmentDescription}
+        onEstimatedDurationChange={setEstimatedDuration}
         onInstructionsTitleChange={setInstructionsTitle}
         onInstructionsDescriptionChange={setInstructionsDescription}
       />
@@ -116,8 +119,10 @@ export default function AssessmentCreateView() {
       {selectedType === "free_input" && (
         <div ref={contentRef} className="">
           <AssessmentCreateQuestionaryView
+            internalPollenTitle={internalPollenTitle}
             assessmentTitle={assessmentTitle}
             assessmentDescription={assessmentDescription}
+            estimatedDuration={estimatedDuration}
             instructionsTitle={instructionsTitle}
             instructionsDescription={instructionsDescription}
           />

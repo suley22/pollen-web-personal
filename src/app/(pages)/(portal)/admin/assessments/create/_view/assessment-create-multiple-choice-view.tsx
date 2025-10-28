@@ -4,6 +4,12 @@ import { AssessmentCreateMultipleChoicePreview } from "../_components/assessment
 import { AssessmentCreateCategories } from "../_components/assessment-create-categories";
 import { AssessmentCreateQuestions } from "../_components/assessment-create-questions";
 import { useAssessmentCreate } from "../_hooks/assessment-create-hook";
+import {
+  FormActions,
+  PrimaryButton,
+  SecondaryButton,
+} from "@/components/design-system";
+import { Save, Send } from "lucide-react";
 
 interface AssessmentCreateMultipleChoiceViewProps {
   assessmentTitle: string;
@@ -54,7 +60,14 @@ export default function AssessmentCreateMultipleChoiceView({
     handleMoveQuestionUp,
     handleMoveQuestionDown,
     handleClearForm,
+    handleBack,
+    handleSubmit,
+    isSaving,
   } = useAssessmentCreate({});
+
+  const handleSaveDraft = async () => {
+    await handleSubmit("multiple_choice");
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -106,6 +119,21 @@ export default function AssessmentCreateMultipleChoiceView({
         onEditQuestion={handleEditQuestion}
         onRemoveQuestion={handleRemoveQuestion}
       />
+
+      {/* Action Buttons */}
+      <FormActions>
+        <SecondaryButton
+          text="Cancel"
+          onClick={handleBack}
+          disabled={isSaving}
+        />
+        <PrimaryButton
+          icon={<Save />}
+          text={isSaving ? "Saving..." : "Save Assessment"}
+          onClick={handleSaveDraft}
+          disabled={isSaving || !assessmentTitle || questions.length === 0}
+        />
+      </FormActions>
     </div>
   );
 }

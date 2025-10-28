@@ -14,6 +14,8 @@ interface TextareaInputProps
   rows?: number;
   minHeight?: string;
   textareaClassName?: string;
+  maxLength?: number;
+  showCharacterCount?: boolean;
 }
 
 export const TextareaInput = React.forwardRef<
@@ -32,12 +34,16 @@ export const TextareaInput = React.forwardRef<
       name,
       minHeight,
       rows = 3,
+      maxLength,
+      showCharacterCount = false,
+      value,
       ...props
     },
     ref,
   ) => {
     const generatedId = React.useId();
     const textareaId = id || generatedId;
+    const currentLength = value ? String(value).length : 0;
 
     return (
       <div className={cn("w-full", className)}>
@@ -59,6 +65,8 @@ export const TextareaInput = React.forwardRef<
           id={textareaId}
           name={name}
           rows={rows}
+          maxLength={maxLength}
+          value={value}
           className={cn(
             "resize-y",
             error && "border-destructive focus-visible:ring-destructive",
@@ -82,11 +90,27 @@ export const TextareaInput = React.forwardRef<
           </p>
         )}
 
-        {helperText && !error && (
-          <p id={`${name}-helper`} className="mt-1.5 text-sm text-gray-600">
-            {helperText}
-          </p>
-        )}
+        {/* Character Count and Helper Text */}
+        <div className="flex items-center justify-between mt-1.5">
+          {helperText && !error && (
+            <p id={`${name}-helper`} className="text-sm text-gray-600">
+              {helperText}
+            </p>
+          )}
+
+          {showCharacterCount && maxLength && (
+            <p
+              className={cn(
+                "text-sm ml-auto",
+                currentLength > maxLength * 0.9
+                  ? "text-orange-600 dark:text-orange-500 font-medium"
+                  : "text-gray-500 dark:text-gray-400",
+              )}
+            >
+              {currentLength}/{maxLength}
+            </p>
+          )}
+        </div>
       </div>
     );
   },

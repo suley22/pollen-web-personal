@@ -35,7 +35,7 @@ export function AssessmentQuestionCard({
 
           <div className="flex flex-col gap-3 mt-2">
             {question.options.map((option) => (
-              <div key={option.value} className="flex items-start space-x-3">
+              <div key={option.value} className="flex items-center space-x-3">
                 <input
                   type="radio"
                   id={`${question.id}-${option.value}`}
@@ -43,7 +43,7 @@ export function AssessmentQuestionCard({
                   value={option.value}
                   checked={selectedValue === option.value}
                   onChange={(e) => onAnswerChange(question.id, e.target.value)}
-                  className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 cursor-pointer"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 cursor-pointer"
                 />
                 <Label
                   htmlFor={`${question.id}-${option.value}`}

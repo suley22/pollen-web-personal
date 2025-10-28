@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/design-system";
-import type { FilterOption, FilterConfig, FiltersProps } from "@/types/filters";
+import type { FiltersProps } from "@/types/filters";
 
 export function Filters({
   onSearchChange,

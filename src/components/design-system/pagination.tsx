@@ -67,18 +67,10 @@ export function Pagination({
     return rangeWithDots;
   }, [currentPage, totalPages]);
 
-  if (totalPages <= 1) {
-    return showInfo ? (
-      <div className={`flex justify-between items-center ${className}`}>
-        <div className="text-sm text-muted-foreground">
-          Showing {from} to {to} of {totalItems} results
-        </div>
-      </div>
-    ) : null;
-  }
+  const hasMorePages = totalPages > 1;
 
   return (
-    <div className={`flex items-center justify-between ${className}`}>
+    <div className={`flex items-center justify-between h-8 ${className}`}>
       {/* Info section */}
       {showInfo && (
         <div className="flex items-center gap-4">
@@ -87,6 +79,7 @@ export function Pagination({
             <span className="font-semibold text-foreground">{from}</span> to{" "}
             <span className="font-semibold text-foreground">
               <select
+                disabled={!hasMorePages && totalItems < 10}
                 value={pageSize}
                 onChange={(e) => onPageSizeChange(Number(e.target.value))}
                 className="border border-input bg-background px-2 py-1 text-sm rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
@@ -106,58 +99,60 @@ export function Pagination({
       )}
 
       {/* Pagination controls */}
-      <div className="flex items-center gap-1">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={!hasPreviousPage}
-          className="h-8 px-2"
-        >
-          <ChevronLeft className="h-4 w-4" />
-          <span className="sr-only">Previous page</span>
-        </Button>
+      {hasMorePages && (
+        <div className="flex items-center gap-1">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={!hasPreviousPage}
+            className="h-8 px-2"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <span className="sr-only">Previous page</span>
+          </Button>
 
-        {pageNumbers.map((pageNum, index) => {
-          if (pageNum === "...") {
+          {pageNumbers.map((pageNum, index) => {
+            if (pageNum === "...") {
+              return (
+                <Button
+                  key={`dots-${index}`}
+                  variant="ghost"
+                  size="sm"
+                  disabled
+                  className="h-8 px-2"
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              );
+            }
+
+            const isCurrentPage = pageNum === currentPage;
             return (
               <Button
-                key={`dots-${index}`}
-                variant="ghost"
+                key={pageNum}
+                variant={isCurrentPage ? "default" : "outline"}
                 size="sm"
-                disabled
-                className="h-8 px-2"
+                onClick={() => onPageChange(pageNum as number)}
+                className="h-8 px-3 min-w-[32px]"
               >
-                <MoreHorizontal className="h-4 w-4" />
+                {pageNum}
               </Button>
             );
-          }
+          })}
 
-          const isCurrentPage = pageNum === currentPage;
-          return (
-            <Button
-              key={pageNum}
-              variant={isCurrentPage ? "default" : "outline"}
-              size="sm"
-              onClick={() => onPageChange(pageNum as number)}
-              className="h-8 px-3 min-w-[32px]"
-            >
-              {pageNum}
-            </Button>
-          );
-        })}
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={!hasNextPage}
-          className="h-8 px-2"
-        >
-          <ChevronRight className="h-4 w-4" />
-          <span className="sr-only">Next page</span>
-        </Button>
-      </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={!hasNextPage}
+            className="h-8 px-2"
+          >
+            <ChevronRight className="h-4 w-4" />
+            <span className="sr-only">Next page</span>
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

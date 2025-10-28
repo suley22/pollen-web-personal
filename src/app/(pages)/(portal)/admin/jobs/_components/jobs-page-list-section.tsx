@@ -1,20 +1,19 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Pagination } from "@/components/design-system";
+import { EmptyState, Pagination } from "@/components/design-system";
 import { useRouter } from "next/navigation";
-import { AdminRoutes } from "../../router";
 import { Skeleton } from "@/components/ui/skeleton";
-import JobCardItem from "@/components/design-system/job-card-item";
+import { JobCardItem } from "@/admin/jobs/_components/jobs-page-card-item";
+import { Building2 } from "lucide-react";
 
-export default function JobListSection({
+export function JobListSection({
   jobs,
   isLoading,
   pagination,
   handlePageChange,
   handlePageSizeChange,
 }) {
-  const router = useRouter();
   if (isLoading) {
     // Skeleton loading state
     return (
@@ -44,6 +43,16 @@ export default function JobListSection({
     );
   }
 
+  if (jobs.length === 0) {
+    return (
+      <EmptyState
+        icon={Building2}
+        title="No jobs found"
+        description="No jobs match your current filters. Try adjusting your search criteria or clear filters to see all jobs."
+      />
+    );
+  }
+
   return (
     <div className="flex flex-col w-full gap-4">
       <div className="items-center justify-between">
@@ -64,13 +73,7 @@ export default function JobListSection({
       </div>
 
       {jobs.map((job) => (
-        <JobCardItem
-          key={job.id}
-          job={job}
-          router={router}
-          routes={AdminRoutes}
-          showAdminBadge={true}
-        />
+        <JobCardItem key={job.id} job={job} showAdminBadge={true} />
       ))}
 
       {pagination && (

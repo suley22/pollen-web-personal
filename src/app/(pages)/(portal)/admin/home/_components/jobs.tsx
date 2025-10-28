@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useHome } from "@/admin/home/useHome";
 import { AdminRoutes } from "@/admin/router";
 import { HomeJobsSkeleton } from "./jobs-skeleton";
-import JobCardItem from "@/components/design-system/job-card-item";
+import { JobCardItem } from "@/admin/jobs/_components/jobs-page-card-item";
 
 export function HomeJobs() {
   const router = useRouter();
@@ -40,14 +40,7 @@ export function HomeJobs() {
         ) : homeState.jobs && homeState.jobs.length > 0 ? (
           homeState.jobs.map((job) => {
             return (
-              <JobCardItem
-                key={job.id}
-                job={job}
-                form={homeState}
-                router={router}
-                routes={AdminRoutes}
-                showAdminBadge={false}
-              />
+              <JobCardItem key={job.id} job={job} showAdminBadge={false} />
             );
           })
         ) : (

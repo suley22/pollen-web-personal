@@ -8,7 +8,8 @@ import {
   JOB_ASSIGNMENT_OPTIONS,
 } from "@/constants/filters";
 
-export function useJobManagement(debouncedSearchTerm) {
+export function useJobManagement() {
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedAssignment, setSelectedAssignment] = useState("all");
   const [activeTab, setActiveTab] = useState("all");
@@ -18,7 +19,7 @@ export function useJobManagement(debouncedSearchTerm) {
   // Reset page when search term or filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [debouncedSearchTerm, selectedStatus, selectedAssignment]);
+  }, [searchTerm, selectedStatus, selectedAssignment]);
 
   // Filter configurations for Filters component
   const filterConfigs = useMemo(
@@ -46,17 +47,11 @@ export function useJobManagement(debouncedSearchTerm) {
     () => ({
       status: selectedStatus,
       assignment: selectedAssignment,
-      searchTerm: debouncedSearchTerm.trim(),
+      searchTerm: searchTerm.trim(),
       page: currentPage,
       pageSize: pageSize,
     }),
-    [
-      selectedStatus,
-      selectedAssignment,
-      debouncedSearchTerm,
-      currentPage,
-      pageSize,
-    ],
+    [selectedStatus, selectedAssignment, searchTerm, currentPage, pageSize],
   );
 
   // React Query: Fetch jobs list
@@ -69,9 +64,9 @@ export function useJobManagement(debouncedSearchTerm) {
   // React Query: Fetch statistics - only filter by search term
   const statisticsFilters = useMemo(
     () => ({
-      searchTerm: debouncedSearchTerm.trim(),
+      searchTerm: searchTerm.trim(),
     }),
-    [debouncedSearchTerm],
+    [searchTerm],
   );
 
   const { data: statisticsData } = useJobsStatistics(statisticsFilters);
@@ -126,5 +121,6 @@ export function useJobManagement(debouncedSearchTerm) {
     hasActionRequired,
     handlePageChange,
     handlePageSizeChange,
+    setSearchTerm,
   };
 }

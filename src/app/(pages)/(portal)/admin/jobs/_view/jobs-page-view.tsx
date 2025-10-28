@@ -5,38 +5,27 @@ import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useJobManagement } from "../_hooks/jobs-page-hook";
 import { Filters } from "@/components/design-system";
-import JobListSection from "../_components/JobListSection";
+import { JobListSection } from "../_components/jobs-page-list-section";
 import { AdminRoutes } from "../../router";
 import { PageHeader } from "@/components/design-system/page-header";
 import { PrimaryButton, PageContainer } from "@/components/design-system";
+import { StatisticsCards } from "../_components/jobs-page-cards";
 
 export default function JobsPageView() {
   const router = useRouter();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-
-  // Debounce search term
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
 
   const {
     jobs,
     loading,
-
     pagination,
     filterConfigs,
     handlePageChange,
     handlePageSizeChange,
-  } = useJobManagement(debouncedSearchTerm);
-
-  const handleSearchChange = (term: string) => {
-    setSearchTerm(term);
-  };
+    setSearchTerm,
+    statistics,
+    selectedStatus,
+    setSelectedStatus,
+  } = useJobManagement();
 
   return (
     <PageContainer>
@@ -48,10 +37,17 @@ export default function JobsPageView() {
         />
       </PageHeader>
 
+      <StatisticsCards
+        statistics={statistics}
+        selectedStatus={selectedStatus}
+        setSelectedStatus={setSelectedStatus}
+        loading={loading}
+      />
+
       {/* Main Content */}
-      <div className="flex flex-col w-full gap-4">
+      <div className="flex flex-col w-full gap-6">
         <Filters
-          onSearchChange={handleSearchChange}
+          onSearchChange={setSearchTerm}
           searchPlaceholder="Search jobs..."
           filters={filterConfigs}
         />

@@ -1,63 +1,36 @@
-import { Badge } from "@/components/ui/badge";
-
-export type JobStatus = "draft" | "live" | "paused" | "complete" | "cancelled";
+import { useCallback } from "react";
+import {
+  DraftBadge,
+  LiveBadge,
+  PausedBadge,
+  InfoBadge,
+  ErrorBadge,
+} from "./badge";
+import { JOB_STATUS, JOB_STATUS_LABELS } from "@/lib/configs/constants/filters";
 
 interface JobStatusBadgeProps {
-  status: JobStatus;
-  className?: string;
+  status?: string;
 }
 
-export function JobStatusBadge({
-  status,
-  className = "",
-}: JobStatusBadgeProps) {
-  switch (status) {
-    case "live":
-      return (
-        <Badge
-          className={`bg-green-100 text-green-800 status-badge-compact ${className}`}
-        >
-          Live
-        </Badge>
-      );
-    case "paused":
-      return (
-        <Badge
-          className={`bg-orange-100 text-orange-800 status-badge-compact ${className}`}
-        >
-          Paused
-        </Badge>
-      );
-    case "cancelled":
-      return (
-        <Badge
-          className={`bg-red-100 text-red-800 status-badge-medium ${className}`}
-        >
-          Cancelled
-        </Badge>
-      );
-    case "complete":
-      return (
-        <Badge
-          className={`bg-blue-100 text-blue-800 status-badge-medium ${className}`}
-        >
-          Complete
-        </Badge>
-      );
-    case "draft":
-      return (
-        <Badge className={`bg-yellow-100 text-yellow-800 ${className}`}>
-          Draft
-        </Badge>
-      );
-    default:
-      return (
-        <Badge
-          variant="outline"
-          className={`status-badge-compact ${className}`}
-        >
-          {status}
-        </Badge>
-      );
-  }
+export function JobStatusBadge({ status }: JobStatusBadgeProps) {
+  const getBadge = useCallback((status: string | undefined) => {
+    if (!status) return null;
+
+    switch (status) {
+      case JOB_STATUS.DRAFT:
+        return <DraftBadge>{JOB_STATUS_LABELS.draft}</DraftBadge>;
+      case JOB_STATUS.LIVE:
+        return <LiveBadge>{JOB_STATUS_LABELS.live}</LiveBadge>;
+      case JOB_STATUS.PAUSED:
+        return <PausedBadge>{JOB_STATUS_LABELS.paused}</PausedBadge>;
+      case JOB_STATUS.COMPLETE:
+        return <InfoBadge>{JOB_STATUS_LABELS.complete}</InfoBadge>;
+      case JOB_STATUS.CANCELLED:
+        return <ErrorBadge>{JOB_STATUS_LABELS.cancelled}</ErrorBadge>;
+      default:
+        return null;
+    }
+  }, []);
+
+  return getBadge(status);
 }

@@ -1,7 +1,6 @@
 import { useCallback } from "react";
 import { DraftBadge, LiveBadge, HiddenBadge } from "./badge";
 import { EMPLOYER_STATUS, EMPLOYER_STATUS_LABELS } from "@/constants/filters";
-import type { EmployerStatus } from "@/constants/filters";
 
 interface EmployerStatusBadgeProps {
   status?: string;

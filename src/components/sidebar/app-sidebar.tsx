@@ -21,7 +21,7 @@ import { useLogout } from "@/hooks/useLogout";
 
 export function AppSidebar({ ...props }) {
   const { state } = useSidebar();
-  const handleLogout = useLogout();
+  const { onLogout: handleLogout } = useLogout();
 
   return (
     <Sidebar collapsible="icon" {...props}>

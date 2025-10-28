@@ -75,6 +75,14 @@ export function CompanySearchSelect({
     }
   };
 
+  const handleInputFocus = () => {
+    setShowDropdown(true);
+    // Clear the search term to show all companies when focusing
+    if (searchTerm === initialCompanyName) {
+      setSearchTerm("");
+    }
+  };
+
   const handleCompanySelect = (company) => {
     setCompanyId(company.id);
     setCompanyName(company.company_name);
@@ -104,7 +112,7 @@ export function CompanySearchSelect({
             placeholder="Search and select company..."
             value={searchTerm}
             onChange={handleInputChange}
-            onFocus={() => setShowDropdown(true)}
+            onFocus={handleInputFocus}
             className="pl-10"
           />
         </div>

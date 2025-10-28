@@ -51,10 +51,18 @@ export function useJobsList(filters: JobFilters) {
         throw new Error(countError.message);
       }
 
-      // Data query
+      // Data query with employer_profile join to get current company name
       let query = supabase
         .from("job")
-        .select("*")
+        .select(
+          `
+          *,
+          employer_profile:company_id (
+            company_name,
+            logo_url
+          )
+        `,
+        )
         .order("created_at", { ascending: false })
         .filter("deleted_at", "is", null)
         .range(from, to);
@@ -81,7 +89,7 @@ export function useJobsList(filters: JobFilters) {
 
       const totalPages = Math.ceil((count || 0) / pageSize);
 
-      // Normalize jobs data
+      // Normalize jobs data - prioritize employer_profile company_name
       const normalizedJobs =
         data?.map((job) => ({
           ...job,
@@ -90,7 +98,11 @@ export function useJobsList(filters: JobFilters) {
           newApplicationsToReview: job.new_applications_to_review || 0,
           pollenInterviewsBooked: job.pollen_interviews_booked || 0,
           needsApproval: job.needs_approval || false,
-          company_name: job.company_name || "Unknown Company",
+          company_name:
+            job.employer_profile?.company_name ||
+            job.company_name ||
+            "Unknown Company",
+          company_logo_url: job.employer_profile?.logo_url || null,
           responsibilities: job.responsibilities || [],
           who_would_love: job.who_would_love || [],
         })) || [];

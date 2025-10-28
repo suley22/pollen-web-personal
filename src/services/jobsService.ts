@@ -237,8 +237,6 @@ export class JobService {
    */
   async fetchJobs(filters: JobFilters = {}) {
     try {
-      console.log("🔍 JobService: Fetching jobs with filters:", filters);
-
       const query = this.buildJobQuery(filters);
       const { data, error } = await query;
 
@@ -246,10 +244,6 @@ export class JobService {
         console.error("❌ JobService: Error fetching jobs:", error);
         return { success: false, error: error.message };
       }
-
-      console.log(
-        `📦 JobService: Fetched ${data?.length || 0} jobs from database`,
-      );
 
       // Fetch application counts for each job
       const jobsWithApplicationCounts = await Promise.all(
@@ -277,8 +271,6 @@ export class JobService {
    */
   async fetchJobById(id: string) {
     try {
-      console.log("JobService: Fetching job by ID:", id);
-
       const { data, error } = await this.supabase
         .from("job")
         .select("*")
@@ -316,8 +308,6 @@ export class JobService {
    */
   async fetchJobWithAssessment(jobId: string) {
     try {
-      console.log("JobService: Fetching job with assessment:", jobId);
-
       // Fetch job data
       const { data: job, error: jobError } = await this.supabase
         .from("job")

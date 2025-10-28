@@ -179,11 +179,18 @@ export function useJobById(id: string) {
     enabled: !!id,
     queryKey: [jobsQueryKey, "profile", id],
     queryFn: async () => {
-      console.log("JobService: Fetching job by ID:", id);
-
+      // TODO: Ejemplo de consulta de url de companía asociada a un job
       const { data, error } = await supabase
         .from("job")
-        .select("*")
+        .select(
+          `
+          *,
+          employer_profile:company_id (
+            logo_url,
+            company_name
+          )
+        `,
+        )
         .eq("id", id)
         .single();
 
@@ -195,7 +202,7 @@ export function useJobById(id: string) {
       // Normalize the job data
       const job = {
         ...data,
-        tu_campo: data?.tu_campo || "valor personalizado",
+        company_logo_url: data?.employer_profile?.logo_url || null,
         responsibilities: data?.responsibilities || [],
         who_would_love: data?.who_would_love || [],
         qualifications: data?.qualifications || [],

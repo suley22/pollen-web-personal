@@ -35,7 +35,7 @@ export const TextareaInput = React.forwardRef<
       minHeight,
       rows = 3,
       maxLength = 1000,
-      showCharacterCount = false,
+      showCharacterCount = true,
       value,
       ...props
     },

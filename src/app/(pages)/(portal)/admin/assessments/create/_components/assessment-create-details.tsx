@@ -34,7 +34,7 @@ export function AssessmentCreateDetails({
       icon={<Building2 className="h-5 w-5" />}
     >
       <div className="flex flex-col gap-4">
-        {/* Internal Pollen Title */}
+        {/* Internal Pollen Title - Optional */}
         <Input
           label="Internal Pollen Title"
           type="text"
@@ -45,8 +45,7 @@ export function AssessmentCreateDetails({
           onChange={(e) => onInternalPollenTitleChange(e.target.value)}
           helperText="This title is only visible to Pollen administrators"
         />
-
-        {/* Assessment Title */}
+        {/* Assessment Title - Required */}
         <Input
           label="Title"
           type="text"
@@ -55,20 +54,20 @@ export function AssessmentCreateDetails({
           placeholder="Enter assessment title"
           value={assessmentTitle}
           onChange={(e) => onAssessmentTitleChange(e.target.value)}
+          required
         />
 
-        {/* Assessment Description */}
-        <TextareaInput
-          label="Description"
-          name="assessment_description"
-          id="assessment_description"
-          placeholder="Enter assessment description"
+        {/* Assessment Subtitle (Description) */}
+        <Input
+          label="Subtitle"
+          name="assessment_subtitle"
+          id="assessment_subtitle"
+          placeholder="Enter assessment subtitle"
           value={assessmentDescription}
           onChange={(e) => onAssessmentDescriptionChange(e.target.value)}
-          rows={3}
         />
 
-        {/* Instructions Title */}
+        {/* Instructions Title - Optional */}
         <Input
           label="Instructions Title"
           type="text"
@@ -79,7 +78,7 @@ export function AssessmentCreateDetails({
           onChange={(e) => onInstructionsTitleChange(e.target.value)}
         />
 
-        {/* Instructions Description */}
+        {/* Instructions Description - Optional */}
         <TextareaInput
           label="Instructions Description"
           name="instructions_description"

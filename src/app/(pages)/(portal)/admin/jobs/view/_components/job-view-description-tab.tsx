@@ -1,5 +1,6 @@
 import { Award, FileText, Lightbulb, Target, Users } from "lucide-react";
-import { DescriptionCard, JobOverviewCard, ListCard } from "./job-view-cards";
+import { JobOverviewCard, ListCard } from "./job-view-cards";
+import { DescriptionCard } from "@/components/design-system";
 
 export function JobDescriptionTab({ job }) {
   if (!job) {
@@ -19,9 +20,8 @@ export function JobDescriptionTab({ job }) {
       <DescriptionCard
         title="About this Role"
         icon={<FileText className="h-5 w-5 text-gray-500" />}
-      >
-        <p>{job.about_this_role || "No description provided."}</p>
-      </DescriptionCard>
+        value={job.about_this_role || "No description provided."}
+      />
 
       <ListCard
         title="Key Responsibilities"
@@ -38,12 +38,11 @@ export function JobDescriptionTab({ job }) {
       <DescriptionCard
         title="Success In This Role Looks Like"
         icon={<Target className="h-5 w-5 text-gray-500" />}
-      >
-        <p>{job.success_looks || "No description provided."}</p>
-      </DescriptionCard>
+        value={job.success_looks || "No description provided."}
+      />
 
       <ListCard
-        title="Polle Approved Requirements"
+        title="Pollen Approved Requirements"
         icon={<Award className="h-5 w-5 text-gray-500" />}
         items={job.pollen_approved_requirements}
       />
@@ -51,9 +50,8 @@ export function JobDescriptionTab({ job }) {
       <DescriptionCard
         title="Internal Notes"
         icon={<Lightbulb className="h-5 w-5 text-gray-500" />}
-      >
-        <p>{job.internal_notes || "No internal notes provided."}</p>
-      </DescriptionCard>
+        value={job.internal_notes || "No internal notes provided."}
+      />
     </div>
   );
 }

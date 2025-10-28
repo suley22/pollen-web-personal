@@ -34,16 +34,10 @@ export default function JobsViewComponent({ id = null }) {
         jobStatus={job?.status || "draft"}
         onBack={() => router.back()}
         onEdit={handleEdit}
-        onSave={() => {}}
-        onCancel={() => {}}
         onGoLive={() => {}}
         onPause={() => {}}
         onComplete={() => {}}
-        onCancelJob={() => {}}
         onDelete={() => {}}
-        isEditing={false}
-        isEditingAssessment={false}
-        canMarkComplete={false}
       />
 
       <Tabs

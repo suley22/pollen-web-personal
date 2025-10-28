@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const assessmentsQueryKey = "assessments";
 
@@ -12,6 +12,136 @@ export interface AssessmentFilters {
   pageSize?: number;
 }
 
+export interface AssessmentQuestion {
+  id?: string;
+  title: string;
+  subtitle: string;
+  options?: { value: string; label: string; categoryId?: string }[];
+  categoryId?: string;
+  type: "multiple_choice" | "free_input" | "file_upload";
+}
+
+export interface AssessmentCategory {
+  id: string;
+  name: string;
+  description: string;
+  color: string;
+}
+
+export interface CreateAssessmentInput {
+  internal_pollen_title?: string;
+  title: string;
+  subtitle?: string;
+  estimated_duration?: string;
+  instructions_title?: string;
+  instructions_description?: string;
+  type: "multiple_choice" | "free_input" | "file_upload";
+  categories?: AssessmentCategory[];
+  questions: AssessmentQuestion[];
+}
+
+export interface Assessment {
+  id: string;
+  internal_pollen_title?: string;
+  title: string;
+  subtitle?: string;
+  type: "multiple_choice" | "free_input" | "file_upload";
+  status: "draft" | "live" | "paused" | "archived";
+  questions_count: number;
+  estimated_duration?: string;
+  created_at: string;
+  updated_at: string;
+  created_by: string;
+  total_submissions?: number;
+  categories?: AssessmentCategory[];
+  questions?: AssessmentQuestion[];
+  instructions_title?: string;
+  instructions_description?: string;
+}
+
+// Mock data store (in real app, this would be in a database)
+let mockAssessmentsStore: Assessment[] = [
+  {
+    id: "1",
+    internal_pollen_title: "Frontend Developer Skills Assessment",
+    title: "Frontend Developer Skills Assessment",
+    subtitle: "Evaluate React and TypeScript proficiency",
+    type: "multiple_choice",
+    status: "draft",
+    questions_count: 15,
+    estimated_duration: "30 minutes",
+    created_at: "2024-10-20T10:00:00Z",
+    updated_at: "2024-10-25T14:30:00Z",
+    created_by: "Admin User",
+  },
+  {
+    id: "2",
+    internal_pollen_title: "Product Management Case Study",
+    title: "Product Management Case Study",
+    subtitle: "Assess strategic thinking and problem-solving",
+    type: "free_input",
+    status: "live",
+    questions_count: 5,
+    estimated_duration: "45 minutes",
+    created_at: "2024-10-15T09:00:00Z",
+    updated_at: "2024-10-22T11:20:00Z",
+    created_by: "Admin User",
+  },
+  {
+    id: "3",
+    internal_pollen_title: "Design Portfolio Review",
+    title: "Design Portfolio Review",
+    subtitle: "Upload and review design work samples",
+    type: "file_upload",
+    status: "live",
+    questions_count: 3,
+    estimated_duration: "20 minutes",
+    created_at: "2024-10-18T13:00:00Z",
+    updated_at: "2024-10-26T16:45:00Z",
+    created_by: "Admin User",
+  },
+  {
+    id: "4",
+    internal_pollen_title: "Backend Engineering Assessment",
+    title: "Backend Engineering Assessment",
+    subtitle: "Test Node.js and database knowledge",
+    type: "multiple_choice",
+    status: "live",
+    questions_count: 20,
+    estimated_duration: "40 minutes",
+    created_at: "2024-10-12T08:00:00Z",
+    updated_at: "2024-10-24T10:15:00Z",
+    created_by: "Admin User",
+  },
+  {
+    id: "5",
+    internal_pollen_title: "Sales Skills Evaluation",
+    title: "Sales Skills Evaluation",
+    subtitle: "Assess communication and persuasion abilities",
+    type: "free_input",
+    status: "paused",
+    questions_count: 8,
+    estimated_duration: "35 minutes",
+    created_at: "2024-10-10T12:00:00Z",
+    updated_at: "2024-10-23T15:30:00Z",
+    created_by: "Admin User",
+    total_submissions: 18,
+  },
+  {
+    id: "6",
+    internal_pollen_title: "Marketing Campaign Analysis",
+    title: "Marketing Campaign Analysis",
+    subtitle: "Upload campaign materials and strategy documents",
+    type: "file_upload",
+    status: "draft",
+    questions_count: 4,
+    estimated_duration: "25 minutes",
+    created_at: "2024-10-08T14:00:00Z",
+    updated_at: "2024-10-21T09:00:00Z",
+    created_by: "Admin User",
+  },
+];
+
 export function useAssessmentsList(filters: AssessmentFilters) {
   return useQuery({
     queryKey: [assessmentsQueryKey, "list", filters],
@@ -19,96 +149,8 @@ export function useAssessmentsList(filters: AssessmentFilters) {
       const page = filters.page || 1;
       const pageSize = filters.pageSize || 10;
 
-      // Mock data
-      const mockAssessments = [
-        {
-          id: "1",
-          internal_pollen_title: "Frontend Developer Skills Assessment",
-          title: "Frontend Developer Skills Assessment",
-          subtitle: "Evaluate React and TypeScript proficiency",
-          type: "multiple_choice",
-          status: "draft",
-          questions_count: 15,
-          estimated_duration: "30 minutes",
-          created_at: "2024-10-20T10:00:00Z",
-          updated_at: "2024-10-25T14:30:00Z",
-          created_by: "Admin User",
-          total_submissions: 0,
-        },
-        {
-          id: "2",
-          internal_pollen_title: "Product Management Case Study",
-          title: "Product Management Case Study",
-          subtitle: "Assess strategic thinking and problem-solving",
-          type: "free_input",
-          status: "live",
-          questions_count: 5,
-          estimated_duration: "45 minutes",
-          created_at: "2024-10-15T09:00:00Z",
-          updated_at: "2024-10-22T11:20:00Z",
-          created_by: "Admin User",
-          total_submissions: 23,
-        },
-        {
-          id: "3",
-          internal_pollen_title: "Design Portfolio Review",
-          title: "Design Portfolio Review",
-          subtitle: "Upload and review design work samples",
-          type: "file_upload",
-          status: "live",
-          questions_count: 3,
-          estimated_duration: "20 minutes",
-          created_at: "2024-10-18T13:00:00Z",
-          updated_at: "2024-10-26T16:45:00Z",
-          created_by: "Admin User",
-          total_submissions: 12,
-        },
-        {
-          id: "4",
-          internal_pollen_title: "Backend Engineering Assessment",
-          title: "Backend Engineering Assessment",
-          subtitle: "Test Node.js and database knowledge",
-          type: "multiple_choice",
-          status: "live",
-          questions_count: 20,
-          estimated_duration: "40 minutes",
-          created_at: "2024-10-12T08:00:00Z",
-          updated_at: "2024-10-24T10:15:00Z",
-          created_by: "Admin User",
-          total_submissions: 45,
-        },
-        {
-          id: "5",
-          internal_pollen_title: "Sales Skills Evaluation",
-          title: "Sales Skills Evaluation",
-          subtitle: "Assess communication and persuasion abilities",
-          type: "free_input",
-          status: "paused",
-          questions_count: 8,
-          estimated_duration: "35 minutes",
-          created_at: "2024-10-10T12:00:00Z",
-          updated_at: "2024-10-23T15:30:00Z",
-          created_by: "Admin User",
-          total_submissions: 18,
-        },
-        {
-          id: "6",
-          internal_pollen_title: "Marketing Campaign Analysis",
-          title: "Marketing Campaign Analysis",
-          subtitle: "Upload campaign materials and strategy documents",
-          type: "file_upload",
-          status: "draft",
-          questions_count: 4,
-          estimated_duration: "25 minutes",
-          created_at: "2024-10-08T14:00:00Z",
-          updated_at: "2024-10-21T09:00:00Z",
-          created_by: "Admin User",
-          total_submissions: 0,
-        },
-      ];
-
       // Apply filters
-      let filteredAssessments = [...mockAssessments, ...mockAssessments];
+      let filteredAssessments = [...mockAssessmentsStore];
 
       if (filters.status && filters.status !== "all") {
         filteredAssessments = filteredAssessments.filter(
@@ -127,7 +169,7 @@ export function useAssessmentsList(filters: AssessmentFilters) {
         filteredAssessments = filteredAssessments.filter(
           (a) =>
             a.title.toLowerCase().includes(searchLower) ||
-            a.subtitle.toLowerCase().includes(searchLower),
+            (a.subtitle?.toLowerCase().includes(searchLower) ?? false),
         );
       }
 
@@ -159,17 +201,125 @@ export function useAssessmentsStatistics(filters?: AssessmentFilters) {
   return useQuery({
     queryKey: [assessmentsQueryKey, "statistics", filters],
     queryFn: async () => {
-      // Mock statistics
-      return {
-        total: 6,
-        draft: 2,
-        live: 3,
-        paused: 1,
-        archived: 0,
-        multiple_choice: 2,
-        free_input: 2,
-        file_upload: 2,
+      const assessments = mockAssessmentsStore;
+
+      // Calculate statistics
+      const stats = {
+        total: assessments.length,
+        draft: assessments.filter((a) => a.status === "draft").length,
+        live: assessments.filter((a) => a.status === "live").length,
+        paused: assessments.filter((a) => a.status === "paused").length,
+        archived: assessments.filter((a) => a.status === "archived").length,
+        multiple_choice: assessments.filter((a) => a.type === "multiple_choice")
+          .length,
+        free_input: assessments.filter((a) => a.type === "free_input").length,
+        file_upload: assessments.filter((a) => a.type === "file_upload").length,
       };
+
+      return stats;
+    },
+  });
+}
+
+// Mutation to create a new assessment
+export function useCreateAssessment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: CreateAssessmentInput) => {
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Create new assessment
+      const newAssessment: Assessment = {
+        id: Date.now().toString(),
+        internal_pollen_title: input.internal_pollen_title,
+        title: input.title,
+        subtitle: input.subtitle,
+        type: input.type,
+        status: "draft",
+        questions_count: input.questions.length,
+        estimated_duration: input.estimated_duration,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        created_by: "Admin User", // TODO: Get from auth context
+        total_submissions: 0,
+        categories: input.categories,
+        questions: input.questions,
+        instructions_title: input.instructions_title,
+        instructions_description: input.instructions_description,
+      };
+
+      // Add to mock store
+      mockAssessmentsStore = [newAssessment, ...mockAssessmentsStore];
+
+      return newAssessment;
+    },
+    onSuccess: () => {
+      // Invalidate and refetch assessments queries
+      queryClient.invalidateQueries({ queryKey: [assessmentsQueryKey] });
+    },
+  });
+}
+
+// Mutation to update an assessment
+export function useUpdateAssessment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      input,
+    }: {
+      id: string;
+      input: Partial<CreateAssessmentInput>;
+    }) => {
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Find and update assessment
+      const index = mockAssessmentsStore.findIndex((a) => a.id === id);
+      if (index === -1) {
+        throw new Error("Assessment not found");
+      }
+
+      const updatedAssessment: Assessment = {
+        ...mockAssessmentsStore[index],
+        ...input,
+        questions_count:
+          input.questions?.length ??
+          mockAssessmentsStore[index].questions_count,
+        updated_at: new Date().toISOString(),
+      };
+
+      mockAssessmentsStore[index] = updatedAssessment;
+
+      return updatedAssessment;
+    },
+    onSuccess: () => {
+      // Invalidate and refetch assessments queries
+      queryClient.invalidateQueries({ queryKey: [assessmentsQueryKey] });
+    },
+  });
+}
+
+// Mutation to delete an assessment
+export function useDeleteAssessment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Remove from mock store
+      mockAssessmentsStore = mockAssessmentsStore.filter((a) => a.id !== id);
+
+      return { id };
+    },
+    onSuccess: () => {
+      // Invalidate and refetch assessments queries
+      queryClient.invalidateQueries({ queryKey: [assessmentsQueryKey] });
     },
   });
 }

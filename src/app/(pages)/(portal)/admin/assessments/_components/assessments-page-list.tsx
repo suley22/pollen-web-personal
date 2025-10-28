@@ -2,7 +2,16 @@
 
 import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, Clock, HelpCircle, Eye, Edit, Users } from "lucide-react";
+import {
+  FileText,
+  Clock,
+  HelpCircle,
+  Eye,
+  Edit,
+  Users,
+  Upload,
+  ListChecks,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { AdminRoutes } from "@/admin/router";
@@ -102,15 +111,6 @@ export function AssessmentsList({
                           >
                             {STATUS_LABELS[assessment.status]}
                           </Badge>
-                          <Badge
-                            variant="outline"
-                            className={cn(
-                              "font-medium",
-                              ASSESSMENT_TYPE_COLORS[assessment.type],
-                            )}
-                          >
-                            {ASSESSMENT_TYPE_LABELS[assessment.type]}
-                          </Badge>
                         </div>
                       </div>
 
@@ -136,6 +136,28 @@ export function AssessmentsList({
                       {/* First Row: Questions and Duration */}
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2 text-muted-foreground">
+                          <div className="flex justify-center gap-2">
+                            {assessment.type == "multiple_choice" && (
+                              <>
+                                <ListChecks className="w-4 h-4 flex-shrink-0" />
+                                <span>Multiple Choice </span>
+                              </>
+                            )}
+                            {assessment.type === "file_upload" && (
+                              <>
+                                <Upload className="w-4 h-4 flex-shrink-0" />
+                                <span> File Upload </span>
+                              </>
+                            )}
+                            {assessment.type === "free_input" && (
+                              <>
+                                <FileText className="w-4 h-4 flex-shrink-0" />
+                                <span> Free Input </span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 text-muted-foreground">
                           <HelpCircle className="w-4 h-4 flex-shrink-0" />
                           <span>
                             {assessment.questions_count}{" "}
@@ -147,12 +169,6 @@ export function AssessmentsList({
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Clock className="w-4 h-4 flex-shrink-0" />
                           <span>{assessment.estimated_duration}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-muted-foreground">
-                          <Users className="w-4 h-4 flex-shrink-0" />
-                          <span>
-                            {assessment.total_submissions} submissions
-                          </span>
                         </div>
                       </div>
                     </div>

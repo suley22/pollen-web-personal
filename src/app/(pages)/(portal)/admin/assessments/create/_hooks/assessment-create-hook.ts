@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { AssessmentCategory } from "@/types/assessment-category";
+import { useCreateAssessment } from "../../_services/assessments-page-service";
+import { AdminRoutes } from "@/admin/router";
 
 interface MultipleChoiceQuestion {
   title: string;
@@ -14,11 +16,13 @@ interface MultipleChoiceQuestion {
 
 export function useAssessmentCreate({ id = null }) {
   const router = useRouter();
+  const createAssessmentMutation = useCreateAssessment();
 
   // Estado para el assessment
   const [internalPollenTitle, setInternalPollenTitle] = useState("");
   const [assessmentTitle, setAssessmentTitle] = useState("");
   const [assessmentDescription, setAssessmentDescription] = useState("");
+  const [estimatedDuration, setEstimatedDuration] = useState("");
   const [instructionsTitle, setInstructionsTitle] = useState("");
   const [instructionsDescription, setInstructionsDescription] = useState("");
 
@@ -187,18 +191,42 @@ export function useAssessmentCreate({ id = null }) {
     router.back();
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (
+    assessmentType: "multiple_choice" | "free_input" | "file_upload",
+  ) => {
     try {
-      // TODO: Implement save logic
-      console.log("Saving assessment:", {
-        assessmentTitle,
-        assessmentDescription,
-        instructionsTitle,
-        instructionsDescription,
-        categories,
-        questions,
+      // Validate required fields
+      if (!assessmentTitle.trim()) {
+        throw new Error("Assessment title is required");
+      }
+
+      if (questions.length === 0) {
+        throw new Error("At least one question is required");
+      }
+
+      // Create assessment using mutation
+      const result = await createAssessmentMutation.mutateAsync({
+        internal_pollen_title: internalPollenTitle || undefined,
+        title: assessmentTitle,
+        subtitle: assessmentDescription || undefined,
+        estimated_duration: estimatedDuration || undefined,
+        instructions_title: instructionsTitle || undefined,
+        instructions_description: instructionsDescription || undefined,
+        type: assessmentType,
+        categories: categories.length > 0 ? categories : undefined,
+        questions: questions.map((q) => ({
+          title: q.title,
+          subtitle: q.description,
+          options: q.options,
+          categoryId: q.categoryId,
+          type: assessmentType,
+        })),
       });
-      // After save, redirect or show success message
+
+      console.log("Assessment created successfully:", result);
+
+      // Navigate to assessments list
+      router.push(AdminRoutes.assessments);
     } catch (error) {
       console.error("Error saving assessment:", error);
       throw error;
@@ -213,6 +241,8 @@ export function useAssessmentCreate({ id = null }) {
     setAssessmentTitle,
     assessmentDescription,
     setAssessmentDescription,
+    estimatedDuration,
+    setEstimatedDuration,
     instructionsTitle,
     setInstructionsTitle,
     instructionsDescription,
@@ -257,5 +287,9 @@ export function useAssessmentCreate({ id = null }) {
     // Navigation
     handleBack,
     handleSubmit,
+
+    // Mutation states
+    isSaving: createAssessmentMutation.isPending,
+    saveError: createAssessmentMutation.error,
   };
 }

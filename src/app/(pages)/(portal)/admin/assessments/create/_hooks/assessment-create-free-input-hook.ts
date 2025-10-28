@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCreateAssessment } from "../../_services/assessments-page-service";
+import { AdminRoutes } from "@/admin/router";
 
 interface FreeInputQuestion {
   title: string;
@@ -9,6 +12,9 @@ interface FreeInputQuestion {
 }
 
 export function useAssessmentCreateFreeInput() {
+  const router = useRouter();
+  const createAssessmentMutation = useCreateAssessment();
+
   // Estado para preguntas
   const [questions, setQuestions] = useState<FreeInputQuestion[]>([]);
   const [title, setTitle] = useState("");
@@ -101,6 +107,58 @@ export function useAssessmentCreateFreeInput() {
     setQuestions(newQuestions);
   };
 
+  // Funciones de navegación
+  const handleBack = () => {
+    router.back();
+  };
+
+  const handleSubmit = async (
+    assessmentType: "free_input",
+    assessmentData: {
+      internal_pollen_title?: string;
+      title: string;
+      subtitle?: string;
+      estimated_duration?: string;
+      instructions_title?: string;
+      instructions_description?: string;
+    },
+  ) => {
+    try {
+      // Validate required fields
+      if (!assessmentData.title.trim()) {
+        throw new Error("Assessment title is required");
+      }
+
+      if (questions.length === 0) {
+        throw new Error("At least one question is required");
+      }
+
+      // Create assessment using mutation
+      const result = await createAssessmentMutation.mutateAsync({
+        internal_pollen_title: assessmentData.internal_pollen_title,
+        title: assessmentData.title,
+        subtitle: assessmentData.subtitle,
+        estimated_duration: assessmentData.estimated_duration,
+        instructions_title: assessmentData.instructions_title,
+        instructions_description: assessmentData.instructions_description,
+        type: assessmentType,
+        questions: questions.map((q) => ({
+          title: q.title,
+          subtitle: q.subtitle,
+          type: assessmentType,
+        })),
+      });
+
+      console.log("Assessment created successfully:", result);
+
+      // Navigate to assessments list
+      router.push(AdminRoutes.assessments);
+    } catch (error) {
+      console.error("Error saving assessment:", error);
+      throw error;
+    }
+  };
+
   return {
     // Questions
     questions,
@@ -117,5 +175,11 @@ export function useAssessmentCreateFreeInput() {
     handleMoveQuestionUp,
     handleMoveQuestionDown,
     handleClearForm,
+
+    // Navigation and submission
+    handleBack,
+    handleSubmit,
+    isSaving: createAssessmentMutation.isPending,
+    saveError: createAssessmentMutation.error,
   };
 }

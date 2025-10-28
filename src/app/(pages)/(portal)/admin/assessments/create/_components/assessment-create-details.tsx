@@ -7,11 +7,13 @@ interface AssessmentCreateHeaderProps {
   internalPollenTitle: string;
   assessmentTitle: string;
   assessmentDescription: string;
+  estimatedDuration: string;
   instructionsTitle: string;
   instructionsDescription: string;
   onInternalPollenTitleChange: (value: string) => void;
   onAssessmentTitleChange: (value: string) => void;
   onAssessmentDescriptionChange: (value: string) => void;
+  onEstimatedDurationChange: (value: string) => void;
   onInstructionsTitleChange: (value: string) => void;
   onInstructionsDescriptionChange: (value: string) => void;
 }
@@ -20,11 +22,13 @@ export function AssessmentCreateDetails({
   internalPollenTitle,
   assessmentTitle,
   assessmentDescription,
+  estimatedDuration,
   instructionsTitle,
   instructionsDescription,
   onInternalPollenTitleChange,
   onAssessmentTitleChange,
   onAssessmentDescriptionChange,
+  onEstimatedDurationChange,
   onInstructionsTitleChange,
   onInstructionsDescriptionChange,
 }: AssessmentCreateHeaderProps) {
@@ -65,6 +69,18 @@ export function AssessmentCreateDetails({
           placeholder="Enter assessment subtitle"
           value={assessmentDescription}
           onChange={(e) => onAssessmentDescriptionChange(e.target.value)}
+        />
+
+        {/* Estimated Duration */}
+        <Input
+          label="Estimated Duration"
+          type="text"
+          name="estimated_duration"
+          id="estimated_duration"
+          placeholder="e.g., '30 minutes', '1 hour'"
+          value={estimatedDuration}
+          onChange={(e) => onEstimatedDurationChange(e.target.value)}
+          helperText="Approximate time needed to complete this assessment"
         />
 
         {/* Instructions Title - Optional */}

@@ -29,9 +29,11 @@ export function JobDescriptionTab({ initialData: editedJob, formRef }) {
       <FormCard icon={<Briefcase className="h-5 w-5" />} title="Job Overview">
         <div className="grid grid-cols-2 gap-6">
           <CompanySearchSelect
-            initialCompanyId={editedJob?.company_id || null}
-            initialCompanyName={editedJob?.company_name || ""}
+            initialCompanyId={editedJob?.company_id}
+            initialCompanyName={editedJob?.company_name}
+            onValueChange={() => {}}
           />
+
           <Input
             label="Job Title"
             type="text"

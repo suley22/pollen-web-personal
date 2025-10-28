@@ -203,6 +203,8 @@ export function useJobById(id: string) {
       const job = {
         ...data,
         company_logo_url: data?.employer_profile?.logo_url || null,
+        company_name:
+          data?.employer_profile?.company_name || data?.company_name || "",
         responsibilities: data?.responsibilities || [],
         who_would_love: data?.who_would_love || [],
         qualifications: data?.qualifications || [],

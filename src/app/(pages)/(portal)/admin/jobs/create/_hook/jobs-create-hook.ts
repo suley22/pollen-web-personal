@@ -12,13 +12,10 @@ export function useJobsCreatePage({ id = null }) {
   const isEditMode = !!id;
 
   // Query para obtener job (solo si hay id - modo edición)
-  const { data: { data: job } = {}, isLoading } = useJobById(id || "");
+  const { data: job, isLoading } = useJobById(id || "");
 
   // Mutation para crear
   const createMutation = useCreateJob();
-
-  // // Mutation para actualizar
-  // const updateMutation = useUpdateJob();
 
   const [activeTab, setActiveTab] = useState("description");
   const [isDialogOpen, setIsDialogOpen] = useState(false);

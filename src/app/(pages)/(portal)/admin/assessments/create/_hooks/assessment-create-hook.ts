@@ -102,8 +102,8 @@ export function useAssessmentCreate({ id = null }) {
 
   // Funciones para preguntas
   const handleAddQuestion = () => {
-    if (!title.trim() || !optionsTitle.trim() || options.length === 0) {
-      alert("Please fill in all required fields and add at least one option");
+    if (!title.trim() || options.length < 2) {
+      alert("Please fill in all required fields and add at least 2 options");
       return;
     }
 

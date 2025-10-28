@@ -16,6 +16,8 @@ interface AssessmentCreateMultipleChoiceViewProps {
   assessmentDescription: string;
   instructionsTitle: string;
   instructionsDescription: string;
+  internalPollenTitle: string;
+  estimatedDuration: string;
 }
 
 export default function AssessmentCreateMultipleChoiceView({
@@ -23,6 +25,8 @@ export default function AssessmentCreateMultipleChoiceView({
   assessmentDescription,
   instructionsTitle,
   instructionsDescription,
+  internalPollenTitle,
+  estimatedDuration,
 }: AssessmentCreateMultipleChoiceViewProps) {
   const {
     // Categories
@@ -66,7 +70,14 @@ export default function AssessmentCreateMultipleChoiceView({
   } = useAssessmentCreate({});
 
   const handleSaveDraft = async () => {
-    await handleSubmit("multiple_choice");
+    await handleSubmit("multiple_choice", {
+      internalPollenTitle,
+      assessmentTitle,
+      assessmentDescription,
+      estimatedDuration,
+      instructionsTitle,
+      instructionsDescription,
+    });
   };
 
   return (

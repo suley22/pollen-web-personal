@@ -193,10 +193,33 @@ export function useAssessmentCreate({ id = null }) {
 
   const handleSubmit = async (
     assessmentType: "multiple_choice" | "free_input" | "file_upload",
+    assessmentData?: {
+      internalPollenTitle?: string;
+      assessmentTitle?: string;
+      assessmentDescription?: string;
+      estimatedDuration?: string;
+      instructionsTitle?: string;
+      instructionsDescription?: string;
+    },
   ) => {
     try {
+      // Use provided data or fall back to hook state
+      const dataToSubmit = {
+        internalPollenTitle:
+          assessmentData?.internalPollenTitle ?? internalPollenTitle,
+        assessmentTitle: assessmentData?.assessmentTitle ?? assessmentTitle,
+        assessmentDescription:
+          assessmentData?.assessmentDescription ?? assessmentDescription,
+        estimatedDuration:
+          assessmentData?.estimatedDuration ?? estimatedDuration,
+        instructionsTitle:
+          assessmentData?.instructionsTitle ?? instructionsTitle,
+        instructionsDescription:
+          assessmentData?.instructionsDescription ?? instructionsDescription,
+      };
+
       // Validate required fields
-      if (!assessmentTitle.trim()) {
+      if (!dataToSubmit.assessmentTitle.trim()) {
         throw new Error("Assessment title is required");
       }
 
@@ -206,12 +229,13 @@ export function useAssessmentCreate({ id = null }) {
 
       // Create assessment using mutation
       const result = await createAssessmentMutation.mutateAsync({
-        internal_pollen_title: internalPollenTitle || undefined,
-        title: assessmentTitle,
-        subtitle: assessmentDescription || undefined,
-        estimated_duration: estimatedDuration || undefined,
-        instructions_title: instructionsTitle || undefined,
-        instructions_description: instructionsDescription || undefined,
+        internal_pollen_title: dataToSubmit.internalPollenTitle || undefined,
+        title: dataToSubmit.assessmentTitle,
+        subtitle: dataToSubmit.assessmentDescription || undefined,
+        estimated_duration: dataToSubmit.estimatedDuration || undefined,
+        instructions_title: dataToSubmit.instructionsTitle || undefined,
+        instructions_description:
+          dataToSubmit.instructionsDescription || undefined,
         type: assessmentType,
         categories: categories.length > 0 ? categories : undefined,
         questions: questions.map((q) => ({

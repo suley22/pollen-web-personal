@@ -112,6 +112,8 @@ export default function AssessmentCreateView() {
             assessmentDescription={assessmentDescription}
             instructionsTitle={instructionsTitle}
             instructionsDescription={instructionsDescription}
+            internalPollenTitle={internalPollenTitle}
+            estimatedDuration={estimatedDuration}
           />
         </div>
       )}

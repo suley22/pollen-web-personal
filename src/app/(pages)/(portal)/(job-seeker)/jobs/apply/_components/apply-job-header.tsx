@@ -7,10 +7,8 @@ export default function ApplyJobHeader({
   isSaved,
   showCompanyProfile,
   setShowCompanyProfile,
-  onSaveJob,
+  onToggleSave,
   onBack,
-  saveJobMutation,
-  removeSavedJobMutation,
 }) {
   return (
     <PageHeader
@@ -23,11 +21,8 @@ export default function ApplyJobHeader({
         <Button
           variant="outline"
           size="sm"
-          onClick={onSaveJob}
+          onClick={onToggleSave}
           className={isSaved ? "text-pink-600 border-pink-600" : ""}
-          disabled={
-            saveJobMutation?.isPending || removeSavedJobMutation?.isPending
-          }
         >
           <Heart className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`} />
           {isSaved ? "Saved" : "Save Job"}

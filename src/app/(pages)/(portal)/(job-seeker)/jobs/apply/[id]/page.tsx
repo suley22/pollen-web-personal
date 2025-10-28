@@ -7,22 +7,16 @@ import ProgressSteps from "../_components/progress-steps";
 import JobDetails from "../_components/job-details";
 import WhatHappensNext from "../_components/what-happens-next";
 
-// Mocked data (to be replaced with real data fetching logic)
-
-const isSaved = false;
-const saveJobMutation = { isPending: false };
-const removeSavedJobMutation = { isPending: false };
-
-// ----------------------- //
-
 export default function ApplyJobPage() {
   const {
     currentStep,
     showCompanyProfile,
     setShowCompanyProfile,
-    handleSaveJob,
+
     handleBack,
     job,
+    saveFavoriteJob,
+    isSaved,
   } = useApply();
 
   return (
@@ -32,10 +26,8 @@ export default function ApplyJobPage() {
         isSaved={isSaved}
         showCompanyProfile={showCompanyProfile}
         setShowCompanyProfile={setShowCompanyProfile}
-        onSaveJob={handleSaveJob}
+        onToggleSave={() => saveFavoriteJob(job.id)}
         onBack={handleBack}
-        saveJobMutation={saveJobMutation}
-        removeSavedJobMutation={removeSavedJobMutation}
       />
 
       <ProgressSteps currentStep={currentStep} />

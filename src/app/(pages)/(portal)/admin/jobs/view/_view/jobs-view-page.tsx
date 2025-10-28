@@ -22,6 +22,7 @@ export default function JobsViewComponent({ id = null }) {
     handleGoLive,
     handlePause,
     handleComplete,
+    handleCancel,
     handleDelete,
   } = useJobViewHook(id);
 
@@ -46,6 +47,7 @@ export default function JobsViewComponent({ id = null }) {
         onGoLive={handleGoLive}
         onPause={handlePause}
         onComplete={handleComplete}
+        onCancel={handleCancel}
         onDelete={handleDelete}
       />
 

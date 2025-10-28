@@ -29,6 +29,10 @@ export function useJobViewHook(id: string) {
     updateStatus.mutate({ id, status: JOB_STATUS.COMPLETE });
   };
 
+  const handleCancel = () => {
+    updateStatus.mutate({ id, status: JOB_STATUS.CANCELLED });
+  };
+
   const handleDelete = () => {
     deleteQuery.mutate(
       { id },
@@ -49,6 +53,7 @@ export function useJobViewHook(id: string) {
     handleGoLive,
     handlePause,
     handleComplete,
+    handleCancel,
     handleDelete,
     isUpdating: updateStatus.isPending,
     isDeleting: deleteQuery.isPending,

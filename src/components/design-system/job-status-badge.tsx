@@ -26,7 +26,9 @@ export function JobStatusBadge({ status }: JobStatusBadgeProps) {
       case JOB_STATUS.COMPLETE:
         return <InfoBadge>{JOB_STATUS_LABELS.complete}</InfoBadge>;
       case JOB_STATUS.CANCELLED:
-        return <ErrorBadge>{JOB_STATUS_LABELS.cancelled}</ErrorBadge>;
+        return (
+          <ErrorBadge>{JOB_STATUS_LABELS[JOB_STATUS.CANCELLED]}</ErrorBadge>
+        );
       default:
         return null;
     }

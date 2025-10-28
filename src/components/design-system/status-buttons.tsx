@@ -14,8 +14,8 @@ interface StatusButtonProps {
   type?: "button" | "submit" | "reset";
 }
 
-// Primary Button (Blue)
-export function PrimaryButton({
+// Complete Button (Blue)
+export function CompleteButton({
   text,
   icon,
   onClick,

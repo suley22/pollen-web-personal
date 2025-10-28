@@ -440,3 +440,65 @@ const parseArrayField = (fieldData: any): string[] => {
       .filter((item: string) => item);
   }
 };
+
+export function useUpdateJobStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      const { data, error } = await supabase
+        .from("job")
+        .update({
+          status: status,
+        })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
+    },
+    onSuccess: (_data, variables) => {
+      // Invalidate the specific job profile
+      queryClient.invalidateQueries({
+        queryKey: [jobsQueryKey, "profile", variables.id],
+      });
+      // Invalidate all jobs lists and statistics
+      queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
+    },
+    onError: (error) => {
+      console.error("Error updating job status:", error);
+    },
+  });
+}
+
+export function useDeleteJob() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      const { data, error } = await supabase
+        .from("job")
+        .update({
+          deleted_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      // Invalidate all jobs queries to refresh the lists and statistics
+      queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
+    },
+  });
+}

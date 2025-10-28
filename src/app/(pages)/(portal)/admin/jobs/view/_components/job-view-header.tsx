@@ -2,8 +2,8 @@
 
 import { PageHeader } from "@/components/design-system/page-header";
 import {
-  PrimaryButton,
   SuccessButton,
+  CompleteButton,
   WarningButton,
   DangerButton,
   EditButton,
@@ -68,7 +68,7 @@ export function JobViewHeader({
             onClick={onPause}
             disabled={isUpdating || isDeleting}
           />
-          <PrimaryButton
+          <CompleteButton
             text="Mark Complete"
             icon={<CheckCircle />}
             onClick={onComplete}

@@ -1,7 +1,11 @@
 import { FormCard } from "@/components/design-system";
 import { UserCheck } from "lucide-react";
+import { JobPersonaSkeleton } from "./job-view-skeletons";
 
-export function JobPersonaTab() {
+export function JobPersonaTab({ isLoading = false }) {
+  if (isLoading) {
+    return <JobPersonaSkeleton />;
+  }
   return (
     <FormCard
       title="Employer Persona Questionnaire Results"

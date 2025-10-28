@@ -54,6 +54,12 @@ export function JobOverviewCard({ job }) {
             label="Work Authorisation"
             value={job.work_authorisation}
           />
+          <div className="col-span-2">
+            <InfoField
+              label="Employment Type Details"
+              value={job.employment_type_details || "Not specified"}
+            />
+          </div>
         </div>
       </FormCard>
     </div>

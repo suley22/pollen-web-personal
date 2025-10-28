@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { JobViewHeader } from "../_components/job-view-header";
-import { useJobView } from "../_hooks/jobs-view-hook";
+import { useJobViewHook } from "../_hooks/jobs-view-hook";
 import { JobViewSkeleton } from "@/jobs/view/_view/jobs-view-skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, UserCheck, Brain } from "lucide-react";
@@ -14,7 +14,7 @@ import { AdminRoutes } from "@/admin/router";
 export default function JobsViewComponent({ id = null }) {
   const router = useRouter();
 
-  const { job, isLoading, activeTab, setActiveTab } = useJobView(id);
+  const { job, isLoading, activeTab, setActiveTab } = useJobViewHook(id);
 
   if (!job || isLoading) {
     return <JobViewSkeleton />;
@@ -29,9 +29,9 @@ export default function JobsViewComponent({ id = null }) {
     <div className="flex flex-col w-full mx-auto py-6 gap-6">
       {/* Header */}
       <JobViewHeader
-        jobTitle={job.job_title || "Job Details"}
-        companyName={job.company_name || "Company Name"}
-        jobStatus={job.status || "draft"}
+        jobTitle={job?.job_title || "Job Details"}
+        companyName={job?.company_name || "Company Name"}
+        jobStatus={job?.status || "draft"}
         onBack={() => router.back()}
         onEdit={handleEdit}
         onSave={() => {}}

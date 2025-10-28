@@ -195,6 +195,7 @@ export function useJobById(id: string) {
       // Normalize the job data
       const job = {
         ...data,
+        tu_campo: data?.tu_campo || "valor personalizado",
         responsibilities: data?.responsibilities || [],
         who_would_love: data?.who_would_love || [],
         qualifications: data?.qualifications || [],

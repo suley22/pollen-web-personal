@@ -56,7 +56,7 @@ export function List({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="flex flex-col w-full gap-4">
       <ResultsCount
         pagination={pagination}
         handlePageChange={handlePageChange}

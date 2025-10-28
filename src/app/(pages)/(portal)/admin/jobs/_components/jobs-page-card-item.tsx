@@ -2,15 +2,19 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Eye, Building2, Calendar, Users } from "lucide-react";
-import { JobStatusBadge } from "./job-status-badge";
+import { JobStatusBadge } from "../../../../../../components/design-system/job-status-badge";
+import { useRouter } from "next/navigation";
+import { AdminRoutes } from "@/admin/router";
 
-export default function JobCardItem({ job, router, routes, showAdminBadge }) {
+export function JobCardItem({ job, showAdminBadge }) {
+  const router = useRouter();
+
   return (
     <Card
       key={job.id}
       className="hover:shadow-lg hover:border-primary/20 transition-all duration-200 cursor-pointer border-border/40"
       onClick={() => {
-        router.push(routes.jobView(job.id));
+        router.push(AdminRoutes.jobView(job.id));
       }}
     >
       <CardContent className="px-5 pt-3 pb-2">
@@ -129,7 +133,7 @@ export default function JobCardItem({ job, router, routes, showAdminBadge }) {
                       className="h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
                       onClick={(e) => {
                         e.stopPropagation();
-                        router.push(routes.jobsApplicants(job.id));
+                        router.push(AdminRoutes.jobsApplicants(job.id));
                       }}
                     >
                       <Users className="h-4 w-4 mr-1" />
@@ -146,7 +150,7 @@ export default function JobCardItem({ job, router, routes, showAdminBadge }) {
                     }
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(routes.jobView(job.id));
+                      router.push(AdminRoutes.jobView(job.id));
                     }}
                   >
                     <Eye className="h-4 w-4 mr-1" />

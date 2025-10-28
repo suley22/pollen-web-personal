@@ -2,7 +2,8 @@
 
 import { useRoleManagment } from "./useRoleManagment";
 import { RoleChangeConfirmDialog } from "./role-change-confirm-dialog";
-import { User, Search } from "lucide-react";
+import { Search, Building2} from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -68,7 +69,16 @@ export default function RoleManagmentPage() {
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
                           <div className="h-12 w-12 bg-gray-200 rounded-full flex items-center justify-center">
-                            <User className="h-6 w-6  text-gray-500" />
+                            <Avatar className="h-12 w-12">
+                                  <AvatarImage
+                                    className="rounded-md"
+                                    src={jobSeeker.avatar_url}
+                                    alt={`${jobSeeker.first_name}`}
+                                  />
+                                  <AvatarFallback className="bg-muted text-muted-foreground">
+                                    <Building2 className="h-8 w-8" />
+                                  </AvatarFallback>
+                                </Avatar>
                           </div>
                         </div>
                       </div>

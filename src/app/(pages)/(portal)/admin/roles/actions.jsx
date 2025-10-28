@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/utils/supabase/server";
+import { supabaseAdmin } from "@/lib/utils/supabase/supabase-admin";
 
 export async function getUsers(filters = {}) {
   try {
@@ -62,9 +63,9 @@ export async function updateUserRole(userId, role) {
       return { message: "Error actualizando profile", success: false };
     }
 
-    const { data: dataUpdateUser, error: errorUpdateUser } =
-      await supabase.auth.updateUser({
-        data: {
+   const { data: dataUpdateUser, error: errorUpdateUser } =
+      await supabaseAdmin.auth.admin.updateUserById(userId, {
+        user_metadata: {
           role: role,
         },
       });

@@ -1,6 +1,7 @@
 import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { getJobById, saveSavedJob } from "../../_services/jobs-service";
+import { is } from "zod/v4/locales";
 
 export function useApply() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -11,7 +12,12 @@ export function useApply() {
   const params = useParams();
   const [jobs, setJobs] = useState([]);
   const [hiddenJobs, setHiddenJobs] = useState([]);
-  const savedJobs = new Set();
+  const [savedJobs] = useState(new Set());
+
+  useEffect(() => {
+    // Forzar re-render cuando savedJobs cambie
+    console.log("Saved jobs updated:", Array.from(savedJobs));
+  }, [savedJobs]);
 
   useEffect(() => {
     async function loadJob() {
@@ -34,10 +40,6 @@ export function useApply() {
 
   const handleBack = () => {
     router.back();
-  };
-
-  const handleSaveJob = () => {
-    // Logic to save the job
   };
 
   const updateFavouriteJob = (jobId) => {
@@ -81,9 +83,11 @@ export function useApply() {
     currentStep,
     showCompanyProfile,
     setShowCompanyProfile,
-    handleSaveJob,
+
     handleBack,
     job,
     loading,
+    saveFavoriteJob: updateFavouriteJob,
+    isSaved: (jobId) => savedJobs.has(jobId),
   };
 }

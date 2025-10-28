@@ -11,7 +11,7 @@ export function CompanySearchSelect({
   initialCompanyName = "",
   onValueChange,
 }) {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(initialCompanyName);
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const [companyId, setCompanyId] = useState(initialCompanyId);
@@ -19,6 +19,15 @@ export function CompanySearchSelect({
 
   const inputRef = useRef(null);
   const dropdownRef = useRef(null);
+
+  // Update state when initial values change (important for edit mode)
+  useEffect(() => {
+    if (initialCompanyId && initialCompanyName) {
+      setCompanyId(initialCompanyId);
+      setCompanyName(initialCompanyName);
+      setSearchTerm(initialCompanyName);
+    }
+  }, [initialCompanyId, initialCompanyName]);
 
   // Debounce search term
   useEffect(() => {
@@ -66,6 +75,14 @@ export function CompanySearchSelect({
     }
   };
 
+  const handleInputFocus = () => {
+    setShowDropdown(true);
+    // Clear the search term to show all companies when focusing
+    if (searchTerm === initialCompanyName) {
+      setSearchTerm("");
+    }
+  };
+
   const handleCompanySelect = (company) => {
     setCompanyId(company.id);
     setCompanyName(company.company_name);
@@ -95,7 +112,7 @@ export function CompanySearchSelect({
             placeholder="Search and select company..."
             value={searchTerm}
             onChange={handleInputChange}
-            onFocus={() => setShowDropdown(true)}
+            onFocus={handleInputFocus}
             className="pl-10"
           />
         </div>

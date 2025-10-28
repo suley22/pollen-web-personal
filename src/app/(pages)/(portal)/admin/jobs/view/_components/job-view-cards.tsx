@@ -6,55 +6,57 @@ import {
   MapPin,
   PoundSterling,
   Building2,
+  Info,
 } from "lucide-react";
-import { FormCard } from "@/components/design-system";
+import { FormCard, InfoField } from "@/components/design-system";
 
 export function JobOverviewCard({ job }) {
   return (
-    <FormCard title="Job Overview" icon={<Briefcase className="h-5 w-5 " />}>
-      <div className="flex flex-col gap-4">
-        <div>{job.job_title}</div>
-        <div className="flex flex-row font-light text-sm gap-1 items-center ">
-          <Building className="w-4 h-4" />
-          {job?.company_name}
+    <div className="flex flex-col gap-6">
+      <FormCard title="Job Overview" icon={<Briefcase className="h-5 w-5" />}>
+        <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+          <InfoField
+            label="Company"
+            value={job?.company_name}
+            icon={<Building className="h-4 w-4 text-muted-foreground" />}
+          />
+          <InfoField
+            label="Job Type"
+            value={job.job_type}
+            icon={<Clock className="h-4 w-4 text-muted-foreground" />}
+          />
+          <InfoField
+            label="Location"
+            value={job?.location}
+            icon={<MapPin className="h-4 w-4 text-muted-foreground" />}
+          />
+          <InfoField
+            label="Work Arrangement"
+            value={job.work_arrangement}
+            icon={<Building2 className="h-4 w-4 text-muted-foreground" />}
+          />
+          <InfoField
+            label="Salary Range"
+            value={job?.salary_range ? job.salary_range : "Not specified"}
+            icon={<PoundSterling className="h-4 w-4 text-muted-foreground" />}
+          />
         </div>
-        <div className="flex flex-row ">
-          <div className="w-full flex flex-col gap-4">
-            <div className="flex items-center gap-1  text-sm font-light">
-              <MapPin className="w-4 h-4" />
-              {job?.location ? job.location : "Not specified"}
-            </div>
-            <div className="flex items-center gap-1 text-sm font-light">
-              <PoundSterling className="w-4 h-4" />
-              {job?.salary_range ? job.salary_range : "Not specified"}
-            </div>
-          </div>
-          <div className="w-full flex flex-col gap-4">
-            <div className="flex items-center gap-1 text-sm font-light">
-              <Clock className="w-4 h-4" />
-              {job.job_type}
-            </div>
-            <div className="flex items-center gap-1 text-sm font-light">
-              <Building2 className="w-4 h-4" />
-              {job.work_arrangement}
-            </div>
-          </div>
+      </FormCard>
+      <FormCard title="Employment Details" icon={<Info className="h-5 w-5" />}>
+        <div className="grid grid-cols-2 gap-x-8 gap-y-6">
+          <InfoField label="Employment Type" value={job.employment_type} />
+          <InfoField label="Start Date" value={job.start_date} />
+          <InfoField
+            label="Application Deadline"
+            value={job.application_deadline}
+          />
+          <InfoField
+            label="Work Authorisation"
+            value={job.work_authorisation}
+          />
         </div>
-        <div className="flex flex-col bg-gray-50 rounded-md p-4 gap-4">
-          <div>Employment Details</div>
-          <div className="flex flex-row">
-            <div className="w-full flex flex-col gap-4">
-              <div>Type: {job.employment_type}</div>
-              <div>Application Deadline: {job.application_deadline}</div>
-            </div>
-            <div className="w-full flex flex-col gap-4">
-              <div>Start Date: {job.start_date}</div>
-              <div>Authorisation: {job.work_authorisation}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </FormCard>
+      </FormCard>
+    </div>
   );
 }
 

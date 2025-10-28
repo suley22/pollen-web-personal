@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useJobManagement } from "../_hooks/jobs-page-hook";
-import { Filters } from "@/components/design-system";
+import { Filters, FiltersSkeleton } from "@/components/design-system";
 import { JobListSection } from "../_components/jobs-page-list-section";
 import { AdminRoutes } from "../../router";
 import { PageHeader } from "@/components/design-system/page-header";
@@ -46,11 +46,15 @@ export default function JobsPageView() {
 
       {/* Main Content */}
       <div className="flex flex-col w-full gap-6">
-        <Filters
-          onSearchChange={setSearchTerm}
-          searchPlaceholder="Search jobs..."
-          filters={filterConfigs}
-        />
+        {loading ? (
+          <FiltersSkeleton />
+        ) : (
+          <Filters
+            onSearchChange={setSearchTerm}
+            searchPlaceholder="Search jobs..."
+            filters={filterConfigs}
+          />
+        )}
 
         <JobListSection
           jobs={jobs}

@@ -18,14 +18,14 @@ export function CheckboxGroup({
   allowCustomItems = false,
   customItemsPlaceholder = "Add custom item and press Enter",
   columns = 3,
-  className,
+  className = "",
 }) {
   // Initialize custom items by extracting items from initialSelectedItems that aren't predefined
   const [customItems, setCustomItems] = React.useState(() => {
     // Extract predefined item labels for comparison during initialization
-    const predefinedLabels = items.map(item => item.label || item);
+    const predefinedLabels = items.map((item) => item.label || item);
     const customItemsFromInitial = initialSelectedItems.filter(
-      item => !predefinedLabels.includes(item)
+      (item) => !predefinedLabels.includes(item),
     );
     console.log("Initializing customItems:", customItemsFromInitial);
     console.log("Predefined labels:", predefinedLabels);
@@ -42,7 +42,7 @@ export function CheckboxGroup({
 
   // Extract predefined item labels for comparison throughout the component
   const predefinedLabels = React.useMemo(() => {
-    return items.map(item => item.label || item);
+    return items.map((item) => item.label || item);
   }, [items]);
 
   // Combinar items predefinidos con personalizados - esta es la lista completa disponible

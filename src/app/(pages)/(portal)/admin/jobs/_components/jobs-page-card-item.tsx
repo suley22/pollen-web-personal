@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/buttons/button";
 import { Eye, Building2, Calendar, Users } from "lucide-react";
 import { JobStatusBadge } from "../../../../../../components/design-system/job-status-badge";
 import { useRouter } from "next/navigation";
@@ -17,9 +17,9 @@ export function JobCardItem({ job, showAdminBadge }) {
         router.push(AdminRoutes.jobView(job.id));
       }}
     >
-      <CardContent className="px-5 pt-3 pb-2">
+      <CardContent className="px-5 py-3">
         <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 min-w-0 space-y-4">
+          <div className="flex-1 min-w-0 space-y-3">
             <div className="flex flex-row justify-between">
               <div className="flex flex-col flex-1 space-y-2">
                 {/* Job Title and Status */}
@@ -32,12 +32,12 @@ export function JobCardItem({ job, showAdminBadge }) {
 
                 {/* Company and Date */}
                 <div className="flex flex-col items-start gap-2 text-muted-foreground text-sm">
-                  <div className="flex  gap-2">
-                    <Building2 className="w-4 h-4  mt-0.5" />
+                  <div className="flex gap-2">
+                    <Building2 className="w-4 h-4 flex-shrink-0" />
                     <span className="truncate">{job.company_name}</span>
                   </div>
                   <div className="flex gap-2 items-center">
-                    <Calendar className="w-4 h-4 " />
+                    <Calendar className="w-4 h-4 flex-shrink-0" />
                     <span className="truncate">
                       {job.status === "draft"
                         ? `Created ${new Date(job.assigned_date).toLocaleDateString()}`
@@ -47,24 +47,24 @@ export function JobCardItem({ job, showAdminBadge }) {
                 </div>
               </div>
 
-              <div
-                className={`flex flex-col items-end justify-between text-right ${showAdminBadge ? "items-start" : "items-end"}`}
-              >
-                {/* Right Section - Total Applications */}
-
-                <div
-                  className={`flex flex-col text-muted-foreground gap-2 my-2`}
-                >
-                  {/* Total applications */}
-                  <div className="flex flex-row items-center justify-end gap-2">
-                    <p className="text-sm text-gray-700 ">
-                      Total Applications:
-                    </p>
-                    <p className="text-base font-semibold text-foreground">
-                      {job.total_applications}
-                    </p>
+              {/* Right Section - Total Applications */}
+              <div className="flex flex-col justify-end gap-3">
+                <div className="text-right space-y-1 bg-muted/30 ">
+                  <div className="text-xs text-muted-foreground">
+                    Total Applications
                   </div>
+                  <div className="text-xl font-bold text-foreground">
+                    {job.total_applications}
+                  </div>
+                </div>
+              </div>
+            </div>
 
+            {/* Divider */}
+            <div className="border-t border-border/50 pt-3 mt-3">
+              {/* Job Counts and Admin */}
+              <div className="flex flex-row justify-between">
+                <div className="flex items-center gap-2 flex-wrap">
                   {/* Assigned Admin */}
                   {job.assigned_to ? (
                     <Badge
@@ -78,57 +78,16 @@ export function JobCardItem({ job, showAdminBadge }) {
                       variant="outline"
                       className="bg-gray-50 text-gray-600 border-gray-200 font-medium"
                     >
-                      Unassigned{" "}
-                      <span className="text-gray-500">(No Admin Assigned)</span>
+                      Unassigned
                     </Badge>
                   )}
-                </div>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="border-t border-border/50">
-              {/* Status Breakdown and Actions */}
-              <div className="flex flex-row justify-between items-center pt-2">
-                <div className="flex items-center gap-2 text-sm flex-wrap ">
-                  <div className="flex items-center gap-1.5 font-medium">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                    <span>
-                      {job.new_applications_to_review ??
-                        job.newApplicationsToReview}{" "}
-                    </span>
-                    <span className="font-normal text-gray-500">New</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 font-medium">
-                    <div className="w-2 h-2 bg-yellow-500 rounded-full" />
-                    <span>
-                      {job.pollen_interviews_booked ??
-                        job.pollenInterviewsBooked}{" "}
-                    </span>
-                    <span className="font-normal text-gray-500">
-                      In Progress
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5 font-medium">
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <span>
-                      {job.candidates_matched_to_employer ??
-                        job.candidatesMatchedToEmployer}{" "}
-                    </span>
-                    <span className="font-normal text-gray-500">Matched</span>
-                  </div>
-                  <div className="flex items-center gap-1.5 font-medium">
-                    <div className="w-2 h-2 bg-gray-500 rounded-full" />
-                    <span>{job.feedbackSent} </span>
-                    <span className="font-normal text-gray-500">Complete</span>
-                  </div>
                 </div>
 
                 {/* Action Buttons */}
                 <div className="flex items-center gap-1">
                   {job.status !== "draft" && (
                     <Button
-                      variant="pollen"
+                      variant="ghost"
                       size="sm"
                       className="h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
                       onClick={(e) => {
@@ -141,13 +100,9 @@ export function JobCardItem({ job, showAdminBadge }) {
                     </Button>
                   )}
                   <Button
-                    variant="pollen"
+                    variant="ghost"
                     size="sm"
-                    className={
-                      job.status === "draft"
-                        ? "h-8 px-2 bg-pink-600 hover:bg-pink-700 text-white"
-                        : "h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
-                    }
+                    className="h-8 px-2 text-muted-foreground hover:text-foreground hover:bg-muted"
                     onClick={(e) => {
                       e.stopPropagation();
                       router.push(AdminRoutes.jobView(job.id));

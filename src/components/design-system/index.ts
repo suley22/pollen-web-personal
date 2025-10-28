@@ -35,6 +35,7 @@ export { InfoCard } from "./info-card";
 export { Divider } from "./divider";
 export { Pagination } from "./pagination";
 export { Filters } from "./filters";
+export { FiltersSkeleton } from "./filters-skeleton";
 export { EmployerStatusBadge } from "./employer-status-badge";
 export { JobStatusBadge } from "./job-status-badge";
 export {

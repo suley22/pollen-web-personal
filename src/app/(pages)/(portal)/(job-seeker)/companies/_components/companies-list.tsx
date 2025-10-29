@@ -1,7 +1,7 @@
 import {
   RecommendedCompaniesFormCard as FormCard,
   AllCompaniesFormCard,
-} from "./form-card";
+} from "@/job-seeker/companies/_components/form-card";
 import { Target } from "lucide-react";
 
 export function RecommendedCompanies() {

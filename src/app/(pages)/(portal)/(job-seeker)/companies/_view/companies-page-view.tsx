@@ -1,9 +1,9 @@
 import { PageHeader, PageContainer } from "@/components/design-system";
-import { CallToAction } from "../_components/call-to-action";
+import { CallToAction } from "@/job-seeker/companies/_components/call-to-action";
 import {
   AllCompanies,
   RecommendedCompanies,
-} from "../_components/companies-list";
+} from "@/job-seeker/companies/_components/companies-list";
 
 export default function CompaniesPageView() {
   return (

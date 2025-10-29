@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, MapPin, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCompanies } from "../_hooks/useCompanies";
+import { useCompanies } from "@/job-seeker/companies/_hooks/companies-page-hook";
 import { PrimaryButton } from "@/components/design-system/primary-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Building2 } from "lucide-react";

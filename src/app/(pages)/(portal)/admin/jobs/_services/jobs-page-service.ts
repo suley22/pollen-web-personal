@@ -187,6 +187,33 @@ export function useSearchEmployers(searchTerm: string) {
   });
 }
 
+export function useSearchAdmins(searchTerm: string) {
+  return useQuery({
+    queryKey: ["admins", "search", searchTerm],
+    queryFn: async () => {
+      let query = supabase
+        .from("profile")
+        .select("id, first_name, last_name")
+        .order("first_name", { ascending: true });
+
+      if (searchTerm && searchTerm.trim()) {
+        query = query.or(
+          `first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%`,
+        );
+      }
+
+      const { data, error } = await query.limit(50);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data || [];
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
+
 export function useJobById(id: string) {
   return useQuery({
     enabled: !!id,
@@ -201,6 +228,10 @@ export function useJobById(id: string) {
           employer_profile:company_id (
             logo_url,
             company_name
+          ),
+          profile:user_id (
+            first_name,
+            last_name
           )
         `,
         )
@@ -230,6 +261,8 @@ export function useJobById(id: string) {
           complete: data?.candidate_counts?.complete || 8,
           hired: data?.candidate_counts?.hired || 2,
         },
+        admin:
+          `${data?.profile?.last_name || ""} ${data?.profile?.first_name || ""}`.trim(),
       };
 
       return job;

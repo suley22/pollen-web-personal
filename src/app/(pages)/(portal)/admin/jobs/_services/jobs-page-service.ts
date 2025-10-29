@@ -52,7 +52,7 @@ export function useJobsList(filters: JobFilters) {
         throw new Error(countError.message);
       }
 
-      // Data query with employer_profile join to get current company name
+      // Data query with employer_profile join
       let query = supabase
         .from("job")
         .select(
@@ -90,23 +90,48 @@ export function useJobsList(filters: JobFilters) {
 
       const totalPages = Math.ceil((count || 0) / pageSize);
 
+      // Get unique user_ids to fetch profiles
+      const userIds = [
+        ...new Set(data?.map((job) => job.user_id).filter(Boolean)),
+      ];
+
+      // Fetch profiles for all user_ids in one query
+      let profilesMap = new Map();
+      if (userIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("profile")
+          .select("id, first_name, last_name")
+          .in("id", userIds);
+
+        profiles?.forEach((profile) => {
+          profilesMap.set(profile.id, profile);
+        });
+      }
+
       // Normalize jobs data - prioritize employer_profile company_name
       const normalizedJobs =
-        data?.map((job) => ({
-          ...job,
-          assigned_date: job.published_at || job.created_at,
-          total_applications: job.total_applications || 0,
-          newApplicationsToReview: job.new_applications_to_review || 0,
-          pollenInterviewsBooked: job.pollen_interviews_booked || 0,
-          needsApproval: job.needs_approval || false,
-          company_name:
-            job.employer_profile?.company_name ||
-            job.company_name ||
-            "Unknown Company",
-          company_logo_url: job.employer_profile?.logo_url || null,
-          responsibilities: job.responsibilities || [],
-          who_would_love: job.who_would_love || [],
-        })) || [];
+        data?.map((job) => {
+          const profile = job.user_id ? profilesMap.get(job.user_id) : null;
+          return {
+            ...job,
+            assigned_date: job.published_at || job.created_at,
+            total_applications: job.total_applications || 0,
+            newApplicationsToReview: job.new_applications_to_review || 0,
+            pollenInterviewsBooked: job.pollen_interviews_booked || 0,
+            needsApproval: job.needs_approval || false,
+            company_name:
+              job.employer_profile?.company_name ||
+              job.company_name ||
+              "Unknown Company",
+            company_logo_url: job.employer_profile?.logo_url || null,
+            responsibilities: job.responsibilities || [],
+            who_would_love: job.who_would_love || [],
+            admin:
+              profile?.first_name || profile?.last_name
+                ? `${profile?.last_name || ""} ${profile?.first_name || ""}`.trim()
+                : "Unassigned",
+          };
+        }) || [];
 
       return {
         jobs: normalizedJobs,
@@ -399,6 +424,7 @@ const transformFormDataToDatabase = (formData: FormData) => {
     success_looks: formJobData.success_looks,
     pollen_approved_requirements: pollen_approved_requirements,
     internal_notes: formJobData.internal_notes,
+    user_id: formJobData.user_id || null,
   };
 };
 

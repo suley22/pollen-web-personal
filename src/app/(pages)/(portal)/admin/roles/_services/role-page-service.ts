@@ -63,9 +63,39 @@ export function useUsersList(filters: UserFilters) {
         .neq("id", user.id); // Exclude current user
 
       if (filters.searchTerm) {
-        countQuery = countQuery.or(
-          `first_name.ilike.%${filters.searchTerm}%,last_name.ilike.%${filters.searchTerm}%,email.ilike.%${filters.searchTerm}%`,
-        );
+        const searchTerms = filters.searchTerm.trim().split(/\s+/);
+        
+        if (searchTerms.length > 1) {
+          // Para búsquedas como "test user", crear condiciones que busquen:
+          // 1. Primer término en first_name Y segundo término en last_name
+          // 2. Cualquier término en cualquier campo
+          const [firstTerm, secondTerm] = searchTerms;
+          
+          countQuery = countQuery.or([
+            // Nombre completo: "test" en first_name Y "user" en last_name
+            `and(first_name.ilike.%${firstTerm}%,last_name.ilike.%${secondTerm}%)`,
+            // Nombre completo invertido: "user" en first_name Y "test" en last_name  
+            `and(first_name.ilike.%${secondTerm}%,last_name.ilike.%${firstTerm}%)`,
+            // Cualquier término en first_name
+            `first_name.ilike.%${firstTerm}%`,
+            `first_name.ilike.%${secondTerm}%`,
+            // Cualquier término en last_name
+            `last_name.ilike.%${firstTerm}%`, 
+            `last_name.ilike.%${secondTerm}%`,
+            // Cualquier término en email
+            `email.ilike.%${firstTerm}%`,
+            `email.ilike.%${secondTerm}%`,
+            // Término completo en cualquier campo
+            `first_name.ilike.%${filters.searchTerm}%`,
+            `last_name.ilike.%${filters.searchTerm}%`,
+            `email.ilike.%${filters.searchTerm}%`
+          ].join(','));
+        } else {
+          // Búsqueda simple para un solo término
+          countQuery = countQuery.or(
+            `first_name.ilike.%${filters.searchTerm}%,last_name.ilike.%${filters.searchTerm}%,email.ilike.%${filters.searchTerm}%`,
+          );
+        }
       }
 
       const { count, error: countError } = await countQuery;
@@ -83,9 +113,39 @@ export function useUsersList(filters: UserFilters) {
         .range(from, to);
 
       if (filters.searchTerm) {
-        query = query.or(
-          `first_name.ilike.%${filters.searchTerm}%,last_name.ilike.%${filters.searchTerm}%,email.ilike.%${filters.searchTerm}%`,
-        );
+        const searchTerms = filters.searchTerm.trim().split(/\s+/);
+        
+        if (searchTerms.length > 1) {
+          // Para búsquedas como "test user", crear condiciones que busquen:
+          // 1. Primer término en first_name Y segundo término en last_name
+          // 2. Cualquier término en cualquier campo
+          const [firstTerm, secondTerm] = searchTerms;
+          
+          query = query.or([
+            // Nombre completo: "test" en first_name Y "user" en last_name
+            `and(first_name.ilike.%${firstTerm}%,last_name.ilike.%${secondTerm}%)`,
+            // Nombre completo invertido: "user" en first_name Y "test" en last_name  
+            `and(first_name.ilike.%${secondTerm}%,last_name.ilike.%${firstTerm}%)`,
+            // Cualquier término en first_name
+            `first_name.ilike.%${firstTerm}%`,
+            `first_name.ilike.%${secondTerm}%`,
+            // Cualquier término en last_name
+            `last_name.ilike.%${firstTerm}%`, 
+            `last_name.ilike.%${secondTerm}%`,
+            // Cualquier término en email
+            `email.ilike.%${firstTerm}%`,
+            `email.ilike.%${secondTerm}%`,
+            // Término completo en cualquier campo
+            `first_name.ilike.%${filters.searchTerm}%`,
+            `last_name.ilike.%${filters.searchTerm}%`,
+            `email.ilike.%${filters.searchTerm}%`
+          ].join(','));
+        } else {
+          // Búsqueda simple para un solo término
+          query = query.or(
+            `first_name.ilike.%${filters.searchTerm}%,last_name.ilike.%${filters.searchTerm}%,email.ilike.%${filters.searchTerm}%`,
+          );
+        }
       }
 
       const { data, error } = await query;

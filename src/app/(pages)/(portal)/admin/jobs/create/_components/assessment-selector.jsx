@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useAssessmentsList } from "@/app/(pages)/(portal)/admin/assessments/_services/assessments-page-service";
 
 const ASSESSMENT_TYPE_LABELS = {
   multiple_choice: "Multiple Choice",
@@ -37,74 +38,28 @@ const STATUS_LABELS = {
 export function AssessmentSelector({ isOpen, onClose, onSelect }) {
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Mock assessments - TODO: Replace with useAssessmentsList service
-  const mockAssessments = [
-    {
-      id: "1",
-      internal_pollen_title: "Sales Skills Assessment",
-      title: "Sales Representative Evaluation",
-      subtitle: "Comprehensive sales aptitude test",
-      type: "multiple_choice",
-      status: "live",
-      questions_count: 10,
-      estimated_duration: "15 min",
-      created_at: "2024-10-20",
-      updated_at: "2024-10-28",
-      created_by: { full_name: "John Doe" },
-      assessment_completeness: 95,
-    },
-    {
-      id: "2",
-      internal_pollen_title: "Technical Problem Solving",
-      title: "Software Engineering Challenge",
-      subtitle: "Algorithmic thinking and code quality",
-      type: "free_input",
-      status: "live",
-      questions_count: 5,
-      estimated_duration: "30 min",
-      created_at: "2024-10-15",
-      updated_at: "2024-10-25",
-      created_by: { full_name: "Jane Smith" },
-      assessment_completeness: 100,
-    },
-    {
-      id: "3",
-      internal_pollen_title: "Design Portfolio Review",
-      title: "UX/UI Design Portfolio",
-      subtitle: "Submit your best design work",
-      type: "file_upload",
-      status: "live",
-      questions_count: 3,
-      estimated_duration: "10 min",
-      created_at: "2024-10-18",
-      updated_at: "2024-10-27",
-      created_by: { full_name: "Mike Johnson" },
-      assessment_completeness: 85,
-    },
-    {
-      id: "4",
-      internal_pollen_title: "Customer Service Skills",
-      title: "Customer Support Excellence",
-      subtitle: "Communication and problem resolution",
-      type: "multiple_choice",
-      status: "live",
-      questions_count: 12,
-      estimated_duration: "20 min",
-      created_at: "2024-10-22",
-      updated_at: "2024-10-29",
-      created_by: { full_name: "Sarah Wilson" },
-      assessment_completeness: 90,
-    },
-  ];
+  // TODO: Technical Debt - Using assessments service from admin module
+  // Fetch only live assessments
+  const { data } = useAssessmentsList({
+    status: "live",
+    searchTerm: searchTerm,
+    page: 1,
+    pageSize: 100, // Get all live assessments
+  });
 
-  const filteredAssessments = mockAssessments.filter(
-    (assessment) =>
-      assessment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      assessment.internal_pollen_title
-        ?.toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      assessment.subtitle?.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  // Client-side filtering for better UX (in addition to server-side search)
+  const filteredAssessments = useMemo(() => {
+    const assessments = data?.assessments || [];
+    if (!searchTerm.trim()) return assessments;
+
+    const search = searchTerm.toLowerCase();
+    return assessments.filter(
+      (assessment) =>
+        assessment.title?.toLowerCase().includes(search) ||
+        assessment.internal_pollen_title?.toLowerCase().includes(search) ||
+        assessment.subtitle?.toLowerCase().includes(search),
+    );
+  }, [data?.assessments, searchTerm]);
 
   const handleSelectAssessment = (assessment) => {
     onSelect(assessment);

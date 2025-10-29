@@ -12,13 +12,14 @@ import {
 import { Building2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/buttons/button";
 import { RoleChangeConfirmDialog } from "../role-change-confirm-dialog";
+import { ResultsCount } from "@/app/(pages)/(portal)/admin/employers/_components/employers-page-results-count";
 
 const ROLE_OPTIONS = [
   { id: "1", name: "Admin", value: "admin" },
   { id: "2", name: "JobSeeker", value: "job_seeker" },
 ];
 
-export function RolesList({ users, loading, onRoleChange, isUpdatingRole, onDeleteUser, isDeletingUser }) {
+export function RolesList({ users, loading, onRoleChange, isUpdatingRole, onDeleteUser, isDeletingUser, pagination, handlePageChange, handlePageSizeChange }) {
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     userId: "",
@@ -76,8 +77,15 @@ export function RolesList({ users, loading, onRoleChange, isUpdatingRole, onDele
 
   return (
     <>
-      <div className="w-full bg-white rounded-lg border overflow-hidden">
-        <table className="w-full table-auto">
+      <div className="flex flex-col w-full gap-4">
+        <ResultsCount
+          pagination={pagination}
+          handlePageChange={handlePageChange}
+          handlePageSizeChange={handlePageSizeChange}
+        />
+        
+        <div className="w-full bg-white rounded-lg border overflow-hidden">
+          <table className="w-full table-auto">
           <thead className="bg-gray-50 border-b">
             <tr>
               <th className="text-left py-3 px-4 font-medium text-gray-900 w-1/4">
@@ -161,6 +169,13 @@ export function RolesList({ users, loading, onRoleChange, isUpdatingRole, onDele
             ))}
           </tbody>
         </table>
+        </div>
+
+        <ResultsCount
+          pagination={pagination}
+          handlePageChange={handlePageChange}
+          handlePageSizeChange={handlePageSizeChange}
+        />
       </div>
 
       <RoleChangeConfirmDialog

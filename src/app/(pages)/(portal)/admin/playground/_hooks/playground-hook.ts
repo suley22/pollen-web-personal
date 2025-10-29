@@ -9,8 +9,16 @@ import {
 } from "../_services/playground-service";
 
 export function usePlaygroundHook(jobId: string) {
-  const { data: tasks = {}, isLoading, error } = useJobApplicants(jobId);
+  const { data: tasks, isLoading, error } = useJobApplicants(jobId);
   const updateStatusMutation = useUpdateApplicationStatus();
+
+  // Default empty structure si no hay data
+  const safeTasksData = tasks || {
+    new_applicants: [],
+    in_progress: [],
+    matched_to_employer: [],
+    complete: [],
+  };
 
   // View state
   const [viewMode, setViewMode] = useState("board"); // "board" or "grid"
@@ -74,10 +82,32 @@ export function usePlaygroundHook(jobId: string) {
       return;
     }
 
+    console.log("🎯 Dropping task:", {
+      jobSeekerId: item.id,
+      applicationId: item.application_id,
+      fullItem: item, // Para debug
+      taskName: item.name,
+      from: sourceColumn,
+      to: targetColumnId,
+      jobId,
+    });
+
+    // Determinar el application_id correcto
+    // Fallback: si application_id no existe, usar id (por si hay data cacheada antigua)
+    const applicationIdToUpdate =
+      item.application_id || item._raw_application?.id || item.id;
+
+    if (!applicationIdToUpdate) {
+      console.error("❌ No se pudo determinar el application_id:", item);
+      setDraggedItem(null);
+      return;
+    }
+
     // Actualizar el status en la BD usando mutation
     updateStatusMutation.mutate({
-      applicationId: item.id,
+      applicationId: applicationIdToUpdate,
       newStatus: targetColumnId,
+      jobId: jobId,
     });
 
     setDraggedItem(null);
@@ -87,12 +117,12 @@ export function usePlaygroundHook(jobId: string) {
    * Obtiene todas las tareas en formato de lista con su status
    */
   const getAllTasksWithStatus = () => {
-    return transformTasksToList(tasks);
+    return transformTasksToList(safeTasksData);
   };
 
   return {
     // Data
-    tasks,
+    tasks: safeTasksData,
     isLoading,
     error,
 

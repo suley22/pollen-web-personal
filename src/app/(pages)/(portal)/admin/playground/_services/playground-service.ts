@@ -41,6 +41,8 @@ export function useJobApplicants(jobId: string) {
   return useQuery({
     queryKey: ["playground", "applicants", jobId],
     queryFn: async () => {
+      console.log("🔍 Fetching applicants for job:", jobId);
+
       const { data: applications, error } = await supabase
         .from("job_applications")
         .select(
@@ -61,17 +63,26 @@ export function useJobApplicants(jobId: string) {
         throw new Error(error.message);
       }
 
+      console.log("📦 Raw applications from DB:", applications);
+
       // Agrupar por status (que coincide con las columnas del Kanban)
-      return groupApplicantsByStatus(applications);
+      const grouped = groupApplicantsByStatus(applications || []);
+
+      console.log("📊 Grouped by status:", grouped);
+
+      return grouped;
     },
     enabled: !!jobId, // Solo ejecuta si hay jobId
+    staleTime: 0, // ✅ Forzar refetch inmediato
+    gcTime: 0, // ✅ No cachear (reemplaza cacheTime en React Query v5)
+    refetchOnMount: true, // ✅ Refetch al montar
   });
 }
 
 /**
  * Agrupa las aplicaciones por su status en el formato del Kanban
  */
-function groupApplicantsByStatus(applications: any[]) {
+function groupApplicantsByStatus(applications: any[] = []) {
   const grouped: Record<string, any[]> = {
     new_applicants: [],
     in_progress: [],
@@ -79,10 +90,18 @@ function groupApplicantsByStatus(applications: any[]) {
     complete: [],
   };
 
-  applications?.forEach((app) => {
+  if (!applications || applications.length === 0) {
+    return grouped;
+  }
+
+  applications.forEach((app) => {
     const status = app.status || "new_applicants";
-    const task = transformApplicationToTask(app);
-    grouped[status].push(task);
+
+    // Validar que el status existe en nuestras columnas
+    if (grouped[status] !== undefined) {
+      const task = transformApplicationToTask(app);
+      grouped[status].push(task);
+    }
   });
 
   return grouped;
@@ -94,10 +113,17 @@ function groupApplicantsByStatus(applications: any[]) {
 function transformApplicationToTask(application: any) {
   const seeker = application.job_seeker;
 
+  console.log("🔄 Transforming application:", {
+    applicationId: application.id,
+    seekerId: seeker?.id,
+    seekerName: seeker?.name,
+  });
+
   return {
-    // IDs
-    id: application.id, // ID de la aplicación
-    applicant_id: seeker?.id,
+    // IDs - IMPORTANTE: id es del job_seeker, application_id es de job_applications
+    id: seeker?.id, // ID del job_seeker (para UI/keys)
+    application_id: application.id, // ID de la aplicación (para updates)
+    applicant_id: seeker?.id, // Redundante pero útil
 
     // Datos del candidato (desde job_seeker)
     name: seeker?.name || "Unknown",
@@ -130,29 +156,47 @@ export function useUpdateApplicationStatus() {
     mutationFn: async ({
       applicationId,
       newStatus,
+      jobId,
     }: {
       applicationId: number;
       newStatus: string;
+      jobId: string;
     }) => {
+      console.log("🔄 Updating application:", {
+        applicationId,
+        newStatus,
+        jobId,
+      });
+
       const { data, error } = await supabase
         .from("job_applications")
         .update({ status: newStatus })
         .eq("id", applicationId)
-        .select()
-        .single();
+        .select();
 
       if (error) {
-        console.error("Error updating application status:", error);
+        console.error("❌ Error updating application status:", error);
         throw new Error(error.message);
       }
 
-      return data;
+      if (!data || data.length === 0) {
+        console.error("❌ No application found with id:", applicationId);
+        throw new Error("Application not found");
+      }
+
+      console.log("✅ Application updated successfully:", data[0]);
+      return data[0];
     },
-    onSuccess: (_, variables) => {
-      // Invalidar la query para refrescar los datos
+    onSuccess: (data, variables) => {
+      console.log("🔃 Invalidating queries for jobId:", variables.jobId);
+
+      // Invalidar la query específica de este job
       queryClient.invalidateQueries({
-        queryKey: ["playground", "applicants"],
+        queryKey: ["playground", "applicants", variables.jobId],
       });
+    },
+    onError: (error) => {
+      console.error("❌ Mutation error:", error);
     },
   });
 }

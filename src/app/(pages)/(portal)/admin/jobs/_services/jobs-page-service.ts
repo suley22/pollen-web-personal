@@ -219,8 +219,8 @@ export function useJobById(id: string) {
     enabled: !!id,
     queryKey: [jobsQueryKey, "profile", id],
     queryFn: async () => {
-      // TODO: Ejemplo de consulta de url de companía asociada a un job
-      const { data, error } = await supabase
+      // First get the job data
+      const { data: jobData, error: jobError } = await supabase
         .from("job")
         .select(
           `
@@ -228,20 +228,38 @@ export function useJobById(id: string) {
           employer_profile:company_id (
             logo_url,
             company_name
-          ),
-          profile:user_id (
-            first_name,
-            last_name
           )
         `,
         )
         .eq("id", id)
         .single();
 
-      if (error) {
-        console.error("JobService: Error fetching job by ID:", error);
-        throw new Error(error.message);
+      if (jobError) {
+        console.error("JobService: Error fetching job by ID:", jobError);
+        throw new Error(jobError.message);
       }
+
+      if (!jobData) {
+        throw new Error("Job not found");
+      }
+
+      // Then get the profile data if user_id exists
+      let profileData = null;
+      if (jobData.user_id) {
+        const { data: profile } = await supabase
+          .from("profile")
+          .select("first_name, last_name")
+          .eq("id", jobData.user_id)
+          .single();
+
+        profileData = profile;
+      }
+
+      // Combine the data
+      const data = {
+        ...jobData,
+        profile: profileData,
+      };
 
       // Normalize the job data
       const job = {
@@ -262,7 +280,9 @@ export function useJobById(id: string) {
           hired: data?.candidate_counts?.hired || 2,
         },
         admin:
-          `${data?.profile?.last_name || ""} ${data?.profile?.first_name || ""}`.trim(),
+          data?.profile?.first_name || data?.profile?.last_name
+            ? `${data?.profile?.last_name || ""} ${data?.profile?.first_name || ""}`.trim()
+            : "Unassigned",
       };
 
       return job;

@@ -5,12 +5,14 @@ import { Divider } from "@/components/design-system";
 import { AssessmentCreateFileUploadQuestions } from "../_components/assessment-create-file-upload-questions";
 import { AssessmentCreateFileUploadPreview } from "../_components/assessment-create-file-upload-preview";
 import { useAssessmentCreateFileUpload } from "../_hooks/assessment-create-file-upload-hook";
+import type { Assessment } from "@/types/assessment-types";
 
 interface AssessmentCreateFileUploadViewProps {
   assessmentTitle: string;
   assessmentDescription: string;
   instructionsTitle: string;
   instructionsDescription: string;
+  assessment?: Assessment;
   onSaveRef?: (fn: () => Promise<void>) => void;
   onSavingChange?: (isSaving: boolean) => void;
 }
@@ -20,6 +22,7 @@ export function AssessmentCreateFileUploadView({
   assessmentDescription,
   instructionsTitle,
   instructionsDescription,
+  assessment,
   onSaveRef,
   onSavingChange,
 }: AssessmentCreateFileUploadViewProps) {
@@ -43,7 +46,7 @@ export function AssessmentCreateFileUploadView({
     handleBack,
     handleSubmit,
     isSaving,
-  } = useAssessmentCreateFileUpload();
+  } = useAssessmentCreateFileUpload({ assessment });
 
   const handleSaveDraft = useCallback(async () => {
     await handleSubmit("file_upload", {

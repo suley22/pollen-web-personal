@@ -17,10 +17,15 @@ import AssessmentCreateMultipleChoiceView from "./assessment-create-multiple-cho
 import AssessmentCreateQuestionaryView from "./assessment-create-questionary-view";
 import { AssessmentCreateFileUploadView } from "./assessment-create-file-upload-view";
 
-const CreateAssessmentButton = ({ isLoading, onClick, disabled }) => (
+const CreateAssessmentButton = ({
+  isLoading,
+  onClick,
+  disabled,
+  isEditMode,
+}) => (
   <PrimaryButton
     icon={<CheckCircle className="h-5 w-5" />}
-    text="Create Assessment"
+    text={isEditMode ? "Update Assessment" : "Create Assessment"}
     loading={isLoading}
     disabled={disabled || isLoading}
     onClick={onClick}
@@ -36,6 +41,7 @@ export default function AssessmentCreateView({
 
   const {
     // Assessment data
+    assessment,
     internalPollenTitle,
     setInternalPollenTitle,
     assessmentTitle,
@@ -92,14 +98,19 @@ export default function AssessmentCreateView({
     <PageContainer>
       <PageHeader
         showBackButton={true}
-        title="Create Assessment"
-        subtitle="Select assessment type and configure details"
+        title={id ? "Edit Assessment" : "Create Assessment"}
+        subtitle={
+          id
+            ? "Update assessment details and configuration"
+            : "Select assessment type and configure details"
+        }
         onBack={handleBack}
       >
         <CreateAssessmentButton
           isLoading={isSaving}
           disabled={!canSave}
           onClick={() => setShowSaveDialog(true)}
+          isEditMode={!!id}
         />
       </PageHeader>
 
@@ -134,6 +145,7 @@ export default function AssessmentCreateView({
             instructionsDescription={instructionsDescription}
             internalPollenTitle={internalPollenTitle}
             estimatedDuration={estimatedDuration}
+            assessment={assessment}
             onSaveRef={(fn) => (multipleChoiceSaveRef.current = fn)}
             onSavingChange={setIsSaving}
           />
@@ -149,6 +161,7 @@ export default function AssessmentCreateView({
             estimatedDuration={estimatedDuration}
             instructionsTitle={instructionsTitle}
             instructionsDescription={instructionsDescription}
+            assessment={assessment}
             onSaveRef={(fn) => (freeInputSaveRef.current = fn)}
             onSavingChange={setIsSaving}
           />
@@ -162,6 +175,7 @@ export default function AssessmentCreateView({
             assessmentDescription={assessmentDescription}
             instructionsTitle={instructionsTitle}
             instructionsDescription={instructionsDescription}
+            assessment={assessment}
             onSaveRef={(fn) => (fileUploadSaveRef.current = fn)}
             onSavingChange={setIsSaving}
           />
@@ -177,10 +191,17 @@ export default function AssessmentCreateView({
                 isLoading={isSaving}
                 disabled={!canSave}
                 onClick={() => setShowSaveDialog(true)}
+                isEditMode={!!id}
               />
             }
-            title="Confirm assessment creation?"
-            description="Are you sure you want to create this assessment? This will create a new assessment in the system."
+            title={
+              id ? "Confirm assessment update?" : "Confirm assessment creation?"
+            }
+            description={
+              id
+                ? "Are you sure you want to update this assessment? This will save all changes."
+                : "Are you sure you want to create this assessment? This will create a new assessment in the system."
+            }
             confirmText="Confirm"
             cancelText="Cancel"
             isLoading={isSaving}

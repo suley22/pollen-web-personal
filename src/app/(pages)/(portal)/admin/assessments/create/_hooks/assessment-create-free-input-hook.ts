@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCreateAssessment } from "../../_services/assessments-page-service";
 import { AdminRoutes } from "@/admin/router";
+import type { Assessment } from "@/types/assessment-types";
 
 interface FreeInputQuestion {
   title: string;
@@ -11,7 +12,7 @@ interface FreeInputQuestion {
   placeholder: string;
 }
 
-export function useAssessmentCreateFreeInput() {
+export function useAssessmentCreateFreeInput({ assessment }: { assessment?: Assessment } = {}) {
   const router = useRouter();
   const createAssessmentMutation = useCreateAssessment();
 
@@ -23,6 +24,18 @@ export function useAssessmentCreateFreeInput() {
   const [editingQuestionIndex, setEditingQuestionIndex] = useState<
     number | null
   >(null);
+
+  // Initialize state from assessment data (edit mode)
+  useEffect(() => {
+    if (assessment && assessment.questions && assessment.questions.length > 0) {
+      const loadedQuestions = assessment.questions.map((q) => ({
+        title: q.title,
+        subtitle: q.subtitle || "",
+        placeholder: q.free_input?.placeholder || "",
+      }));
+      setQuestions(loadedQuestions);
+    }
+  }, [assessment]);
 
   // Agregar pregunta
   const handleAddQuestion = () => {

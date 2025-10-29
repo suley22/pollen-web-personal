@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCreateAssessment } from "../../_services/assessments-page-service";
 import { AdminRoutes } from "@/admin/router";
+import type { Assessment } from "@/types/assessment-types";
 
 export interface ReferenceFile {
   id: string;
@@ -18,7 +19,7 @@ export interface FileUploadQuestion {
   referenceFiles: ReferenceFile[]; // Multiple reference files
 }
 
-export function useAssessmentCreateFileUpload() {
+export function useAssessmentCreateFileUpload({ assessment }: { assessment?: Assessment } = {}) {
   const router = useRouter();
   const createAssessmentMutation = useCreateAssessment();
 
@@ -31,6 +32,23 @@ export function useAssessmentCreateFileUpload() {
   const [editingQuestionIndex, setEditingQuestionIndex] = useState<
     number | null
   >(null);
+
+  // Initialize state from assessment data (edit mode)
+  useEffect(() => {
+    if (assessment && assessment.questions && assessment.questions.length > 0) {
+      const loadedQuestions = assessment.questions.map((q) => ({
+        title: q.title,
+        subtitle: q.subtitle || "",
+        referenceFiles: (q.file_upload?.referenceFiles || []).map((rf) => ({
+          id: rf.id,
+          name: rf.name,
+          fileName: rf.fileName,
+          file: rf.file || null,
+        })),
+      }));
+      setQuestions(loadedQuestions);
+    }
+  }, [assessment]);
 
   // Reference file management
   const handleAddReferenceFile = (name: string, file: File) => {

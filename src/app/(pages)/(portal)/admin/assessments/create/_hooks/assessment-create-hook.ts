@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { AssessmentCategory } from "@/types/assessment-category";
 import { useCreateAssessment } from "../../_services/assessments-page-service";
 import { AdminRoutes } from "@/admin/router";
+import type { Assessment } from "@/types/assessment-types";
 
 interface MultipleChoiceQuestion {
   title: string;
@@ -14,7 +15,7 @@ interface MultipleChoiceQuestion {
   categoryId?: string;
 }
 
-export function useAssessmentCreate({ id = null }) {
+export function useAssessmentCreate({ assessment }: { assessment?: Assessment }) {
   const router = useRouter();
   const createAssessmentMutation = useCreateAssessment();
 
@@ -47,6 +48,34 @@ export function useAssessmentCreate({ id = null }) {
   const [editingQuestionIndex, setEditingQuestionIndex] = useState<
     number | null
   >(null);
+
+  // Initialize state from assessment data (edit mode)
+  useEffect(() => {
+    if (assessment) {
+      // Load categories if available
+      if (assessment.categories) {
+        const loadedCategories = assessment.categories.map((cat) => ({
+          id: cat.id,
+          name: cat.name,
+          description: cat.description || "",
+          color: cat.color,
+        }));
+        setCategories(loadedCategories);
+      }
+
+      // Load questions and convert them from the new structure
+      if (assessment.questions && assessment.questions.length > 0) {
+        const loadedQuestions = assessment.questions.map((q) => ({
+          title: q.title,
+          description: q.subtitle || "",
+          options_title: q.multiple_choice?.options_title || "",
+          options: q.multiple_choice?.options || [],
+          categoryId: q.multiple_choice?.categoryId,
+        }));
+        setQuestions(loadedQuestions);
+      }
+    }
+  }, [assessment]);
 
   // Funciones para categorías
   const handleAddCategory = () => {

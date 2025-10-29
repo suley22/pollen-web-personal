@@ -17,8 +17,8 @@ export function CompanyInformation({ company }) {
         {/* Company Logo - Left Side (Full Height) */}
         <div className="flex flex-col justify-center pr-6">
           <CompanyAvatar
-            logoUrl={company.logo_url}
-            companyName={company.company_name}
+            logoUrl={company?.logo_url}
+            companyName={company?.company_name}
             size="xl"
           />
         </div>
@@ -28,17 +28,17 @@ export function CompanyInformation({ company }) {
           {/* Location */}
           <InfoField
             label="Location"
-            value={company.company_location}
+            value={company?.company_location}
             icon={<MapPin className="h-4 w-4 text-muted-foreground" />}
           />
           {/* Company Size */}
-          <InfoField label="Company Size" value={company.company_size} />
+          <InfoField label="Company Size" value={company?.company_size} />
 
           {/* Website */}
           <InfoField
             label="Website"
             value={
-              company.website_url ? (
+              company?.website_url ? (
                 <div className="flex">
                   <a
                     href={UrlHelper.formatUrl(company.website_url)}
@@ -52,7 +52,7 @@ export function CompanyInformation({ company }) {
               ) : null
             }
             icon={
-              company.website_url ? (
+              company?.website_url ? (
                 <Globe className="h-4 w-4 text-muted-foreground" />
               ) : undefined
             }
@@ -67,8 +67,8 @@ export function CompanyInformation({ company }) {
             className="col-span-2"
             value={
               <div className="flex flex-wrap gap-2">
-                {company.industries.length > 0
-                  ? company.industries.map((industry) => (
+                {company?.industries.length > 0
+                  ? company?.industries.map((industry) => (
                       <Badge
                         key={industry}
                         variant="outline"

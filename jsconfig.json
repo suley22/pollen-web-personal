@@ -38,6 +38,6 @@
     "jsx": "preserve",
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx", "src/app/(pages)/(portal)/(job-seeker)/companies/view/_view/company-view-page"],
+  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx", "src/app/(pages)/(portal)/(job-seeker)/companies/view/_view/company-view-skeleton"],
   "exclude": ["node_modules"]
 }

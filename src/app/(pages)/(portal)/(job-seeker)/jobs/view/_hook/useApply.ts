@@ -1,152 +1,127 @@
 import { useRouter, useParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useCallback } from "react";
 import {
-  getJobById,
-  saveSavedJob,
-  createJobApplication,
-  checkIfUserApplied,
+  useJobById,
+  useSaveJob,
+  useCreateJobApplication,
+  useCheckIfUserApplied,
 } from "../../_services/jobs-service";
 import { useToastNotifications } from "@/hooks/useToastNotifications";
 
 export function useApply() {
   const [currentStep, setCurrentStep] = useState(1);
   const [showCompanyProfile, setShowCompanyProfile] = useState(false);
-  const [job, setJob] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [hasApplied, setHasApplied] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isApplying, setIsApplying] = useState(false);
   const router = useRouter();
   const params = useParams();
-  const [jobs, setJobs] = useState([]);
-  const [hiddenJobs, setHiddenJobs] = useState([]);
-  const [savedJobs] = useState(new Set());
+  const [savedJobs, setSavedJobs] = useState<Set<string>>(new Set());
   const { showSuccess, showError } = useToastNotifications();
 
-  useEffect(() => {
-    // Forzar re-render cuando savedJobs cambie
-    console.log("Saved jobs updated:", Array.from(savedJobs));
-  }, [savedJobs]);
+  const jobId = params.id as string;
 
-  useEffect(() => {
-    async function loadJob() {
-      const jobId = params.id;
-      if (!jobId) return;
+  // React Query: Fetch job by ID
+  const { data: job = null, isLoading: loading } = useJobById(jobId);
 
-      const result = await getJobById(jobId);
+  // React Query: Check if user has applied
+  const { data: applicationStatus } = useCheckIfUserApplied(jobId);
+  const hasApplied = applicationStatus?.hasApplied || false;
 
-      if (result.success) {
-        setJob(result.data);
+  // React Query: Create job application mutation
+  const createApplicationMutation = useCreateJobApplication();
 
-        // Check if user has already applied to this job
-        const appliedResult = await checkIfUserApplied(jobId);
-        if (appliedResult.success) {
-          setHasApplied(appliedResult.hasApplied);
-        }
-      } else {
-        console.error("Error loading job:", result.error);
-      }
-
-      setLoading(false);
-    }
-
-    loadJob();
-  }, [params.id]);
+  // React Query: Save job mutation
+  const saveJobMutation = useSaveJob();
 
   const handleBack = () => {
     router.back();
   };
 
   // Create job application
-  const handleStart = async () => {
+  const handleStart = useCallback(async () => {
     if (!job?.id) {
       console.error("❌ No job ID available");
       showError("Error", "Job information is not available");
       return;
     }
 
-    setIsApplying(true);
-
-    try {
-      const result = await createJobApplication(job.id);
-
-      if (result.success) {
-        console.log("✅ Job application created successfully:", result.data);
-        setHasApplied(true);
+    createApplicationMutation.mutate(job.id, {
+      onSuccess: () => {
         setIsDialogOpen(false);
-
         showSuccess(
           "Application submitted successfully!",
           "Your application has been submitted. We'll review it and get back to you soon.",
         );
 
-        // Redirigir de vuelta a la lista de trabajos después de un breve delay
+        // Redirect back to jobs list after a brief delay
         setTimeout(() => {
           router.push("/jobs");
         }, 1500);
-      } else {
-        console.error("❌ Error creating job application:", result.error);
+      },
+      onError: (error: any) => {
         setIsDialogOpen(false);
         showError(
           "Application failed",
-          result.error ||
+          error?.message ||
             "Unable to submit your application. Please try again.",
         );
+      },
+    });
+  }, [job?.id, createApplicationMutation, router, showSuccess, showError]);
+
+  // Handle favorite job toggle
+  const saveFavoriteJob = useCallback(
+    (jobId: string) => {
+      const alreadySaved = savedJobs.has(jobId);
+
+      if (alreadySaved) {
+        setSavedJobs((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(jobId);
+          return newSet;
+        });
+      } else {
+        setSavedJobs((prev) => {
+          const newSet = new Set(prev);
+          newSet.add(jobId);
+          return newSet;
+        });
       }
-    } catch (error) {
-      console.error("❌ Unexpected error in handleStart:", error);
-      setIsDialogOpen(false);
-      showError(
-        "Application failed",
-        "An unexpected error occurred. Please try again.",
-      );
-    } finally {
-      setIsApplying(false);
-    }
-  };
 
-  const updateFavouriteJob = (jobId) => {
-    const alreadySaved = savedJobs.has(jobId);
+      // Call the mutation
+      saveJobMutation.mutate(jobId, {
+        onError: () => {
+          // Revert on error
+          if (alreadySaved) {
+            setSavedJobs((prev) => {
+              const newSet = new Set(prev);
+              newSet.add(jobId);
+              return newSet;
+            });
+          } else {
+            setSavedJobs((prev) => {
+              const newSet = new Set(prev);
+              newSet.delete(jobId);
+              return newSet;
+            });
+          }
+        },
+      });
+    },
+    [savedJobs, saveJobMutation],
+  );
 
-    if (alreadySaved) {
-      updateSavedJobList(jobId, false);
-      savedJobs.delete(jobId);
-
-      const result = saveSavedJob(jobId);
-
-      if (!result.success) {
-        console.error("❌ Error saving favorite job:", result.error);
-        updateSavedJobList(jobId, true);
-      }
-    } else {
-      updateSavedJobList(jobId, true);
-      savedJobs.add(jobId);
-
-      const result = saveSavedJob(jobId);
-
-      if (!result.success) {
-        console.error("❌ Error saving favorite job:", result.error);
-        updateSavedJobList(jobId, true);
-      }
-    }
-  };
-
-  const updateSavedJobList = (jobId, isSaved) => {
-    setJobs((items) => updateSavedJob(items, jobId, isSaved));
-    setHiddenJobs((items) => updateSavedJob(items, jobId, isSaved));
-  };
-
-  const updateSavedJob = (items, jobId, isSaved) => {
-    return items.map((job) =>
-      job.id === jobId ? { ...job, isSaved: isSaved } : job,
-    );
-  };
+  // Check if a job is saved
+  const isSaved = useCallback(
+    (jobId: string) => {
+      return savedJobs.has(jobId);
+    },
+    [savedJobs],
+  );
 
   return {
     currentStep,
     showCompanyProfile,
     setShowCompanyProfile,
-
     handleBack,
     handleStart,
     job,
@@ -154,8 +129,8 @@ export function useApply() {
     hasApplied,
     isDialogOpen,
     setIsDialogOpen,
-    isApplying,
-    saveFavoriteJob: updateFavouriteJob,
-    isSaved: (jobId) => savedJobs.has(jobId),
+    isApplying: createApplicationMutation.isPending,
+    saveFavoriteJob,
+    isSaved,
   };
 }

@@ -14,6 +14,40 @@ interface StatusButtonProps {
   type?: "button" | "submit" | "reset";
 }
 
+// Complete Button (Blue)
+export function CompleteButton({
+  text,
+  icon,
+  onClick,
+  disabled = false,
+  loading = false,
+  className,
+  type = "button",
+}: StatusButtonProps) {
+  const iconWithSize = icon
+    ? cloneElement(icon as ReactElement<any>, {
+        className: cn("w-4 h-4", (icon.props as any)?.className),
+      })
+    : null;
+
+  return (
+    <Button
+      type={type}
+      variant="default"
+      size="sm"
+      onClick={onClick}
+      disabled={disabled || loading}
+      className={cn(
+        "bg-blue-600 hover:bg-blue-700 text-white font-sora gap-2",
+        className,
+      )}
+    >
+      {iconWithSize}
+      {loading ? "Loading..." : text}
+    </Button>
+  );
+}
+
 // Success Button (Green)
 export function SuccessButton({
   text,

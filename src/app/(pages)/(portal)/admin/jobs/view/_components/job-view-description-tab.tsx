@@ -1,14 +1,11 @@
 import { Award, FileText, Lightbulb, Target, Users } from "lucide-react";
 import { JobOverviewCard, ListCard } from "./job-view-cards";
 import { DescriptionCard } from "@/components/design-system";
+import { JobDescriptionSkeleton } from "./job-view-skeletons";
 
 export function JobDescriptionTab({ job }) {
   if (!job) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <p className="text-gray-500">Loading job details...</p>
-      </div>
-    );
+    return <JobDescriptionSkeleton />;
   }
 
   return (
@@ -20,7 +17,7 @@ export function JobDescriptionTab({ job }) {
       <DescriptionCard
         title="About this Role"
         icon={<FileText className="h-5 w-5 text-gray-500" />}
-        value={job.about_this_role || "No description provided."}
+        value={job.description || "No description provided."}
       />
 
       <ListCard

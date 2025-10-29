@@ -92,6 +92,13 @@ export default function AssessmentCreateMultipleChoiceView({
     if (onSaveRef) {
       onSaveRef(handleSaveDraft);
     }
+
+    // Cleanup: remove the ref when component unmounts
+    return () => {
+      if (onSaveRef) {
+        onSaveRef(null as any);
+      }
+    };
   }, [onSaveRef, handleSaveDraft]);
 
   // Sync saving state with parent

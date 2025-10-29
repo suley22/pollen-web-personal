@@ -129,7 +129,8 @@ export function useAssessmentCreateFreeInput() {
         throw new Error("Assessment title is required");
       }
 
-      if (questions.length === 0) {
+      // Only validate questions if this is a free_input assessment
+      if (assessmentType === "free_input" && questions.length === 0) {
         throw new Error("At least one question is required");
       }
 
@@ -146,6 +147,9 @@ export function useAssessmentCreateFreeInput() {
           title: q.title,
           subtitle: q.subtitle,
           type: assessmentType,
+          free_input: {
+            placeholder: q.placeholder,
+          },
         })),
       });
 

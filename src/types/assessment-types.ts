@@ -1,6 +1,6 @@
 export type AssessmentType = "multiple_choice" | "free_input" | "file_upload";
 
-export type AssessmentStatus = "draft" | "live" | "paused";
+export type AssessmentStatus = "draft" | "live" | "paused" | "archived";
 
 export enum AssessmentTypeEnum {
   MultipleChoice = "multiple_choice",
@@ -12,6 +12,31 @@ export enum AssessmentStatusEnum {
   Draft = "draft",
   Live = "live",
   Paused = "paused",
+  Archived = "archived",
+}
+
+// Type-specific question data
+export interface MultipleChoiceQuestionData {
+  options: Array<{
+    value: string;
+    label: string;
+    categoryId?: string;
+  }>;
+  options_title?: string; // Title for the options section
+  categoryId?: string; // Category this question belongs to
+}
+
+export interface FreeInputQuestionData {
+  placeholder?: string;
+}
+
+export interface FileUploadQuestionData {
+  referenceFiles?: Array<{
+    id: string;
+    name: string;
+    fileName: string;
+    file?: File | null;
+  }>;
 }
 
 export interface AssessmentQuestion {
@@ -19,18 +44,10 @@ export interface AssessmentQuestion {
   title: string;
   subtitle?: string;
   type: AssessmentType;
-  options?: Array<{
-    value: string;
-    label: string;
-    categoryId?: string;
-  }>;
-  categoryId?: string;
-  placeholder?: string;
-  referenceFiles?: Array<{
-    id: string;
-    name: string;
-    fileName: string;
-  }>;
+  // Type-specific data
+  multiple_choice?: MultipleChoiceQuestionData;
+  free_input?: FreeInputQuestionData;
+  file_upload?: FileUploadQuestionData;
 }
 
 export interface AssessmentCategory {
@@ -52,7 +69,8 @@ export interface Assessment {
   status: AssessmentStatus;
   categories?: AssessmentCategory[];
   questions: AssessmentQuestion[];
-  total_questions?: number;
+  questions_count?: number; // Calculated field for display
+  total_questions?: number; // Alias for questions_count
   total_submissions?: number;
   created_at: string;
   updated_at: string;
@@ -99,6 +117,7 @@ export class AssessmentHelper {
       draft: "Draft",
       live: "Live",
       paused: "Paused",
+      archived: "Archived",
     };
     return statusDisplayMap[status] || status;
   }
@@ -155,6 +174,7 @@ export class AssessmentHelper {
       draft: "bg-gray-100 text-gray-800",
       live: "bg-green-100 text-green-800",
       paused: "bg-yellow-100 text-yellow-800",
+      archived: "bg-red-100 text-red-800",
     };
     return colorMap[status] || "bg-gray-100 text-gray-800";
   }
@@ -218,9 +238,11 @@ export class AssessmentHelper {
     categoryId?: string,
   ): AssessmentQuestion[] {
     if (!categoryId) {
-      return questions.filter((q) => !q.categoryId);
+      return questions.filter((q) => !q.multiple_choice?.categoryId);
     }
-    return questions.filter((q) => q.categoryId === categoryId);
+    return questions.filter(
+      (q) => q.multiple_choice?.categoryId === categoryId,
+    );
   }
 
   /**

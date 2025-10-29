@@ -1,6 +1,14 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  Assessment,
+  AssessmentQuestion,
+  AssessmentCategory,
+  CreateAssessmentInput,
+  AssessmentType,
+  AssessmentStatus,
+} from "@/types/assessment-types";
 
 const assessmentsQueryKey = "assessments";
 
@@ -12,52 +20,13 @@ export interface AssessmentFilters {
   pageSize?: number;
 }
 
-export interface AssessmentQuestion {
-  id?: string;
-  title: string;
-  subtitle: string;
-  options?: { value: string; label: string; categoryId?: string }[];
-  categoryId?: string;
-  type: "multiple_choice" | "free_input" | "file_upload";
-}
-
-export interface AssessmentCategory {
-  id: string;
-  name: string;
-  description: string;
-  color: string;
-}
-
-export interface CreateAssessmentInput {
-  internal_pollen_title?: string;
-  title: string;
-  subtitle?: string;
-  estimated_duration?: string;
-  instructions_title?: string;
-  instructions_description?: string;
-  type: "multiple_choice" | "free_input" | "file_upload";
-  categories?: AssessmentCategory[];
-  questions: AssessmentQuestion[];
-}
-
-export interface Assessment {
-  id: string;
-  internal_pollen_title?: string;
-  title: string;
-  subtitle?: string;
-  type: "multiple_choice" | "free_input" | "file_upload";
-  status: "draft" | "live" | "paused" | "archived";
-  questions_count: number;
-  estimated_duration?: string;
-  created_at: string;
-  updated_at: string;
-  created_by: string;
-  total_submissions?: number;
-  categories?: AssessmentCategory[];
-  questions?: AssessmentQuestion[];
-  instructions_title?: string;
-  instructions_description?: string;
-}
+// Re-export types for convenience
+export type {
+  Assessment,
+  AssessmentQuestion,
+  AssessmentCategory,
+  CreateAssessmentInput,
+};
 
 // Mock data store (in real app, this would be in a database)
 let mockAssessmentsStore: Assessment[] = [
@@ -68,6 +37,7 @@ let mockAssessmentsStore: Assessment[] = [
     subtitle: "Evaluate React and TypeScript proficiency",
     type: "multiple_choice",
     status: "draft",
+    questions: [], // Empty for now, will be filled on create
     questions_count: 15,
     estimated_duration: "30 minutes",
     created_at: "2024-10-20T10:00:00Z",
@@ -81,6 +51,7 @@ let mockAssessmentsStore: Assessment[] = [
     subtitle: "Assess strategic thinking and problem-solving",
     type: "free_input",
     status: "live",
+    questions: [],
     questions_count: 5,
     estimated_duration: "45 minutes",
     created_at: "2024-10-15T09:00:00Z",
@@ -94,6 +65,7 @@ let mockAssessmentsStore: Assessment[] = [
     subtitle: "Upload and review design work samples",
     type: "file_upload",
     status: "live",
+    questions: [],
     questions_count: 3,
     estimated_duration: "20 minutes",
     created_at: "2024-10-18T13:00:00Z",
@@ -107,6 +79,7 @@ let mockAssessmentsStore: Assessment[] = [
     subtitle: "Test Node.js and database knowledge",
     type: "multiple_choice",
     status: "live",
+    questions: [],
     questions_count: 20,
     estimated_duration: "40 minutes",
     created_at: "2024-10-12T08:00:00Z",
@@ -120,6 +93,7 @@ let mockAssessmentsStore: Assessment[] = [
     subtitle: "Assess communication and persuasion abilities",
     type: "free_input",
     status: "paused",
+    questions: [],
     questions_count: 8,
     estimated_duration: "35 minutes",
     created_at: "2024-10-10T12:00:00Z",
@@ -134,6 +108,7 @@ let mockAssessmentsStore: Assessment[] = [
     subtitle: "Upload campaign materials and strategy documents",
     type: "file_upload",
     status: "draft",
+    questions: [],
     questions_count: 4,
     estimated_duration: "25 minutes",
     created_at: "2024-10-08T14:00:00Z",
@@ -194,6 +169,27 @@ export function useAssessmentsList(filters: AssessmentFilters) {
         },
       };
     },
+  });
+}
+
+export function useAssessmentById(id: string) {
+  return useQuery({
+    queryKey: [assessmentsQueryKey, "detail", id],
+    queryFn: async () => {
+      if (!id) return null;
+
+      // Simulate API delay
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      const assessment = mockAssessmentsStore.find((a) => a.id === id);
+
+      if (!assessment) {
+        throw new Error("Assessment not found");
+      }
+
+      return assessment;
+    },
+    enabled: !!id, // Only run query if id is provided
   });
 }
 

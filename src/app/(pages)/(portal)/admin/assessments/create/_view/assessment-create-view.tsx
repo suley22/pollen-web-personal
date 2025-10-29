@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRef, useEffect } from "react";
 import {
   PageContainer,
   PageHeader,
@@ -10,7 +9,8 @@ import {
   FormActions,
 } from "@/components/design-system";
 import { CheckCircle } from "lucide-react";
-import { AssessmentType } from "@/types/assessment-types";
+import { AssessmentTypeEnum } from "@/types/assessment-types";
+import { useAssessmentCreate } from "../_hooks/assessment-create-main-hook";
 import { AssessmentCreateDetails } from "../_components/assessment-create-details";
 import { AssessmentTypeSelector } from "../_components/assessment-type-selector";
 import AssessmentCreateMultipleChoiceView from "./assessment-create-multiple-choice-view";
@@ -27,73 +27,54 @@ const CreateAssessmentButton = ({ isLoading, onClick, disabled }) => (
   />
 );
 
-export default function AssessmentCreateView() {
-  const router = useRouter();
+export default function AssessmentCreateView({
+  id = null,
+}: {
+  id?: string | null;
+}) {
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Refs to child components save functions
-  const multipleChoiceSaveRef = useRef<(() => Promise<void>) | null>(null);
-  const freeInputSaveRef = useRef<(() => Promise<void>) | null>(null);
-  const fileUploadSaveRef = useRef<(() => Promise<void>) | null>(null);
+  const {
+    // Assessment data
+    internalPollenTitle,
+    setInternalPollenTitle,
+    assessmentTitle,
+    setAssessmentTitle,
+    assessmentDescription,
+    setAssessmentDescription,
+    estimatedDuration,
+    setEstimatedDuration,
+    instructionsTitle,
+    setInstructionsTitle,
+    instructionsDescription,
+    setInstructionsDescription,
 
-  // Assessment data state
-  const [internalPollenTitle, setInternalPollenTitle] = useState("");
-  const [assessmentTitle, setAssessmentTitle] = useState("");
-  const [assessmentDescription, setAssessmentDescription] = useState("");
-  const [estimatedDuration, setEstimatedDuration] = useState("");
-  const [instructionsTitle, setInstructionsTitle] = useState("");
-  const [instructionsDescription, setInstructionsDescription] = useState("");
-  const [selectedType, setSelectedType] = useState<AssessmentType | null>(null);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [showSaveDialog, setShowSaveDialog] = useState(false);
-  const [pendingType, setPendingType] = useState<AssessmentType | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
+    // Type selection
+    selectedType,
+    handleSelectType,
 
-  const handleBack = () => {
-    router.back();
-  };
+    // Dialog states
+    showConfirmDialog,
+    setShowConfirmDialog,
+    setShowSaveDialog,
+    showSaveDialog,
+    handleConfirmChange,
+    handleCancelChange,
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      if (selectedType === "multiple_choice" && multipleChoiceSaveRef.current) {
-        await multipleChoiceSaveRef.current();
-      } else if (selectedType === "free_input" && freeInputSaveRef.current) {
-        await freeInputSaveRef.current();
-      } else if (selectedType === "file_upload" && fileUploadSaveRef.current) {
-        await fileUploadSaveRef.current();
-      }
-    } finally {
-      setIsSaving(false);
-      setShowSaveDialog(false);
-    }
-  };
+    // Save refs
+    multipleChoiceSaveRef,
+    freeInputSaveRef,
+    fileUploadSaveRef,
 
-  const canSave = selectedType !== null && assessmentTitle.trim() !== "";
+    // Actions
+    handleBack,
+    handleSave,
+    canSave,
 
-  const handleSelectType = (type: AssessmentType) => {
-    // If there's already a type selected and user is changing it, show confirmation
-    if (selectedType && selectedType !== type) {
-      setPendingType(type);
-      setShowConfirmDialog(true);
-    } else {
-      // First selection or same type, just set it
-      setSelectedType(type);
-    }
-  };
-
-  const handleConfirmChange = () => {
-    if (pendingType) {
-      setSelectedType(pendingType);
-      setPendingType(null);
-    }
-    setShowConfirmDialog(false);
-  };
-
-  const handleCancelChange = () => {
-    setPendingType(null);
-    setShowConfirmDialog(false);
-  };
+    // Loading state
+    isSaving,
+    setIsSaving,
+  } = useAssessmentCreate({ id });
 
   // Scroll to content when type is selected
   useEffect(() => {
@@ -144,7 +125,7 @@ export default function AssessmentCreateView() {
       />
 
       {/* Show type-specific content based on selection */}
-      {selectedType === "multiple_choice" && (
+      {selectedType === AssessmentTypeEnum.MultipleChoice && (
         <div ref={contentRef} className="">
           <AssessmentCreateMultipleChoiceView
             assessmentTitle={assessmentTitle}
@@ -159,7 +140,7 @@ export default function AssessmentCreateView() {
         </div>
       )}
 
-      {selectedType === "free_input" && (
+      {selectedType === AssessmentTypeEnum.FreeInput && (
         <div ref={contentRef} className="">
           <AssessmentCreateQuestionaryView
             internalPollenTitle={internalPollenTitle}
@@ -174,7 +155,7 @@ export default function AssessmentCreateView() {
         </div>
       )}
 
-      {selectedType === "file_upload" && (
+      {selectedType === AssessmentTypeEnum.FileUpload && (
         <div ref={contentRef} className="">
           <AssessmentCreateFileUploadView
             assessmentTitle={assessmentTitle}

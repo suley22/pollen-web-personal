@@ -163,7 +163,8 @@ export function useAssessmentCreateFileUpload() {
         throw new Error("Assessment title is required");
       }
 
-      if (questions.length === 0) {
+      // Only validate questions if this is a file_upload assessment
+      if (assessmentType === "file_upload" && questions.length === 0) {
         throw new Error("At least one question is required");
       }
 
@@ -182,6 +183,9 @@ export function useAssessmentCreateFileUpload() {
           title: q.title,
           subtitle: q.subtitle,
           type: assessmentType,
+          file_upload: {
+            referenceFiles: q.referenceFiles,
+          },
         })),
       });
 

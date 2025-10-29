@@ -203,6 +203,12 @@ export function useAssessmentCreate({ id = null }) {
     },
   ) => {
     try {
+      console.log(
+        "[Multiple Choice Hook] handleSubmit called with type:",
+        assessmentType,
+      );
+      console.log("[Multiple Choice Hook] Questions count:", questions.length);
+
       // Use provided data or fall back to hook state
       const dataToSubmit = {
         internalPollenTitle:
@@ -223,7 +229,8 @@ export function useAssessmentCreate({ id = null }) {
         throw new Error("Assessment title is required");
       }
 
-      if (questions.length === 0) {
+      // Only validate questions if this is a multiple_choice assessment
+      if (assessmentType === "multiple_choice" && questions.length === 0) {
         throw new Error("At least one question is required");
       }
 
@@ -241,9 +248,12 @@ export function useAssessmentCreate({ id = null }) {
         questions: questions.map((q) => ({
           title: q.title,
           subtitle: q.description,
-          options: q.options,
-          categoryId: q.categoryId,
           type: assessmentType,
+          multiple_choice: {
+            options: q.options,
+            options_title: q.options_title,
+            categoryId: q.categoryId,
+          },
         })),
       });
 

@@ -11,7 +11,15 @@ import {
 } from "@/components/design-system";
 import { QuestionActionButtons } from "./question-action-buttons";
 import { AssessmentProgress } from "../../test/_components/assessment-progress";
-import { HelpCircle, Download, Upload, X } from "lucide-react";
+import {
+  HelpCircle,
+  Download,
+  Upload,
+  X,
+  Check,
+  CheckCircle,
+  Trash,
+} from "lucide-react";
 import type { FileUploadQuestion } from "../_hooks/assessment-create-file-upload-hook";
 import { useToastNotifications } from "@/hooks/useToastNotifications";
 
@@ -239,8 +247,7 @@ export function AssessmentCreateFileUploadPreview({
                             <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                               Selected File:
                             </p>
-                            <div className="flex items-center gap-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 p-3">
-                              <Upload className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                            <div className="py-3 px-5 flex items-center gap-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800">
                               <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                                   {questionFile.name}
@@ -251,10 +258,10 @@ export function AssessmentCreateFileUploadPreview({
                               </div>
                               <button
                                 onClick={() => handleRemoveFile(index)}
-                                className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 flex-shrink-0"
+                                className=" hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 flex-shrink-0"
                                 title="Remove file"
                               >
-                                <X className="h-4 w-4" />
+                                <Trash className="h-4 w-4" />
                               </button>
                             </div>
                           </div>
@@ -265,11 +272,7 @@ export function AssessmentCreateFileUploadPreview({
                     {/* Submitted File (Read-only) */}
                     {isSubmitted && questionFile && (
                       <div className="space-y-2">
-                        <p className="text-sm font-medium text-green-700 dark:text-green-300">
-                          ✓ Submitted File:
-                        </p>
-                        <div className="flex items-center gap-3 rounded-lg border border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20 p-3">
-                          <Upload className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0" />
+                        <div className="py-3 px-5 flex items-center gap-4 rounded-lg border border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20 ">
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                               {questionFile.name}
@@ -278,6 +281,7 @@ export function AssessmentCreateFileUploadPreview({
                               {formatFileSize(questionFile.size)}
                             </p>
                           </div>
+                          <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0" />
                         </div>
                       </div>
                     )}

@@ -2,12 +2,13 @@
 
 import { PageContainer, PageHeader } from "@/components/design-system";
 import { CompanyInformation } from "@/app/(pages)/(portal)/admin/employers/view/_components/employers-view-company-information";
-import { AccoladesAccreditations } from "@/app/(pages)/(portal)/admin/employers/view/_components/employers-view-accolades";
+import { AccoladesAccreditations } from "@/job-seeker/companies/view/_components/companies-view-accolades";
 import { SocialMedia } from "@/app/(pages)/(portal)/admin/employers/view/_components/employers-view-social-media";
 import { DescriptionCard } from "@/components/design-system";
 import { FileText, Users, Heart, GraduationCap } from "lucide-react";
 import { useEmployerView } from "@/app/(pages)/(portal)/admin/employers/view/_hooks/employers-view-hook";
 import { useRouter } from "next/navigation";
+import { CompanyProfileSkeleton } from "./company-view-skeleton";
 
 export default function CompanyProfileView({
   id = null,
@@ -18,7 +19,7 @@ export default function CompanyProfileView({
   const router = useRouter();
 
   return isLoading ? (
-    <div>Loading...</div>
+    <CompanyProfileSkeleton />
   ) : (
     <>
       <PageContainer>
@@ -27,7 +28,7 @@ export default function CompanyProfileView({
           onBack={() => router.back()}
           title={profile?.company_name}
         />
-        {/* Left Column - Main Information */}
+
         <div className="lg:col-span-2 space-y-6">
           <CompanyInformation company={profile} />
 

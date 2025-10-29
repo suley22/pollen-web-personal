@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/utils/supabase/client";
+import { getLoggedInUserId } from "@/services/userService";
 
 const supabase = createClient();
 
@@ -39,31 +40,32 @@ export const TASK_COLUMNS = [
  */
 export function useJobApplicants(jobId: string) {
   return useQuery({
-    queryKey: ["playground", "applicants", jobId],
+    queryKey: ["playground", "applicants"],
     queryFn: async () => {
       const { data: applications, error } = await supabase
         .from("job_applications")
-        .select(
-          `
-          *,
-          job_seeker:applicant_id (
-            id,
-            name,
-            profile_picture
-          )
-        `,
-        )
-        .eq("job_id", jobId)
+        .select("*")
         .order("created_at", { ascending: false });
+
+      const userId = await getLoggedInUserId();
+
+      const mappedApplications = applications?.map((app) => {
+        return {
+          ...app,
+          id: app.id,
+          name: "Gonzalo",
+          profile_picture: "",
+        };
+      });
 
       if (error) {
         throw new Error(error.message);
       }
 
       // Agrupar por status (que coincide con las columnas del Kanban)
-      return groupApplicantsByStatus(applications || []);
+      return groupApplicantsByStatus(mappedApplications || []);
     },
-    enabled: !!jobId, // Solo ejecuta si hay jobId
+
     staleTime: 0, // ✅ Forzar refetch inmediato
     gcTime: 0, // ✅ No cachear (reemplaza cacheTime en React Query v5)
     refetchOnMount: true, // ✅ Refetch al montar

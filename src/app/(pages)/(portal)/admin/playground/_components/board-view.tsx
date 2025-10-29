@@ -36,9 +36,9 @@ export function BoardView({
             className="flex-1 bg-gray-50 rounded-lg p-3 min-h-[400px] border-2 border-dashed border-gray-200"
           >
             <div className="flex flex-col gap-2">
-              {tasks[column.id]?.map((task) => (
+              {tasks[column.id]?.map((task, index) => (
                 <TaskCard
-                  key={task.id}
+                  key={`${task.id}-${index}`}
                   task={task}
                   columnId={column.id}
                   onDragStart={onDragStart}

@@ -63,13 +63,13 @@ export const ADMIN_NAVIGATION = [
     icon: LayoutDashboard,
     label: "Job Seekers",
     path: AdminRoutes.allJobSeekers,
-    section: "Admin",
+    section: "Development",
   },
   {
     icon: Key,
     label: "Roles",
     path: AdminRoutes.roles,
-    section: "Admin",
+    section: "Development",
   },
   {
     icon: FlaskConical,

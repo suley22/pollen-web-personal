@@ -62,16 +62,30 @@ export async function getJobById(jobId) {
   try {
     const { data, error } = await supabase
       .from("job")
-      .select("*")
+      .select(
+        `
+          *,
+          employer_profile:company_id (
+            logo_url,
+            company_name
+          )
+        `,
+      )
       .eq("id", jobId)
-      .single(); // .single() devuelve un objeto en vez de array
+      .single();
 
     if (error) {
       console.error("❌ Error fetching job:", error);
       return { success: false, error: error.message };
     }
 
-    return { success: true, data };
+    const job = {
+      ...data,
+      company_logo: data.employer_profile?.logo_url || null,
+      company_name: data.employer_profile?.company_name || null,
+    };
+
+    return { success: true, data: job };
   } catch (error) {
     console.error("Unexpected error:", error);
     return { success: false, error: "Failed to fetch job" };

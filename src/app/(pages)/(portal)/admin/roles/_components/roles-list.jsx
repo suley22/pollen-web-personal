@@ -12,6 +12,7 @@ import {
 import { Building2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/buttons/button";
 import { RoleChangeConfirmDialog } from "../role-change-confirm-dialog";
+import { UserDeleteConfirmDialog } from "./user-delete-confirm-dialog";
 import { ResultsCount } from "@/app/(pages)/(portal)/admin/employers/_components/employers-page-results-count";
 
 const ROLE_OPTIONS = [
@@ -26,6 +27,13 @@ export function RolesList({ users, loading, onRoleChange, isUpdatingRole, onDele
     userName: "",
     currentRole: "",
     newRole: "",
+  });
+
+  const [deleteDialog, setDeleteDialog] = useState({
+    isOpen: false,
+    userId: "",
+    userName: "",
+    userEmail: "",
   });
 
   const handleRoleChangeRequest = (userId, newRole) => {
@@ -64,6 +72,42 @@ export function RolesList({ users, loading, onRoleChange, isUpdatingRole, onDele
       userName: "",
       currentRole: "",
       newRole: "",
+    });
+  };
+
+  const handleDeleteRequest = (userId) => {
+    const user = users.find((u) => u.id === userId);
+    if (!user) return;
+
+    setDeleteDialog({
+      isOpen: true,
+      userId: userId,
+      userName: `${user.first_name} ${user.last_name}`,
+      userEmail: user.email,
+    });
+  };
+
+  const confirmUserDelete = async () => {
+    const { userId } = deleteDialog;
+    try {
+      await onDeleteUser(userId);
+      setDeleteDialog({
+        isOpen: false,
+        userId: "",
+        userName: "",
+        userEmail: "",
+      });
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
+
+  const closeDeleteDialog = () => {
+    setDeleteDialog({
+      isOpen: false,
+      userId: "",
+      userName: "",
+      userEmail: "",
     });
   };
 
@@ -156,7 +200,7 @@ export function RolesList({ users, loading, onRoleChange, isUpdatingRole, onDele
                     <Button
                       variant="destructive"
                       size="sm"
-                      onClick={() => onDeleteUser(user.id)}
+                      onClick={() => handleDeleteRequest(user.id)}
                       disabled={isDeletingUser}
                       className="flex items-center gap-2"
                     >
@@ -185,6 +229,14 @@ export function RolesList({ users, loading, onRoleChange, isUpdatingRole, onDele
         userName={confirmDialog.userName}
         currentRole={confirmDialog.currentRole}
         newRole={confirmDialog.newRole}
+      />
+
+      <UserDeleteConfirmDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={closeDeleteDialog}
+        onConfirm={confirmUserDelete}
+        userName={deleteDialog.userName}
+        userEmail={deleteDialog.userEmail}
       />
     </>
   );

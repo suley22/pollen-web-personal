@@ -1,80 +1,91 @@
 "use client";
 
 import { PageHeader } from "@/components/design-system/page-header";
-import { PrimaryButton } from "@/components/design-system/primary-button";
+import {
+  SuccessButton,
+  WarningButton,
+  DangerButton,
+  EditButton,
+} from "@/components/design-system/status-buttons";
 import { DeleteConfirmationDialog } from "@/components/design-system/delete-confirmation-dialog";
-import { Edit, Trash2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Edit, CheckCircle, Pause, Archive, Trash2 } from "lucide-react";
+import { AssessmentStatusEnum } from "@/types/assessment-types";
 
 interface AssessmentViewHeaderProps {
   title: string;
-  type: string;
   status: string;
   onBack: () => void;
   onEdit: () => void;
+  onSetLive: () => void;
+  onPause: () => void;
+  onArchive: () => void;
   onDelete: () => void;
-  isDeleting: boolean;
+  isUpdating?: boolean;
+  isDeleting?: boolean;
 }
-
-const STATUS_STYLES = {
-  draft: "bg-gray-100 text-gray-800 hover:bg-gray-200",
-  live: "bg-green-100 text-green-800 hover:bg-green-200",
-  paused: "bg-yellow-100 text-yellow-800 hover:bg-yellow-200",
-  archived: "bg-red-100 text-red-800 hover:bg-red-200",
-};
-
-const TYPE_LABELS = {
-  multiple_choice: "Multiple Choice",
-  free_input: "Free Input",
-  file_upload: "File Upload",
-};
 
 export function AssessmentViewHeader({
   title,
-  type,
   status,
   onBack,
   onEdit,
+  onSetLive,
+  onPause,
+  onArchive,
   onDelete,
-  isDeleting,
+  isUpdating = false,
+  isDeleting = false,
 }: AssessmentViewHeaderProps) {
+  const isDraft = status === AssessmentStatusEnum.Draft;
+  const isLive = status === AssessmentStatusEnum.Live;
+  const isPaused = status === AssessmentStatusEnum.Paused;
+  const isArchived = status === AssessmentStatusEnum.Archived;
+
   return (
-    <div className="space-y-4">
-      <PageHeader
-        showBackButton={true}
-        title={title}
-        subtitle="View assessment details and configuration"
-        onBack={onBack}
-      >
-        <div className="flex gap-2">
-          <PrimaryButton
-            icon={<Edit className="h-4 w-4" />}
-            text="Edit"
-            onClick={onEdit}
+    <PageHeader title={title} showBackButton={true} onBack={onBack}>
+      {/* Status Actions - Show Set Live button when Draft or Paused */}
+      {(isDraft || isPaused) && (
+        <SuccessButton
+          text="Set Live"
+          icon={<CheckCircle />}
+          onClick={onSetLive}
+          disabled={isUpdating || isDeleting}
+        />
+      )}
+
+      {/* Show Pause button only when Live */}
+      {isLive && (
+        <WarningButton
+          text="Pause"
+          icon={<Pause />}
+          onClick={onPause}
+          disabled={isUpdating || isDeleting}
+        />
+      )}
+
+      {/* Edit Button */}
+      <EditButton
+        text="Edit"
+        icon={<Edit />}
+        onClick={onEdit}
+        disabled={isUpdating || isDeleting}
+      />
+
+      {/* Delete Button with Confirmation */}
+      <DeleteConfirmationDialog
+        trigger={
+          <DangerButton
+            text="Delete"
+            icon={<Trash2 />}
+            disabled={isUpdating || isDeleting}
           />
-          <DeleteConfirmationDialog
-            trigger={
-              <PrimaryButton
-                icon={<Trash2 className="h-4 w-4" />}
-                text="Delete"
-                loading={isDeleting}
-              />
-            }
-            title="Delete Assessment"
-            description="Are you sure you want to delete this assessment? This action cannot be undone."
-            itemName={title}
-            onConfirm={onDelete}
-          />
-        </div>
-      </PageHeader>
-      <div className="flex items-center gap-2">
-        <Badge className={STATUS_STYLES[status as keyof typeof STATUS_STYLES]}>
-          {status?.toUpperCase()}
-        </Badge>
-        <Badge variant="outline">
-          {TYPE_LABELS[type as keyof typeof TYPE_LABELS]}
-        </Badge>
-      </div>
-    </div>
+        }
+        title="Delete Assessment"
+        description="Are you sure you want to delete {itemName}? This action cannot be undone."
+        itemName={title}
+        onConfirm={onDelete}
+        confirmText="Delete Assessment"
+      />
+    </PageHeader>
   );
 }

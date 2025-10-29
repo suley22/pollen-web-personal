@@ -14,9 +14,13 @@ export default function AssessmentView({ id = null }: { id?: string | null }) {
     assessment,
     isLoading,
     handleEdit,
+    handleSetLive,
+    handlePause,
+    handleArchive,
     handleDelete,
     handleBack,
     isDeleting,
+    isUpdating,
   } = useAssessmentView(id);
 
   if (!assessment || isLoading) {
@@ -28,11 +32,14 @@ export default function AssessmentView({ id = null }: { id?: string | null }) {
       {/* Header */}
       <AssessmentViewHeader
         title={assessment.title}
-        type={assessment.type}
         status={assessment.status}
         onBack={handleBack}
         onEdit={handleEdit}
+        onSetLive={handleSetLive}
+        onPause={handlePause}
+        onArchive={handleArchive}
         onDelete={handleDelete}
+        isUpdating={isUpdating}
         isDeleting={isDeleting}
       />
 
@@ -66,6 +73,7 @@ export default function AssessmentView({ id = null }: { id?: string | null }) {
             createdDate={assessment.created_at}
             lastUpdatedBy={assessment.updated_by?.full_name}
             lastUpdatedDate={assessment.updated_at}
+            assessmentCompleteness={assessment.assessment_completeness}
           />
         </div>
       </div>

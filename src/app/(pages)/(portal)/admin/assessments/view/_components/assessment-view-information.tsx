@@ -26,29 +26,19 @@ export function AssessmentInformation({
       title="Assessment Information"
       icon={<FileText className="h-5 w-5" />}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-        {internalPollenTitle && (
+      <div className="flex flex-col gap-6">
+        <InfoField label="Internal Pollen Title" value={internalPollenTitle} />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+          <InfoField label="Title" value={title} />
           <InfoField
-            label="Internal Pollen Title"
-            value={internalPollenTitle}
+            label="Questions"
+            value={questionsCount?.toString() || "0"}
           />
-        )}
-        <InfoField label="Title" value={title} />
-        {subtitle && <InfoField label="Subtitle" value={subtitle} />}
-        {estimatedDuration && (
-          <InfoField
-            label="Estimated Duration"
-            value={`${estimatedDuration} minutes`}
-          />
-        )}
-        <InfoField
-          label="Questions"
-          value={questionsCount?.toString() || "0"}
-        />
-        <InfoField
-          label="Total Submissions"
-          value={totalSubmissions?.toString() || "0"}
-        />
+
+          <InfoField label="Subtitle" value={subtitle} />
+          <InfoField label="Estimated Duration" value={estimatedDuration} />
+        </div>
       </div>
     </FormCard>
   );

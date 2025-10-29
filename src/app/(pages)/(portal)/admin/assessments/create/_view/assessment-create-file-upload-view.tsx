@@ -10,6 +10,8 @@ import type { Assessment } from "@/types/assessment-types";
 interface AssessmentCreateFileUploadViewProps {
   assessmentTitle: string;
   assessmentDescription: string;
+  estimatedDuration: string;
+  internalPollenTitle: string;
   instructionsTitle: string;
   instructionsDescription: string;
   assessment?: Assessment;
@@ -20,6 +22,8 @@ interface AssessmentCreateFileUploadViewProps {
 export function AssessmentCreateFileUploadView({
   assessmentTitle,
   assessmentDescription,
+  estimatedDuration,
+  internalPollenTitle,
   instructionsTitle,
   instructionsDescription,
   assessment,
@@ -46,21 +50,25 @@ export function AssessmentCreateFileUploadView({
     handleBack,
     handleSubmit,
     isSaving,
-  } = useAssessmentCreateFileUpload({ assessment });
+  } = useAssessmentCreateFileUpload({ questions: assessment?.questions });
 
   const handleSaveDraft = useCallback(async () => {
     await handleSubmit("file_upload", {
-      internal_pollen_title: "",
+      id: assessment?.id,
+      internal_pollen_title: internalPollenTitle,
       title: assessmentTitle,
       subtitle: assessmentDescription,
-      estimated_duration: "",
+      estimated_duration: estimatedDuration,
       instructions_title: instructionsTitle,
       instructions_description: instructionsDescription,
     });
   }, [
     handleSubmit,
+    assessment?.id,
+    internalPollenTitle,
     assessmentTitle,
     assessmentDescription,
+    estimatedDuration,
     instructionsTitle,
     instructionsDescription,
   ]);

@@ -13,6 +13,7 @@ import { AssessmentTypeEnum } from "@/types/assessment-types";
 import { useAssessmentCreate } from "../_hooks/assessment-create-main-hook";
 import { AssessmentCreateDetails } from "../_components/assessment-create-details";
 import { AssessmentTypeSelector } from "../_components/assessment-type-selector";
+import { AssessmentCreateSkeleton } from "../_components/assessment-create-skeleton";
 import AssessmentCreateMultipleChoiceView from "./assessment-create-multiple-choice-view";
 import AssessmentCreateQuestionaryView from "./assessment-create-questionary-view";
 import { AssessmentCreateFileUploadView } from "./assessment-create-file-upload-view";
@@ -78,13 +79,25 @@ export default function AssessmentCreateView({
     canSave,
 
     // Loading state
+    isLoadingAssessment,
     isSaving,
     setIsSaving,
   } = useAssessmentCreate({ id });
 
-  // Scroll to content when type is selected
+  // Track if this is the initial load
+  const isInitialLoad = useRef(true);
+
+  // Scroll to content when type is selected (but not on initial load in edit mode)
   useEffect(() => {
     if (selectedType && contentRef.current) {
+      // Skip scroll on initial load if we're in edit mode (id exists)
+      if (isInitialLoad.current && id) {
+        isInitialLoad.current = false;
+        return;
+      }
+
+      isInitialLoad.current = false;
+
       setTimeout(() => {
         contentRef.current?.scrollIntoView({
           behavior: "smooth",
@@ -92,7 +105,7 @@ export default function AssessmentCreateView({
         });
       }, 100);
     }
-  }, [selectedType]);
+  }, [selectedType, id]);
 
   return (
     <PageContainer>
@@ -114,26 +127,33 @@ export default function AssessmentCreateView({
         />
       </PageHeader>
 
-      <AssessmentCreateDetails
-        internalPollenTitle={internalPollenTitle}
-        assessmentTitle={assessmentTitle}
-        assessmentDescription={assessmentDescription}
-        estimatedDuration={estimatedDuration}
-        instructionsTitle={instructionsTitle}
-        instructionsDescription={instructionsDescription}
-        onInternalPollenTitleChange={setInternalPollenTitle}
-        onAssessmentTitleChange={setAssessmentTitle}
-        onAssessmentDescriptionChange={setAssessmentDescription}
-        onEstimatedDurationChange={setEstimatedDuration}
-        onInstructionsTitleChange={setInstructionsTitle}
-        onInstructionsDescriptionChange={setInstructionsDescription}
-      />
+      {/* Show skeleton while loading in edit mode */}
+      {id && isLoadingAssessment ? (
+        <AssessmentCreateSkeleton />
+      ) : (
+        <>
+          <AssessmentCreateDetails
+            internalPollenTitle={internalPollenTitle}
+            assessmentTitle={assessmentTitle}
+            assessmentDescription={assessmentDescription}
+            estimatedDuration={estimatedDuration}
+            instructionsTitle={instructionsTitle}
+            instructionsDescription={instructionsDescription}
+            onInternalPollenTitleChange={setInternalPollenTitle}
+            onAssessmentTitleChange={setAssessmentTitle}
+            onAssessmentDescriptionChange={setAssessmentDescription}
+            onEstimatedDurationChange={setEstimatedDuration}
+            onInstructionsTitleChange={setInstructionsTitle}
+            onInstructionsDescriptionChange={setInstructionsDescription}
+          />
 
-      {/* Assessment Type Selector */}
-      <AssessmentTypeSelector
-        selectedType={selectedType}
-        onSelectType={handleSelectType}
-      />
+          {/* Assessment Type Selector */}
+          <AssessmentTypeSelector
+            selectedType={selectedType}
+            onSelectType={handleSelectType}
+          />
+        </>
+      )}
 
       {/* Show type-specific content based on selection */}
       {selectedType === AssessmentTypeEnum.MultipleChoice && (
@@ -171,8 +191,10 @@ export default function AssessmentCreateView({
       {selectedType === AssessmentTypeEnum.FileUpload && (
         <div ref={contentRef} className="">
           <AssessmentCreateFileUploadView
+            internalPollenTitle={internalPollenTitle}
             assessmentTitle={assessmentTitle}
             assessmentDescription={assessmentDescription}
+            estimatedDuration={estimatedDuration}
             instructionsTitle={instructionsTitle}
             instructionsDescription={instructionsDescription}
             assessment={assessment}

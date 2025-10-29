@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useCreateAssessment } from "../../_services/assessments-page-service";
+import {
+  useCreateAssessment,
+  useUpdateAssessment,
+} from "../../_services/assessments-page-service";
 import { AdminRoutes } from "@/admin/router";
-import type { Assessment } from "@/types/assessment-types";
+import type { AssessmentQuestion } from "@/types/assessment-types";
 
 export interface ReferenceFile {
   id: string;
@@ -20,10 +23,13 @@ export interface FileUploadQuestion {
 }
 
 export function useAssessmentCreateFileUpload({
-  assessment,
-}: { assessment?: Assessment } = {}) {
+  questions: initialQuestions,
+}: {
+  questions?: AssessmentQuestion[];
+} = {}) {
   const router = useRouter();
   const createAssessmentMutation = useCreateAssessment();
+  const updateAssessmentMutation = useUpdateAssessment();
 
   const [questions, setQuestions] = useState<FileUploadQuestion[]>([]);
 
@@ -35,10 +41,10 @@ export function useAssessmentCreateFileUpload({
     number | null
   >(null);
 
-  // Initialize state from assessment data (edit mode)
+  // Initialize state from props (edit mode)
   useEffect(() => {
-    if (assessment && assessment.questions && assessment.questions.length > 0) {
-      const loadedQuestions = assessment.questions.map((q) => ({
+    if (initialQuestions && initialQuestions.length > 0) {
+      const loadedQuestions = initialQuestions.map((q) => ({
         title: q.title,
         subtitle: q.subtitle || "",
         referenceFiles: (q.file_upload?.referenceFiles || []).map((rf) => ({
@@ -50,7 +56,7 @@ export function useAssessmentCreateFileUpload({
       }));
       setQuestions(loadedQuestions);
     }
-  }, [assessment]);
+  }, [initialQuestions]);
 
   // Reference file management
   const handleAddReferenceFile = (name: string, file: File) => {
@@ -169,6 +175,7 @@ export function useAssessmentCreateFileUpload({
   const handleSubmit = async (
     assessmentType: "file_upload",
     assessmentData: {
+      id?: string;
       internal_pollen_title?: string;
       title: string;
       subtitle?: string;
@@ -188,16 +195,14 @@ export function useAssessmentCreateFileUpload({
         throw new Error("At least one question is required");
       }
 
-      // Create assessment using mutation
-      const result = await createAssessmentMutation.mutateAsync({
-        internal_pollen_title:
-          assessmentData.internal_pollen_title || undefined,
+      const assessmentInput = {
+        internal_pollen_title: assessmentData.internal_pollen_title || null,
         title: assessmentData.title,
-        subtitle: assessmentData.subtitle || undefined,
-        estimated_duration: assessmentData.estimated_duration || undefined,
-        instructions_title: assessmentData.instructions_title || undefined,
+        subtitle: assessmentData.subtitle || null,
+        estimated_duration: assessmentData.estimated_duration || null,
+        instructions_title: assessmentData.instructions_title || null,
         instructions_description:
-          assessmentData.instructions_description || undefined,
+          assessmentData.instructions_description || null,
         type: assessmentType,
         questions: questions.map((q) => ({
           title: q.title,
@@ -207,9 +212,22 @@ export function useAssessmentCreateFileUpload({
             referenceFiles: q.referenceFiles,
           },
         })),
-      });
+      };
 
-      console.log("Assessment created successfully:", result);
+      // Use update mutation if assessment id exists, otherwise create
+      const result = assessmentData.id
+        ? await updateAssessmentMutation.mutateAsync({
+            id: assessmentData.id,
+            input: assessmentInput,
+          })
+        : await createAssessmentMutation.mutateAsync(assessmentInput);
+
+      console.log(
+        assessmentData.id
+          ? "Assessment updated successfully:"
+          : "Assessment created successfully:",
+        result,
+      );
 
       // Navigate to assessments list
       router.push(AdminRoutes.assessments);
@@ -252,7 +270,8 @@ export function useAssessmentCreateFileUpload({
     // Navigation and submit
     handleBack,
     handleSubmit,
-    isSaving: createAssessmentMutation.isPending,
-    saveError: createAssessmentMutation.error,
+    isSaving:
+      createAssessmentMutation.isPending || updateAssessmentMutation.isPending,
+    saveError: createAssessmentMutation.error || updateAssessmentMutation.error,
   };
 }

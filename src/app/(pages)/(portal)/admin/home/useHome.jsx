@@ -1,16 +1,13 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
+import { useAssignedJobs } from "./_services/home-service";
 
 export function useHome() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
-  const [jobs, setJobs] = useState([]);
   const [selectedAssignment, setSelectedAssignment] = useState("all");
   const [activeTab, setActiveTab] = useState("all");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const loadingRef = useRef(false);
 
   // Debounce del searchTerm
   useEffect(() => {
@@ -21,56 +18,15 @@ export function useHome() {
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
 
-  const loadJobs = useCallback(async () => {
-    // Evitar llamadas duplicadas
-    if (loadingRef.current) {
-      return;
-    }
-
-    loadingRef.current = true;
-    setLoading(true);
-    setError(null);
-
-    try {
-      // TODO: Agregar función real para obtener la lista de trabajos
-      // const result = await getJobList({
-      //   status: selectedStatus,
-      //   searchTerm: debouncedSearchTerm.trim(),
-      // });
-
-      const result = { success: true, data: [] }; // Placeholder
-
-      if (result.success) {
-        const assignedJobs = result.data.map((job) => ({
-          ...job,
-          assigned_date: job.published_at || job.created_at,
-          // Application counts now come from the database via fetchJobApplicationCounts
-          needsApproval: job.needs_approval || false,
-          company_name: job.company_name || "Unknown Company",
-          responsibilities: job.responsibilities || [],
-          interviewsScheduled: 4,
-          offersExtended: 2,
-          hiresMade: 1,
-        }));
-        setJobs(assignedJobs || []);
-        setError(null);
-      } else {
-        console.error("❌ Error from server:", result.error);
-        setError(result.error);
-      }
-    } catch (err) {
-      console.error("💥 Exception caught:", err);
-      setError("Failed to load employers: " + err.message);
-    } finally {
-      setLoading(false);
-      loadingRef.current = false;
-    }
-  }, [selectedStatus, debouncedSearchTerm]);
-
-  // Efecto unificado para cargar datos iniciales y cambios
-  useEffect(() => {
-    loadJobs();
-  }, [loadJobs]);
+  // Use the React Query hook to fetch assigned jobs
+  const {
+    data: jobs = [],
+    isLoading: loading,
+    error,
+  } = useAssignedJobs({
+    status: selectedStatus,
+    searchTerm: debouncedSearchTerm.trim(),
+  });
 
   const getStatusBadge = useCallback((status) => {
     switch (status) {
@@ -129,10 +85,9 @@ export function useHome() {
       searchTerm,
       jobs,
       loading,
-      error,
+      error: error?.message || null,
       setSelectedStatus,
       setSearchTerm,
-      loadJobs,
       getStatusBadge,
       setSelectedAssignment,
       setActiveTab,
@@ -146,7 +101,6 @@ export function useHome() {
       jobs,
       loading,
       error,
-      loadJobs,
       getStatusBadge,
       hasActionRequired,
     ],

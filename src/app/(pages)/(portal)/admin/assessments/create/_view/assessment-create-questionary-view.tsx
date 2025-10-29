@@ -46,10 +46,11 @@ export default function AssessmentCreateQuestionaryView({
     handleBack,
     handleSubmit,
     isSaving,
-  } = useAssessmentCreateFreeInput({ assessment });
+  } = useAssessmentCreateFreeInput({ questions: assessment?.questions });
 
   const handleSaveDraft = useCallback(async () => {
     await handleSubmit("free_input", {
+      id: assessment?.id,
       internal_pollen_title: internalPollenTitle,
       title: assessmentTitle,
       subtitle: assessmentDescription,
@@ -59,6 +60,7 @@ export default function AssessmentCreateQuestionaryView({
     });
   }, [
     handleSubmit,
+    assessment?.id,
     internalPollenTitle,
     assessmentTitle,
     assessmentDescription,

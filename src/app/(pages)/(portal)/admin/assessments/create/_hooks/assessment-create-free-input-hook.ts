@@ -7,7 +7,7 @@ import {
   useUpdateAssessment,
 } from "../../_services/assessments-page-service";
 import { AdminRoutes } from "@/admin/router";
-import type { Assessment } from "@/types/assessment-types";
+import type { AssessmentQuestion } from "@/types/assessment-types";
 
 interface FreeInputQuestion {
   title: string;
@@ -16,8 +16,10 @@ interface FreeInputQuestion {
 }
 
 export function useAssessmentCreateFreeInput({
-  assessment,
-}: { assessment?: Assessment } = {}) {
+  questions: initialQuestions,
+}: {
+  questions?: AssessmentQuestion[];
+} = {}) {
   const router = useRouter();
   const createAssessmentMutation = useCreateAssessment();
   const updateAssessmentMutation = useUpdateAssessment();
@@ -31,17 +33,17 @@ export function useAssessmentCreateFreeInput({
     number | null
   >(null);
 
-  // Initialize state from assessment data (edit mode)
+  // Initialize state from props (edit mode)
   useEffect(() => {
-    if (assessment && assessment.questions && assessment.questions.length > 0) {
-      const loadedQuestions = assessment.questions.map((q) => ({
+    if (initialQuestions && initialQuestions.length > 0) {
+      const loadedQuestions = initialQuestions.map((q) => ({
         title: q.title,
         subtitle: q.subtitle || "",
         placeholder: q.free_input?.placeholder || "",
       }));
       setQuestions(loadedQuestions);
     }
-  }, [assessment]);
+  }, [initialQuestions]);
 
   // Agregar pregunta
   const handleAddQuestion = () => {
@@ -134,6 +136,7 @@ export function useAssessmentCreateFreeInput({
   const handleSubmit = async (
     assessmentType: "free_input",
     assessmentData: {
+      id?: string;
       internal_pollen_title?: string;
       title: string;
       subtitle?: string;
@@ -172,16 +175,16 @@ export function useAssessmentCreateFreeInput({
         })),
       };
 
-      // Use update mutation if assessment exists, otherwise create
-      const result = assessment?.id
+      // Use update mutation if assessment id exists, otherwise create
+      const result = assessmentData.id
         ? await updateAssessmentMutation.mutateAsync({
-            id: assessment.id,
+            id: assessmentData.id,
             input: assessmentInput,
           })
         : await createAssessmentMutation.mutateAsync(assessmentInput);
 
       console.log(
-        assessment?.id
+        assessmentData.id
           ? "Assessment updated successfully:"
           : "Assessment created successfully:",
         result,
@@ -215,7 +218,8 @@ export function useAssessmentCreateFreeInput({
     // Navigation and submission
     handleBack,
     handleSubmit,
-    isSaving: createAssessmentMutation.isPending,
-    saveError: createAssessmentMutation.error,
+    isSaving:
+      createAssessmentMutation.isPending || updateAssessmentMutation.isPending,
+    saveError: createAssessmentMutation.error || updateAssessmentMutation.error,
   };
 }

@@ -69,10 +69,14 @@ export default function AssessmentCreateMultipleChoiceView({
     handleBack,
     handleSubmit,
     isSaving,
-  } = useAssessmentCreate({ assessment });
+  } = useAssessmentCreate({
+    questions: assessment?.questions,
+    categories: assessment?.categories,
+  });
 
   const handleSaveDraft = useCallback(async () => {
     await handleSubmit("multiple_choice", {
+      id: assessment?.id,
       internalPollenTitle,
       assessmentTitle,
       assessmentDescription,
@@ -82,6 +86,7 @@ export default function AssessmentCreateMultipleChoiceView({
     });
   }, [
     handleSubmit,
+    assessment?.id,
     internalPollenTitle,
     assessmentTitle,
     assessmentDescription,

@@ -191,8 +191,10 @@ export default function AssessmentCreateView({
       {selectedType === AssessmentTypeEnum.FileUpload && (
         <div ref={contentRef} className="">
           <AssessmentCreateFileUploadView
+            internalPollenTitle={internalPollenTitle}
             assessmentTitle={assessmentTitle}
             assessmentDescription={assessmentDescription}
+            estimatedDuration={estimatedDuration}
             instructionsTitle={instructionsTitle}
             instructionsDescription={instructionsDescription}
             assessment={assessment}

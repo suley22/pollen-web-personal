@@ -10,6 +10,7 @@ import {
   FormActions,
 } from "@/components/design-system";
 import { CheckCircle } from "lucide-react";
+import { AssessmentType } from "@/types/assessment-types";
 import { AssessmentCreateDetails } from "../_components/assessment-create-details";
 import { AssessmentTypeSelector } from "../_components/assessment-type-selector";
 import AssessmentCreateMultipleChoiceView from "./assessment-create-multiple-choice-view";
@@ -42,14 +43,10 @@ export default function AssessmentCreateView() {
   const [estimatedDuration, setEstimatedDuration] = useState("");
   const [instructionsTitle, setInstructionsTitle] = useState("");
   const [instructionsDescription, setInstructionsDescription] = useState("");
-  const [selectedType, setSelectedType] = useState<
-    "multiple_choice" | "free_input" | "file_upload" | null
-  >(null);
+  const [selectedType, setSelectedType] = useState<AssessmentType | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
-  const [pendingType, setPendingType] = useState<
-    "multiple_choice" | "free_input" | "file_upload" | null
-  >(null);
+  const [pendingType, setPendingType] = useState<AssessmentType | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   const handleBack = () => {
@@ -74,9 +71,7 @@ export default function AssessmentCreateView() {
 
   const canSave = selectedType !== null && assessmentTitle.trim() !== "";
 
-  const handleSelectType = (
-    type: "multiple_choice" | "free_input" | "file_upload",
-  ) => {
+  const handleSelectType = (type: AssessmentType) => {
     // If there's already a type selected and user is changing it, show confirmation
     if (selectedType && selectedType !== type) {
       setPendingType(type);

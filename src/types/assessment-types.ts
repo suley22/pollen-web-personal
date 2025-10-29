@@ -140,7 +140,8 @@ export class AssessmentHelper {
   static isValid(assessment: Partial<CreateAssessmentInput>): boolean {
     if (!assessment.title?.trim()) return false;
     if (!assessment.type) return false;
-    if (!assessment.questions || assessment.questions.length === 0) return false;
+    if (!assessment.questions || assessment.questions.length === 0)
+      return false;
 
     // Validate each question has at least a title
     return assessment.questions.every((q) => q.title?.trim());
@@ -214,7 +215,7 @@ export class AssessmentHelper {
    */
   static getQuestionsByCategory(
     questions: AssessmentQuestion[],
-    categoryId?: string
+    categoryId?: string,
   ): AssessmentQuestion[] {
     if (!categoryId) {
       return questions.filter((q) => !q.categoryId);

@@ -12,19 +12,28 @@ import {
 import { Building2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/buttons/button";
 import { RoleChangeConfirmDialog } from "../role-change-confirm-dialog";
+import { UserDeleteConfirmDialog } from "./user-delete-confirm-dialog";
+import { ResultsCount } from "@/app/(pages)/(portal)/admin/employers/_components/employers-page-results-count";
 
 const ROLE_OPTIONS = [
   { id: "1", name: "Admin", value: "admin" },
   { id: "2", name: "JobSeeker", value: "job_seeker" },
 ];
 
-export function RolesList({ users, loading, onRoleChange, isUpdatingRole, onDeleteUser, isDeletingUser }) {
+export function RolesList({ users, loading, onRoleChange, isUpdatingRole, onDeleteUser, isDeletingUser, pagination, handlePageChange, handlePageSizeChange }) {
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     userId: "",
     userName: "",
     currentRole: "",
     newRole: "",
+  });
+
+  const [deleteDialog, setDeleteDialog] = useState({
+    isOpen: false,
+    userId: "",
+    userName: "",
+    userEmail: "",
   });
 
   const handleRoleChangeRequest = (userId, newRole) => {
@@ -66,6 +75,42 @@ export function RolesList({ users, loading, onRoleChange, isUpdatingRole, onDele
     });
   };
 
+  const handleDeleteRequest = (userId) => {
+    const user = users.find((u) => u.id === userId);
+    if (!user) return;
+
+    setDeleteDialog({
+      isOpen: true,
+      userId: userId,
+      userName: `${user.first_name} ${user.last_name}`,
+      userEmail: user.email,
+    });
+  };
+
+  const confirmUserDelete = async () => {
+    const { userId } = deleteDialog;
+    try {
+      await onDeleteUser(userId);
+      setDeleteDialog({
+        isOpen: false,
+        userId: "",
+        userName: "",
+        userEmail: "",
+      });
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
+
+  const closeDeleteDialog = () => {
+    setDeleteDialog({
+      isOpen: false,
+      userId: "",
+      userName: "",
+      userEmail: "",
+    });
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-8">
@@ -76,8 +121,15 @@ export function RolesList({ users, loading, onRoleChange, isUpdatingRole, onDele
 
   return (
     <>
-      <div className="w-full bg-white rounded-lg border overflow-hidden">
-        <table className="w-full table-auto">
+      <div className="flex flex-col w-full gap-4">
+        <ResultsCount
+          pagination={pagination}
+          handlePageChange={handlePageChange}
+          handlePageSizeChange={handlePageSizeChange}
+        />
+        
+        <div className="w-full bg-white rounded-lg border overflow-hidden">
+          <table className="w-full table-auto">
           <thead className="bg-gray-50 border-b">
             <tr>
               <th className="text-left py-3 px-4 font-medium text-gray-900 w-1/4">
@@ -148,7 +200,7 @@ export function RolesList({ users, loading, onRoleChange, isUpdatingRole, onDele
                     <Button
                       variant="destructive"
                       size="sm"
-                      onClick={() => onDeleteUser(user.id)}
+                      onClick={() => handleDeleteRequest(user.id)}
                       disabled={isDeletingUser}
                       className="flex items-center gap-2"
                     >
@@ -161,6 +213,13 @@ export function RolesList({ users, loading, onRoleChange, isUpdatingRole, onDele
             ))}
           </tbody>
         </table>
+        </div>
+
+        <ResultsCount
+          pagination={pagination}
+          handlePageChange={handlePageChange}
+          handlePageSizeChange={handlePageSizeChange}
+        />
       </div>
 
       <RoleChangeConfirmDialog
@@ -170,6 +229,14 @@ export function RolesList({ users, loading, onRoleChange, isUpdatingRole, onDele
         userName={confirmDialog.userName}
         currentRole={confirmDialog.currentRole}
         newRole={confirmDialog.newRole}
+      />
+
+      <UserDeleteConfirmDialog
+        isOpen={deleteDialog.isOpen}
+        onClose={closeDeleteDialog}
+        onConfirm={confirmUserDelete}
+        userName={deleteDialog.userName}
+        userEmail={deleteDialog.userEmail}
       />
     </>
   );

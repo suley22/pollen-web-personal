@@ -13,10 +13,13 @@ export default function RoleManagmentPage() {
     users,
     loading,
     error,
+    pagination,
     handleRoleChange,
     isUpdatingRole,
     handleDeleteUser,
     isDeletingUser,
+    handlePageChange,
+    handlePageSizeChange,
   } = useRolesPage(debouncedSearchTerm);
 
   return (
@@ -40,6 +43,9 @@ export default function RoleManagmentPage() {
           isUpdatingRole={isUpdatingRole}
           onDeleteUser={handleDeleteUser}
           isDeletingUser={isDeletingUser}
+          pagination={pagination}
+          handlePageChange={handlePageChange}
+          handlePageSizeChange={handlePageSizeChange}
         />
       </div>
 

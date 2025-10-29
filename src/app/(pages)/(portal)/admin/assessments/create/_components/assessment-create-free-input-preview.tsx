@@ -12,7 +12,7 @@ import {
   SecondaryButton,
 } from "@/components/design-system";
 import { QuestionActionButtons } from "./question-action-buttons";
-import { AssessmentProgress } from "../../test/_components/assessment-progress";
+import { AssessmentProgress } from "../../_components/assessment-progress";
 import { HelpCircle, CheckCircle } from "lucide-react";
 
 interface FreeInputQuestion {

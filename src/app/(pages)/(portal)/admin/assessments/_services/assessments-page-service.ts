@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/utils/supabase/client";
 import { getLoggedInUserId } from "@/services/userService";
+import { DateHelper } from "@/lib/helpers/date-helper";
 import {
   Assessment,
   AssessmentQuestion,
@@ -10,6 +11,7 @@ import {
   CreateAssessmentInput,
   AssessmentType,
   AssessmentStatus,
+  AssessmentHelper,
 } from "@/types/assessment-types";
 
 const supabase = createClient();
@@ -41,6 +43,10 @@ export type {
   AssessmentCategory,
   CreateAssessmentInput,
 };
+
+export interface UpdateAssessmentInput extends Partial<CreateAssessmentInput> {
+  status?: AssessmentStatus;
+}
 
 // React Query Hooks
 export function useAssessmentsList(filters: AssessmentFilters) {
@@ -156,6 +162,8 @@ export function useAssessmentsList(filters: AssessmentFilters) {
           ...assessment,
           created_by: usersMap[assessment.user_id as string] || null,
           updated_by_user: usersMap[assessment.updated_by as string] || null,
+          assessment_completeness:
+            AssessmentHelper.calculateCompleteness(assessment),
         })) || [];
 
       return {
@@ -243,6 +251,9 @@ export function useAssessmentById(id: string) {
         ...data,
         created_by: createdBy,
         updated_by: updatedBy,
+        created_at: DateHelper.formatDate(data.created_at),
+        updated_at: DateHelper.formatDate(data.updated_at),
+        assessment_completeness: AssessmentHelper.calculateCompleteness(data),
       };
     },
     enabled: !!id,
@@ -330,7 +341,7 @@ export function useUpdateAssessment() {
       input,
     }: {
       id: string;
-      input: Partial<CreateAssessmentInput>;
+      input: UpdateAssessmentInput;
     }) => {
       const userId = await getLoggedInUserId();
 
@@ -347,6 +358,7 @@ export function useUpdateAssessment() {
         updateData.subtitle = input.subtitle || null;
       }
       if (input.type !== undefined) updateData.type = input.type;
+      if (input.status !== undefined) updateData.status = input.status;
       if (input.estimated_duration !== undefined) {
         updateData.estimated_duration = input.estimated_duration || null;
       }

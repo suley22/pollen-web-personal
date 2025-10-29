@@ -259,3 +259,11 @@ export class AssessmentHelper {
     return count === 1 ? "1 submission" : `${count} submissions`;
   }
 }
+
+export interface CategoryStats {
+  categoryId: string;
+  categoryName: string;
+  color: string;
+  count: number;
+  percentage: number;
+}

@@ -82,23 +82,12 @@ export function usePlaygroundHook(jobId: string) {
       return;
     }
 
-    console.log("🎯 Dropping task:", {
-      jobSeekerId: item.id,
-      applicationId: item.application_id,
-      fullItem: item, // Para debug
-      taskName: item.name,
-      from: sourceColumn,
-      to: targetColumnId,
-      jobId,
-    });
-
     // Determinar el application_id correcto
     // Fallback: si application_id no existe, usar id (por si hay data cacheada antigua)
     const applicationIdToUpdate =
       item.application_id || item._raw_application?.id || item.id;
 
     if (!applicationIdToUpdate) {
-      console.error("❌ No se pudo determinar el application_id:", item);
       setDraggedItem(null);
       return;
     }

@@ -41,8 +41,6 @@ export function useJobApplicants(jobId: string) {
   return useQuery({
     queryKey: ["playground", "applicants", jobId],
     queryFn: async () => {
-      console.log("🔍 Fetching applicants for job:", jobId);
-
       const { data: applications, error } = await supabase
         .from("job_applications")
         .select(
@@ -59,18 +57,11 @@ export function useJobApplicants(jobId: string) {
         .order("created_at", { ascending: false });
 
       if (error) {
-        console.error("Error fetching job applicants:", error);
         throw new Error(error.message);
       }
 
-      console.log("📦 Raw applications from DB:", applications);
-
       // Agrupar por status (que coincide con las columnas del Kanban)
-      const grouped = groupApplicantsByStatus(applications || []);
-
-      console.log("📊 Grouped by status:", grouped);
-
-      return grouped;
+      return groupApplicantsByStatus(applications || []);
     },
     enabled: !!jobId, // Solo ejecuta si hay jobId
     staleTime: 0, // ✅ Forzar refetch inmediato
@@ -112,12 +103,6 @@ function groupApplicantsByStatus(applications: any[] = []) {
  */
 function transformApplicationToTask(application: any) {
   const seeker = application.job_seeker;
-
-  console.log("🔄 Transforming application:", {
-    applicationId: application.id,
-    seekerId: seeker?.id,
-    seekerName: seeker?.name,
-  });
 
   return {
     // IDs - IMPORTANTE: id es del job_seeker, application_id es de job_applications
@@ -162,12 +147,6 @@ export function useUpdateApplicationStatus() {
       newStatus: string;
       jobId: string;
     }) => {
-      console.log("🔄 Updating application:", {
-        applicationId,
-        newStatus,
-        jobId,
-      });
-
       const { data, error } = await supabase
         .from("job_applications")
         .update({ status: newStatus })
@@ -175,28 +154,20 @@ export function useUpdateApplicationStatus() {
         .select();
 
       if (error) {
-        console.error("❌ Error updating application status:", error);
         throw new Error(error.message);
       }
 
       if (!data || data.length === 0) {
-        console.error("❌ No application found with id:", applicationId);
         throw new Error("Application not found");
       }
 
-      console.log("✅ Application updated successfully:", data[0]);
       return data[0];
     },
     onSuccess: (data, variables) => {
-      console.log("🔃 Invalidating queries for jobId:", variables.jobId);
-
       // Invalidar la query específica de este job
       queryClient.invalidateQueries({
         queryKey: ["playground", "applicants", variables.jobId],
       });
-    },
-    onError: (error) => {
-      console.error("❌ Mutation error:", error);
     },
   });
 }

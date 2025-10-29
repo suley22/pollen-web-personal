@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useCreateAssessment } from "../../_services/assessments-page-service";
+import {
+  useCreateAssessment,
+  useUpdateAssessment,
+} from "../../_services/assessments-page-service";
 import { AdminRoutes } from "@/admin/router";
 import type { Assessment } from "@/types/assessment-types";
 
@@ -17,6 +20,7 @@ export function useAssessmentCreateFreeInput({
 }: { assessment?: Assessment } = {}) {
   const router = useRouter();
   const createAssessmentMutation = useCreateAssessment();
+  const updateAssessmentMutation = useUpdateAssessment();
 
   // Estado para preguntas
   const [questions, setQuestions] = useState<FreeInputQuestion[]>([]);
@@ -149,8 +153,7 @@ export function useAssessmentCreateFreeInput({
         throw new Error("At least one question is required");
       }
 
-      // Create assessment using mutation
-      const result = await createAssessmentMutation.mutateAsync({
+      const assessmentInput = {
         internal_pollen_title: assessmentData.internal_pollen_title,
         title: assessmentData.title,
         subtitle: assessmentData.subtitle,
@@ -166,9 +169,22 @@ export function useAssessmentCreateFreeInput({
             placeholder: q.placeholder,
           },
         })),
-      });
+      };
 
-      console.log("Assessment created successfully:", result);
+      // Use update mutation if assessment exists, otherwise create
+      const result = assessment?.id
+        ? await updateAssessmentMutation.mutateAsync({
+            id: assessment.id,
+            input: assessmentInput,
+          })
+        : await createAssessmentMutation.mutateAsync(assessmentInput);
+
+      console.log(
+        assessment?.id
+          ? "Assessment updated successfully:"
+          : "Assessment created successfully:",
+        result,
+      );
 
       // Navigate to assessments list
       router.push(AdminRoutes.assessments);

@@ -59,8 +59,16 @@ let mockAssessmentsStore: Assessment[] = [
         type: "multiple_choice",
         multiple_choice: {
           options: [
-            { value: "1", label: "To manage state in functional components", categoryId: "1" },
-            { value: "2", label: "To replace class components", categoryId: "1" },
+            {
+              value: "1",
+              label: "To manage state in functional components",
+              categoryId: "1",
+            },
+            {
+              value: "2",
+              label: "To replace class components",
+              categoryId: "1",
+            },
             { value: "3", label: "To create side effects", categoryId: "1" },
             { value: "4", label: "All of the above", categoryId: "1" },
           ],
@@ -77,7 +85,11 @@ let mockAssessmentsStore: Assessment[] = [
           options: [
             { value: "1", label: "Type safety", categoryId: "2" },
             { value: "2", label: "Better IDE support", categoryId: "2" },
-            { value: "3", label: "Catches errors at compile time", categoryId: "2" },
+            {
+              value: "3",
+              label: "Catches errors at compile time",
+              categoryId: "2",
+            },
             { value: "4", label: "All of the above", categoryId: "2" },
           ],
           options_title: "Select the best option",

@@ -19,7 +19,9 @@ export interface FileUploadQuestion {
   referenceFiles: ReferenceFile[]; // Multiple reference files
 }
 
-export function useAssessmentCreateFileUpload({ assessment }: { assessment?: Assessment } = {}) {
+export function useAssessmentCreateFileUpload({
+  assessment,
+}: { assessment?: Assessment } = {}) {
   const router = useRouter();
   const createAssessmentMutation = useCreateAssessment();
 

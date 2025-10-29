@@ -12,7 +12,9 @@ interface FreeInputQuestion {
   placeholder: string;
 }
 
-export function useAssessmentCreateFreeInput({ assessment }: { assessment?: Assessment } = {}) {
+export function useAssessmentCreateFreeInput({
+  assessment,
+}: { assessment?: Assessment } = {}) {
   const router = useRouter();
   const createAssessmentMutation = useCreateAssessment();
 

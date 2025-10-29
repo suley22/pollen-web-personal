@@ -15,7 +15,11 @@ interface MultipleChoiceQuestion {
   categoryId?: string;
 }
 
-export function useAssessmentCreate({ assessment }: { assessment?: Assessment }) {
+export function useAssessmentCreate({
+  assessment,
+}: {
+  assessment?: Assessment;
+}) {
   const router = useRouter();
   const createAssessmentMutation = useCreateAssessment();
 

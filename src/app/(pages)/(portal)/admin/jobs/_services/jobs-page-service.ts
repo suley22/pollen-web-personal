@@ -599,3 +599,167 @@ export function useDeleteJob() {
     },
   });
 }
+
+// External Jobs Services
+const externalJobsQueryKey = "external_jobs";
+
+export function useExternalJobById(id: string) {
+  return useQuery({
+    enabled: !!id,
+    queryKey: [externalJobsQueryKey, "profile", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("external_jobs")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        console.error("JobService: Error fetching external job by ID:", error);
+        throw new Error(error.message);
+      }
+
+      // Normalize the external job data
+      const externalJob = {
+        ...data,
+        external_links: data?.external_links || [],
+      };
+
+      return externalJob;
+    },
+  });
+}
+
+export const useCreateExternalJob = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ formData }: { formData: FormData }) => {
+      const userId = await getLoggedInUserId();
+
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
+
+      const transformedData = transformExternalJobFormDataToDatabase(formData);
+
+      // Validate required fields
+      if (
+        !transformedData.job_title ||
+        !transformedData.job_title.toString().trim()
+      ) {
+        throw new Error("Job title is required");
+      }
+
+      if (
+        !transformedData.company_name ||
+        !transformedData.company_name.toString().trim()
+      ) {
+        throw new Error("Company name is required");
+      }
+
+      // Create the external job
+      const { data: externalJobData, error: externalJobError } = await supabase
+        .from("external_jobs")
+        .insert({
+          ...transformedData,
+        })
+        .select()
+        .single();
+
+      if (externalJobError) {
+        console.error(
+          "JobService: Error creating external job:",
+          externalJobError,
+        );
+        throw new Error(
+          externalJobError.message || "Failed to create external job",
+        );
+      }
+
+      console.log("JobService: Created external job:", externalJobData);
+
+      return externalJobData;
+    },
+    onSuccess: () => {
+      // Invalidate all external jobs queries
+      queryClient.invalidateQueries({ queryKey: [externalJobsQueryKey] });
+    },
+  });
+};
+
+const transformExternalJobFormDataToDatabase = (formData: FormData) => {
+  const formJobData = Object.fromEntries(formData.entries());
+
+  // Parse external_links array field
+  const external_links = parseArrayField(formJobData.external_links);
+
+  return {
+    job_title: formJobData.job_title,
+    company_name: formJobData.company_name,
+    industries: formJobData.industries,
+    location: formJobData.location,
+    salary_range: formJobData.salary_range,
+    working_hours: formJobData.working_hours,
+    employment_type: formJobData.employment_type,
+    application_deadline: formJobData.application_deadline,
+    external_links: external_links,
+  };
+};
+
+export function useUpdateExternalJob() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      formData,
+    }: {
+      id: string;
+      formData: FormData;
+    }) => {
+      const transformedData = transformExternalJobFormDataToDatabase(formData);
+
+      // Validate required fields
+      if (
+        !transformedData.job_title ||
+        !transformedData.job_title.toString().trim()
+      ) {
+        throw new Error("Job title is required");
+      }
+
+      if (
+        !transformedData.company_name ||
+        !transformedData.company_name.toString().trim()
+      ) {
+        throw new Error("Company name is required");
+      }
+
+      const { data, error } = await supabase
+        .from("external_jobs")
+        .update({
+          ...transformedData,
+        })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("JobService: Error updating external job:", error);
+        throw new Error(error.message || "Failed to update external job");
+      }
+
+      console.log("JobService: Updated external job:", data);
+
+      return data;
+    },
+    onSuccess: (_data, variables) => {
+      // Invalidate the specific external job profile
+      queryClient.invalidateQueries({
+        queryKey: [externalJobsQueryKey, "profile", variables.id],
+      });
+      // Invalidate all external jobs queries
+      queryClient.invalidateQueries({ queryKey: [externalJobsQueryKey] });
+    },
+  });
+}

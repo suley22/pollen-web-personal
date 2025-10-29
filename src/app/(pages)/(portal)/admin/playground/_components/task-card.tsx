@@ -12,13 +12,14 @@ import {
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
-export function TaskCard({ task, columnId, onDragStart, onClick }) {
-  // Mock data - en el futuro vendrá del objeto task
-  const candidateName = "James Mitchell";
-  const matchScore = 88;
-  const appliedDate = "14/01/2025";
-  const subStatus = "Pollen Interview Complete";
-  const avatarUrl = "https://api.dicebear.com/7.x/avataaars/svg?seed=James";
+export default function TaskCard({ task, columnId, onDragStart, onClick }) {
+  // Datos reales desde el task (job_application + job_seeker)
+  const candidateName = task.name;
+  const candidateAvatar = task.avatar_url;
+  const matchScore = task.match_score;
+  const appliedDate = task.applied_date;
+  const subStatus = task.sub_status;
+  const isVerified = task.is_verified;
 
   return (
     <div
@@ -31,7 +32,7 @@ export function TaskCard({ task, columnId, onDragStart, onClick }) {
         {/* Header: Avatar, Name, Score */}
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10 border-2 border-border flex-shrink-0">
-            <AvatarImage src={avatarUrl} alt={candidateName} />
+            <AvatarImage src={candidateAvatar} alt={candidateName} />
             <AvatarFallback className="bg-primary/10 text-primary font-semibold">
               {candidateName
                 .split(" ")

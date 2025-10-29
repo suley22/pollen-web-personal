@@ -5,13 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/buttons/button";
 import { User, FileText, MessageSquare, CheckCircle } from "lucide-react";
 
-export function GridRow({ task, onClick }) {
-  // Mock data - en el futuro vendrá del objeto task
-  const candidateName = "James Mitchell";
-  const matchScore = 88;
-  const appliedDate = "14/01/2025";
-  const subStatus = "Pollen Interview";
-  const avatarUrl = "https://api.dicebear.com/7.x/avataaars/svg?seed=James";
+export default function GridRow({ task, onClick }) {
+  // Datos reales desde el task (job_application + job_seeker)
+  const candidateName = task.name;
+  const candidateAvatar = task.avatar_url;
+  const matchScore = task.match_score;
+  const appliedDate = task.applied_date;
+  const subStatus = task.sub_status;
+  const isVerified = task.is_verified;
 
   return (
     <div
@@ -21,7 +22,7 @@ export function GridRow({ task, onClick }) {
       {/* Candidate (Avatar + Name) */}
       <div className="flex items-center gap-3">
         <Avatar className="h-8 w-8 border-2 border-border flex-shrink-0">
-          <AvatarImage src={avatarUrl} alt={candidateName} />
+          <AvatarImage src={candidateAvatar} alt={candidateName} />
           <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
             {candidateName
               .split(" ")

@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import {
-  useTasks,
-  useMoveTask,
+  useJobApplicants,
+  useUpdateApplicationStatus,
   transformTasksToList,
   getColumnInfo,
 } from "../_services/playground-service";
 
-export function usePlaygroundHook() {
-  const { tasks, setTasks, isLoading, error } = useTasks();
-  const { moveTask } = useMoveTask();
+export function usePlaygroundHook(jobId: string) {
+  const { data: tasks = {}, isLoading, error } = useJobApplicants(jobId);
+  const updateStatusMutation = useUpdateApplicationStatus();
 
   // View state
   const [viewMode, setViewMode] = useState("board"); // "board" or "grid"
@@ -74,9 +74,12 @@ export function usePlaygroundHook() {
       return;
     }
 
-    // Mover la tarea
-    const newTasks = moveTask(tasks, sourceColumn, targetColumnId, item.id);
-    setTasks(newTasks);
+    // Actualizar el status en la BD usando mutation
+    updateStatusMutation.mutate({
+      applicationId: item.id,
+      newStatus: targetColumnId,
+    });
+
     setDraggedItem(null);
   };
 

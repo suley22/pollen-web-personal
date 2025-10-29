@@ -6,7 +6,11 @@ import { GridView } from "../_components/grid-view";
 import { TaskDrawer } from "../_components/task-drawer";
 import { ViewToggle } from "../_components/view-toggle";
 
-export default function PlaygroundView() {
+interface PlaygroundViewProps {
+  jobId: string;
+}
+
+export default function PlaygroundView({ jobId }: PlaygroundViewProps) {
   const {
     tasks,
     isLoading,
@@ -20,7 +24,7 @@ export default function PlaygroundView() {
     handleDragOver,
     handleDrop,
     getAllTasksWithStatus,
-  } = usePlaygroundHook();
+  } = usePlaygroundHook(jobId);
 
   if (isLoading) {
     return (

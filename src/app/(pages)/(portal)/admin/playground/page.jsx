@@ -1,5 +1,9 @@
 import PlaygroundView from "./_view/playground-view";
 
 export default function PlaygroundPage() {
-  return <PlaygroundView />;
+  // TODO: En el futuro, recibir jobId desde params o searchParams
+  // Ejemplo: const jobId = params.jobId || searchParams.get('jobId')
+  const MOCK_JOB_ID = "dff65ca8-1b23-4856-8be0-8792288e7043"; // UUID temporal para desarrollo
+
+  return <PlaygroundView jobId={MOCK_JOB_ID} />;
 }

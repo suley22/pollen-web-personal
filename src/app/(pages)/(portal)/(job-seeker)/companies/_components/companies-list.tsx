@@ -3,8 +3,8 @@ import {
   AllCompaniesFormCard,
 } from "@/job-seeker/companies/_components/form-card";
 import { Target } from "lucide-react";
-import { Filters } from "@/components/design-system";
-import { useAllCompaniesFilters } from "@/job-seeker/companies/_hooks/useAllCompaniesFilters";
+import { Filters, Pagination } from "@/components/design-system";
+import { useAllCompaniesPage } from "@/job-seeker/companies/_hooks/useAllCompaniesPage";
 
 export function RecommendedCompanies() {
   return (
@@ -33,24 +33,63 @@ export function RecommendedCompanies() {
 }
 
 export function AllCompanies() {
-  const { filteredCompanies, loading, filterConfigs, onSearchChange } =
-    useAllCompaniesFilters();
+  const {
+    companies,
+    loading,
+    pagination,
+    filterConfigs,
+    onSearchChange,
+    handlePageChange,
+    handlePageSizeChange,
+  } = useAllCompaniesPage();
 
   return (
-    <div className="mb-0">
-      <div className="text-lg font-bold text-gray-900 mb-3">All Companies</div>
+    <div className="flex flex-col gap-6 mb-0">
+      <div className="flex flex-col gap-4">
+        <div className="text-lg font-bold text-gray-900">All Companies</div>
 
-      <div className="mb-4">
         <Filters
           onSearchChange={onSearchChange}
           searchPlaceholder="Search companies, industries, or locations..."
           filters={filterConfigs}
         />
       </div>
+      {pagination && (
+        <Pagination
+          pageSizeOptions={[9, 18]}
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          totalItems={pagination.totalItems}
+          pageSize={pagination.pageSize}
+          hasNextPage={pagination.hasNextPage}
+          hasPreviousPage={pagination.hasPreviousPage}
+          from={pagination.from}
+          to={pagination.to}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+        />
+      )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-3 gap-x-4">
-        <AllCompaniesFormCard companies={filteredCompanies} loading={loading} />
+      <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-3 gap-x-4">
+          <AllCompaniesFormCard companies={companies} loading={loading} />
+        </div>
       </div>
+      {pagination && (
+        <Pagination
+          pageSizeOptions={[9, 18]}
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          totalItems={pagination.totalItems}
+          pageSize={pagination.pageSize}
+          hasNextPage={pagination.hasNextPage}
+          hasPreviousPage={pagination.hasPreviousPage}
+          from={pagination.from}
+          to={pagination.to}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+        />
+      )}
     </div>
   );
 }

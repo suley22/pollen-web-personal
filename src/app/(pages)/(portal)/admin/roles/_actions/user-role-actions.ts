@@ -25,3 +25,20 @@ export async function updateUserRoleAction(userId: string, newRole: string) {
     };
   }
 }
+
+export async function deleteUserAction(userId: string) {
+  try {
+  const { data, error } = await supabaseAdmin.auth.admin.deleteUser(userId);
+  
+  if (error) {
+    console.error('Error al eliminar usuario:', error);
+    return { success: false, error: error.message };
+  }
+  
+    console.log('Usuario eliminado exitosamente:', data);
+    return { success: true };
+  } catch (error) {
+    console.error('Error:', error);
+    return { success: false, error: error.message };
+  }
+}

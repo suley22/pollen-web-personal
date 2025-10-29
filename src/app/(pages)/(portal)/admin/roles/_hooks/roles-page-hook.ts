@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   useUsersList,
   useUpdateUserRole,
+  useDeleteUser,
 } from "../_services/role-page-service";
 
 export function useRolesPage(debouncedSearchTerm: string) {
@@ -32,6 +33,9 @@ export function useRolesPage(debouncedSearchTerm: string) {
 
   // React Query: Update user role mutation
   const updateUserRoleMutation = useUpdateUserRole();
+  
+  // React Query: Delete user mutation
+  const deleteUserMutation = useDeleteUser();
 
   // Pagination functions
   const handlePageChange = useCallback((page: number) => {
@@ -51,6 +55,14 @@ export function useRolesPage(debouncedSearchTerm: string) {
     [updateUserRoleMutation],
   );
 
+  // Delete user function
+  const handleDeleteUser = useCallback(
+    (userId: string) => {
+      return deleteUserMutation.mutateAsync({ userId });
+    },
+    [deleteUserMutation],
+  );
+
   return {
     users: users || [],
     loading: isLoading,
@@ -62,5 +74,7 @@ export function useRolesPage(debouncedSearchTerm: string) {
     handlePageSizeChange,
     handleRoleChange,
     isUpdatingRole: updateUserRoleMutation.isPending,
+    handleDeleteUser,
+    isDeletingUser: deleteUserMutation.isPending,
   };
 }

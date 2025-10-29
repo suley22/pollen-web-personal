@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/utils/supabase/client";
-import { updateUserRoleAction } from "../_actions/user-role-actions";
+import { updateUserRoleAction, deleteUserAction } from "../_actions/user-role-actions";
 
 const supabase = createClient();
 
@@ -151,6 +151,41 @@ export function useUpdateUserRole() {
     },
     onError: (error) => {
       console.error("Error updating user role:", error);
+    },
+  });
+}
+
+export function useDeleteUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ userId }: { userId: string }) => {
+      // Delete from profile table
+      const { error: profileError } = await supabase
+        .from("profile")
+        .delete()
+        .eq("id", userId);
+
+      if (profileError) {
+        throw new Error(`Error deleting profile: ${profileError.message}`);
+      }
+
+      const result = await deleteUserAction(userId);
+
+      if (!result.success) {
+        throw new Error(result.error || "Error updating user metadata");
+      }
+
+      // Delete from auth using admin client would require server action
+      // For now, we'll just delete from profile table
+      return { success: true };
+    },
+    onSuccess: () => {
+      // Invalidate all users queries to refresh the lists
+      queryClient.invalidateQueries({ queryKey: [usersQueryKey] });
+    },
+    onError: (error) => {
+      console.error("Error deleting user:", error);
     },
   });
 }

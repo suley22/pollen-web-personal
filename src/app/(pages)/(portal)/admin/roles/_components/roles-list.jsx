@@ -9,7 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select/select";
-import { Building2 } from "lucide-react";
+import { Building2, Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/buttons/button";
 import { RoleChangeConfirmDialog } from "../role-change-confirm-dialog";
 
 const ROLE_OPTIONS = [
@@ -17,7 +18,7 @@ const ROLE_OPTIONS = [
   { id: "2", name: "JobSeeker", value: "job_seeker" },
 ];
 
-export function RolesList({ users, loading, onRoleChange, isUpdatingRole }) {
+export function RolesList({ users, loading, onRoleChange, isUpdatingRole, onDeleteUser, isDeletingUser }) {
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     userId: "",
@@ -79,21 +80,24 @@ export function RolesList({ users, loading, onRoleChange, isUpdatingRole }) {
         <table className="w-full table-auto">
           <thead className="bg-gray-50 border-b">
             <tr>
-              <th className="text-left py-3 px-4 font-medium text-gray-900 w-1/3">
+              <th className="text-left py-3 px-4 font-medium text-gray-900 w-1/4">
                 User
               </th>
-              <th className="text-left py-3 px-4 font-medium text-gray-900 w-1/3">
+              <th className="text-left py-3 px-4 font-medium text-gray-900 w-1/4">
                 Email
               </th>
-              <th className="text-center py-3 px-4 font-medium text-gray-900 w-1/3">
+              <th className="text-center py-3 px-4 font-medium text-gray-900 w-1/4">
                 Role
+              </th>
+              <th className="text-center py-3 px-4 font-medium text-gray-900 w-1/4">
+                Actions
               </th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user.id} className="border-b hover:bg-gray-50">
-                <td className="py-2 px-4 w-1/3">
+                <td className="py-2 px-4 w-1/4">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 mr-3">
                       <Avatar className="h-12 w-12">
@@ -113,11 +117,11 @@ export function RolesList({ users, loading, onRoleChange, isUpdatingRole }) {
                   </div>
                 </td>
 
-                <td className="py-2 px-4 w-1/3">
+                <td className="py-2 px-4 w-1/4">
                   <span className="text-sm text-gray-600">{user.email}</span>
                 </td>
 
-                <td className="py-2 px-4 w-1/3">
+                <td className="py-2 px-4 w-1/4">
                   <div className="flex justify-center">
                     <Select
                       key={`${user.id}-${user.role}`}
@@ -136,6 +140,21 @@ export function RolesList({ users, loading, onRoleChange, isUpdatingRole }) {
                         ))}
                       </SelectContent>
                     </Select>
+                  </div>
+                </td>
+
+                <td className="py-2 px-4 w-1/4">
+                  <div className="flex justify-center">
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => onDeleteUser(user.id)}
+                      disabled={isDeletingUser}
+                      className="flex items-center gap-2"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Delete
+                    </Button>
                   </div>
                 </td>
               </tr>

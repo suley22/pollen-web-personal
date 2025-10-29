@@ -185,11 +185,10 @@ export function HomeCards() {
               variant="outline"
               size="sm"
               className="flex-1 bg-pink-50 hover:bg-pink-100"
-              //TODO: implementar create job
-              // onClick={(e) => {
-              //   e.stopPropagation();
-              //   router.push();
-              // }}
+              onClick={(e) => {
+                e.stopPropagation();
+                router.push(AdminRoutes.jobsCreate);
+              }}
             >
               <Plus className="mr-2 h-4 w-4" />
               Create

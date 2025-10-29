@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/utils/supabase/client";
 import { DateHelper } from "@/lib/helpers/date-helper";
+import { getLoggedInUserId } from "@/services/userService";
 
 const supabase = createClient();
 
@@ -241,83 +242,74 @@ export const useCreateJob = () => {
 
   return useMutation({
     mutationFn: async ({ formData }: { formData: FormData }) => {
-      try {
-        const transformedData = transformFormDataToDatabase(formData);
+      const userId = await getLoggedInUserId();
 
-        // Validate required fields
-        if (
-          !transformedData.job_title ||
-          !transformedData.job_title.toString().trim()
-        ) {
-          return {
-            success: false,
-            error: "Job title is required",
-          };
-        }
-
-        // 1. Create the job
-        const { data: jobData, error: jobError } = await supabase
-          .from("job")
-          .insert(transformedData)
-          .select()
-          .single();
-
-        if (jobError) {
-          console.error("JobService: Error creating job:", jobError);
-          return {
-            success: false,
-            error: jobError.message || "Failed to create job",
-          };
-        }
-
-        console.log("JobService: Created job:", jobData);
-
-        // 2. Create assessment if there's assessment data
-        const formJobData = Object.fromEntries(formData.entries());
-        const hasAssessmentData =
-          formJobData.assessment_title ||
-          formJobData.assessment_content ||
-          formJobData.assessment_scoring_criteria;
-
-        if (hasAssessmentData && jobData.id) {
-          const assessmentData = transformAssessmentDataToDatabase(
-            formData,
-            jobData.id,
-          );
-
-          const { data: assessmentResult, error: assessmentError } =
-            await supabase
-              .from("job_assessment")
-              .insert(assessmentData)
-              .select()
-              .single();
-
-          if (assessmentError) {
-            console.error(
-              "JobService: Error creating assessment:",
-              assessmentError,
-            );
-            console.warn(
-              "Job was created but assessment failed:",
-              assessmentError.message,
-            );
-          } else {
-            console.log("JobService: Created assessment:", assessmentResult);
-          }
-        }
-
-        return {
-          success: true,
-          data: { job: jobData, hasAssessment: hasAssessmentData },
-          message: "Job created successfully",
-        };
-      } catch (error) {
-        console.error("JobService: Unexpected error creating job:", error);
-        return {
-          success: false,
-          error: "Failed to create job",
-        };
+      if (!userId) {
+        throw new Error("User not authenticated");
       }
+
+      const transformedData = transformFormDataToDatabase(formData);
+
+      // Validate required fields
+      if (
+        !transformedData.job_title ||
+        !transformedData.job_title.toString().trim()
+      ) {
+        throw new Error("Job title is required");
+      }
+
+      // 1. Create the job
+      const { data: jobData, error: jobError } = await supabase
+        .from("job")
+        .insert({
+          ...transformedData,
+          user_id: userId,
+        })
+        .select()
+        .single();
+
+      if (jobError) {
+        console.error("JobService: Error creating job:", jobError);
+        throw new Error(jobError.message || "Failed to create job");
+      }
+
+      console.log("JobService: Created job:", jobData);
+
+      // 2. Create assessment if there's assessment data
+      const formJobData = Object.fromEntries(formData.entries());
+      const hasAssessmentData =
+        formJobData.assessment_title ||
+        formJobData.assessment_content ||
+        formJobData.assessment_scoring_criteria;
+
+      if (hasAssessmentData && jobData.id) {
+        const assessmentData = transformAssessmentDataToDatabase(
+          formData,
+          jobData.id,
+        );
+
+        const { data: assessmentResult, error: assessmentError } =
+          await supabase
+            .from("job_assessment")
+            .insert(assessmentData)
+            .select()
+            .single();
+
+        if (assessmentError) {
+          console.error(
+            "JobService: Error creating assessment:",
+            assessmentError,
+          );
+          console.warn(
+            "Job was created but assessment failed:",
+            assessmentError.message,
+          );
+        } else {
+          console.log("JobService: Created assessment:", assessmentResult);
+        }
+      }
+
+      return jobData;
     },
     onSuccess: () => {
       // Invalidate all jobs lists and statistics
@@ -340,14 +332,14 @@ const transformFormDataToDatabase = (formData: FormData) => {
     job_title: formJobData.job_title,
     company_name: formJobData.company_name,
     location: formJobData.location,
-    job_type: formJobData.job_type,
+    working_hours: formJobData.working_hours,
     salary_range: formJobData.salary_range,
     work_arrangement: formJobData.work_arrangement,
     employment_type: formJobData.employment_type,
     employment_type_details: formJobData.employment_type_details,
     start_date: formJobData.start_date,
     application_deadline: formJobData.application_deadline,
-    work_authorization: formJobData.work_authorization,
+    work_authorisation: formJobData.work_authorisation,
     description: formJobData.description,
     responsibilities: responsibilities,
     who_would_love: who_would_love,
@@ -440,3 +432,170 @@ const parseArrayField = (fieldData: any): string[] => {
       .filter((item: string) => item);
   }
 };
+
+export function useUpdateJob() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      formData,
+    }: {
+      id: string;
+      formData: FormData;
+    }) => {
+      const transformedData = transformFormDataToDatabase(formData);
+
+      // Validate required fields
+      if (
+        !transformedData.job_title ||
+        !transformedData.job_title.toString().trim()
+      ) {
+        throw new Error("Job title is required");
+      }
+
+      const { data, error } = await supabase
+        .from("job")
+        .update({
+          ...transformedData,
+        })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("JobService: Error updating job:", error);
+        throw new Error(error.message || "Failed to update job");
+      }
+
+      console.log("JobService: Updated job:", data);
+
+      // Update assessment if there's assessment data
+      const formJobData = Object.fromEntries(formData.entries());
+      const hasAssessmentData =
+        formJobData.assessment_title ||
+        formJobData.assessment_content ||
+        formJobData.assessment_scoring_criteria;
+
+      if (hasAssessmentData) {
+        const assessmentData = transformAssessmentDataToDatabase(formData, id);
+
+        // Check if assessment already exists
+        const { data: existingAssessment } = await supabase
+          .from("job_assessment")
+          .select("id")
+          .eq("job_id", id)
+          .single();
+
+        if (existingAssessment) {
+          // Update existing assessment
+          const { error: assessmentError } = await supabase
+            .from("job_assessment")
+            .update({
+              ...assessmentData,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("job_id", id);
+
+          if (assessmentError) {
+            console.error(
+              "JobService: Error updating assessment:",
+              assessmentError,
+            );
+            console.warn(
+              "Job was updated but assessment failed:",
+              assessmentError.message,
+            );
+          }
+        } else {
+          // Create new assessment
+          const { error: assessmentError } = await supabase
+            .from("job_assessment")
+            .insert(assessmentData);
+
+          if (assessmentError) {
+            console.error(
+              "JobService: Error creating assessment:",
+              assessmentError,
+            );
+            console.warn(
+              "Job was updated but assessment failed:",
+              assessmentError.message,
+            );
+          }
+        }
+      }
+
+      return data;
+    },
+    onSuccess: (_data, variables) => {
+      // Invalidate the specific job profile
+      queryClient.invalidateQueries({
+        queryKey: [jobsQueryKey, "profile", variables.id],
+      });
+      // Invalidate all jobs lists and statistics
+      queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
+    },
+  });
+}
+
+export function useUpdateJobStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      const { data, error } = await supabase
+        .from("job")
+        .update({
+          status: status,
+        })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
+    },
+    onSuccess: (_data, variables) => {
+      // Invalidate the specific job profile
+      queryClient.invalidateQueries({
+        queryKey: [jobsQueryKey, "profile", variables.id],
+      });
+      // Invalidate all jobs lists and statistics
+      queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
+    },
+    onError: (error) => {
+      console.error("Error updating job status:", error);
+    },
+  });
+}
+
+export function useDeleteJob() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      const { data, error } = await supabase
+        .from("job")
+        .update({
+          deleted_at: new Date().toISOString(),
+        })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      // Invalidate all jobs queries to refresh the lists and statistics
+      queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
+    },
+  });
+}

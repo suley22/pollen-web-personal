@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, UserCheck, Brain } from "lucide-react";
+import { FileText, UserCheck, Brain, CheckCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 
@@ -9,11 +9,22 @@ import {
   PageHeader,
   FormActions,
   ConfirmationDialog,
+  PrimaryButton,
 } from "@/components/design-system";
 import { JobDescriptionTab } from "../_components/tabs/jobs-create-job-description-tab";
 import { PersonaTab } from "../_components/tabs/jobs-create-persona-tab";
 import { AssessmentTab } from "../_components/tabs/jobs-create-assessment-tab";
 import { useJobsCreatePage } from "../_hook/jobs-create-hook";
+
+const CreateUpdateButton = ({ isEditMode, isLoading, onClick }) => (
+  <PrimaryButton
+    icon={<CheckCircle className="h-5 w-5" />}
+    text={isEditMode ? "Update Job" : "Create Job"}
+    loading={isLoading}
+    disabled={isLoading}
+    onClick={onClick}
+  />
+);
 
 export function JobForm({ id = null }) {
   // ✅ Usa el hook para obtener toda la lógica
@@ -43,7 +54,13 @@ export function JobForm({ id = null }) {
         }
         showBackButton={true}
         onBack={handleBack}
-      />
+      >
+        <CreateUpdateButton
+          isEditMode={isEditMode}
+          isLoading={isLoading}
+          onClick={() => setIsDialogOpen(true)}
+        />
+      </PageHeader>
 
       <Tabs
         value={activeTab}
@@ -83,15 +100,11 @@ export function JobForm({ id = null }) {
       <FormActions>
         <ConfirmationDialog
           trigger={
-            <Button type="button" size="lg" disabled={isLoading}>
-              {isLoading
-                ? isEditMode
-                  ? "Updating..."
-                  : "Creating..."
-                : isEditMode
-                  ? "Update Job"
-                  : "Create Job"}
-            </Button>
+            <CreateUpdateButton
+              isEditMode={isEditMode}
+              isLoading={isLoading}
+              onClick={() => setIsDialogOpen(true)}
+            />
           }
           title={isEditMode ? "Confirm job update?" : "Confirm job creation?"}
           description={

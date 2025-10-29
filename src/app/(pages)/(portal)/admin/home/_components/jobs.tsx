@@ -17,8 +17,8 @@ export function HomeJobs() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border">
-      <div className="px-6 py-4 border-b border-gray-200">
+    <div>
+      <div className="px-6 py-4 border-b border-gray-200 bg-white rounded-lg shadow-sm border mb-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-medium text-gray-900">
             My Assigned Jobs
@@ -33,8 +33,7 @@ export function HomeJobs() {
           </Button>
         </div>
       </div>
-
-      <div className="p-6 space-y-3">
+      <div className="flex flex-col gap-6">
         {homeState.loading ? (
           <ListSkeleton />
         ) : homeState.jobs && homeState.jobs.length > 0 ? (

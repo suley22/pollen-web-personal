@@ -1,5 +1,9 @@
 "use client";
-import { PageContainer, PrimaryButton } from "@/components/design-system";
+import {
+  PageContainer,
+  PrimaryButton,
+  ConfirmationDialog,
+} from "@/components/design-system";
 import { useApply } from "../_hook/useApply";
 
 import ApplyJobHeader from "../_components/apply-job-header";
@@ -17,6 +21,11 @@ export default function ApplyJobPage() {
     job,
     saveFavoriteJob,
     isSaved,
+    handleStart,
+    hasApplied,
+    isDialogOpen,
+    setIsDialogOpen,
+    isApplying,
   } = useApply();
 
   return (
@@ -34,7 +43,24 @@ export default function ApplyJobPage() {
       <JobDetails job={job} />
       <WhatHappensNext />
       <div className="flex flex-col items-end">
-        <PrimaryButton text="Start Assessment" className="px-6 py-4" />
+        <ConfirmationDialog
+          trigger={
+            <PrimaryButton
+              text={hasApplied ? "Already Applied" : "Start Assessment"}
+              className="px-6 py-4"
+              disabled={hasApplied}
+            />
+          }
+          title="Submit your application?"
+          description="Are you sure you want to apply for this position? Once submitted, your application will be reviewed by our team."
+          confirmText="Submit Application"
+          cancelText="Cancel"
+          onConfirm={handleStart}
+          isLoading={isApplying}
+          loadingText="Submitting..."
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+        />
       </div>
     </PageContainer>
   );

@@ -2,15 +2,23 @@
 
 import { useState } from "react";
 import {
-  useTasks,
-  useMoveTask,
+  useJobApplicants,
+  useUpdateApplicationStatus,
   transformTasksToList,
   getColumnInfo,
 } from "../_services/playground-service";
 
-export function usePlaygroundHook() {
-  const { tasks, setTasks, isLoading, error } = useTasks();
-  const { moveTask } = useMoveTask();
+export function usePlaygroundHook(jobId: string) {
+  const { data: tasks, isLoading, error } = useJobApplicants(jobId);
+  const updateStatusMutation = useUpdateApplicationStatus();
+
+  // Default empty structure si no hay data
+  const safeTasksData = tasks || {
+    new_applicants: [],
+    in_progress: [],
+    matched_to_employer: [],
+    complete: [],
+  };
 
   // View state
   const [viewMode, setViewMode] = useState("board"); // "board" or "grid"
@@ -74,9 +82,23 @@ export function usePlaygroundHook() {
       return;
     }
 
-    // Mover la tarea
-    const newTasks = moveTask(tasks, sourceColumn, targetColumnId, item.id);
-    setTasks(newTasks);
+    // Determinar el application_id correcto
+    // Fallback: si application_id no existe, usar id (por si hay data cacheada antigua)
+    const applicationIdToUpdate =
+      item.application_id || item._raw_application?.id || item.id;
+
+    if (!applicationIdToUpdate) {
+      setDraggedItem(null);
+      return;
+    }
+
+    // Actualizar el status en la BD usando mutation
+    updateStatusMutation.mutate({
+      applicationId: applicationIdToUpdate,
+      newStatus: targetColumnId,
+      jobId: jobId,
+    });
+
     setDraggedItem(null);
   };
 
@@ -84,12 +106,12 @@ export function usePlaygroundHook() {
    * Obtiene todas las tareas en formato de lista con su status
    */
   const getAllTasksWithStatus = () => {
-    return transformTasksToList(tasks);
+    return transformTasksToList(safeTasksData);
   };
 
   return {
     // Data
-    tasks,
+    tasks: safeTasksData,
     isLoading,
     error,
 

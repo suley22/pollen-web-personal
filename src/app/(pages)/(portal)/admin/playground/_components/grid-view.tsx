@@ -1,6 +1,6 @@
 "use client";
 
-import { GridRow } from "./grid-row";
+import GridRow from "./grid-row";
 
 export function GridView({ tasks, onTaskClick }) {
   return (

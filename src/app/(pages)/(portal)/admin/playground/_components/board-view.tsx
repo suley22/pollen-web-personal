@@ -1,7 +1,7 @@
 "use client";
 
 import { TASK_COLUMNS } from "../_services/playground-service";
-import { TaskCard } from "./task-card";
+import TaskCard from "./task-card";
 
 export function BoardView({
   tasks,

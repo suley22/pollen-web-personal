@@ -272,13 +272,12 @@ export function useAssessmentCreate({
       }
 
       const assessmentInput = {
-        internal_pollen_title: dataToSubmit.internalPollenTitle || undefined,
+        internal_pollen_title: dataToSubmit.internalPollenTitle || null,
         title: dataToSubmit.assessmentTitle,
-        subtitle: dataToSubmit.assessmentDescription || undefined,
-        estimated_duration: dataToSubmit.estimatedDuration || undefined,
-        instructions_title: dataToSubmit.instructionsTitle || undefined,
-        instructions_description:
-          dataToSubmit.instructionsDescription || undefined,
+        subtitle: dataToSubmit.assessmentDescription || null,
+        estimated_duration: dataToSubmit.estimatedDuration || null,
+        instructions_title: dataToSubmit.instructionsTitle || null,
+        instructions_description: dataToSubmit.instructionsDescription || null,
         type: assessmentType,
         categories: categories.length > 0 ? categories : undefined,
         questions: questions.map((q) => ({

@@ -204,7 +204,9 @@ export function AssessmentsList({
                     Updated:{" "}
                     {DateHelper.formatRelativeDate(assessment.updated_at)}
                   </span>
-                  <span>by: {assessment.created_by}</span>
+                  <span>
+                    by: {assessment.created_by?.full_name || "Unknown"}
+                  </span>
                 </div>
                 <div className="flex items-center justify-end gap-1">
                   {/* Second Row: Created/Updated info */}

@@ -108,7 +108,7 @@ export function useAssessmentsList(filters: AssessmentFilters) {
 
       const totalPages = Math.ceil((count || 0) / pageSize);
 
-      // Get user information for created_by
+      // Get user information from profile table
       const userIds = [
         ...new Set(
           data
@@ -118,12 +118,35 @@ export function useAssessmentsList(filters: AssessmentFilters) {
         ),
       ];
 
-      let usersMap: Record<string, any> = {};
+      let usersMap: Record<
+        string,
+        {
+          email: string;
+          full_name: string;
+          first_name: string;
+          last_name: string;
+        }
+      > = {};
+
       if (userIds.length > 0) {
-        const { data: users } = await supabase.auth.admin.listUsers();
-        if (users?.users) {
+        const { data: profilesData } = await supabase
+          .from("profile")
+          .select("id, first_name, last_name, email")
+          .in("id", userIds);
+
+        if (profilesData && profilesData.length > 0) {
           usersMap = Object.fromEntries(
-            users.users.map((u) => [u.id, u.email || "Unknown"]),
+            profilesData.map((p) => [
+              p.id,
+              {
+                email: p.email,
+                full_name:
+                  `${p.first_name || ""} ${p.last_name || ""}`.trim() ||
+                  p.email,
+                first_name: p.first_name,
+                last_name: p.last_name,
+              },
+            ]),
           );
         }
       }
@@ -131,7 +154,8 @@ export function useAssessmentsList(filters: AssessmentFilters) {
       const assessmentsWithUserInfo =
         data?.map((assessment) => ({
           ...assessment,
-          created_by: usersMap[assessment.user_id as string] || "Unknown",
+          created_by: usersMap[assessment.user_id as string] || null,
+          updated_by_user: usersMap[assessment.updated_by as string] || null,
         })) || [];
 
       return {
@@ -168,16 +192,58 @@ export function useAssessmentById(id: string) {
         throw new Error(error.message);
       }
 
-      // Get user information
-      if (data?.user_id) {
-        const { data: userData } = await supabase.auth.admin.listUsers();
-        const user = userData?.users.find((u: any) => u.id === data.user_id);
-        if (user) {
-          data.created_by = user.email || "Unknown";
+      // Get both creator and updater information in a single query
+      let createdBy = null;
+      let updatedBy = null;
+
+      const userIds = [data.user_id, data.updated_by].filter(Boolean);
+
+      if (userIds.length > 0) {
+        const { data: profilesData } = await supabase
+          .from("profile")
+          .select("id, first_name, last_name, email")
+          .in("id", userIds);
+
+        if (profilesData && profilesData.length > 0) {
+          // Map creator
+          const creatorProfile = profilesData.find(
+            (p) => p.id === data.user_id,
+          );
+          if (creatorProfile) {
+            createdBy = {
+              id: creatorProfile.id,
+              email: creatorProfile.email,
+              full_name:
+                `${creatorProfile.first_name || ""} ${creatorProfile.last_name || ""}`.trim() ||
+                creatorProfile.email,
+              first_name: creatorProfile.first_name,
+              last_name: creatorProfile.last_name,
+            };
+          }
+
+          // Map updater
+          const updaterProfile = profilesData.find(
+            (p) => p.id === data.updated_by,
+          );
+          if (updaterProfile) {
+            updatedBy = {
+              id: updaterProfile.id,
+              email: updaterProfile.email,
+              full_name:
+                `${updaterProfile.first_name || ""} ${updaterProfile.last_name || ""}`.trim() ||
+                updaterProfile.email,
+              first_name: updaterProfile.first_name,
+              last_name: updaterProfile.last_name,
+            };
+          }
         }
       }
 
-      return data;
+      return {
+        ...data,
+        created_by: createdBy,
+        updated_by: updatedBy,
+      };
     },
     enabled: !!id,
   });

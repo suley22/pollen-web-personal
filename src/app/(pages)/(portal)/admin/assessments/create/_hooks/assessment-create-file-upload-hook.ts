@@ -193,14 +193,13 @@ export function useAssessmentCreateFileUpload({
       }
 
       const assessmentInput = {
-        internal_pollen_title:
-          assessmentData.internal_pollen_title || undefined,
+        internal_pollen_title: assessmentData.internal_pollen_title || null,
         title: assessmentData.title,
-        subtitle: assessmentData.subtitle || undefined,
-        estimated_duration: assessmentData.estimated_duration || undefined,
-        instructions_title: assessmentData.instructions_title || undefined,
+        subtitle: assessmentData.subtitle || null,
+        estimated_duration: assessmentData.estimated_duration || null,
+        instructions_title: assessmentData.instructions_title || null,
         instructions_description:
-          assessmentData.instructions_description || undefined,
+          assessmentData.instructions_description || null,
         type: assessmentType,
         questions: questions.map((q) => ({
           title: q.title,

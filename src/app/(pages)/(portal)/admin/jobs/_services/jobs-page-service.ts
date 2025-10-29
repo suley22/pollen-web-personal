@@ -212,6 +212,26 @@ export function useSearchEmployers(searchTerm: string) {
   });
 }
 
+export function useAdminsList() {
+  return useQuery({
+    queryKey: ["admins", "list"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profile")
+        .select("id, first_name, last_name")
+        .eq("role", "admin")
+        .order("first_name", { ascending: true });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data || [];
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
+
 export function useSearchAdmins(searchTerm: string) {
   return useQuery({
     queryKey: ["admins", "search", searchTerm],
@@ -219,6 +239,7 @@ export function useSearchAdmins(searchTerm: string) {
       let query = supabase
         .from("profile")
         .select("id, first_name, last_name")
+        .eq("role", "admin")
         .order("first_name", { ascending: true });
 
       if (searchTerm && searchTerm.trim()) {

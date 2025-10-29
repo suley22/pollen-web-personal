@@ -1,17 +1,19 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useJobsList, useJobsStatistics } from "../_services/jobs-page-service";
-import { JobStatusBadge } from "@/components/design-system";
 import {
-  JOB_STATUS_OPTIONS,
-  JOB_ASSIGNMENT_OPTIONS,
-} from "@/constants/filters";
+  useJobsList,
+  useJobsStatistics,
+  useAdminsList,
+} from "../_services/jobs-page-service";
+import { JobStatusBadge } from "@/components/design-system";
+import { JOB_STATUS_OPTIONS } from "@/constants/filters";
+import type { FilterOption } from "@/types/filters";
 
 export function useJobManagement() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
-  const [selectedAssignment, setSelectedAssignment] = useState("all");
+  const [selectedAdmin, setSelectedAdmin] = useState("all");
   const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -19,18 +21,28 @@ export function useJobManagement() {
   // Reset page when search term or filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedStatus, selectedAssignment]);
+  }, [searchTerm, selectedStatus, selectedAdmin]);
+
+  // Fetch admins list
+  const { data: admins = [] } = useAdminsList();
+
+  // Create admin options for the filter
+  const adminOptions: FilterOption[] = useMemo(() => {
+    const options: FilterOption[] = [{ label: "All Admins", value: "all" }];
+
+    admins.forEach((admin) => {
+      options.push({
+        label: `${admin.first_name} ${admin.last_name}`,
+        value: admin.id,
+      });
+    });
+
+    return options;
+  }, [admins]);
 
   // Filter configurations for Filters component
   const filterConfigs = useMemo(
     () => [
-      {
-        name: "assignment",
-        placeholder: "Filter by assignment",
-        defaultValue: selectedAssignment,
-        options: JOB_ASSIGNMENT_OPTIONS,
-        onValueChange: setSelectedAssignment,
-      },
       {
         name: "status",
         placeholder: "Filter by status",
@@ -38,20 +50,27 @@ export function useJobManagement() {
         options: JOB_STATUS_OPTIONS,
         onValueChange: setSelectedStatus,
       },
+      {
+        name: "admin",
+        placeholder: "Filter by admin",
+        defaultValue: selectedAdmin,
+        options: adminOptions,
+        onValueChange: setSelectedAdmin,
+      },
     ],
-    [selectedAssignment, selectedStatus],
+    [selectedStatus, selectedAdmin, adminOptions],
   );
 
   // Build filters for React Query
   const fetchFilters = useMemo(
     () => ({
       status: selectedStatus,
-      assignment: selectedAssignment,
+      assignment: selectedAdmin !== "all" ? selectedAdmin : undefined,
       searchTerm: searchTerm.trim(),
       page: currentPage,
       pageSize: pageSize,
     }),
-    [selectedStatus, selectedAssignment, searchTerm, currentPage, pageSize],
+    [selectedStatus, selectedAdmin, searchTerm, currentPage, pageSize],
   );
 
   // React Query: Fetch jobs list
@@ -95,7 +114,7 @@ export function useJobManagement() {
 
   return {
     selectedStatus,
-    selectedAssignment,
+    selectedAdmin,
     activeTab,
     jobs,
     loading: isLoading,
@@ -115,7 +134,7 @@ export function useJobManagement() {
     pageSize,
     filterConfigs,
     setSelectedStatus,
-    setSelectedAssignment,
+    setSelectedAdmin,
     setActiveTab,
     getStatusBadge,
     hasActionRequired,

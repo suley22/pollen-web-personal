@@ -75,17 +75,17 @@ export function RolesList({ users, loading, onRoleChange, isUpdatingRole }) {
 
   return (
     <>
-      <div className="flex flex-col w-full bg-white rounded-lg border overflow-hidden">
-        <table className="flex flex-col w-full table-auto">
-          <thead className="flex bg-gray-50 border-b">
-            <tr className="flex w-full">
-              <th className="flex flex-1 text-left py-3 px-4 font-medium text-gray-900">
+      <div className="w-full bg-white rounded-lg border overflow-hidden">
+        <table className="w-full table-auto">
+          <thead className="bg-gray-50 border-b">
+            <tr>
+              <th className="text-left py-3 px-4 font-medium text-gray-900 w-1/3">
                 User
               </th>
-              <th className="flex flex-1 text-left py-3 px-4 font-medium text-gray-900">
+              <th className="text-left py-3 px-4 font-medium text-gray-900 w-1/3">
                 Email
               </th>
-              <th className="flex flex-1 text-right py-3 px-4 font-medium text-gray-900">
+              <th className="text-center py-3 px-4 font-medium text-gray-900 w-1/3">
                 Role
               </th>
             </tr>
@@ -93,7 +93,7 @@ export function RolesList({ users, loading, onRoleChange, isUpdatingRole }) {
           <tbody>
             {users.map((user) => (
               <tr key={user.id} className="border-b hover:bg-gray-50">
-                <td className="py-2 px-4">
+                <td className="py-2 px-4 w-1/3">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 mr-3">
                       <Avatar className="h-12 w-12">
@@ -113,12 +113,12 @@ export function RolesList({ users, loading, onRoleChange, isUpdatingRole }) {
                   </div>
                 </td>
 
-                <td className="py-2 px-4">
+                <td className="py-2 px-4 w-1/3">
                   <span className="text-sm text-gray-600">{user.email}</span>
                 </td>
 
-                <td className="py-2 px-4">
-                  <div className="flex justify-end">
+                <td className="py-2 px-4 w-1/3">
+                  <div className="flex justify-center">
                     <Select
                       key={`${user.id}-${user.role}`}
                       onValueChange={(role) => handleRoleChangeRequest(user.id, role)}

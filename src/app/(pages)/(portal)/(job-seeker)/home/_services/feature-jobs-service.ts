@@ -8,6 +8,7 @@ export async function getFeaturedJobs() {
       .from("job")
       .select("*")
       .order("created_at", { ascending: false })
+      .eq("status", "live")
       .limit(3);
 
     const { data, error } = await jobsQuery;
@@ -32,7 +33,8 @@ export async function getFeaturedHiddenJobs() {
       .from("job") // TODO: Reemplazar por tabla de hidden jobs
       .select("*")
       .order("created_at", { ascending: false })
-      .limit(3);
+      .eq("status", "live")
+      .limit(6); 
 
     const { data, error } = await jobsQuery;
 
@@ -40,6 +42,9 @@ export async function getFeaturedHiddenJobs() {
       console.error("❌ JobService: Error fetching jobs:", error);
       return { success: false, error: error.message };
     }
+
+    //Remueve los 3 primeros trabajos para evitar duplicados con los trabajos destacados normales
+    data.splice(0, 3);
 
     const list = data.map((job) => mapAdminJobToCardJob(job, "hidden"));
 

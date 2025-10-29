@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCreateAssessment } from "../../_services/assessments-page-service";
+import { AdminRoutes } from "@/admin/router";
 
 export interface ReferenceFile {
   id: string;
@@ -16,6 +19,9 @@ export interface FileUploadQuestion {
 }
 
 export function useAssessmentCreateFileUpload() {
+  const router = useRouter();
+  const createAssessmentMutation = useCreateAssessment();
+
   const [questions, setQuestions] = useState<FileUploadQuestion[]>([]);
 
   // Form state for adding/editing questions
@@ -135,6 +141,60 @@ export function useAssessmentCreateFileUpload() {
     setEditingQuestionIndex(null);
   };
 
+  // Navigation and submit
+  const handleBack = () => {
+    router.back();
+  };
+
+  const handleSubmit = async (
+    assessmentType: "file_upload",
+    assessmentData: {
+      internal_pollen_title?: string;
+      title: string;
+      subtitle?: string;
+      estimated_duration?: string;
+      instructions_title?: string;
+      instructions_description?: string;
+    },
+  ) => {
+    try {
+      // Validate required fields
+      if (!assessmentData.title.trim()) {
+        throw new Error("Assessment title is required");
+      }
+
+      if (questions.length === 0) {
+        throw new Error("At least one question is required");
+      }
+
+      // Create assessment using mutation
+      const result = await createAssessmentMutation.mutateAsync({
+        internal_pollen_title:
+          assessmentData.internal_pollen_title || undefined,
+        title: assessmentData.title,
+        subtitle: assessmentData.subtitle || undefined,
+        estimated_duration: assessmentData.estimated_duration || undefined,
+        instructions_title: assessmentData.instructions_title || undefined,
+        instructions_description:
+          assessmentData.instructions_description || undefined,
+        type: assessmentType,
+        questions: questions.map((q) => ({
+          title: q.title,
+          subtitle: q.subtitle,
+          type: assessmentType,
+        })),
+      });
+
+      console.log("Assessment created successfully:", result);
+
+      // Navigate to assessments list
+      router.push(AdminRoutes.assessments);
+    } catch (error) {
+      console.error("Failed to create assessment:", error);
+      throw error;
+    }
+  };
+
   const handleCancelEdit = () => {
     handleClearForm();
   };
@@ -164,5 +224,11 @@ export function useAssessmentCreateFileUpload() {
     handleMoveQuestionDown,
     handleClearForm,
     handleCancelEdit,
+
+    // Navigation and submit
+    handleBack,
+    handleSubmit,
+    isSaving: createAssessmentMutation.isPending,
+    saveError: createAssessmentMutation.error,
   };
 }

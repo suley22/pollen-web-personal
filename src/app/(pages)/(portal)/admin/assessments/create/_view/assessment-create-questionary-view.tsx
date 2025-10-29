@@ -4,6 +4,7 @@ import { useEffect, useCallback } from "react";
 import { AssessmentCreateFreeInputQuestions } from "../_components/assessment-create-free-input-questions";
 import { AssessmentCreateFreeInputPreview } from "../_components/assessment-create-free-input-preview";
 import { useAssessmentCreateFreeInput } from "../_hooks/assessment-create-free-input-hook";
+import type { Assessment } from "@/types/assessment-types";
 
 interface AssessmentCreateQuestionaryViewProps {
   assessmentTitle: string;
@@ -12,6 +13,7 @@ interface AssessmentCreateQuestionaryViewProps {
   internalPollenTitle: string;
   instructionsTitle: string;
   instructionsDescription: string;
+  assessment?: Assessment;
   onSaveRef?: (fn: () => Promise<void>) => void;
   onSavingChange?: (isSaving: boolean) => void;
 }
@@ -23,6 +25,7 @@ export default function AssessmentCreateQuestionaryView({
   internalPollenTitle,
   instructionsTitle,
   instructionsDescription,
+  assessment,
   onSaveRef,
   onSavingChange,
 }: AssessmentCreateQuestionaryViewProps) {
@@ -43,7 +46,7 @@ export default function AssessmentCreateQuestionaryView({
     handleBack,
     handleSubmit,
     isSaving,
-  } = useAssessmentCreateFreeInput();
+  } = useAssessmentCreateFreeInput({ assessment });
 
   const handleSaveDraft = useCallback(async () => {
     await handleSubmit("free_input", {
@@ -69,6 +72,13 @@ export default function AssessmentCreateQuestionaryView({
     if (onSaveRef) {
       onSaveRef(handleSaveDraft);
     }
+
+    // Cleanup: remove the ref when component unmounts
+    return () => {
+      if (onSaveRef) {
+        onSaveRef(null as any);
+      }
+    };
   }, [onSaveRef, handleSaveDraft]);
 
   // Sync saving state with parent

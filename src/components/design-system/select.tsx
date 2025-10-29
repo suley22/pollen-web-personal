@@ -27,12 +27,19 @@ export function Select({
 }) {
   const generatedId = React.useId();
   const selectId = id || generatedId;
-  const [selectedValue, setSelectedValue] = React.useState(defaultValue);
+  const [selectedValue, setSelectedValue] = React.useState(defaultValue || "");
 
   // Update selected value when defaultValue changes
   React.useEffect(() => {
-    setSelectedValue(defaultValue);
+    setSelectedValue(defaultValue || "");
   }, [defaultValue]);
+
+  // Debug: Log when value changes (remove after testing)
+  React.useEffect(() => {
+    if (name && selectedValue) {
+      console.log(`Select [${name}]:`, selectedValue);
+    }
+  }, [name, selectedValue]);
 
   return (
     <div className="flex flex-col">
@@ -49,6 +56,9 @@ export function Select({
         </Label>
       )}
 
+      {/* Hidden input for form submission */}
+      {name && <input type="hidden" name={name} value={selectedValue || ""} />}
+
       <SelectRoot
         value={selectedValue}
         onValueChange={(value) => {
@@ -56,7 +66,6 @@ export function Select({
           onValueChange?.(value);
         }}
         disabled={disabled}
-        name={name}
       >
         {/* @ts-ignore */}
         <SelectTrigger

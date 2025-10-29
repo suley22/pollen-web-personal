@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRef, useEffect } from "react";
 import {
   PageContainer,
   PageHeader,
@@ -10,95 +9,78 @@ import {
   FormActions,
 } from "@/components/design-system";
 import { CheckCircle } from "lucide-react";
+import { AssessmentTypeEnum } from "@/types/assessment-types";
+import { useAssessmentCreate } from "../_hooks/assessment-create-main-hook";
 import { AssessmentCreateDetails } from "../_components/assessment-create-details";
 import { AssessmentTypeSelector } from "../_components/assessment-type-selector";
 import AssessmentCreateMultipleChoiceView from "./assessment-create-multiple-choice-view";
 import AssessmentCreateQuestionaryView from "./assessment-create-questionary-view";
 import { AssessmentCreateFileUploadView } from "./assessment-create-file-upload-view";
 
-const CreateAssessmentButton = ({ isLoading, onClick, disabled }) => (
+const CreateAssessmentButton = ({
+  isLoading,
+  onClick,
+  disabled,
+  isEditMode,
+}) => (
   <PrimaryButton
     icon={<CheckCircle className="h-5 w-5" />}
-    text="Create Assessment"
+    text={isEditMode ? "Update Assessment" : "Create Assessment"}
     loading={isLoading}
     disabled={disabled || isLoading}
     onClick={onClick}
   />
 );
 
-export default function AssessmentCreateView() {
-  const router = useRouter();
+export default function AssessmentCreateView({
+  id = null,
+}: {
+  id?: string | null;
+}) {
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Refs to child components save functions
-  const multipleChoiceSaveRef = useRef<(() => Promise<void>) | null>(null);
-  const freeInputSaveRef = useRef<(() => Promise<void>) | null>(null);
-  const fileUploadSaveRef = useRef<(() => Promise<void>) | null>(null);
+  const {
+    // Assessment data
+    assessment,
+    internalPollenTitle,
+    setInternalPollenTitle,
+    assessmentTitle,
+    setAssessmentTitle,
+    assessmentDescription,
+    setAssessmentDescription,
+    estimatedDuration,
+    setEstimatedDuration,
+    instructionsTitle,
+    setInstructionsTitle,
+    instructionsDescription,
+    setInstructionsDescription,
 
-  // Assessment data state
-  const [internalPollenTitle, setInternalPollenTitle] = useState("");
-  const [assessmentTitle, setAssessmentTitle] = useState("");
-  const [assessmentDescription, setAssessmentDescription] = useState("");
-  const [estimatedDuration, setEstimatedDuration] = useState("");
-  const [instructionsTitle, setInstructionsTitle] = useState("");
-  const [instructionsDescription, setInstructionsDescription] = useState("");
-  const [selectedType, setSelectedType] = useState<
-    "multiple_choice" | "free_input" | "file_upload" | null
-  >(null);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [showSaveDialog, setShowSaveDialog] = useState(false);
-  const [pendingType, setPendingType] = useState<
-    "multiple_choice" | "free_input" | "file_upload" | null
-  >(null);
-  const [isSaving, setIsSaving] = useState(false);
+    // Type selection
+    selectedType,
+    handleSelectType,
 
-  const handleBack = () => {
-    router.back();
-  };
+    // Dialog states
+    showConfirmDialog,
+    setShowConfirmDialog,
+    setShowSaveDialog,
+    showSaveDialog,
+    handleConfirmChange,
+    handleCancelChange,
 
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      if (selectedType === "multiple_choice" && multipleChoiceSaveRef.current) {
-        await multipleChoiceSaveRef.current();
-      } else if (selectedType === "free_input" && freeInputSaveRef.current) {
-        await freeInputSaveRef.current();
-      } else if (selectedType === "file_upload" && fileUploadSaveRef.current) {
-        await fileUploadSaveRef.current();
-      }
-    } finally {
-      setIsSaving(false);
-      setShowSaveDialog(false);
-    }
-  };
+    // Save refs
+    multipleChoiceSaveRef,
+    freeInputSaveRef,
+    fileUploadSaveRef,
 
-  const canSave = selectedType !== null && assessmentTitle.trim() !== "";
+    // Actions
+    handleBack,
+    handleSave,
+    canSave,
 
-  const handleSelectType = (
-    type: "multiple_choice" | "free_input" | "file_upload",
-  ) => {
-    // If there's already a type selected and user is changing it, show confirmation
-    if (selectedType && selectedType !== type) {
-      setPendingType(type);
-      setShowConfirmDialog(true);
-    } else {
-      // First selection or same type, just set it
-      setSelectedType(type);
-    }
-  };
-
-  const handleConfirmChange = () => {
-    if (pendingType) {
-      setSelectedType(pendingType);
-      setPendingType(null);
-    }
-    setShowConfirmDialog(false);
-  };
-
-  const handleCancelChange = () => {
-    setPendingType(null);
-    setShowConfirmDialog(false);
-  };
+    // Loading state
+    isSaving,
+    setIsSaving,
+  } = useAssessmentCreate({ id });
 
   // Scroll to content when type is selected
   useEffect(() => {
@@ -116,14 +98,19 @@ export default function AssessmentCreateView() {
     <PageContainer>
       <PageHeader
         showBackButton={true}
-        title="Create Assessment"
-        subtitle="Select assessment type and configure details"
+        title={id ? "Edit Assessment" : "Create Assessment"}
+        subtitle={
+          id
+            ? "Update assessment details and configuration"
+            : "Select assessment type and configure details"
+        }
         onBack={handleBack}
       >
         <CreateAssessmentButton
           isLoading={isSaving}
           disabled={!canSave}
           onClick={() => setShowSaveDialog(true)}
+          isEditMode={!!id}
         />
       </PageHeader>
 
@@ -149,7 +136,7 @@ export default function AssessmentCreateView() {
       />
 
       {/* Show type-specific content based on selection */}
-      {selectedType === "multiple_choice" && (
+      {selectedType === AssessmentTypeEnum.MultipleChoice && (
         <div ref={contentRef} className="">
           <AssessmentCreateMultipleChoiceView
             assessmentTitle={assessmentTitle}
@@ -158,13 +145,14 @@ export default function AssessmentCreateView() {
             instructionsDescription={instructionsDescription}
             internalPollenTitle={internalPollenTitle}
             estimatedDuration={estimatedDuration}
+            assessment={assessment}
             onSaveRef={(fn) => (multipleChoiceSaveRef.current = fn)}
             onSavingChange={setIsSaving}
           />
         </div>
       )}
 
-      {selectedType === "free_input" && (
+      {selectedType === AssessmentTypeEnum.FreeInput && (
         <div ref={contentRef} className="">
           <AssessmentCreateQuestionaryView
             internalPollenTitle={internalPollenTitle}
@@ -173,19 +161,21 @@ export default function AssessmentCreateView() {
             estimatedDuration={estimatedDuration}
             instructionsTitle={instructionsTitle}
             instructionsDescription={instructionsDescription}
+            assessment={assessment}
             onSaveRef={(fn) => (freeInputSaveRef.current = fn)}
             onSavingChange={setIsSaving}
           />
         </div>
       )}
 
-      {selectedType === "file_upload" && (
+      {selectedType === AssessmentTypeEnum.FileUpload && (
         <div ref={contentRef} className="">
           <AssessmentCreateFileUploadView
             assessmentTitle={assessmentTitle}
             assessmentDescription={assessmentDescription}
             instructionsTitle={instructionsTitle}
             instructionsDescription={instructionsDescription}
+            assessment={assessment}
             onSaveRef={(fn) => (fileUploadSaveRef.current = fn)}
             onSavingChange={setIsSaving}
           />
@@ -201,10 +191,17 @@ export default function AssessmentCreateView() {
                 isLoading={isSaving}
                 disabled={!canSave}
                 onClick={() => setShowSaveDialog(true)}
+                isEditMode={!!id}
               />
             }
-            title="Confirm assessment creation?"
-            description="Are you sure you want to create this assessment? This will create a new assessment in the system."
+            title={
+              id ? "Confirm assessment update?" : "Confirm assessment creation?"
+            }
+            description={
+              id
+                ? "Are you sure you want to update this assessment? This will save all changes."
+                : "Are you sure you want to create this assessment? This will create a new assessment in the system."
+            }
             confirmText="Confirm"
             cancelText="Cancel"
             isLoading={isSaving}

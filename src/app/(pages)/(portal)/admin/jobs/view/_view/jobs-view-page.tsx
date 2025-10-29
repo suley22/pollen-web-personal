@@ -14,7 +14,17 @@ import { AdminRoutes } from "@/admin/router";
 export default function JobsViewComponent({ id = null }) {
   const router = useRouter();
 
-  const { job, isLoading, activeTab, setActiveTab } = useJobViewHook(id);
+  const {
+    job,
+    isLoading,
+    activeTab,
+    setActiveTab,
+    handleGoLive,
+    handlePause,
+    handleComplete,
+    handleCancel,
+    handleDelete,
+  } = useJobViewHook(id);
 
   if (!job || isLoading) {
     return <JobViewSkeleton />;
@@ -34,16 +44,11 @@ export default function JobsViewComponent({ id = null }) {
         jobStatus={job?.status || "draft"}
         onBack={() => router.back()}
         onEdit={handleEdit}
-        onSave={() => {}}
-        onCancel={() => {}}
-        onGoLive={() => {}}
-        onPause={() => {}}
-        onComplete={() => {}}
-        onCancelJob={() => {}}
-        onDelete={() => {}}
-        isEditing={false}
-        isEditingAssessment={false}
-        canMarkComplete={false}
+        onGoLive={handleGoLive}
+        onPause={handlePause}
+        onComplete={handleComplete}
+        onCancel={handleCancel}
+        onDelete={handleDelete}
       />
 
       <Tabs
@@ -73,11 +78,11 @@ export default function JobsViewComponent({ id = null }) {
         </TabsContent>
 
         <TabsContent value="persona" className="space-y-6">
-          <JobPersonaTab />
+          <JobPersonaTab isLoading={isLoading} />
         </TabsContent>
 
         <TabsContent value="assessment" className="space-y-6">
-          <JobAssessmentTab />
+          <JobAssessmentTab isLoading={isLoading} />
         </TabsContent>
       </Tabs>
     </div>

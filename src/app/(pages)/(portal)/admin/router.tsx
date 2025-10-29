@@ -5,6 +5,7 @@ import {
   LayoutDashboard,
   Key,
   ClipboardList as Clipboard,
+  FlaskConical,
 } from "lucide-react";
 
 const basePath = "/admin";
@@ -28,6 +29,7 @@ export const AdminRoutes = {
   assessmentCreate: `${basePath}/assessments/create`,
   assessmentEdit: (id) => `${basePath}/assessments/edit/${id}`,
   assessmentView: (id) => `${basePath}/assessments/view/${id}`,
+  playground: `${basePath}/playground`,
 };
 
 export const ADMIN_ROUTES = Object.values(AdminRoutes);
@@ -61,12 +63,18 @@ export const ADMIN_NAVIGATION = [
     icon: LayoutDashboard,
     label: "Job Seekers",
     path: AdminRoutes.allJobSeekers,
-    section: "Admin",
+    section: "Development",
   },
   {
     icon: Key,
     label: "Roles",
     path: AdminRoutes.roles,
-    section: "Admin",
+    section: "Development",
+  },
+  {
+    icon: FlaskConical,
+    label: "Playground",
+    path: AdminRoutes.playground,
+    section: "Development",
   },
 ];

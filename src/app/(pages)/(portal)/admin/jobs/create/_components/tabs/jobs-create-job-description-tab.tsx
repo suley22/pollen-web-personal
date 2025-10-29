@@ -27,13 +27,7 @@ export function JobDescriptionTab({ initialData: editedJob, formRef }) {
   return (
     <FormContainer ref={formRef}>
       <FormCard icon={<Briefcase className="h-5 w-5" />} title="Job Overview">
-        <div className="grid grid-cols-2 gap-6">
-          <CompanySearchSelect
-            initialCompanyId={editedJob?.company_id}
-            initialCompanyName={editedJob?.company_name}
-            onValueChange={() => {}}
-          />
-
+        <div className="flex flex-row mb-6 gap-6">
           <Input
             label="Job Title"
             type="text"
@@ -41,6 +35,20 @@ export function JobDescriptionTab({ initialData: editedJob, formRef }) {
             id="job_title"
             placeholder="Enter job title"
             defaultValue={editedJob?.job_title || ""}
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-6">
+          <CompanySearchSelect
+            initialCompanyId={editedJob?.company_id}
+            initialCompanyName={editedJob?.company_name}
+            onValueChange={() => {}}
+          />
+
+          {/* TODO: admin assigned */}
+          <CompanySearchSelect
+            initialCompanyId={editedJob?.company_id}
+            initialCompanyName={editedJob?.company_name}
+            onValueChange={() => {}}
           />
 
           <Input
@@ -52,10 +60,10 @@ export function JobDescriptionTab({ initialData: editedJob, formRef }) {
           />
           <Select
             label="Working Hours"
-            name="job_type"
-            id="job_type"
+            name="working_hours"
+            id="working_hours"
             placeholder="Select working hours"
-            defaultValue={editedJob?.job_type || ""}
+            defaultValue={editedJob?.working_hours || ""}
             options={WORKING_HOURS_OPTIONS}
           />
 

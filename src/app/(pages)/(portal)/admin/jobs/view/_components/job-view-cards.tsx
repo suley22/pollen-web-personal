@@ -20,10 +20,12 @@ export function JobOverviewCard({ job }) {
             value={job?.company_name}
             icon={<Building className="h-4 w-4 text-muted-foreground" />}
           />
+
+          {/* TODO: admin assigned */}
           <InfoField
-            label="Job Type"
-            value={job.job_type}
-            icon={<Clock className="h-4 w-4 text-muted-foreground" />}
+            label="Company"
+            value={job?.company_name}
+            icon={<Building className="h-4 w-4 text-muted-foreground" />}
           />
           <InfoField
             label="Location"
@@ -31,14 +33,20 @@ export function JobOverviewCard({ job }) {
             icon={<MapPin className="h-4 w-4 text-muted-foreground" />}
           />
           <InfoField
-            label="Work Arrangement"
-            value={job.work_arrangement}
-            icon={<Building2 className="h-4 w-4 text-muted-foreground" />}
+            label="Working Hours"
+            value={job.working_hours}
+            icon={<Clock className="h-4 w-4 text-muted-foreground" />}
           />
+
           <InfoField
             label="Salary Range"
             value={job?.salary_range ? job.salary_range : "Not specified"}
             icon={<PoundSterling className="h-4 w-4 text-muted-foreground" />}
+          />
+          <InfoField
+            label="Work Arrangement"
+            value={job.work_arrangement}
+            icon={<Building2 className="h-4 w-4 text-muted-foreground" />}
           />
         </div>
       </FormCard>
@@ -54,6 +62,12 @@ export function JobOverviewCard({ job }) {
             label="Work Authorisation"
             value={job.work_authorisation}
           />
+          <div className="col-span-2">
+            <InfoField
+              label="Employment Type Details"
+              value={job.employment_type_details || "Not specified"}
+            />
+          </div>
         </div>
       </FormCard>
     </div>

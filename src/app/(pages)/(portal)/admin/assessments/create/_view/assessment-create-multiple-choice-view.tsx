@@ -5,6 +5,7 @@ import { AssessmentCreateMultipleChoicePreview } from "../_components/assessment
 import { AssessmentCreateCategories } from "../_components/assessment-create-categories";
 import { AssessmentCreateQuestions } from "../_components/assessment-create-questions";
 import { useAssessmentCreate } from "../_hooks/assessment-create-hook";
+import type { Assessment } from "@/types/assessment-types";
 
 interface AssessmentCreateMultipleChoiceViewProps {
   assessmentTitle: string;
@@ -13,6 +14,7 @@ interface AssessmentCreateMultipleChoiceViewProps {
   instructionsDescription: string;
   internalPollenTitle: string;
   estimatedDuration: string;
+  assessment?: Assessment;
   onSaveRef?: (fn: () => Promise<void>) => void;
   onSavingChange?: (isSaving: boolean) => void;
 }
@@ -24,6 +26,7 @@ export default function AssessmentCreateMultipleChoiceView({
   instructionsDescription,
   internalPollenTitle,
   estimatedDuration,
+  assessment,
   onSaveRef,
   onSavingChange,
 }: AssessmentCreateMultipleChoiceViewProps) {
@@ -66,7 +69,7 @@ export default function AssessmentCreateMultipleChoiceView({
     handleBack,
     handleSubmit,
     isSaving,
-  } = useAssessmentCreate({});
+  } = useAssessmentCreate({ assessment });
 
   const handleSaveDraft = useCallback(async () => {
     await handleSubmit("multiple_choice", {
@@ -92,6 +95,13 @@ export default function AssessmentCreateMultipleChoiceView({
     if (onSaveRef) {
       onSaveRef(handleSaveDraft);
     }
+
+    // Cleanup: remove the ref when component unmounts
+    return () => {
+      if (onSaveRef) {
+        onSaveRef(null as any);
+      }
+    };
   }, [onSaveRef, handleSaveDraft]);
 
   // Sync saving state with parent

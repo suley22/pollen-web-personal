@@ -3,28 +3,24 @@
 import { PageHeader } from "@/components/design-system/page-header";
 import {
   SuccessButton,
+  CompleteButton,
   WarningButton,
   DangerButton,
   EditButton,
 } from "@/components/design-system/status-buttons";
 import { DeleteConfirmationDialog } from "@/components/design-system/delete-confirmation-dialog";
-import { Edit, CheckCircle, Pause, Play, X, Trash2 } from "lucide-react";
+import { Edit, CheckCircle, Pause, Play, Trash2, XCircle } from "lucide-react";
 
 export function JobViewHeader({
   jobTitle,
   companyName,
   jobStatus,
-  isEditing,
-  isEditingAssessment,
-  canMarkComplete,
   onBack,
   onEdit,
-  onSave,
-  onCancel,
   onGoLive,
   onPause,
   onComplete,
-  onCancelJob,
+  onCancel,
   onDelete,
   isUpdating = false,
   isDeleting = false,
@@ -33,7 +29,7 @@ export function JobViewHeader({
   const isLive = jobStatus === "live";
   const isPaused = jobStatus === "paused";
   const isComplete = jobStatus === "complete";
-  const isInEditMode = isEditing || isEditingAssessment;
+  const isCancelled = jobStatus === "cancelled";
 
   return (
     <PageHeader
@@ -41,26 +37,8 @@ export function JobViewHeader({
       showBackButton={true}
       onBack={onBack}
     >
-      {/* Editing Mode Actions */}
-      {isInEditMode && (
-        <>
-          <DangerButton
-            text="Cancel"
-            icon={<X />}
-            onClick={onCancel}
-            disabled={isUpdating}
-          />
-          <SuccessButton
-            text="Save Changes"
-            icon={<CheckCircle />}
-            onClick={onSave}
-            disabled={isUpdating}
-          />
-        </>
-      )}
-
       {/* Draft Status Actions: Set Live, Edit, Cancel */}
-      {isDraft && !isInEditMode && (
+      {isDraft && (
         <>
           <SuccessButton
             text="Set Live"
@@ -74,17 +52,25 @@ export function JobViewHeader({
             onClick={onEdit}
             disabled={isUpdating || isDeleting}
           />
-          <DangerButton
-            text="Cancel"
-            icon={<X />}
-            onClick={onCancelJob}
-            disabled={isUpdating || isDeleting}
+          <DeleteConfirmationDialog
+            trigger={
+              <DangerButton
+                text="Cancel"
+                icon={<XCircle />}
+                disabled={isUpdating || isDeleting}
+              />
+            }
+            title="Cancel Job"
+            description="Are you sure you want to cancel {itemName}? You can still access it later."
+            itemName={jobTitle}
+            onConfirm={onCancel}
+            confirmText="Cancel Job"
           />
         </>
       )}
 
-      {/* Live Status Actions: Edit, Pause, Mark Complete */}
-      {isLive && !isInEditMode && (
+      {/* Live Status Actions: Edit, Pause, Mark Complete, Cancel */}
+      {isLive && (
         <>
           <EditButton
             text="Edit"
@@ -98,17 +84,31 @@ export function JobViewHeader({
             onClick={onPause}
             disabled={isUpdating || isDeleting}
           />
-          <SuccessButton
+          <CompleteButton
             text="Mark Complete"
             icon={<CheckCircle />}
             onClick={onComplete}
-            disabled={!canMarkComplete || isUpdating || isDeleting}
+            disabled={isUpdating || isDeleting}
+          />
+          <DeleteConfirmationDialog
+            trigger={
+              <DangerButton
+                text="Cancel"
+                icon={<XCircle />}
+                disabled={isUpdating || isDeleting}
+              />
+            }
+            title="Cancel Job"
+            description="Are you sure you want to cancel {itemName}? You can still access it later."
+            itemName={jobTitle}
+            onConfirm={onCancel}
+            confirmText="Cancel Job"
           />
         </>
       )}
 
-      {/* Paused Status Actions: Edit, Set Live, Cancel, Mark Complete */}
-      {isPaused && !isInEditMode && (
+      {/* Paused Status Actions: Edit, Set Live, Cancel */}
+      {isPaused && (
         <>
           <EditButton
             text="Edit"
@@ -122,35 +122,25 @@ export function JobViewHeader({
             onClick={onGoLive}
             disabled={isUpdating || isDeleting}
           />
-          <DangerButton
-            text="Cancel"
-            icon={<X />}
-            onClick={onCancelJob}
-            disabled={isUpdating || isDeleting}
-          />
-          <SuccessButton
-            text="Mark Complete"
-            icon={<CheckCircle />}
-            onClick={onComplete}
-            disabled={!canMarkComplete || isUpdating || isDeleting}
-          />
-        </>
-      )}
-
-      {/* Complete Status Actions: Edit */}
-      {isComplete && !isInEditMode && (
-        <>
-          <EditButton
-            text="Edit"
-            icon={<Edit />}
-            onClick={onEdit}
-            disabled={isUpdating || isDeleting}
+          <DeleteConfirmationDialog
+            trigger={
+              <DangerButton
+                text="Cancel"
+                icon={<XCircle />}
+                disabled={isUpdating || isDeleting}
+              />
+            }
+            title="Cancel Job"
+            description="Are you sure you want to cancel {itemName}? You can still access it later."
+            itemName={jobTitle}
+            onConfirm={onCancel}
+            confirmText="Cancel Job"
           />
         </>
       )}
 
-      {/* Delete Button with Confirmation - Available in all non-editing states */}
-      {!isInEditMode && (
+      {/* Complete or Cancelled Status: Only Delete (soft delete with deleted_at) */}
+      {(isComplete || isCancelled) && (
         <DeleteConfirmationDialog
           trigger={
             <DangerButton
@@ -160,7 +150,7 @@ export function JobViewHeader({
             />
           }
           title="Delete Job"
-          description="Are you sure you want to delete {itemName}? This action cannot be undone."
+          description="Are you sure you want to permanently delete {itemName}? This action cannot be undone."
           itemName={jobTitle}
           onConfirm={onDelete}
           confirmText="Delete Job"

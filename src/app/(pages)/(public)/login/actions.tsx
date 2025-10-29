@@ -100,8 +100,6 @@ export async function signInWithGoogle(origin) {
   }
 
   redirect(data.url);
-
-  return { data, error: null };
 }
 
 export async function resetPassword(_, formData) {

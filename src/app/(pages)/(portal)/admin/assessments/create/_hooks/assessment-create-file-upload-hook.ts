@@ -1,6 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import {
+  useCreateAssessment,
+  useUpdateAssessment,
+} from "../../_services/assessments-page-service";
+import { AdminRoutes } from "@/admin/router";
+import type { Assessment } from "@/types/assessment-types";
 
 export interface ReferenceFile {
   id: string;
@@ -15,7 +22,13 @@ export interface FileUploadQuestion {
   referenceFiles: ReferenceFile[]; // Multiple reference files
 }
 
-export function useAssessmentCreateFileUpload() {
+export function useAssessmentCreateFileUpload({
+  assessment,
+}: { assessment?: Assessment } = {}) {
+  const router = useRouter();
+  const createAssessmentMutation = useCreateAssessment();
+  const updateAssessmentMutation = useUpdateAssessment();
+
   const [questions, setQuestions] = useState<FileUploadQuestion[]>([]);
 
   // Form state for adding/editing questions
@@ -25,6 +38,23 @@ export function useAssessmentCreateFileUpload() {
   const [editingQuestionIndex, setEditingQuestionIndex] = useState<
     number | null
   >(null);
+
+  // Initialize state from assessment data (edit mode)
+  useEffect(() => {
+    if (assessment && assessment.questions && assessment.questions.length > 0) {
+      const loadedQuestions = assessment.questions.map((q) => ({
+        title: q.title,
+        subtitle: q.subtitle || "",
+        referenceFiles: (q.file_upload?.referenceFiles || []).map((rf) => ({
+          id: rf.id,
+          name: rf.name,
+          fileName: rf.fileName,
+          file: rf.file || null,
+        })),
+      }));
+      setQuestions(loadedQuestions);
+    }
+  }, [assessment]);
 
   // Reference file management
   const handleAddReferenceFile = (name: string, file: File) => {
@@ -135,6 +165,75 @@ export function useAssessmentCreateFileUpload() {
     setEditingQuestionIndex(null);
   };
 
+  // Navigation and submit
+  const handleBack = () => {
+    router.back();
+  };
+
+  const handleSubmit = async (
+    assessmentType: "file_upload",
+    assessmentData: {
+      internal_pollen_title?: string;
+      title: string;
+      subtitle?: string;
+      estimated_duration?: string;
+      instructions_title?: string;
+      instructions_description?: string;
+    },
+  ) => {
+    try {
+      // Validate required fields
+      if (!assessmentData.title.trim()) {
+        throw new Error("Assessment title is required");
+      }
+
+      // Only validate questions if this is a file_upload assessment
+      if (assessmentType === "file_upload" && questions.length === 0) {
+        throw new Error("At least one question is required");
+      }
+
+      const assessmentInput = {
+        internal_pollen_title: assessmentData.internal_pollen_title || null,
+        title: assessmentData.title,
+        subtitle: assessmentData.subtitle || null,
+        estimated_duration: assessmentData.estimated_duration || null,
+        instructions_title: assessmentData.instructions_title || null,
+        instructions_description:
+          assessmentData.instructions_description || null,
+        type: assessmentType,
+        questions: questions.map((q) => ({
+          title: q.title,
+          subtitle: q.subtitle,
+          type: assessmentType,
+          file_upload: {
+            referenceFiles: q.referenceFiles,
+          },
+        })),
+      };
+
+      // Use update mutation if assessment exists, otherwise create
+      const result = assessment?.id
+        ? await updateAssessmentMutation.mutateAsync({
+            id: assessment.id,
+            input: assessmentInput,
+          })
+        : await createAssessmentMutation.mutateAsync(assessmentInput);
+
+      console.log(
+        assessment?.id
+          ? "Assessment updated successfully:"
+          : "Assessment created successfully:",
+        result,
+      );
+
+      // Navigate to assessments list
+      router.push(AdminRoutes.assessments);
+    } catch (error) {
+      console.error("Failed to create assessment:", error);
+      throw error;
+    }
+  };
+
   const handleCancelEdit = () => {
     handleClearForm();
   };
@@ -164,5 +263,11 @@ export function useAssessmentCreateFileUpload() {
     handleMoveQuestionDown,
     handleClearForm,
     handleCancelEdit,
+
+    // Navigation and submit
+    handleBack,
+    handleSubmit,
+    isSaving: createAssessmentMutation.isPending,
+    saveError: createAssessmentMutation.error,
   };
 }

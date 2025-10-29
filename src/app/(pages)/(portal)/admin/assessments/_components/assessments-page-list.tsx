@@ -204,7 +204,9 @@ export function AssessmentsList({
                     Updated:{" "}
                     {DateHelper.formatRelativeDate(assessment.updated_at)}
                   </span>
-                  <span>by: {assessment.created_by}</span>
+                  <span>
+                    by: {assessment.created_by?.full_name || "Unknown"}
+                  </span>
                 </div>
                 <div className="flex items-center justify-end gap-1">
                   {/* Second Row: Created/Updated info */}
@@ -216,8 +218,7 @@ export function AssessmentsList({
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      // TODO: Implement view action
-                      console.log("View assessment:", assessment.id);
+                      router.push(AdminRoutes.assessmentView(assessment.id));
                     }}
                   >
                     <Eye className="h-4 w-4 mr-1" />
@@ -230,8 +231,13 @@ export function AssessmentsList({
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      // TODO: Implement edit action
-                      console.log("Edit assessment:", assessment.id);
+                      router.push(AdminRoutes.assessmentEdit(assessment.id));
+                    }}
+                    onMouseEnter={() => {
+                      // Prefetch the edit page on hover for instant navigation
+                      router.prefetch(
+                        AdminRoutes.assessmentEdit(assessment.id),
+                      );
                     }}
                   >
                     <Edit className="h-4 w-4 mr-1" />

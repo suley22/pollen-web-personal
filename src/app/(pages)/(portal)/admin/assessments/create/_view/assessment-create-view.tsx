@@ -1,70 +1,103 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRef, useEffect } from "react";
 import {
   PageContainer,
   PageHeader,
   ConfirmationDialog,
+  PrimaryButton,
+  FormActions,
 } from "@/components/design-system";
+import { CheckCircle } from "lucide-react";
+import { AssessmentTypeEnum } from "@/types/assessment-types";
+import { useAssessmentCreate } from "../_hooks/assessment-create-main-hook";
 import { AssessmentCreateDetails } from "../_components/assessment-create-details";
 import { AssessmentTypeSelector } from "../_components/assessment-type-selector";
+import { AssessmentCreateSkeleton } from "../_components/assessment-create-skeleton";
 import AssessmentCreateMultipleChoiceView from "./assessment-create-multiple-choice-view";
 import AssessmentCreateQuestionaryView from "./assessment-create-questionary-view";
 import { AssessmentCreateFileUploadView } from "./assessment-create-file-upload-view";
 
-export default function AssessmentCreateView() {
-  const router = useRouter();
+const CreateAssessmentButton = ({
+  isLoading,
+  onClick,
+  disabled,
+  isEditMode,
+}) => (
+  <PrimaryButton
+    icon={<CheckCircle className="h-5 w-5" />}
+    text={isEditMode ? "Update Assessment" : "Create Assessment"}
+    loading={isLoading}
+    disabled={disabled || isLoading}
+    onClick={onClick}
+  />
+);
+
+export default function AssessmentCreateView({
+  id = null,
+}: {
+  id?: string | null;
+}) {
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Assessment data state
-  const [internalPollenTitle, setInternalPollenTitle] = useState("");
-  const [assessmentTitle, setAssessmentTitle] = useState("");
-  const [assessmentDescription, setAssessmentDescription] = useState("");
-  const [estimatedDuration, setEstimatedDuration] = useState("");
-  const [instructionsTitle, setInstructionsTitle] = useState("");
-  const [instructionsDescription, setInstructionsDescription] = useState("");
-  const [selectedType, setSelectedType] = useState<
-    "multiple_choice" | "free_input" | "file_upload" | null
-  >(null);
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [pendingType, setPendingType] = useState<
-    "multiple_choice" | "free_input" | "file_upload" | null
-  >(null);
+  const {
+    // Assessment data
+    assessment,
+    internalPollenTitle,
+    setInternalPollenTitle,
+    assessmentTitle,
+    setAssessmentTitle,
+    assessmentDescription,
+    setAssessmentDescription,
+    estimatedDuration,
+    setEstimatedDuration,
+    instructionsTitle,
+    setInstructionsTitle,
+    instructionsDescription,
+    setInstructionsDescription,
 
-  const handleBack = () => {
-    router.back();
-  };
+    // Type selection
+    selectedType,
+    handleSelectType,
 
-  const handleSelectType = (
-    type: "multiple_choice" | "free_input" | "file_upload",
-  ) => {
-    // If there's already a type selected and user is changing it, show confirmation
-    if (selectedType && selectedType !== type) {
-      setPendingType(type);
-      setShowConfirmDialog(true);
-    } else {
-      // First selection or same type, just set it
-      setSelectedType(type);
-    }
-  };
+    // Dialog states
+    showConfirmDialog,
+    setShowConfirmDialog,
+    setShowSaveDialog,
+    showSaveDialog,
+    handleConfirmChange,
+    handleCancelChange,
 
-  const handleConfirmChange = () => {
-    if (pendingType) {
-      setSelectedType(pendingType);
-      setPendingType(null);
-    }
-    setShowConfirmDialog(false);
-  };
+    // Save refs
+    multipleChoiceSaveRef,
+    freeInputSaveRef,
+    fileUploadSaveRef,
 
-  const handleCancelChange = () => {
-    setPendingType(null);
-    setShowConfirmDialog(false);
-  };
+    // Actions
+    handleBack,
+    handleSave,
+    canSave,
 
-  // Scroll to content when type is selected
+    // Loading state
+    isLoadingAssessment,
+    isSaving,
+    setIsSaving,
+  } = useAssessmentCreate({ id });
+
+  // Track if this is the initial load
+  const isInitialLoad = useRef(true);
+
+  // Scroll to content when type is selected (but not on initial load in edit mode)
   useEffect(() => {
     if (selectedType && contentRef.current) {
+      // Skip scroll on initial load if we're in edit mode (id exists)
+      if (isInitialLoad.current && id) {
+        isInitialLoad.current = false;
+        return;
+      }
+
+      isInitialLoad.current = false;
+
       setTimeout(() => {
         contentRef.current?.scrollIntoView({
           behavior: "smooth",
@@ -72,51 +105,74 @@ export default function AssessmentCreateView() {
         });
       }, 100);
     }
-  }, [selectedType]);
+  }, [selectedType, id]);
 
   return (
     <PageContainer>
       <PageHeader
         showBackButton={true}
-        title="Create Assessment"
-        subtitle="Select assessment type and configure details"
+        title={id ? "Edit Assessment" : "Create Assessment"}
+        subtitle={
+          id
+            ? "Update assessment details and configuration"
+            : "Select assessment type and configure details"
+        }
         onBack={handleBack}
-      />
+      >
+        <CreateAssessmentButton
+          isLoading={isSaving}
+          disabled={!canSave}
+          onClick={() => setShowSaveDialog(true)}
+          isEditMode={!!id}
+        />
+      </PageHeader>
 
-      <AssessmentCreateDetails
-        internalPollenTitle={internalPollenTitle}
-        assessmentTitle={assessmentTitle}
-        assessmentDescription={assessmentDescription}
-        estimatedDuration={estimatedDuration}
-        instructionsTitle={instructionsTitle}
-        instructionsDescription={instructionsDescription}
-        onInternalPollenTitleChange={setInternalPollenTitle}
-        onAssessmentTitleChange={setAssessmentTitle}
-        onAssessmentDescriptionChange={setAssessmentDescription}
-        onEstimatedDurationChange={setEstimatedDuration}
-        onInstructionsTitleChange={setInstructionsTitle}
-        onInstructionsDescriptionChange={setInstructionsDescription}
-      />
+      {/* Show skeleton while loading in edit mode */}
+      {id && isLoadingAssessment ? (
+        <AssessmentCreateSkeleton />
+      ) : (
+        <>
+          <AssessmentCreateDetails
+            internalPollenTitle={internalPollenTitle}
+            assessmentTitle={assessmentTitle}
+            assessmentDescription={assessmentDescription}
+            estimatedDuration={estimatedDuration}
+            instructionsTitle={instructionsTitle}
+            instructionsDescription={instructionsDescription}
+            onInternalPollenTitleChange={setInternalPollenTitle}
+            onAssessmentTitleChange={setAssessmentTitle}
+            onAssessmentDescriptionChange={setAssessmentDescription}
+            onEstimatedDurationChange={setEstimatedDuration}
+            onInstructionsTitleChange={setInstructionsTitle}
+            onInstructionsDescriptionChange={setInstructionsDescription}
+          />
 
-      {/* Assessment Type Selector */}
-      <AssessmentTypeSelector
-        selectedType={selectedType}
-        onSelectType={handleSelectType}
-      />
+          {/* Assessment Type Selector */}
+          <AssessmentTypeSelector
+            selectedType={selectedType}
+            onSelectType={handleSelectType}
+          />
+        </>
+      )}
 
       {/* Show type-specific content based on selection */}
-      {selectedType === "multiple_choice" && (
+      {selectedType === AssessmentTypeEnum.MultipleChoice && (
         <div ref={contentRef} className="">
           <AssessmentCreateMultipleChoiceView
             assessmentTitle={assessmentTitle}
             assessmentDescription={assessmentDescription}
             instructionsTitle={instructionsTitle}
             instructionsDescription={instructionsDescription}
+            internalPollenTitle={internalPollenTitle}
+            estimatedDuration={estimatedDuration}
+            assessment={assessment}
+            onSaveRef={(fn) => (multipleChoiceSaveRef.current = fn)}
+            onSavingChange={setIsSaving}
           />
         </div>
       )}
 
-      {selectedType === "free_input" && (
+      {selectedType === AssessmentTypeEnum.FreeInput && (
         <div ref={contentRef} className="">
           <AssessmentCreateQuestionaryView
             internalPollenTitle={internalPollenTitle}
@@ -125,22 +181,59 @@ export default function AssessmentCreateView() {
             estimatedDuration={estimatedDuration}
             instructionsTitle={instructionsTitle}
             instructionsDescription={instructionsDescription}
+            assessment={assessment}
+            onSaveRef={(fn) => (freeInputSaveRef.current = fn)}
+            onSavingChange={setIsSaving}
           />
         </div>
       )}
 
-      {selectedType === "file_upload" && (
+      {selectedType === AssessmentTypeEnum.FileUpload && (
         <div ref={contentRef} className="">
           <AssessmentCreateFileUploadView
             assessmentTitle={assessmentTitle}
             assessmentDescription={assessmentDescription}
             instructionsTitle={instructionsTitle}
             instructionsDescription={instructionsDescription}
+            assessment={assessment}
+            onSaveRef={(fn) => (fileUploadSaveRef.current = fn)}
+            onSavingChange={setIsSaving}
           />
         </div>
       )}
 
-      {/* Confirmation Dialog */}
+      {/* Form Actions at the bottom */}
+      {selectedType && (
+        <FormActions>
+          <ConfirmationDialog
+            trigger={
+              <CreateAssessmentButton
+                isLoading={isSaving}
+                disabled={!canSave}
+                onClick={() => setShowSaveDialog(true)}
+                isEditMode={!!id}
+              />
+            }
+            title={
+              id ? "Confirm assessment update?" : "Confirm assessment creation?"
+            }
+            description={
+              id
+                ? "Are you sure you want to update this assessment? This will save all changes."
+                : "Are you sure you want to create this assessment? This will create a new assessment in the system."
+            }
+            confirmText="Confirm"
+            cancelText="Cancel"
+            isLoading={isSaving}
+            loadingText="Creating..."
+            open={showSaveDialog}
+            onOpenChange={setShowSaveDialog}
+            onConfirm={handleSave}
+          />
+        </FormActions>
+      )}
+
+      {/* Confirmation Dialog for type change */}
       <ConfirmationDialog
         trigger={<div />}
         open={showConfirmDialog}

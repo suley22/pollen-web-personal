@@ -1,7 +1,18 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { createClient } from "@/lib/utils/supabase/client";
+import { getLoggedInUserId } from "@/services/userService";
+import {
+  Assessment,
+  AssessmentQuestion,
+  AssessmentCategory,
+  CreateAssessmentInput,
+  AssessmentType,
+  AssessmentStatus,
+} from "@/types/assessment-types";
 
+const supabase = createClient();
 const assessmentsQueryKey = "assessments";
 
 export interface AssessmentFilters {
@@ -12,188 +23,229 @@ export interface AssessmentFilters {
   pageSize?: number;
 }
 
-export interface AssessmentQuestion {
-  id?: string;
-  title: string;
-  subtitle: string;
-  options?: { value: string; label: string; categoryId?: string }[];
-  categoryId?: string;
-  type: "multiple_choice" | "free_input" | "file_upload";
+export interface AssessmentPaginationInfo {
+  currentPage: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  from: number;
+  to: number;
 }
 
-export interface AssessmentCategory {
-  id: string;
-  name: string;
-  description: string;
-  color: string;
-}
+// Re-export types for convenience
+export type {
+  Assessment,
+  AssessmentQuestion,
+  AssessmentCategory,
+  CreateAssessmentInput,
+};
 
-export interface CreateAssessmentInput {
-  internal_pollen_title?: string;
-  title: string;
-  subtitle?: string;
-  estimated_duration?: string;
-  instructions_title?: string;
-  instructions_description?: string;
-  type: "multiple_choice" | "free_input" | "file_upload";
-  categories?: AssessmentCategory[];
-  questions: AssessmentQuestion[];
-}
-
-export interface Assessment {
-  id: string;
-  internal_pollen_title?: string;
-  title: string;
-  subtitle?: string;
-  type: "multiple_choice" | "free_input" | "file_upload";
-  status: "draft" | "live" | "paused" | "archived";
-  questions_count: number;
-  estimated_duration?: string;
-  created_at: string;
-  updated_at: string;
-  created_by: string;
-  total_submissions?: number;
-  categories?: AssessmentCategory[];
-  questions?: AssessmentQuestion[];
-  instructions_title?: string;
-  instructions_description?: string;
-}
-
-// Mock data store (in real app, this would be in a database)
-let mockAssessmentsStore: Assessment[] = [
-  {
-    id: "1",
-    internal_pollen_title: "Frontend Developer Skills Assessment",
-    title: "Frontend Developer Skills Assessment",
-    subtitle: "Evaluate React and TypeScript proficiency",
-    type: "multiple_choice",
-    status: "draft",
-    questions_count: 15,
-    estimated_duration: "30 minutes",
-    created_at: "2024-10-20T10:00:00Z",
-    updated_at: "2024-10-25T14:30:00Z",
-    created_by: "Admin User",
-  },
-  {
-    id: "2",
-    internal_pollen_title: "Product Management Case Study",
-    title: "Product Management Case Study",
-    subtitle: "Assess strategic thinking and problem-solving",
-    type: "free_input",
-    status: "live",
-    questions_count: 5,
-    estimated_duration: "45 minutes",
-    created_at: "2024-10-15T09:00:00Z",
-    updated_at: "2024-10-22T11:20:00Z",
-    created_by: "Admin User",
-  },
-  {
-    id: "3",
-    internal_pollen_title: "Design Portfolio Review",
-    title: "Design Portfolio Review",
-    subtitle: "Upload and review design work samples",
-    type: "file_upload",
-    status: "live",
-    questions_count: 3,
-    estimated_duration: "20 minutes",
-    created_at: "2024-10-18T13:00:00Z",
-    updated_at: "2024-10-26T16:45:00Z",
-    created_by: "Admin User",
-  },
-  {
-    id: "4",
-    internal_pollen_title: "Backend Engineering Assessment",
-    title: "Backend Engineering Assessment",
-    subtitle: "Test Node.js and database knowledge",
-    type: "multiple_choice",
-    status: "live",
-    questions_count: 20,
-    estimated_duration: "40 minutes",
-    created_at: "2024-10-12T08:00:00Z",
-    updated_at: "2024-10-24T10:15:00Z",
-    created_by: "Admin User",
-  },
-  {
-    id: "5",
-    internal_pollen_title: "Sales Skills Evaluation",
-    title: "Sales Skills Evaluation",
-    subtitle: "Assess communication and persuasion abilities",
-    type: "free_input",
-    status: "paused",
-    questions_count: 8,
-    estimated_duration: "35 minutes",
-    created_at: "2024-10-10T12:00:00Z",
-    updated_at: "2024-10-23T15:30:00Z",
-    created_by: "Admin User",
-    total_submissions: 18,
-  },
-  {
-    id: "6",
-    internal_pollen_title: "Marketing Campaign Analysis",
-    title: "Marketing Campaign Analysis",
-    subtitle: "Upload campaign materials and strategy documents",
-    type: "file_upload",
-    status: "draft",
-    questions_count: 4,
-    estimated_duration: "25 minutes",
-    created_at: "2024-10-08T14:00:00Z",
-    updated_at: "2024-10-21T09:00:00Z",
-    created_by: "Admin User",
-  },
-];
-
+// React Query Hooks
 export function useAssessmentsList(filters: AssessmentFilters) {
   return useQuery({
     queryKey: [assessmentsQueryKey, "list", filters],
     queryFn: async () => {
       const page = filters.page || 1;
       const pageSize = filters.pageSize || 10;
+      const from = (page - 1) * pageSize;
+      const to = from + pageSize - 1;
 
-      // Apply filters
-      let filteredAssessments = [...mockAssessmentsStore];
+      // Count query
+      let countQuery = supabase
+        .from("assessments")
+        .select("*", { count: "exact", head: true })
+        .filter("deleted_at", "is", null);
 
       if (filters.status && filters.status !== "all") {
-        filteredAssessments = filteredAssessments.filter(
-          (a) => a.status === filters.status,
-        );
+        countQuery = countQuery.eq("status", filters.status);
       }
 
       if (filters.type && filters.type !== "all") {
-        filteredAssessments = filteredAssessments.filter(
-          (a) => a.type === filters.type,
-        );
+        countQuery = countQuery.eq("type", filters.type);
       }
 
       if (filters.searchTerm) {
-        const searchLower = filters.searchTerm.toLowerCase();
-        filteredAssessments = filteredAssessments.filter(
-          (a) =>
-            a.title.toLowerCase().includes(searchLower) ||
-            (a.subtitle?.toLowerCase().includes(searchLower) ?? false),
+        countQuery = countQuery.or(
+          `title.ilike.%${filters.searchTerm}%,subtitle.ilike.%${filters.searchTerm}%,internal_pollen_title.ilike.%${filters.searchTerm}%`,
         );
       }
 
-      // Pagination
-      const total = filteredAssessments.length;
-      const from = (page - 1) * pageSize;
-      const to = from + pageSize;
-      const paginatedAssessments = filteredAssessments.slice(from, to);
-      const totalPages = Math.ceil(total / pageSize);
+      const { count, error: countError } = await countQuery;
+
+      if (countError) {
+        throw new Error(countError.message);
+      }
+
+      // Data query
+      let query = supabase
+        .from("assessments")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .filter("deleted_at", "is", null)
+        .range(from, to);
+
+      if (filters.status && filters.status !== "all") {
+        query = query.eq("status", filters.status);
+      }
+
+      if (filters.type && filters.type !== "all") {
+        query = query.eq("type", filters.type);
+      }
+
+      if (filters.searchTerm) {
+        query = query.or(
+          `title.ilike.%${filters.searchTerm}%,subtitle.ilike.%${filters.searchTerm}%,internal_pollen_title.ilike.%${filters.searchTerm}%`,
+        );
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const totalPages = Math.ceil((count || 0) / pageSize);
+
+      // Get user information from profile table
+      const userIds = [
+        ...new Set(
+          data
+            ?.map((a) => [a.user_id, a.updated_by])
+            .flat()
+            .filter(Boolean) || [],
+        ),
+      ];
+
+      let usersMap: Record<
+        string,
+        {
+          email: string;
+          full_name: string;
+          first_name: string;
+          last_name: string;
+        }
+      > = {};
+
+      if (userIds.length > 0) {
+        const { data: profilesData } = await supabase
+          .from("profile")
+          .select("id, first_name, last_name, email")
+          .in("id", userIds);
+
+        if (profilesData && profilesData.length > 0) {
+          usersMap = Object.fromEntries(
+            profilesData.map((p) => [
+              p.id,
+              {
+                email: p.email,
+                full_name:
+                  `${p.first_name || ""} ${p.last_name || ""}`.trim() ||
+                  p.email,
+                first_name: p.first_name,
+                last_name: p.last_name,
+              },
+            ]),
+          );
+        }
+      }
+
+      const assessmentsWithUserInfo =
+        data?.map((assessment) => ({
+          ...assessment,
+          created_by: usersMap[assessment.user_id as string] || null,
+          updated_by_user: usersMap[assessment.updated_by as string] || null,
+        })) || [];
 
       return {
-        assessments: paginatedAssessments,
+        assessments: assessmentsWithUserInfo,
         pagination: {
           currentPage: page,
           pageSize,
-          totalItems: total,
+          totalItems: count || 0,
           totalPages,
           hasNextPage: page < totalPages,
           hasPreviousPage: page > 1,
           from: from + 1,
-          to: Math.min(to, total),
+          to: Math.min(to + 1, count || 0),
         },
       };
     },
+  });
+}
+
+export function useAssessmentById(id: string) {
+  return useQuery({
+    queryKey: [assessmentsQueryKey, "detail", id],
+    queryFn: async () => {
+      if (!id) return null;
+
+      const { data, error } = await supabase
+        .from("assessments")
+        .select("*")
+        .eq("id", id)
+        .filter("deleted_at", "is", null)
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // Get both creator and updater information in a single query
+      let createdBy = null;
+      let updatedBy = null;
+
+      const userIds = [data.user_id, data.updated_by].filter(Boolean);
+
+      if (userIds.length > 0) {
+        const { data: profilesData } = await supabase
+          .from("profile")
+          .select("id, first_name, last_name, email")
+          .in("id", userIds);
+
+        if (profilesData && profilesData.length > 0) {
+          // Map creator
+          const creatorProfile = profilesData.find(
+            (p) => p.id === data.user_id,
+          );
+          if (creatorProfile) {
+            createdBy = {
+              id: creatorProfile.id,
+              email: creatorProfile.email,
+              full_name:
+                `${creatorProfile.first_name || ""} ${creatorProfile.last_name || ""}`.trim() ||
+                creatorProfile.email,
+              first_name: creatorProfile.first_name,
+              last_name: creatorProfile.last_name,
+            };
+          }
+
+          // Map updater
+          const updaterProfile = profilesData.find(
+            (p) => p.id === data.updated_by,
+          );
+          if (updaterProfile) {
+            updatedBy = {
+              id: updaterProfile.id,
+              email: updaterProfile.email,
+              full_name:
+                `${updaterProfile.first_name || ""} ${updaterProfile.last_name || ""}`.trim() ||
+                updaterProfile.email,
+              first_name: updaterProfile.first_name,
+              last_name: updaterProfile.last_name,
+            };
+          }
+        }
+      }
+
+      return {
+        ...data,
+        created_by: createdBy,
+        updated_by: updatedBy,
+      };
+    },
+    enabled: !!id,
   });
 }
 
@@ -201,9 +253,17 @@ export function useAssessmentsStatistics(filters?: AssessmentFilters) {
   return useQuery({
     queryKey: [assessmentsQueryKey, "statistics", filters],
     queryFn: async () => {
-      const assessments = mockAssessmentsStore;
+      const { data, error } = await supabase
+        .from("assessments")
+        .select("status, type")
+        .filter("deleted_at", "is", null);
 
-      // Calculate statistics
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const assessments = data || [];
+
       const stats = {
         total: assessments.length,
         draft: assessments.filter((a) => a.status === "draft").length,
@@ -221,48 +281,46 @@ export function useAssessmentsStatistics(filters?: AssessmentFilters) {
   });
 }
 
-// Mutation to create a new assessment
 export function useCreateAssessment() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (input: CreateAssessmentInput) => {
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const userId = await getLoggedInUserId();
 
-      // Create new assessment
-      const newAssessment: Assessment = {
-        id: Date.now().toString(),
-        internal_pollen_title: input.internal_pollen_title,
-        title: input.title,
-        subtitle: input.subtitle,
-        type: input.type,
-        status: "draft",
-        questions_count: input.questions.length,
-        estimated_duration: input.estimated_duration,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        created_by: "Admin User", // TODO: Get from auth context
-        total_submissions: 0,
-        categories: input.categories,
-        questions: input.questions,
-        instructions_title: input.instructions_title,
-        instructions_description: input.instructions_description,
-      };
+      const { data, error } = await supabase
+        .from("assessments")
+        .insert({
+          internal_pollen_title: input.internal_pollen_title || null,
+          title: input.title,
+          subtitle: input.subtitle || null,
+          type: input.type,
+          status: "draft",
+          estimated_duration: input.estimated_duration || null,
+          instructions_title: input.instructions_title || null,
+          instructions_description: input.instructions_description || null,
+          questions: input.questions || [],
+          categories: input.categories || [],
+          questions_count: input.questions?.length || 0,
+          total_submissions: 0,
+          user_id: userId,
+          updated_by: userId,
+        })
+        .select()
+        .single();
 
-      // Add to mock store
-      mockAssessmentsStore = [newAssessment, ...mockAssessmentsStore];
+      if (error) {
+        throw new Error(error.message || "Failed to create assessment");
+      }
 
-      return newAssessment;
+      return data;
     },
     onSuccess: () => {
-      // Invalidate and refetch assessments queries
       queryClient.invalidateQueries({ queryKey: [assessmentsQueryKey] });
     },
   });
 }
 
-// Mutation to update an assessment
 export function useUpdateAssessment() {
   const queryClient = useQueryClient();
 
@@ -274,51 +332,78 @@ export function useUpdateAssessment() {
       id: string;
       input: Partial<CreateAssessmentInput>;
     }) => {
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const userId = await getLoggedInUserId();
 
-      // Find and update assessment
-      const index = mockAssessmentsStore.findIndex((a) => a.id === id);
-      if (index === -1) {
-        throw new Error("Assessment not found");
-      }
-
-      const updatedAssessment: Assessment = {
-        ...mockAssessmentsStore[index],
-        ...input,
-        questions_count:
-          input.questions?.length ??
-          mockAssessmentsStore[index].questions_count,
+      const updateData: any = {
         updated_at: new Date().toISOString(),
+        updated_by: userId,
       };
 
-      mockAssessmentsStore[index] = updatedAssessment;
+      if (input.internal_pollen_title !== undefined) {
+        updateData.internal_pollen_title = input.internal_pollen_title || null;
+      }
+      if (input.title !== undefined) updateData.title = input.title;
+      if (input.subtitle !== undefined) {
+        updateData.subtitle = input.subtitle || null;
+      }
+      if (input.type !== undefined) updateData.type = input.type;
+      if (input.estimated_duration !== undefined) {
+        updateData.estimated_duration = input.estimated_duration || null;
+      }
+      if (input.instructions_title !== undefined) {
+        updateData.instructions_title = input.instructions_title || null;
+      }
+      if (input.instructions_description !== undefined) {
+        updateData.instructions_description =
+          input.instructions_description || null;
+      }
+      if (input.questions !== undefined) {
+        updateData.questions = input.questions;
+        updateData.questions_count = input.questions.length;
+      }
+      if (input.categories !== undefined) {
+        updateData.categories = input.categories;
+      }
 
-      return updatedAssessment;
+      const { data, error } = await supabase
+        .from("assessments")
+        .update(updateData)
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(error.message || "Failed to update assessment");
+      }
+
+      return data;
     },
-    onSuccess: () => {
-      // Invalidate and refetch assessments queries
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [assessmentsQueryKey, "detail", variables.id],
+      });
       queryClient.invalidateQueries({ queryKey: [assessmentsQueryKey] });
     },
   });
 }
 
-// Mutation to delete an assessment
 export function useDeleteAssessment() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: string) => {
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      const { error } = await supabase
+        .from("assessments")
+        .update({ deleted_at: new Date().toISOString() })
+        .eq("id", id);
 
-      // Remove from mock store
-      mockAssessmentsStore = mockAssessmentsStore.filter((a) => a.id !== id);
+      if (error) {
+        throw new Error(error.message || "Failed to delete assessment");
+      }
 
       return { id };
     },
     onSuccess: () => {
-      // Invalidate and refetch assessments queries
       queryClient.invalidateQueries({ queryKey: [assessmentsQueryKey] });
     },
   });

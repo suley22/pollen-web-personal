@@ -1,21 +1,22 @@
 "use client";
 
+import { useEffect, useCallback } from "react";
 import { AssessmentCreateMultipleChoicePreview } from "../_components/assessment-create-multiple-choice-preview";
 import { AssessmentCreateCategories } from "../_components/assessment-create-categories";
 import { AssessmentCreateQuestions } from "../_components/assessment-create-questions";
 import { useAssessmentCreate } from "../_hooks/assessment-create-hook";
-import {
-  FormActions,
-  PrimaryButton,
-  SecondaryButton,
-} from "@/components/design-system";
-import { Save, Send } from "lucide-react";
+import type { Assessment } from "@/types/assessment-types";
 
 interface AssessmentCreateMultipleChoiceViewProps {
   assessmentTitle: string;
   assessmentDescription: string;
   instructionsTitle: string;
   instructionsDescription: string;
+  internalPollenTitle: string;
+  estimatedDuration: string;
+  assessment?: Assessment;
+  onSaveRef?: (fn: () => Promise<void>) => void;
+  onSavingChange?: (isSaving: boolean) => void;
 }
 
 export default function AssessmentCreateMultipleChoiceView({
@@ -23,6 +24,11 @@ export default function AssessmentCreateMultipleChoiceView({
   assessmentDescription,
   instructionsTitle,
   instructionsDescription,
+  internalPollenTitle,
+  estimatedDuration,
+  assessment,
+  onSaveRef,
+  onSavingChange,
 }: AssessmentCreateMultipleChoiceViewProps) {
   const {
     // Categories
@@ -63,11 +69,47 @@ export default function AssessmentCreateMultipleChoiceView({
     handleBack,
     handleSubmit,
     isSaving,
-  } = useAssessmentCreate({});
+  } = useAssessmentCreate({ assessment });
 
-  const handleSaveDraft = async () => {
-    await handleSubmit("multiple_choice");
-  };
+  const handleSaveDraft = useCallback(async () => {
+    await handleSubmit("multiple_choice", {
+      internalPollenTitle,
+      assessmentTitle,
+      assessmentDescription,
+      estimatedDuration,
+      instructionsTitle,
+      instructionsDescription,
+    });
+  }, [
+    handleSubmit,
+    internalPollenTitle,
+    assessmentTitle,
+    assessmentDescription,
+    estimatedDuration,
+    instructionsTitle,
+    instructionsDescription,
+  ]);
+
+  // Expose save function to parent
+  useEffect(() => {
+    if (onSaveRef) {
+      onSaveRef(handleSaveDraft);
+    }
+
+    // Cleanup: remove the ref when component unmounts
+    return () => {
+      if (onSaveRef) {
+        onSaveRef(null as any);
+      }
+    };
+  }, [onSaveRef, handleSaveDraft]);
+
+  // Sync saving state with parent
+  useEffect(() => {
+    if (onSavingChange) {
+      onSavingChange(isSaving);
+    }
+  }, [isSaving, onSavingChange]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -119,21 +161,6 @@ export default function AssessmentCreateMultipleChoiceView({
         onEditQuestion={handleEditQuestion}
         onRemoveQuestion={handleRemoveQuestion}
       />
-
-      {/* Action Buttons */}
-      <FormActions>
-        <SecondaryButton
-          text="Cancel"
-          onClick={handleBack}
-          disabled={isSaving}
-        />
-        <PrimaryButton
-          icon={<Save />}
-          text={isSaving ? "Saving..." : "Save Assessment"}
-          onClick={handleSaveDraft}
-          disabled={isSaving || !assessmentTitle || questions.length === 0}
-        />
-      </FormActions>
     </div>
   );
 }

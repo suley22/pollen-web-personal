@@ -31,8 +31,11 @@ export function AssessmentQuestionCard({
           </Label>
 
           <div className="flex flex-col gap-3 mt-2">
-            {question.options.map((option) => (
-              <div key={option.value} className="flex items-center space-x-3">
+            {question.options.map((option, index) => (
+              <div
+                key={`${question.id}-${option.value}-${index}`}
+                className="flex items-center space-x-3"
+              >
                 <input
                   type="radio"
                   id={`${question.id}-${option.value}`}

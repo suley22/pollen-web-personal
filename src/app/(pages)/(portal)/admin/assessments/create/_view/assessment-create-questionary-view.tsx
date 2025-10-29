@@ -1,14 +1,10 @@
 "use client";
 
+import { useEffect, useCallback } from "react";
 import { AssessmentCreateFreeInputQuestions } from "../_components/assessment-create-free-input-questions";
 import { AssessmentCreateFreeInputPreview } from "../_components/assessment-create-free-input-preview";
 import { useAssessmentCreateFreeInput } from "../_hooks/assessment-create-free-input-hook";
-import {
-  FormActions,
-  PrimaryButton,
-  SecondaryButton,
-} from "@/components/design-system";
-import { Save } from "lucide-react";
+import type { Assessment } from "@/types/assessment-types";
 
 interface AssessmentCreateQuestionaryViewProps {
   assessmentTitle: string;
@@ -17,6 +13,9 @@ interface AssessmentCreateQuestionaryViewProps {
   internalPollenTitle: string;
   instructionsTitle: string;
   instructionsDescription: string;
+  assessment?: Assessment;
+  onSaveRef?: (fn: () => Promise<void>) => void;
+  onSavingChange?: (isSaving: boolean) => void;
 }
 
 export default function AssessmentCreateQuestionaryView({
@@ -26,6 +25,9 @@ export default function AssessmentCreateQuestionaryView({
   internalPollenTitle,
   instructionsTitle,
   instructionsDescription,
+  assessment,
+  onSaveRef,
+  onSavingChange,
 }: AssessmentCreateQuestionaryViewProps) {
   const {
     // Questions
@@ -44,9 +46,9 @@ export default function AssessmentCreateQuestionaryView({
     handleBack,
     handleSubmit,
     isSaving,
-  } = useAssessmentCreateFreeInput();
+  } = useAssessmentCreateFreeInput({ assessment });
 
-  const handleSaveDraft = async () => {
+  const handleSaveDraft = useCallback(async () => {
     await handleSubmit("free_input", {
       internal_pollen_title: internalPollenTitle,
       title: assessmentTitle,
@@ -55,7 +57,36 @@ export default function AssessmentCreateQuestionaryView({
       instructions_title: instructionsTitle,
       instructions_description: instructionsDescription,
     });
-  };
+  }, [
+    handleSubmit,
+    internalPollenTitle,
+    assessmentTitle,
+    assessmentDescription,
+    estimatedDuration,
+    instructionsTitle,
+    instructionsDescription,
+  ]);
+
+  // Expose save function to parent
+  useEffect(() => {
+    if (onSaveRef) {
+      onSaveRef(handleSaveDraft);
+    }
+
+    // Cleanup: remove the ref when component unmounts
+    return () => {
+      if (onSaveRef) {
+        onSaveRef(null as any);
+      }
+    };
+  }, [onSaveRef, handleSaveDraft]);
+
+  // Sync saving state with parent
+  useEffect(() => {
+    if (onSavingChange) {
+      onSavingChange(isSaving);
+    }
+  }, [isSaving, onSavingChange]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -81,21 +112,6 @@ export default function AssessmentCreateQuestionaryView({
         onEditQuestion={handleEditQuestion}
         onRemoveQuestion={handleRemoveQuestion}
       />
-
-      {/* Action Buttons */}
-      <FormActions>
-        <SecondaryButton
-          text="Cancel"
-          onClick={handleBack}
-          disabled={isSaving}
-        />
-        <PrimaryButton
-          icon={<Save />}
-          text={isSaving ? "Saving..." : "Save Assessment"}
-          onClick={handleSaveDraft}
-          disabled={isSaving || !assessmentTitle || questions.length === 0}
-        />
-      </FormActions>
     </div>
   );
 }

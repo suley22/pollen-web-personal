@@ -46,6 +46,7 @@ export default function AdminEmployers() {
         setSelectedStatus={setSelectedStatus}
         loading={loading}
       />
+
       <Filters
         onSearchChange={setDebouncedSearchTerm}
         searchPlaceholder="Search companies, industries, or locations..."

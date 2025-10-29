@@ -1,21 +1,6 @@
 "use client";
 
-interface TaskCardProps {
-  task: {
-    id: string;
-    content: string;
-  };
-  columnId: string;
-  onDragStart: (e: React.DragEvent, task: any, columnId: string) => void;
-  onClick: (task: any, columnId: string) => void;
-}
-
-export function TaskCard({
-  task,
-  columnId,
-  onDragStart,
-  onClick,
-}: TaskCardProps) {
+export function TaskCard({ task, columnId, onDragStart, onClick }) {
   return (
     <div
       draggable
@@ -23,7 +8,18 @@ export function TaskCard({
       onClick={() => onClick(task, columnId)}
       className="bg-white p-3 rounded-lg border border-gray-200 shadow-sm cursor-pointer hover:shadow-md transition-shadow"
     >
-      <p className="text-sm">{task.content}</p>
+      <div className="flex flex-col gap-2 ">
+        <div className="flex flex-row gap-2">
+          <div>foto</div>
+          <div className="flex flex-col">
+            <div>Nombre</div>
+            <div>45%</div>
+          </div>
+        </div>
+        <div>Applied</div>
+        <div>SubStatus</div>
+        <div>Botones</div>
+      </div>
     </div>
   );
 }

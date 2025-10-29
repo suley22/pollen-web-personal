@@ -2,8 +2,8 @@
 
 import { useState, useMemo } from "react";
 import { FileText } from "lucide-react";
-import { AssessmentQuestionCard } from "../../test/_components/assessment-question-card";
-import { AssessmentProgress } from "../../test/_components/assessment-progress";
+import { AssessmentQuestionCard } from "../../_components/assessment-question-card";
+import { AssessmentProgress } from "../../_components/assessment-progress";
 import {
   PageHeader,
   InfoCard,

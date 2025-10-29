@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import type { AssessmentCategory } from "@/types/assessment-category";
+import type { AssessmentCategory } from "@/types/assessment-types";
 import {
   useCreateAssessment,
   useUpdateAssessment,

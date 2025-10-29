@@ -43,8 +43,6 @@ export function useUsersList(filters: UserFilters) {
     queryFn: async () => {
       const page = filters.page || 1;
       const pageSize = filters.pageSize || 10;
-      const from = (page - 1) * pageSize;
-      const to = from + pageSize - 1;
 
       // Get the current logged-in user
       const {
@@ -56,57 +54,33 @@ export function useUsersList(filters: UserFilters) {
         throw new Error("User not authenticated");
       }
 
-      // Count query
-      let countQuery = supabase
-        .from("profile")
-        .select("*", { count: "exact", head: true })
-        .neq("id", user.id); // Exclude current user
-
-      if (filters.searchTerm) {
-        countQuery = countQuery.or(
-          `first_name.ilike.%${filters.searchTerm}%,last_name.ilike.%${filters.searchTerm}%,email.ilike.%${filters.searchTerm}%`,
-        );
-      }
-
-      const { count, error: countError } = await countQuery;
-
-      if (countError) {
-        throw new Error(countError.message);
-      }
-
-      // Data query
-      let query = supabase
-        .from("profile")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .neq("id", user.id) // Exclude current user
-        .range(from, to);
-
-      if (filters.searchTerm) {
-        query = query.or(
-          `first_name.ilike.%${filters.searchTerm}%,last_name.ilike.%${filters.searchTerm}%,email.ilike.%${filters.searchTerm}%`,
-        );
-      }
-
-      const { data, error } = await query;
+      // Use RPC function for search
+      const { data, error } = await supabase.rpc('search_users', {
+        search_term: filters.searchTerm || null,
+        excluded_user_id: user.id,
+        page_number: page,
+        page_size: pageSize,
+      });
 
       if (error) {
         throw new Error(error.message);
       }
 
-      const totalPages = Math.ceil((count || 0) / pageSize);
+      // Get total count from first row (all rows have same total_count)
+      const totalCount = data && data.length > 0 ? data[0].total_count : 0;
+      const totalPages = Math.ceil(totalCount / pageSize);
 
       return {
         users: data || [],
         pagination: {
           currentPage: page,
           pageSize,
-          totalItems: count || 0,
+          totalItems: totalCount,
           totalPages,
           hasNextPage: page < totalPages,
           hasPreviousPage: page > 1,
-          from: from + 1,
-          to: Math.min(from + (data?.length || 0), count || 0),
+          from: (page - 1) * pageSize + 1,
+          to: Math.min((page - 1) * pageSize + (data?.length || 0), totalCount),
         },
       };
     },

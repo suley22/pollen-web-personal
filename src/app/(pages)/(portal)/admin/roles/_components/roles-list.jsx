@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/select/select";
 import { Building2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/buttons/button";
-import { RoleChangeConfirmDialog } from "../role-change-confirm-dialog";
-import { UserDeleteConfirmDialog } from "./user-delete-confirm-dialog";
+import { RoleChangeConfirmDialog } from "./role-change-confirm-dialog";
+import { UserDeleteConfirmDialog } from "./role-user-delete-confirm-dialog";
 import { ResultsCount } from "@/app/(pages)/(portal)/admin/employers/_components/employers-page-results-count";
 
 const ROLE_OPTIONS = [

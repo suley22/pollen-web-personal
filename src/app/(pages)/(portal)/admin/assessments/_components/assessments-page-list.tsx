@@ -57,10 +57,12 @@ export function AssessmentsList({
 }) {
   const router = useRouter();
 
-  const onAssessmentClick = useCallback((assessment) => {
-    // TODO: Update route when view page is created
-    console.log("View assessment:", assessment.id);
-  }, []);
+  const onAssessmentClick = useCallback(
+    (assessment) => {
+      router.push(AdminRoutes.assessmentView(assessment.id));
+    },
+    [router],
+  );
 
   if (loading) {
     return <ListSkeleton />;
@@ -177,17 +179,15 @@ export function AssessmentsList({
                   <div className="flex flex-col justify-end gap-3">
                     <div className="text-right space-y-1 bg-muted/30 p-3 rounded-lg min-w-[120px]">
                       <div className="text-xs text-muted-foreground">
-                        Completion Rate
+                        Completeness
                       </div>
                       <div className="text-xl font-bold text-foreground">
-                        {assessment.status === "draft"
-                          ? "—"
-                          : `${Math.round(Math.random() * 100)}%`}
+                        {assessment.assessment_completeness
+                          ? `${assessment.assessment_completeness}%`
+                          : "—"}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        {assessment.status === "draft"
-                          ? "Not published"
-                          : "Avg score"}
+                        Profile filled
                       </div>
                     </div>
                   </div>

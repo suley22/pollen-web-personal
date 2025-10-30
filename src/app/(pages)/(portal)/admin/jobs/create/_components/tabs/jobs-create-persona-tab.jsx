@@ -9,6 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { AssessmentSelector } from "../assessment-selector";
+import { useAssessmentById } from "@/app/(pages)/(portal)/admin/assessments/_services/assessments-page-service";
+import { AssessmentCreateMultipleChoicePreview } from "@/app/(pages)/(portal)/admin/assessments/create/_components/assessment-create-multiple-choice-preview";
+import { AssessmentCreateFreeInputPreview } from "@/app/(pages)/(portal)/admin/assessments/create/_components/assessment-create-free-input-preview";
+import { AssessmentCreateFileUploadPreview } from "@/app/(pages)/(portal)/admin/assessments/create/_components/assessment-create-file-upload-preview";
 
 const STATUS_COLORS = {
   draft: "bg-yellow-50 text-yellow-700 border-yellow-200",
@@ -35,6 +39,12 @@ export function PersonaTab({ personaData }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
+  // Cargar datos completos del assessment seleccionado
+  const { data: fullAssessment, isLoading: isLoadingFullAssessment } =
+    useAssessmentById(selectedAssessment?.id, {
+      enabled: !!selectedAssessment?.id && showPreview,
+    });
+
   const handleSelectAssessment = (assessment) => {
     setSelectedAssessment(assessment);
   };
@@ -46,6 +56,41 @@ export function PersonaTab({ personaData }) {
 
   const handleEditAssessment = () => {
     setIsDialogOpen(true);
+  };
+
+  // Renderizar preview según tipo de assessment
+  const renderAssessmentPreview = () => {
+    if (!fullAssessment) return null;
+
+    const commonProps = {
+      assessmentTitle:
+        fullAssessment.internal_pollen_title || fullAssessment.title,
+      assessmentDescription: fullAssessment.subtitle || "",
+      instructionsTitle: fullAssessment.instructions_title || "",
+      instructionsDescription: fullAssessment.instructions_description || "",
+      questions: fullAssessment.questions || [],
+      categories: fullAssessment.categories || [],
+      isEditMode: false, // No mostramos botones de edición en el preview
+    };
+
+    switch (fullAssessment.type) {
+      case "multiple_choice":
+        return <AssessmentCreateMultipleChoicePreview {...commonProps} />;
+      case "free_input":
+        return <AssessmentCreateFreeInputPreview {...commonProps} />;
+      case "file_upload":
+        return <AssessmentCreateFileUploadPreview {...commonProps} />;
+      default:
+        return (
+          <div className="border rounded-lg p-8 bg-muted/30">
+            <div className="text-center space-y-2">
+              <p className="text-sm text-muted-foreground">
+                Preview not available for this assessment type
+              </p>
+            </div>
+          </div>
+        );
+    }
   };
 
   return (
@@ -159,36 +204,40 @@ export function PersonaTab({ personaData }) {
                     <X className="w-4 h-4" />
                   </Button>
                 </div>
-
-                {/* Assessment Preview */}
-                {showPreview && (
-                  <div className="border rounded-lg p-6 bg-background">
-                    <h4 className="font-medium mb-4">Assessment Preview</h4>
-                    <div className="space-y-4">
-                      <div className="text-sm text-muted-foreground">
-                        <p className="mb-2">
-                          This assessment will be shown to candidates during the
-                          application process.
-                        </p>
-                        {/* TODO: Add actual assessment preview component here */}
-                        <div className="bg-muted/50 rounded p-8 text-center">
-                          <p className="text-sm">
-                            Assessment preview will appear here
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            (Integration with AssessmentQuestions preview
-                            component)
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             )}
           </div>
         </div>
       </FormCard>
+
+      {/* Assessment Preview - Outside cards */}
+      {showPreview && selectedAssessment && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold">Assessment Preview</h3>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowPreview(false)}
+            >
+              <X className="w-4 h-4 mr-2" />
+              Close Preview
+            </Button>
+          </div>
+
+          {isLoadingFullAssessment ? (
+            <div className="border rounded-lg p-8 bg-muted/30">
+              <div className="text-center space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  Loading assessment preview...
+                </p>
+              </div>
+            </div>
+          ) : (
+            renderAssessmentPreview()
+          )}
+        </div>
+      )}
 
       {/* Assessment Selector Dialog */}
       <AssessmentSelector

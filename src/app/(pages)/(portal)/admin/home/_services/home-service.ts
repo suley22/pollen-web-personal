@@ -28,7 +28,7 @@ export function useAssignedJobs(filters: HomeFilters) {
           throw new Error("User not authenticated");
         }
 
-        // Build the query to get jobs
+        // Build the query to get jobs assigned to current user
         let query = supabase
           .from("job")
           .select(
@@ -41,8 +41,8 @@ export function useAssignedJobs(filters: HomeFilters) {
           `,
           )
           .filter("deleted_at", "is", null)
-          .order("created_at", { ascending: false })
-          .limit(6); // Limit to 6 most recent jobs for home page
+          .eq("user_id", userId) // Only show jobs assigned to current user
+          .order("created_at", { ascending: false });
 
         // Apply status filter
         if (filters.status && filters.status !== "all") {

@@ -15,6 +15,7 @@ export const AdminRoutes = {
   profile: `${basePath}/profile`,
   jobs: `${basePath}/jobs`,
   jobsCreate: `${basePath}/jobs/create`,
+  jobsCreateExternal: `${basePath}/jobs/create/external`,
   jobsEdit: (id) => `${basePath}/jobs/edit/${id}`,
   employers: `${basePath}/employers`,
   employersCreate: `${basePath}/employers/create`,

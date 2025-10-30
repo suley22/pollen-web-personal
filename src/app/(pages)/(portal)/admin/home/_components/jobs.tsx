@@ -33,7 +33,7 @@ export function HomeJobs() {
           </Button>
         </div>
       </div>
-      <div className="flex flex-col gap-4">
+      <div className="grid grid-cols-2 gap-4">
         {homeState.loading ? (
           <ListSkeleton />
         ) : homeState.jobs && homeState.jobs.length > 0 ? (
@@ -43,7 +43,7 @@ export function HomeJobs() {
             );
           })
         ) : (
-          <div className="text-center text-gray-400 py-8">
+          <div className="col-span-2 text-center text-gray-400 py-8">
             No jobs assigned.
           </div>
         )}

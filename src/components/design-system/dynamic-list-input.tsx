@@ -49,8 +49,8 @@ export function DynamicListInput({
   fields = [],
   initialItems = [],
   addButtonText = "Add Item",
-  renderItem,
-  renderListAsCustom,
+  renderItem = null,
+  renderListAsCustom = null,
 }) {
   // Initialize items with unique IDs
   const [items, setItems] = useState(
@@ -180,6 +180,7 @@ export function DynamicListInput({
           variant="default"
           className="w-full"
           disabled={!isFormValid()}
+          size={"sm"}
         >
           <Plus className="h-4 w-4 mr-2" />
           {addButtonText}

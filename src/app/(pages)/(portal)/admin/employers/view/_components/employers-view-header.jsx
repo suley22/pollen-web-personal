@@ -1,6 +1,7 @@
 "use client";
 
 import { PageHeader } from "@/components/design-system/page-header";
+import { EmployerStatusBadge } from "@/components/design-system/employer-status-badge";
 import {
   SuccessButton,
   WarningButton,
@@ -27,7 +28,16 @@ export function EmployerProfileViewHeader({
   const isHidden = approvalStatus === EMPLOYER_STATUS.HIDDEN;
 
   return (
-    <PageHeader title={companyName} showBackButton={true} onBack={onBack}>
+    <PageHeader
+      title={
+        <div className="flex items-center gap-3">
+          <span>{companyName}</span>
+          <EmployerStatusBadge status={approvalStatus} />
+        </div>
+      }
+      showBackButton={true}
+      onBack={onBack}
+    >
       {/* Status Actions - Show Set Live button when Draft */}
       {(isDraft || isHidden) && (
         <SuccessButton

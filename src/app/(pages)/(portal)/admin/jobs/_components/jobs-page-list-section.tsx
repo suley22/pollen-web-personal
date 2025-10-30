@@ -72,9 +72,11 @@ export function JobListSection({
         )}
       </div>
 
-      {jobs.map((job) => (
-        <JobCardItem key={job.id} job={job} showAdminBadge={true} />
-      ))}
+      <div className="grid grid-cols-2 gap-4">
+        {jobs.map((job) => (
+          <JobCardItem key={job.id} job={job} showAdminBadge={true} />
+        ))}
+      </div>
 
       {pagination && (
         <Pagination

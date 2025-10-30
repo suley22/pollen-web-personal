@@ -34,11 +34,14 @@ export function useCompaniesPageData() {
           .from("employer_profile")
           .select("*")
           .order("created_at", { ascending: false })
+          .eq("approval_status", "live")
           .limit(2),
         supabase
           .from("employer_profile")
           .select("*")
-          .order("created_at", { ascending: false }),
+          .order("created_at", { ascending: false }
+          )
+          .eq("approval_status", "live"),
       ]);
 
       if (recommendedRes.error) {
@@ -119,7 +122,8 @@ export function useCompaniesList(filters: CompaniesFilters) {
       let countQuery = supabase
         .from("employer_profile")
         .select("*", { count: "exact", head: true })
-        .filter("deleted_at", "is", null);
+        .filter("deleted_at", "is", null)
+        .eq("approval_status", "live");
 
       if (filters.searchTerm) {
         countQuery = countQuery.or(
@@ -142,6 +146,7 @@ export function useCompaniesList(filters: CompaniesFilters) {
         .from("employer_profile")
         .select("*")
         .order("created_at", { ascending: false })
+        .eq("approval_status", "live")
         .filter("deleted_at", "is", null)
         .range(from, to);
 

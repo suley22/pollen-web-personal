@@ -5,18 +5,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/buttons/button";
 import { User, FileText, MessageSquare, CheckCircle } from "lucide-react";
 
-export default function GridRow({ task, onClick }) {
-  // Datos reales desde el task (job_application + job_seeker)
-  const candidateName = task.name;
-  const candidateAvatar = task.avatar_url;
-  const matchScore = task.match_score;
-  const appliedDate = task.applied_date;
-  const subStatus = task.sub_status;
-  const isVerified = task.is_verified;
+export default function GridRow({ jobSeeker, onClick }) {
+  // Datos reales desde el jobSeeker (job_application + job_seeker)
+  const candidateName = jobSeeker.name;
+  const candidateAvatar = jobSeeker.avatar_url;
+  const matchScore = jobSeeker.match_score;
+  const appliedDate = jobSeeker.applied_date;
+  const subStatus = jobSeeker.sub_status;
+  const isVerified = jobSeeker.is_verified;
 
   return (
     <div
-      onClick={() => onClick(task, task.status)}
+      onClick={() => onClick(jobSeeker, jobSeeker.status)}
       className="grid grid-cols-6 gap-4 p-4 hover:bg-gray-50 transition-colors cursor-pointer items-center"
     >
       {/* Candidate (Avatar + Name) */}
@@ -56,9 +56,9 @@ export default function GridRow({ task, onClick }) {
       {/* Status Badge */}
       <div>
         <span
-          className={`${task.statusColor} text-white text-xs px-2 py-1 rounded-full`}
+          className={`${jobSeeker.statusColor} text-white text-xs px-2 py-1 rounded-full`}
         >
-          {task.statusLabel}
+          {jobSeeker.statusLabel}
         </span>
       </div>
 

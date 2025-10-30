@@ -65,21 +65,25 @@ export function JobCardItem({ job, showAdminBadge }) {
               {/* Job Counts and Admin */}
               <div className="flex flex-row justify-between">
                 <div className="flex items-center gap-2 flex-wrap">
-                  {/* Assigned Admin */}
-                  {job.assigned_to ? (
-                    <Badge
-                      variant="outline"
-                      className={`bg-blue-50 text-blue-700 border-blue-200 font-medium ${showAdminBadge ? "" : "hidden"}`}
-                    >
-                      Assigned to: {job.assigned_to}
-                    </Badge>
-                  ) : (
-                    <Badge
-                      variant="outline"
-                      className="bg-gray-50 text-gray-600 border-gray-200 font-medium"
-                    >
-                      Unassigned
-                    </Badge>
+                  {/* Assigned Admin - Only show if showAdminBadge is true */}
+                  {showAdminBadge && (
+                    <>
+                      {job.admin && job.admin !== "Unassigned" ? (
+                        <Badge
+                          variant="outline"
+                          className="bg-blue-50 text-blue-700 border-blue-200 font-medium"
+                        >
+                          Assigned to: {job.admin}
+                        </Badge>
+                      ) : (
+                        <Badge
+                          variant="outline"
+                          className="bg-gray-50 text-gray-600 border-gray-200 font-medium"
+                        >
+                          Unassigned
+                        </Badge>
+                      )}
+                    </>
                   )}
                 </div>
 

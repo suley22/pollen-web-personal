@@ -26,17 +26,57 @@ export function useJobs(filters: JobsFilters) {
   return useQuery({
     queryKey: [jobsQueryKey, "list", filters],
     queryFn: async () => {
-      let jobQuery = supabase.from("job").select("*").eq("status", "live");
+      // Solo traer trabajos aprobados por Pollen y en estado "live"
+      let jobQuery = supabase
+        .from("job")
+        .select("*")
+        .eq("status", "live")
+        .eq("pollen_approved", true);
 
       if (filters.jobType && filters.jobType !== "all") {
-        // "pollen" -> pollen_approved = true
-        // "external" -> pollen_approved = false
-        if (filters.jobType === "pollen") {
-          jobQuery = jobQuery.eq("pollen_approved", true);
-        } else if (filters.jobType === "external") {
-          jobQuery = jobQuery.eq("pollen_approved", false);
-        }
+        // Nota: este hook ya fuerza pollen_approved = true arriba.
+        // Si alguien pasa jobType = "external" aquí, no obtendrá resultados.
+        // Para externos usar useExternalJobs.
       }
+
+      if (filters.industry && filters.industry !== "all") {
+        jobQuery = jobQuery.eq("industry", filters.industry);
+      }
+
+      if (filters.location && filters.location !== "all") {
+        jobQuery = jobQuery.eq("location", filters.location);
+      }
+
+      if (filters.contractType && filters.contractType !== "all") {
+        jobQuery = jobQuery.eq("contract_type", filters.contractType);
+      }
+
+      if (filters.searchTerm) {
+        jobQuery = jobQuery.or(
+          `job_title.ilike.%${filters.searchTerm}%,` +
+            `company_name.ilike.%${filters.searchTerm}%,` +
+            `description.ilike.%${filters.searchTerm}%`,
+        );
+      }
+
+      jobQuery = jobQuery.order("created_at", { ascending: false });
+
+      const { data, error } = await jobQuery;
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data || [];
+    },
+  });
+}
+
+export function useExternalJobs(filters: JobsFilters) {
+  return useQuery({
+    queryKey: [jobsQueryKey, "list", filters],
+    queryFn: async () => {
+      let jobQuery = supabase.from("external_jobs").select("*").eq("status", "live");
 
       if (filters.industry && filters.industry !== "all") {
         jobQuery = jobQuery.eq("industry", filters.industry);

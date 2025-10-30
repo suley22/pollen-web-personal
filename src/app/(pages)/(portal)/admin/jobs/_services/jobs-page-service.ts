@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/utils/supabase/client";
 import { DateHelper } from "@/lib/helpers/date-helper";
 import { getLoggedInUserId } from "@/services/userService";
+import { IndustryCategoriesSection } from "../../employers/create/_components/employers-create-industry-categories";
 
 const supabase = createClient();
 
@@ -237,6 +238,57 @@ export function useJobById(id: string) {
   });
 }
 
+export function useExternalJobById(id: string) {
+  return useQuery({
+    enabled: !!id,
+    queryKey: [jobsQueryKey, "profile", id],
+    queryFn: async () => {
+      // TODO: Ejemplo de consulta de url de companía asociada a un job
+      const { data, error } = await supabase
+        .from("external_jobs")
+        .select(
+          `
+          *,
+          employer_profile:company_id (
+            logo_url,
+            company_name
+          )
+        `,
+        )
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        console.error("JobService: Error fetching job by ID:", error);
+        throw new Error(error.message);
+      }
+
+      // Normalize the job data
+      const job = {
+        ...data,
+        company_logo_url: data?.employer_profile?.logo_url || null,
+        company_name:
+          data?.employer_profile?.company_name || data?.company_name || "",
+        responsibilities: data?.responsibilities || [],
+        who_would_love: data?.who_would_love || [],
+        qualifications: data?.qualifications || [],
+        benefits: data?.benefits || [],
+        candidate_counts: data?.candidate_counts || {},
+        candidateCounts: {
+          total: data?.candidate_counts?.total || 15,
+          new: data?.candidate_counts?.new || 10,
+          inProgress: data?.candidate_counts?.inProgress || 5,
+          complete: data?.candidate_counts?.complete || 8,
+          hired: data?.candidate_counts?.hired || 2,
+        },
+        industries: data?.employer_profile?.industries || [],
+      };
+
+      return job;
+    },
+  });
+}
+
 export const useCreateJob = () => {
   const queryClient = useQueryClient();
 
@@ -261,6 +313,87 @@ export const useCreateJob = () => {
       // 1. Create the job
       const { data: jobData, error: jobError } = await supabase
         .from("job")
+        .insert({
+          ...transformedData,
+          user_id: userId,
+        })
+        .select()
+        .single();
+
+      if (jobError) {
+        console.error("JobService: Error creating job:", jobError);
+        throw new Error(jobError.message || "Failed to create job");
+      }
+
+      console.log("JobService: Created job:", jobData);
+
+      // 2. Create assessment if there's assessment data
+      const formJobData = Object.fromEntries(formData.entries());
+      const hasAssessmentData =
+        formJobData.assessment_title ||
+        formJobData.assessment_content ||
+        formJobData.assessment_scoring_criteria;
+
+      if (hasAssessmentData && jobData.id) {
+        const assessmentData = transformAssessmentDataToDatabase(
+          formData,
+          jobData.id,
+        );
+
+        const { data: assessmentResult, error: assessmentError } =
+          await supabase
+            .from("job_assessment")
+            .insert(assessmentData)
+            .select()
+            .single();
+
+        if (assessmentError) {
+          console.error(
+            "JobService: Error creating assessment:",
+            assessmentError,
+          );
+          console.warn(
+            "Job was created but assessment failed:",
+            assessmentError.message,
+          );
+        } else {
+          console.log("JobService: Created assessment:", assessmentResult);
+        }
+      }
+
+      return jobData;
+    },
+    onSuccess: () => {
+      // Invalidate all jobs lists and statistics
+      queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
+    },
+  });
+};
+
+export const useCreateExternalJob = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ formData }: { formData: FormData }) => {
+      const userId = await getLoggedInUserId();
+
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
+
+      const transformedData = transformExternalFormDataToDatabase(formData);
+
+      // Validate required fields
+      if (
+        !transformedData.job_title ||
+        !transformedData.job_title.toString().trim()
+      ) {
+        throw new Error("Job title is required");
+      }
+
+      // 1. Create the job
+      const { data: jobData, error: jobError } = await supabase
+        .from("external_jobs")
         .insert({
           ...transformedData,
           user_id: userId,
@@ -346,6 +479,23 @@ const transformFormDataToDatabase = (formData: FormData) => {
     success_looks: formJobData.success_looks,
     pollen_approved_requirements: pollen_approved_requirements,
     internal_notes: formJobData.internal_notes,
+  };
+};
+
+const transformExternalFormDataToDatabase = (formData: FormData) => {
+  const formJobData = Object.fromEntries(formData.entries());
+
+  return {
+    job_title: formJobData.job_title,
+    company_name: formJobData.company_name,
+    industries: formJobData.industries,
+    location: formJobData.location,
+    salary_range: formJobData.salary_range,
+    working_hours: formJobData.working_hours,
+    employment_type: formJobData.employment_type,
+    employment_type_details: formJobData.employment_type_details,
+    application_deadline: formJobData.application_deadline,
+    description: formJobData.description,
   };
 };
 

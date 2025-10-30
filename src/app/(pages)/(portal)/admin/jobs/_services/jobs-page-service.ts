@@ -2,7 +2,6 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/utils/supabase/client";
-import { DateHelper } from "@/lib/helpers/date-helper";
 import { getLoggedInUserId } from "@/services/userService";
 
 const supabase = createClient();

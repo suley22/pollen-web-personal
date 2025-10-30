@@ -1,16 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
-  getMockApplicants,
+  getJobApplicants,
   transformJobSeekersToList,
   getColumnInfo,
 } from "../_services/playground-service";
 
 export function usePlaygroundHook(jobId: string) {
-  // Usar datos mockeados en lugar de llamada a la BD
-  const [jobSeekers, setJobSeekers] = useState(getMockApplicants());
-  const isLoading = false; // No hay loading con datos mockeados
+  // State para los job seekers
+  const [jobSeekers, setJobSeekers] = useState<Record<string, any[]>>({
+    new_applicants: [],
+    in_progress: [],
+    matched_to_employer: [],
+    complete: [],
+  });
+  const [isLoading, setIsLoading] = useState(true);
 
   // View state
   const [viewMode, setViewMode] = useState<"board" | "grid">("board");
@@ -19,6 +24,28 @@ export function usePlaygroundHook(jobId: string) {
 
   // Drag & Drop state
   const [draggedItem, setDraggedItem] = useState<any>(null);
+
+  /**
+   * Cargar aplicantes desde la BD al montar el componente
+   */
+  useEffect(() => {
+    async function loadApplicants() {
+      setIsLoading(true);
+      try {
+        const applicants = await getJobApplicants(jobId);
+        setJobSeekers(applicants);
+      } catch (error) {
+        console.error("Error loading applicants:", error);
+        // Mantener estado vacío en caso de error
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    if (jobId) {
+      loadApplicants();
+    }
+  }, [jobId]);
 
   /**
    * Maneja el click en un job seeker para abrir el drawer

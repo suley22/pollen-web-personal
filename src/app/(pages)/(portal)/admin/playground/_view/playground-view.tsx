@@ -6,11 +6,10 @@ import { GridView } from "../_components/grid-view";
 import { TaskDrawer } from "../_components/task-drawer";
 import { ViewToggle } from "../_components/view-toggle";
 
-interface PlaygroundViewProps {
-  jobId: string;
-}
+// Mock jobId - por el momento usamos este valor fijo
+const jobId = "139ad003-8062-4cf2-8aee-354451d51798";
 
-export default function PlaygroundView({ jobId }: PlaygroundViewProps) {
+export default function PlaygroundView() {
   const {
     jobSeekers,
     isLoading,

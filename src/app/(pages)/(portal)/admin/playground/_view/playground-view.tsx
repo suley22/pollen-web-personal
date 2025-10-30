@@ -27,27 +27,30 @@ export default function PlaygroundView() {
 
   if (isLoading) {
     return (
-      <div className="w-full flex items-center justify-center py-12">
-        <p className="text-gray-500">Loading...</p>
+      <div className="w-full h-[600px] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+          <p className="text-gray-500 text-sm">Loading applicants...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full flex flex-col py-6 gap-4">
+    <div className="w-full flex flex-col gap-6 pb-8">
       {/* Header */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Playground</h1>
-            <p className="text-muted-foreground">
-              Kanban Board - Drag & Drop Demo
-            </p>
-          </div>
-
-          {/* View Toggle */}
-          <ViewToggle viewMode={viewMode} onViewModeChange={setViewMode} />
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
+            Applicants Pipeline
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Manage and track candidate applications
+          </p>
         </div>
+
+        {/* View Toggle */}
+        <ViewToggle viewMode={viewMode} onViewModeChange={setViewMode} />
       </div>
 
       {/* Board View */}

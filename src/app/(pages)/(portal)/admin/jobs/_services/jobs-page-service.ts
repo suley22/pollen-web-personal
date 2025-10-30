@@ -30,14 +30,14 @@ export function useJobsList(filters: JobFilters) {
       let countQuery = supabase
         .from("job")
         .select("*", { count: "exact", head: true })
-        .filter("deleted_at", "is", null);
+        .is("deleted_at", null);
 
       if (filters.status && filters.status !== "all") {
         countQuery = countQuery.eq("status", filters.status);
       }
 
       if (filters.assignment && filters.assignment !== "all") {
-        countQuery = countQuery.eq("assigned_to", filters.assignment);
+        countQuery = countQuery.eq("user_id", filters.assignment);
       }
 
       if (filters.searchTerm) {
@@ -65,7 +65,7 @@ export function useJobsList(filters: JobFilters) {
         `,
         )
         .order("created_at", { ascending: false })
-        .filter("deleted_at", "is", null)
+        .is("deleted_at", null)
         .range(from, to);
 
       if (filters.status && filters.status !== "all") {
@@ -73,7 +73,7 @@ export function useJobsList(filters: JobFilters) {
       }
 
       if (filters.assignment && filters.assignment !== "all") {
-        query = query.eq("assigned_to", filters.assignment);
+        query = query.eq("user_id", filters.assignment);
       }
 
       if (filters.searchTerm) {
@@ -154,10 +154,15 @@ export function useJobsStatistics(filters?: JobFilters) {
   return useQuery({
     queryKey: [jobsQueryKey, "statistics", filters],
     queryFn: async () => {
+      console.log(
+        "📊 useJobsStatistics - Fetching statistics with filters:",
+        filters,
+      );
+
       let query = supabase
         .from("job")
-        .select("status, assigned_to")
-        .filter("deleted_at", "is", null);
+        .select("status, user_id")
+        .is("deleted_at", null);
 
       if (filters?.searchTerm) {
         query = query.or(
@@ -168,19 +173,26 @@ export function useJobsStatistics(filters?: JobFilters) {
       const { data, error } = await query;
 
       if (error) {
+        console.error("❌ Error fetching statistics:", error);
         throw new Error(error.message);
       }
 
-      return {
+      console.log("✅ Statistics data received:", data?.length, "jobs");
+      console.log("📊 Raw data:", data);
+
+      const stats = {
         total: data?.length || 0,
         draft: data?.filter((j) => j.status === "draft").length || 0,
         live: data?.filter((j) => j.status === "live").length || 0,
         paused: data?.filter((j) => j.status === "paused").length || 0,
         complete: data?.filter((j) => j.status === "complete").length || 0,
         cancelled: data?.filter((j) => j.status === "cancelled").length || 0,
-        assigned: data?.filter((j) => j.assigned_to).length || 0,
-        unassigned: data?.filter((j) => !j.assigned_to).length || 0,
+        assigned: data?.filter((j) => j.user_id).length || 0,
+        unassigned: data?.filter((j) => !j.user_id).length || 0,
       };
+
+      console.log("📊 Calculated statistics:", stats);
+      return stats;
     },
   });
 }
@@ -192,7 +204,7 @@ export function useSearchEmployers(searchTerm: string) {
       let query = supabase
         .from("employer_profile")
         .select("id, company_name, logo_url")
-        .filter("deleted_at", "is", null)
+        .is("deleted_at", null)
         .eq("approval_status", "live")
         .order("company_name", { ascending: true });
 

@@ -90,6 +90,8 @@ export function useJobManagement() {
 
   const { data: statisticsData } = useJobsStatistics(statisticsFilters);
 
+  console.log("📊 Hook - statisticsData:", statisticsData);
+
   // Pagination functions
   const handlePageChange = useCallback((page) => {
     setCurrentPage(page);

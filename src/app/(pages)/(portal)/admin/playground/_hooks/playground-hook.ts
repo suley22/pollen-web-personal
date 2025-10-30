@@ -2,39 +2,31 @@
 
 import { useState } from "react";
 import {
-  useJobApplicants,
-  useUpdateApplicationStatus,
-  transformTasksToList,
+  getMockApplicants,
+  transformJobSeekersToList,
   getColumnInfo,
 } from "../_services/playground-service";
 
 export function usePlaygroundHook(jobId: string) {
-  const { data: tasks, isLoading, error } = useJobApplicants(jobId);
-  const updateStatusMutation = useUpdateApplicationStatus();
-
-  // Default empty structure si no hay data
-  const safeTasksData = tasks || {
-    new_applicants: [],
-    in_progress: [],
-    matched_to_employer: [],
-    complete: [],
-  };
+  // Usar datos mockeados en lugar de llamada a la BD
+  const [jobSeekers, setJobSeekers] = useState(getMockApplicants());
+  const isLoading = false; // No hay loading con datos mockeados
 
   // View state
-  const [viewMode, setViewMode] = useState("board"); // "board" or "grid"
-  const [selectedTask, setSelectedTask] = useState(null);
+  const [viewMode, setViewMode] = useState<"board" | "grid">("board");
+  const [selectedJobSeeker, setSelectedJobSeeker] = useState<any>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   // Drag & Drop state
-  const [draggedItem, setDraggedItem] = useState(null);
+  const [draggedItem, setDraggedItem] = useState<any>(null);
 
   /**
-   * Maneja el click en una tarea para abrir el drawer
+   * Maneja el click en un job seeker para abrir el drawer
    */
-  const handleClick = (task, status) => {
+  const handleClick = (jobSeeker: any, status: string) => {
     const statusInfo = getColumnInfo(status);
-    setSelectedTask({
-      ...task,
+    setSelectedJobSeeker({
+      ...jobSeeker,
       status: status,
       statusLabel: statusInfo?.title || "",
       statusColor: statusInfo?.badgeColor || "",
@@ -47,13 +39,13 @@ export function usePlaygroundHook(jobId: string) {
    */
   const closeDrawer = () => {
     setIsDrawerOpen(false);
-    setTimeout(() => setSelectedTask(null), 300); // Wait for animation
+    setTimeout(() => setSelectedJobSeeker(null), 300); // Wait for animation
   };
 
   /**
-   * Inicia el drag de una tarea
+   * Inicia el drag de un job seeker
    */
-  const handleDragStart = (e, item, columnId) => {
+  const handleDragStart = (e: any, item: any, columnId: string) => {
     setDraggedItem({ item, sourceColumn: columnId });
     e.dataTransfer.effectAllowed = "move";
   };
@@ -61,15 +53,15 @@ export function usePlaygroundHook(jobId: string) {
   /**
    * Permite el drop en la columna
    */
-  const handleDragOver = (e) => {
+  const handleDragOver = (e: any) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
   };
 
   /**
-   * Maneja el drop de una tarea en una columna
+   * Maneja el drop de un job seeker en una columna (solo UI, sin BD)
    */
-  const handleDrop = (e, targetColumnId) => {
+  const handleDrop = (e: any, targetColumnId: string) => {
     e.preventDefault();
 
     if (!draggedItem) return;
@@ -82,47 +74,44 @@ export function usePlaygroundHook(jobId: string) {
       return;
     }
 
-    // Determinar el application_id correcto
-    // Fallback: si application_id no existe, usar id (por si hay data cacheada antigua)
-    const applicationIdToUpdate =
-      item.application_id || item._raw_application?.id || item.id;
+    // Actualizar el estado local (mover el job seeker entre columnas)
+    setJobSeekers((prevJobSeekers) => {
+      const newJobSeekers = { ...prevJobSeekers };
 
-    if (!applicationIdToUpdate) {
-      setDraggedItem(null);
-      return;
-    }
+      // Remover de la columna origen
+      newJobSeekers[sourceColumn] = newJobSeekers[sourceColumn].filter(
+        (jobSeeker) => jobSeeker.id !== item.id,
+      );
 
-    // Actualizar el status en la BD usando mutation
-    updateStatusMutation.mutate({
-      applicationId: applicationIdToUpdate,
-      newStatus: targetColumnId,
-      jobId: jobId,
+      // Agregar a la columna destino
+      newJobSeekers[targetColumnId] = [...newJobSeekers[targetColumnId], item];
+
+      return newJobSeekers;
     });
 
     setDraggedItem(null);
   };
 
   /**
-   * Obtiene todas las tareas en formato de lista con su status
+   * Obtiene todos los job seekers en formato de lista con su status
    */
-  const getAllTasksWithStatus = () => {
-    return transformTasksToList(safeTasksData);
+  const getAllJobSeekersWithStatus = () => {
+    return transformJobSeekersToList(jobSeekers);
   };
 
   return {
     // Data
-    tasks: safeTasksData,
+    jobSeekers,
     isLoading,
-    error,
 
     // View state
     viewMode,
     setViewMode,
 
     // Drawer state
-    selectedTask,
+    selectedJobSeeker,
     isDrawerOpen,
-    handleTaskClick: handleClick,
+    handleJobSeekerClick: handleClick,
     closeDrawer,
 
     // Drag & Drop
@@ -131,6 +120,6 @@ export function usePlaygroundHook(jobId: string) {
     handleDrop,
 
     // Helpers
-    getAllTasksWithStatus,
+    getAllJobSeekersWithStatus,
   };
 }

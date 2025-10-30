@@ -1,13 +1,7 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { createClient } from "@/lib/utils/supabase/client";
-import { getLoggedInUserId } from "@/services/userService";
-
-const supabase = createClient();
-
-// Columnas del Kanban - mapeadas directamente al campo "status" de job_applications
-export const TASK_COLUMNS = [
+// Columnas del Kanban
+export const JOB_SEEKER_COLUMNS = [
   {
     id: "new_applicants",
     title: "New Applicants",
@@ -34,157 +28,114 @@ export const TASK_COLUMNS = [
   },
 ];
 
-/**
- * Hook para obtener los aplicantes de un job específico
- * Trae las aplicaciones con info básica del job_seeker
- */
-export function useJobApplicants(jobId: string) {
-  return useQuery({
-    queryKey: ["playground", "applicants"],
-    queryFn: async () => {
-      const { data: applications, error } = await supabase
-        .from("job_applications")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      const userId = await getLoggedInUserId();
-
-      const mappedApplications = applications?.map((app) => {
-        return {
-          ...app,
-          id: app.id,
-          name: "Gonzalo",
-          profile_picture: "",
-        };
-      });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      // Agrupar por status (que coincide con las columnas del Kanban)
-      return groupApplicantsByStatus(mappedApplications || []);
+// Mock Data - Datos de ejemplo
+const MOCK_JOB_SEEKERS = {
+  new_applicants: [
+    {
+      id: "1",
+      application_id: "app-1",
+      name: "Sarah Johnson",
+      avatar_url: null,
+      match_score: 92,
+      applied_date: "15/01/2025",
+      sub_status: "Unopened",
+      is_verified: true,
+      is_fast_track: false,
     },
-
-    staleTime: 0, // ✅ Forzar refetch inmediato
-    gcTime: 0, // ✅ No cachear (reemplaza cacheTime en React Query v5)
-    refetchOnMount: true, // ✅ Refetch al montar
-  });
-}
-
-/**
- * Agrupa las aplicaciones por su status en el formato del Kanban
- */
-function groupApplicantsByStatus(applications: any[] = []) {
-  const grouped: Record<string, any[]> = {
-    new_applicants: [],
-    in_progress: [],
-    matched_to_employer: [],
-    complete: [],
-  };
-
-  if (!applications || applications.length === 0) {
-    return grouped;
-  }
-
-  applications.forEach((app) => {
-    const status = app.status || "new_applicants";
-
-    // Validar que el status existe en nuestras columnas
-    if (grouped[status] !== undefined) {
-      const task = transformApplicationToTask(app);
-      grouped[status].push(task);
-    }
-  });
-
-  return grouped;
-}
-
-/**
- * Transforma una aplicación en el formato que esperan TaskCard y GridRow
- */
-function transformApplicationToTask(application: any) {
-  const seeker = application.job_seeker;
-
-  return {
-    // IDs - IMPORTANTE: id es del job_seeker, application_id es de job_applications
-    id: seeker?.id, // ID del job_seeker (para UI/keys)
-    application_id: application.id, // ID de la aplicación (para updates)
-    applicant_id: seeker?.id, // Redundante pero útil
-
-    // Datos del candidato (desde job_seeker)
-    name: seeker?.name || "Unknown",
-    avatar_url: seeker?.profile_picture || null,
-
-    // Datos de la aplicación (desde job_applications)
-    match_score: application.overall_score || 0,
-    applied_date: new Date(application.created_at).toLocaleDateString("en-GB"),
-    sub_status: application.sub_status || "Unopened",
-    is_verified: application.assessment_submitted_at !== null,
-
-    // Campos útiles adicionales
-    is_fast_track: application.is_fast_track || false,
-    interview_scheduled_at: application.interview_scheduled_at,
-    interview_completed_at: application.interview_completed_at,
-    hired_at: application.hired_at,
-
-    // Guardamos todo por si se necesita en el drawer
-    _raw_application: application,
-  };
-}
-
-/**
- * Hook para mover una aplicación entre columnas (actualiza el status)
- */
-export function useUpdateApplicationStatus() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({
-      applicationId,
-      newStatus,
-      jobId,
-    }: {
-      applicationId: number;
-      newStatus: string;
-      jobId: string;
-    }) => {
-      const { data, error } = await supabase
-        .from("job_applications")
-        .update({ status: newStatus })
-        .eq("id", applicationId)
-        .select();
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      if (!data || data.length === 0) {
-        throw new Error("Application not found");
-      }
-
-      return data[0];
+    {
+      id: "2",
+      application_id: "app-2",
+      name: "Michael Chen",
+      avatar_url: null,
+      match_score: 88,
+      applied_date: "16/01/2025",
+      sub_status: "Unopened",
+      is_verified: true,
+      is_fast_track: true,
     },
-    onSuccess: (data, variables) => {
-      // Invalidar la query específica de este job
-      queryClient.invalidateQueries({
-        queryKey: ["playground", "applicants", variables.jobId],
-      });
+    {
+      id: "3",
+      application_id: "app-3",
+      name: "Emma Rodriguez",
+      avatar_url: null,
+      match_score: 85,
+      applied_date: "17/01/2025",
+      sub_status: "Unopened",
+      is_verified: false,
+      is_fast_track: false,
     },
-  });
+  ],
+  in_progress: [
+    {
+      id: "4",
+      application_id: "app-4",
+      name: "David Kim",
+      avatar_url: null,
+      match_score: 90,
+      applied_date: "14/01/2025",
+      sub_status: "Interview Scheduled",
+      is_verified: true,
+      is_fast_track: false,
+    },
+    {
+      id: "5",
+      application_id: "app-5",
+      name: "Lisa Anderson",
+      avatar_url: null,
+      match_score: 87,
+      applied_date: "13/01/2025",
+      sub_status: "Under Review",
+      is_verified: true,
+      is_fast_track: false,
+    },
+  ],
+  matched_to_employer: [
+    {
+      id: "6",
+      application_id: "app-6",
+      name: "James Wilson",
+      avatar_url: null,
+      match_score: 95,
+      applied_date: "10/01/2025",
+      sub_status: "Awaiting Response",
+      is_verified: true,
+      is_fast_track: true,
+    },
+  ],
+  complete: [
+    {
+      id: "7",
+      application_id: "app-7",
+      name: "Sophia Martinez",
+      avatar_url: null,
+      match_score: 93,
+      applied_date: "08/01/2025",
+      sub_status: "Hired",
+      is_verified: true,
+      is_fast_track: false,
+    },
+  ],
+};
+
+/**
+ * Función mockeada para obtener los aplicantes
+ * Retorna datos estáticos para testing de UI
+ */
+export function getMockApplicants() {
+  return MOCK_JOB_SEEKERS;
 }
 
 /**
  * Transforma las aplicaciones agrupadas por columna en una lista plana con status
  * Para la vista Grid
  */
-export function transformTasksToList(tasks: Record<string, any[]>) {
-  const allTasks: any[] = [];
+export function transformJobSeekersToList(jobSeekers: Record<string, any[]>) {
+  const allJobSeekers: any[] = [];
 
-  TASK_COLUMNS.forEach((column) => {
-    tasks[column.id]?.forEach((task) => {
-      allTasks.push({
-        ...task,
+  JOB_SEEKER_COLUMNS.forEach((column) => {
+    jobSeekers[column.id]?.forEach((jobSeeker) => {
+      allJobSeekers.push({
+        ...jobSeeker,
         status: column.id,
         statusLabel: column.title,
         statusColor: column.badgeColor,
@@ -192,12 +143,12 @@ export function transformTasksToList(tasks: Record<string, any[]>) {
     });
   });
 
-  return allTasks;
+  return allJobSeekers;
 }
 
 /**
  * Obtiene información de una columna por su ID
  */
 export function getColumnInfo(columnId: string) {
-  return TASK_COLUMNS.find((col) => col.id === columnId);
+  return JOB_SEEKER_COLUMNS.find((col) => col.id === columnId);
 }

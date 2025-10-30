@@ -12,18 +12,18 @@ interface PlaygroundViewProps {
 
 export default function PlaygroundView({ jobId }: PlaygroundViewProps) {
   const {
-    tasks,
+    jobSeekers,
     isLoading,
     viewMode,
     setViewMode,
-    selectedTask,
+    selectedJobSeeker,
     isDrawerOpen,
-    handleTaskClick,
+    handleJobSeekerClick,
     closeDrawer,
     handleDragStart,
     handleDragOver,
     handleDrop,
-    getAllTasksWithStatus,
+    getAllJobSeekersWithStatus,
   } = usePlaygroundHook(jobId);
 
   if (isLoading) {
@@ -54,26 +54,26 @@ export default function PlaygroundView({ jobId }: PlaygroundViewProps) {
       {/* Board View */}
       {viewMode === "board" && (
         <BoardView
-          tasks={tasks}
+          jobSeekers={jobSeekers}
           onDragStart={handleDragStart}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
-          onTaskClick={handleTaskClick}
+          onJobSeekerClick={handleJobSeekerClick}
         />
       )}
 
       {/* Grid View */}
       {viewMode === "grid" && (
         <GridView
-          tasks={getAllTasksWithStatus()}
-          onTaskClick={handleTaskClick}
+          jobSeekers={getAllJobSeekersWithStatus()}
+          onJobSeekerClick={handleJobSeekerClick}
         />
       )}
 
-      {/* Task Drawer */}
+      {/* Job Seeker Drawer */}
       <TaskDrawer
         isOpen={isDrawerOpen}
-        task={selectedTask}
+        jobSeeker={selectedJobSeeker}
         onClose={closeDrawer}
       />
     </div>

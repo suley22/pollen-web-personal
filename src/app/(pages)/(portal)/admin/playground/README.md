@@ -1,6 +1,6 @@
-# Playground - Arquitectura
+# Playground - Kanban Board (UI Pura + Mock Data)
 
-Esta feature del Playground sigue el patrón arquitectónico de 3 capas: **Service → Hook → View**
+Esta feature del Playground está simplificada con **UI pura y datos mockeados** para desarrollo y testing.
 
 ## 📁 Estructura de Archivos
 
@@ -10,42 +10,43 @@ playground/
 ├── _view/
 │   └── playground-view.tsx          # UI principal - orquesta componentes
 ├── _hooks/
-│   └── playground-hook.ts           # Lógica de negocio y estado
+│   └── playground-hook.ts           # Lógica de negocio y estado local
 ├── _services/
-│   └── playground-service.ts        # Data fetching (mock por ahora)
+│   └── playground-service.ts        # Mock data y helpers
 └── _components/
     ├── board-view.tsx               # Vista de tablero Kanban
     ├── grid-view.tsx                # Vista de tabla
     ├── task-drawer.tsx              # Panel lateral de detalles
-    ├── view-toggle.tsx              # Toggle entre vistas
-    └── status-badge.tsx             # Badge de estado reutilizable
+    ├── task-card.tsx                # Tarjeta de tarea
+    ├── grid-row.tsx                 # Fila de tabla
+    └── view-toggle.tsx              # Toggle entre vistas
 ```
 
 ---
 
-## 🏗️ Arquitectura de Capas
+## 🏗️ Arquitectura Simplificada
 
 ### 1. **SERVICE LAYER** (`_services/playground-service.ts`)
 
-**Responsabilidad:** Gestión de datos
+**Responsabilidad:** Datos mockeados y helpers
 
-- ✅ Mock data (INITIAL_DATA)
-- ✅ Definición de columnas (TASK_COLUMNS)
-- ✅ `useTasks()` - Hook para obtener tareas (futuro: React Query)
-- ✅ `useMoveTask()` - Lógica de mover tareas (futuro: mutation)
-- ✅ `transformTasksToList()` - Transforma datos para la vista grid
+- ✅ `MOCK_TASKS` - Datos estáticos de ejemplo
+- ✅ `TASK_COLUMNS` - Definición de columnas del Kanban
+- ✅ `getMockApplicants()` - Retorna datos mockeados
+- ✅ `transformTasksToList()` - Transforma datos para vista grid
 - ✅ `getColumnInfo()` - Helper para obtener info de columna
 
-**Futuro:** Reemplazar con llamadas a Supabase usando React Query
+**Nota:** No hay llamadas a BD, todo es estado local
 
 ---
 
 ### 2. **HOOK LAYER** (`_hooks/playground-hook.ts`)
 
-**Responsabilidad:** Lógica de negocio y orquestación
+**Responsabilidad:** Lógica de negocio y estado local
 
 **Estado gestionado:**
 
+- Tasks state (useState con datos mockeados)
 - View mode (board/grid)
 - Drawer state (open/closed, selected task)
 - Drag & Drop state

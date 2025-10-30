@@ -12,20 +12,25 @@ import {
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
-export default function TaskCard({ task, columnId, onDragStart, onClick }) {
-  // Datos reales desde el task (job_application + job_seeker)
-  const candidateName = task.name;
-  const candidateAvatar = task.avatar_url;
-  const matchScore = task.match_score;
-  const appliedDate = task.applied_date;
-  const subStatus = task.sub_status;
-  const isVerified = task.is_verified;
+export default function JobSeekerCard({
+  jobSeeker,
+  columnId,
+  onDragStart,
+  onClick,
+}) {
+  // Datos reales desde el jobSeeker (job_application + job_seeker)
+  const candidateName = jobSeeker.name;
+  const candidateAvatar = jobSeeker.avatar_url;
+  const matchScore = jobSeeker.match_score;
+  const appliedDate = jobSeeker.applied_date;
+  const subStatus = jobSeeker.sub_status;
+  const isVerified = jobSeeker.is_verified;
 
   return (
     <div
       draggable
-      onDragStart={(e) => onDragStart(e, task, columnId)}
-      onClick={() => onClick(task, columnId)}
+      onDragStart={(e) => onDragStart(e, jobSeeker, columnId)}
+      onClick={() => onClick(jobSeeker, columnId)}
       className="bg-white rounded-lg border border-border/40 hover:border-primary/20 hover:shadow-lg transition-all duration-200 cursor-pointer"
     >
       <div className="flex flex-col gap-4 p-4 ">

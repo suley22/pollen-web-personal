@@ -9,7 +9,7 @@ import {
 } from "@/components/design-system";
 import { Palette, Plus, ChevronUp, Trash2 } from "lucide-react";
 import { SecondaryButton } from "@/components/design-system/primary-button";
-import type { AssessmentCategory } from "@/types/assessment-category";
+import type { AssessmentCategory } from "@/types/assessment-types";
 import { CategoryCard } from "@/components/assessments/category-card";
 
 interface AssessmentCreateCategoriesProps {

@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { AssessmentCategory } from "@/types/assessment-category";
+import type { AssessmentCategory } from "@/types/assessment-types";
 
 interface CategorySelectorProps {
   label?: string;

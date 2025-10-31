@@ -5,6 +5,7 @@ import { createClient } from "@/lib/utils/supabase/client";
 const supabase = createClient();
 
 // Columnas del Kanban
+// TODO(playground): Exportar tipos/enum para ColumnId y centralizar estilos (colors/badges) en theme.
 export const JOB_SEEKER_COLUMNS = [
   {
     id: "new_applicants",
@@ -33,6 +34,7 @@ export const JOB_SEEKER_COLUMNS = [
 ];
 
 // Mock Data - Datos de ejemplo (deprecated - usar getJobApplicants)
+// TODO(playground): Eliminar mocks o aislar en archivos .mock.ts y controlarlos vía feature flag.
 const MOCK_JOB_SEEKERS = {
   new_applicants: [
     {
@@ -128,6 +130,7 @@ export function getMockApplicants() {
  */
 export async function getJobApplicants(jobId: string) {
   try {
+    // TODO(playground): Reemplazar console.log por logger centralizado (con niveles y toggles por entorno).
     console.log("🔍 getJobApplicants called with jobId:", jobId);
 
     // 1. Obtener las aplicaciones para este job
@@ -185,7 +188,7 @@ export async function getJobApplicants(jobId: string) {
         .in("id", userIds);
 
       if (jobSeekersError) {
-        console.error("❌ Error fetching job seekers:", jobSeekersError);
+  console.error("❌ Error fetching job seekers:", jobSeekersError);
         // Continuar sin los datos de job_seeker
       } else {
         console.log(

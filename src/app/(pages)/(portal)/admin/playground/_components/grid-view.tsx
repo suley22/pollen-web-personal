@@ -2,6 +2,10 @@
 
 import GridRow from "./grid-row";
 
+// TODO(playground):
+// - Considerar semántica de tabla (<table>) para accesibilidad y navegación.
+// - Añadir paginación/virtualización si el volumen de filas es grande.
+// - Extraer cabecera a un componente reutilizable si hay más vistas tipo grid.
 export function GridView({ jobSeekers, onJobSeekerClick }) {
   return (
     <div className="w-full">

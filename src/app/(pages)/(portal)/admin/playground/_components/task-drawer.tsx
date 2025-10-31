@@ -2,6 +2,9 @@
 
 import { X } from "lucide-react";
 
+// TODO(playground):
+// - Reemplazar por un componente Drawer del design-system para consistencia (focus trap, aria, portal).
+// - Añadir rol="dialog" aria-modal y gestionar focus al abrir/cerrar.
 export function TaskDrawer({ isOpen, jobSeeker, onClose }) {
   if (!isOpen) return null;
 

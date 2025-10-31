@@ -1,5 +1,6 @@
 "use client";
 
+import React, { memo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/buttons/button";
@@ -25,11 +26,25 @@ const SUB_STATUS_STYLES = {
   "Not Progressing": "bg-gray-100 text-gray-700 border-gray-300",
 };
 
-export default function JobSeekerCard({
+// Card del candidato:
+// - Presenta datos del job seeker
+// - Es draggable: onDragStart inicia el arrastre y onDragEnd limpia estados
+// - onClick abre el drawer con detalles
+// TODO(playground): Consider splitting visual Card from drag handlers to ease reuse in Grid.
+function JobSeekerCard({
   jobSeeker,
   columnId,
   onDragStart,
   onClick,
+  onDragEnd,
+  isHiddenWhileDragging,
+}: {
+  jobSeeker: any;
+  columnId: string;
+  onDragStart: (e: any, jobSeeker: any, columnId: string) => void;
+  onClick: (jobSeeker: any, columnId: string) => void;
+  onDragEnd?: () => void;
+  isHiddenWhileDragging?: boolean;
 }) {
   // Datos reales desde el jobSeeker (job_application + job_seeker)
   const candidateName = jobSeeker.name;
@@ -45,9 +60,33 @@ export default function JobSeekerCard({
   return (
     <div
       draggable
-      onDragStart={(e) => onDragStart(e, jobSeeker, columnId)}
+      onDragStart={(e) => {
+        try {
+          // Safari/WebKit requiere setData para habilitar correctamente el DnD
+          e.dataTransfer?.setData("text/plain", String(jobSeeker.id));
+        } catch (err) {
+          // noop: fall back, algunos navegadores pueden lanzar si no permiten setData
+        }
+        onDragStart(e, jobSeeker, columnId);
+      }}
+      onDragEnd={onDragEnd}
       onClick={() => onClick(jobSeeker, columnId)}
       className="bg-white rounded-lg border border-gray-200 hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-move group"
+      // Colapsar el nodo durante el drag para no ocupar espacio, pero mantenerlo en el DOM
+      // Mantener draggable y data-attrs permite que el cálculo de índice lo ignore y no cancele el drag
+      style={
+        isHiddenWhileDragging
+          ? {
+              visibility: "hidden",
+              height: 0,
+              padding: 0,
+              margin: 0,
+              borderWidth: 0,
+            }
+          : undefined
+      }
+      data-draggable-item="true"
+      data-drag-hidden={isHiddenWhileDragging ? "true" : "false"}
     >
       <div className="flex flex-col gap-3 p-4">
         {/* Header: Avatar, Name, Score */}
@@ -131,3 +170,11 @@ export default function JobSeekerCard({
     </div>
   );
 }
+
+export default memo(
+  JobSeekerCard,
+  (prev, next) =>
+    prev.jobSeeker === next.jobSeeker &&
+    prev.columnId === next.columnId &&
+    prev.isHiddenWhileDragging === next.isHiddenWhileDragging,
+);

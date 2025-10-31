@@ -9,6 +9,7 @@ export const JobSeekerRoutes = {
   companies: `/companies`,
   community: `/community`,
   applyJobs: (id) => `/jobs/view/${id}`,
+  applyExternalJobs: (id) => `/jobs/view/external/${id}`,
   companyView: (id) => `/companies/view/${id}`,
 };
 

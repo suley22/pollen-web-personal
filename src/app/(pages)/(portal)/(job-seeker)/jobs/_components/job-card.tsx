@@ -21,13 +21,19 @@ export function JobCard({ job, isSaved, onToggleSave }) {
     <Card
       key={job.id}
       className="hover:shadow-lg hover:border-primary/20 transition-all duration-200 cursor-pointer border-border/40"
-      onClick={() => router.push(JobSeekerRoutes.applyJobs(job.id))}
+      onClick={() => {
+        if (job.source === "external") {
+          router.push(JobSeekerRoutes.applyExternalJobs(job.id));
+        } else {
+          router.push(JobSeekerRoutes.applyJobs(job.id));
+        }
+      }}
     >
-      <CardContent className="px-5 py-3">
+      <CardContent className="px-6 py-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0 space-y-3">
             <div className="flex flex-row justify-between">
-              <div className="flex flex-col flex-1 space-y-2">
+              <div className="flex flex-col flex-1 gap-3">
                 {/* Job Title and Badges */}
                 <div className="flex items-center gap-3 flex-wrap">
                   <div className="text-lg font-semibold text-foreground truncate">
@@ -120,7 +126,11 @@ export function JobCard({ job, isSaved, onToggleSave }) {
                   className="h-8 px-4"
                   onClick={(e) => {
                     e.stopPropagation();
-                    router.push(JobSeekerRoutes.applyJobs(job.id));
+                    if (job.source === "external") {
+                      router.push(JobSeekerRoutes.applyExternalJobs(job.id));
+                    } else {
+                      router.push(JobSeekerRoutes.applyJobs(job.id));
+                    }
                   }}
                 >
                   <span className="text-xs">View & Apply</span>

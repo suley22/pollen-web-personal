@@ -25,6 +25,35 @@ export function usePlaygroundHook(jobId: string) {
   // Drag & Drop state
   const [draggedItem, setDraggedItem] = useState<any>(null);
 
+  // Computes the insertion index inside a container based on mouse Y position
+  // Falls back to container.children if no specific draggable selector matches
+  const getInsertionIndex = (container: HTMLElement, clientY: number) => {
+    // Prefer specific draggable nodes if available
+    const preferred = container.querySelectorAll(
+      '[data-draggable-item="true"], [data-js-item], [draggable="true"]',
+    );
+    const list: HTMLElement[] = (preferred.length
+      ? Array.from(preferred)
+      : Array.from(container.children)) as HTMLElement[];
+
+    if (!list.length) return 0;
+
+    let closest = { offset: Number.NEGATIVE_INFINITY, index: list.length };
+    list.forEach((el, index) => {
+      const rect = el.getBoundingClientRect();
+      const offset = clientY - (rect.top + rect.height / 2);
+      // We look for the closest element above the cursor (offset < 0)
+      if (offset < 0 && offset > closest.offset) {
+        closest = { offset, index };
+      }
+    });
+
+    // If none is above, insert at end
+    return closest.offset === Number.NEGATIVE_INFINITY
+      ? list.length
+      : closest.index;
+  };
+
   /**
    * Cargar aplicantes desde la BD al montar el componente
    */
@@ -95,25 +124,64 @@ export function usePlaygroundHook(jobId: string) {
 
     const { item, sourceColumn } = draggedItem;
 
+    // Compute insertion index based on drop height within the target column container
+    const container: HTMLElement | null = (e.currentTarget as HTMLElement) || null;
+    const rawIndex = container ? getInsertionIndex(container, e.clientY) : undefined;
+
     // Si es la misma columna, no hacer nada
-    if (sourceColumn === targetColumnId) {
-      setDraggedItem(null);
-      return;
-    }
-
-    // Actualizar el estado local (mover el job seeker entre columnas)
+    // Si es la misma columna, permitir reordenar dentro de la columna
     setJobSeekers((prevJobSeekers) => {
-      const newJobSeekers = { ...prevJobSeekers };
+      const newJobSeekers: Record<string, any[]> = {
+        ...prevJobSeekers,
+      };
 
-      // Remover de la columna origen
-      newJobSeekers[sourceColumn] = newJobSeekers[sourceColumn].filter(
-        (jobSeeker) => jobSeeker.id !== item.id,
-      );
+      const sourceList = [...(newJobSeekers[sourceColumn] || [])];
+      const targetList =
+        sourceColumn === targetColumnId
+          ? sourceList
+          : [...(newJobSeekers[targetColumnId] || [])];
 
-      // Agregar a la columna destino
-      newJobSeekers[targetColumnId] = [...newJobSeekers[targetColumnId], item];
+      // Encontrar el índice actual del ítem en la lista fuente
+      const currentIndex = sourceList.findIndex((js) => js.id === item.id);
 
-      return newJobSeekers;
+      // Si por alguna razón no está, no hacemos nada
+      if (currentIndex === -1) {
+        return prevJobSeekers;
+      }
+
+      // Remover de la fuente
+      sourceList.splice(currentIndex, 1);
+
+      // Calcular índice de inserción en destino
+      let insertIndex =
+        typeof rawIndex === "number" && rawIndex >= 0 ? rawIndex : targetList.length;
+
+      if (sourceColumn === targetColumnId) {
+        // Ajustar índice si venimos de la misma lista y el removal movió posiciones
+        if (insertIndex > currentIndex) insertIndex = insertIndex - 1;
+
+        // Edge cases: soltar "encima de sí mismo" o posición equivalente => no-op
+        if (insertIndex === currentIndex) {
+          return prevJobSeekers; // nada cambia
+        }
+
+        // Insertar en la misma lista
+        sourceList.splice(insertIndex, 0, item);
+
+        newJobSeekers[sourceColumn] = sourceList;
+        return newJobSeekers;
+      } else {
+        // Movimiento entre columnas diferentes
+        // Asegurar límites de índice
+        if (insertIndex < 0) insertIndex = 0;
+        if (insertIndex > targetList.length) insertIndex = targetList.length;
+
+        targetList.splice(insertIndex, 0, item);
+
+        newJobSeekers[sourceColumn] = sourceList;
+        newJobSeekers[targetColumnId] = targetList;
+        return newJobSeekers;
+      }
     });
 
     setDraggedItem(null);

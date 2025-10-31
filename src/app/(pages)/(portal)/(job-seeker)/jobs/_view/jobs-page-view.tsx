@@ -6,7 +6,7 @@ import PollenApprovedJobs from "../_components/pollen-approved";
 import ExternalJobs from "../_components/external-jobs";
 import JobListSection from "../_components/job-list-section";
 
-import { useJobs, useExternalJobs } from "../_hooks/jobs-page-hooks";
+import { useJobs } from "../_hooks/jobs-page-hooks";
 
 export default function JobsPageView() {
   const {
@@ -24,8 +24,6 @@ export default function JobsPageView() {
     isSaved,
     saveFavoriteJob,
   } = useJobs();
-
-  const { externalJobs } = useExternalJobs();
 
   return (
     <PageContainer>
@@ -54,11 +52,6 @@ export default function JobsPageView() {
         />
         <JobListSection
           jobs={jobs}
-          isSaved={isSaved}
-          saveFavoriteJob={saveFavoriteJob}
-        />
-        <JobListSection
-          jobs={externalJobs}
           isSaved={isSaved}
           saveFavoriteJob={saveFavoriteJob}
         />

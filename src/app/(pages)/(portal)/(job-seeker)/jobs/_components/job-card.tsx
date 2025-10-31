@@ -8,6 +8,8 @@ import {
   Heart,
   Calendar,
   PoundSterling,
+  ExternalLink,
+  Shield,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { JobSeekerRoutes } from "../../router";
@@ -26,17 +28,27 @@ export function JobCard({ job, isSaved, onToggleSave }) {
           <div className="flex-1 min-w-0 space-y-3">
             <div className="flex flex-row justify-between">
               <div className="flex flex-col flex-1 space-y-2">
-                {/* Job Title and Pollen Approved Badge */}
+                {/* Job Title and Badges */}
                 <div className="flex items-center gap-3 flex-wrap">
-                  <h3 className="text-lg font-semibold text-foreground truncate">
+                  <div className="text-lg font-semibold text-foreground truncate">
                     {job.job_title}
-                  </h3>
-                  {job.pollen_approved && (
+                  </div>
+                  {job.source === "pollen" && (
                     <Badge
                       variant="default"
-                      className="bg-pink-100 text-pink-600 border-pink-200"
+                      className="bg-pink-100 text-pink-600 border-pink-200 items-center justify-center gap-1 flex flex-row"
                     >
-                      Pollen Approved
+                      <Shield className="w-3 h-3" />
+                      <div>Pollen Approved</div>
+                    </Badge>
+                  )}
+                  {job.source === "external" && (
+                    <Badge
+                      variant="default"
+                      className="flex flex-row bg-blue-50 text-blue-600 border-blue-200 items-center justify-center gap-1"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      <div>External</div>
                     </Badge>
                   )}
                 </div>

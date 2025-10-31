@@ -7,7 +7,7 @@ export default function JobListSection({ jobs, isSaved, saveFavoriteJob }) {
     <div className="space-y-4">
       {jobs?.map((job) => (
         <JobCard
-          key={job.id}
+          key={job.uniqueKey || job.id}
           job={job}
           isSaved={isSaved(job.id)}
           onToggleSave={() => saveFavoriteJob(job.id)}

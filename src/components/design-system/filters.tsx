@@ -31,7 +31,7 @@ export function Filters({
 
   return (
     <Card className="w-full">
-      <CardContent className="p-6">
+      <CardContent className="p-2">
         <div className="flex flex-row gap-4 items-center">
           {/* Search Input */}
           <div className="flex flex-1 relative">

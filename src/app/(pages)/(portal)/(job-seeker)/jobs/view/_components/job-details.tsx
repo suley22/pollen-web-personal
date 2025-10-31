@@ -6,7 +6,6 @@ import {
   MapPin,
   PoundSterling,
   Users,
-  Trophy,
   Shield,
   FileText,
 } from "lucide-react";

@@ -1,10 +1,10 @@
 "use client";
 
-import { SearchAndFilterBar } from "../_components/search-and-filter-bar";
+import { SearchAndFilterBar } from "../_components/jobs-page-search-and-filter-bar";
 import { PageContainer, PageHeader } from "@/components/design-system";
-import PollenApprovedJobs from "../_components/pollen-approved";
-import ExternalJobs from "../_components/external-jobs";
-import JobListSection from "../_components/job-list-section";
+import PollenApprovedJobs from "../_components/jobs-page-pollen-approved";
+import ExternalJobs from "../_components/jobs-page-external-jobs";
+import JobListSection from "../_components/jobs-page-job-list-section";
 
 import { useJobs } from "../_hooks/jobs-page-hooks";
 

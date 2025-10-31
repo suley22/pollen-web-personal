@@ -1,6 +1,6 @@
 "use client";
 
-import { JobCard } from "./job-card";
+import { JobCard } from "./jobs-page-job-card";
 
 export default function JobListSection({ jobs, isSaved, saveFavoriteJob }) {
   return (

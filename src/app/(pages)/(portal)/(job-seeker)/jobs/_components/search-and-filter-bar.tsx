@@ -1,4 +1,5 @@
-import { Search, X } from "lucide-react";
+import { useState } from "react";
+import { Search, X, SlidersHorizontal } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ export function SearchAndFilterBar({
   jobContractTypesFilter,
   onContractTypesChange,
 }) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const industries = [
     { value: "all", label: "All Industries" },
     { value: "technology", label: "Technology" },
@@ -59,39 +61,116 @@ export function SearchAndFilterBar({
     onSearchChange("");
   };
 
+  const handleClearFilters = () => {
+    onSearchChange("");
+    onJobTypeChange("all");
+    onIndustriesChange("all");
+    onLocationsChange("all");
+    onContractTypesChange("all");
+  };
+
   return (
-    <Card className="w-full">
-      <CardContent className="p-2">
-        <div className="grid grid-cols-4 gap-2">
-          <div className="col-span-3 relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search companies, industries, or locations..."
-              value={searchTerm}
-              onChange={(e) => onSearchChange(e.target.value)}
-              className="pl-10 pr-10"
-            />
-            {searchTerm && (
+    <div className="w-full gap-2 flex flex-col">
+      <div className="flex items-center gap-2 bg-white rounded-xl border p-2 ">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Search companies, industries, or locations..."
+            value={searchTerm}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="pl-10 pr-10"
+          />
+          {searchTerm && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0 hover:bg-muted"
+              onClick={handleClearSearch}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+
+        <SimpleFilter
+          options={jobType}
+          placeholder="Job Type"
+          value={jobTypeFilter}
+          onValueChange={onJobTypeChange}
+          className="w-[180px]"
+        />
+
+        <Button
+          variant={isExpanded ? "default" : "outline"}
+          size="icon"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="shrink-0"
+        >
+          <SlidersHorizontal className="h-4 w-4" />
+        </Button>
+      </div>
+
+      {/* Sección expandible */}
+      {isExpanded && (
+        <div className="animate-in slide-in-from-top-2 duration-200 rounded-lg border bg-card pb-4 pt-2 px-4">
+          <div className="flex items-end justify-between ">
+            <div className="text-sm">Aditional Filters</div>
+            <div>
               <Button
                 variant="ghost"
                 size="sm"
-                className="absolute right-1 top-1 h-7 w-7 p-0 hover:bg-muted"
-                onClick={handleClearSearch}
+                onClick={handleClearFilters}
+                className=" text-xs p-1"
               >
-                <X className="h-4 w-4" />
+                <X className="mr-1 h-2 w-2" />
+                Clear all filters
               </Button>
-            )}
+            </div>
           </div>
-          <SimpleFilter
-            options={jobType}
-            placeholder="Job Type"
-            value={jobTypeFilter}
-            onValueChange={onJobTypeChange}
-            className="w-full"
-          />
+
+          <div className="grid gap-3 sm:grid-cols-3">
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-muted-foreground">
+                Industry
+              </label>
+              <SimpleFilter
+                options={industries}
+                placeholder="Select industry"
+                value={jobIndustriesFilter}
+                onValueChange={onIndustriesChange}
+                className="w-full"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-muted-foreground">
+                Location
+              </label>
+              <SimpleFilter
+                options={locations}
+                placeholder="Select location"
+                value={jobLocationsFilter}
+                onValueChange={onLocationsChange}
+                className="w-full"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-muted-foreground">
+                Contract Type
+              </label>
+              <SimpleFilter
+                options={employmentType}
+                placeholder="Select contract type"
+                value={jobContractTypesFilter}
+                onValueChange={onContractTypesChange}
+                className="w-full"
+              />
+            </div>
+          </div>
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 }

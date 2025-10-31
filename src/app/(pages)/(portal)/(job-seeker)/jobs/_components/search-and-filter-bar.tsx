@@ -62,8 +62,8 @@ export function SearchAndFilterBar({
   return (
     <Card className="w-full">
       <CardContent className="p-2">
-        <div className="grid grid-cols-1 sm:grid-cols-6 gap-2">
-          <div className="sm:col-span-2 relative">
+        <div className="grid grid-cols-4 gap-2">
+          <div className="col-span-3 relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
@@ -88,27 +88,6 @@ export function SearchAndFilterBar({
             placeholder="Job Type"
             value={jobTypeFilter}
             onValueChange={onJobTypeChange}
-            className="w-full"
-          />
-          <SimpleFilter
-            options={industries}
-            placeholder="Industry"
-            value={jobIndustriesFilter}
-            onValueChange={onIndustriesChange}
-            className="w-full"
-          />
-          <SimpleFilter
-            options={locations}
-            placeholder="Location"
-            value={jobLocationsFilter}
-            onValueChange={onLocationsChange}
-            className="w-full"
-          />
-          <SimpleFilter
-            options={employmentType}
-            placeholder="Contract Type"
-            value={jobContractTypesFilter}
-            onValueChange={onContractTypesChange}
             className="w-full"
           />
         </div>

@@ -11,11 +11,11 @@ export function BoardView({
   onJobSeekerClick,
 }) {
   return (
-    <div className="flex gap-6 w-full overflow-x-auto pb-6">
+    <div className="flex gap-6 w-full overflow-x-auto overflow-y-hidden h-full min-h-0">
       {JOB_SEEKER_COLUMNS.map((column) => (
         <div
           key={column.id}
-          className="flex-1 min-w-[320px] flex flex-col gap-0"
+          className="flex-none shrink-0 w-[320px] h-full flex flex-col gap-0 min-h-0"
         >
           {/* Column Header */}
           <div
@@ -35,7 +35,7 @@ export function BoardView({
           <div
             onDragOver={onDragOver}
             onDrop={(e) => onDrop(e, column.id)}
-            className="flex-1 bg-white rounded-b-xl p-4 min-h-[600px] border-x border-b border-gray-200 transition-colors"
+            className="flex-1 min-h-0 overflow-y-hidden overflow-x-hidden bg-white rounded-b-xl p-4 border-x border-b border-gray-200 transition-colors"
           >
             <div className="flex flex-col gap-3">
               {jobSeekers[column.id]?.length === 0 ? (

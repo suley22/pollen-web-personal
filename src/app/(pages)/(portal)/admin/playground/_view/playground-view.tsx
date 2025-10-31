@@ -5,6 +5,7 @@ import { BoardView } from "../_components/board-view";
 import { GridView } from "../_components/grid-view";
 import { TaskDrawer } from "../_components/task-drawer";
 import { ViewToggle } from "../_components/view-toggle";
+import { PageContainer, PageHeader } from "@/components/design-system";
 
 // Mock jobId - por el momento usamos este valor fijo
 const jobId = "139ad003-8062-4cf2-8aee-354451d51798";
@@ -37,40 +38,44 @@ export default function PlaygroundView() {
   }
 
   return (
-    <div className="w-full flex flex-col gap-6 pb-8">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Applicants Pipeline
-          </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Manage and track candidate applications
-          </p>
+    <PageContainer className="flex-1 min-h-0 w-full">
+      <div className="flex-1 min-h-0 w-full grid grid-rows-[auto,1fr] gap-6">
+        {/* Header */}
+        <div className="w-full flex flex-row items-center justify-between">
+          <PageHeader
+            title="Applicants Pipeline"
+            subtitle="Manage and track candidate applications"
+          />
+          {/* View Toggle */}
+          <ViewToggle viewMode={viewMode} onViewModeChange={setViewMode} />
         </div>
 
-        {/* View Toggle */}
-        <ViewToggle viewMode={viewMode} onViewModeChange={setViewMode} />
+        {/* Content area that fills remaining height */}
+        <div className="min-h-0 h-full w-full overflow-hidden">
+          {/* Board View */}
+          {viewMode === "board" && (
+            <div className="min-h-0 h-full w-full">
+              <BoardView
+                jobSeekers={jobSeekers}
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                onJobSeekerClick={handleJobSeekerClick}
+              />
+            </div>
+          )}
+
+          {/* Grid View */}
+          {viewMode === "grid" && (
+            <div className="min-h-0 h-full w-full">
+              <GridView
+                jobSeekers={getAllJobSeekersWithStatus()}
+                onJobSeekerClick={handleJobSeekerClick}
+              />
+            </div>
+          )}
+        </div>
       </div>
-
-      {/* Board View */}
-      {viewMode === "board" && (
-        <BoardView
-          jobSeekers={jobSeekers}
-          onDragStart={handleDragStart}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-          onJobSeekerClick={handleJobSeekerClick}
-        />
-      )}
-
-      {/* Grid View */}
-      {viewMode === "grid" && (
-        <GridView
-          jobSeekers={getAllJobSeekersWithStatus()}
-          onJobSeekerClick={handleJobSeekerClick}
-        />
-      )}
 
       {/* Job Seeker Drawer */}
       <TaskDrawer
@@ -78,6 +83,6 @@ export default function PlaygroundView() {
         jobSeeker={selectedJobSeeker}
         onClose={closeDrawer}
       />
-    </div>
+    </PageContainer>
   );
 }

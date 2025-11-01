@@ -7,10 +7,7 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint ./src",
-    "db:login": "npx supabase login",
-    "db:pull": "npx supabase db pull",
-    "db:diff": "npx supabase db diff",
-    "db:push": "npx supabase db push"
+    "db:login": "npx supabase login"
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.28",

@@ -1,8 +1,10 @@
 import {
   RecommendedCompaniesFormCard as FormCard,
   AllCompaniesFormCard,
-} from "./form-card";
+} from "@/job-seeker/companies/_components/form-card";
 import { Target } from "lucide-react";
+import { Filters, Pagination } from "@/components/design-system";
+import { useAllCompaniesPage } from "@/job-seeker/companies/_hooks/useAllCompaniesPage";
 
 export function RecommendedCompanies() {
   return (
@@ -31,13 +33,63 @@ export function RecommendedCompanies() {
 }
 
 export function AllCompanies() {
-  return (
-    <div className="mb-0">
-      <div className="text-lg font-bold text-gray-900 mb-1">All Companies</div>
+  const {
+    companies,
+    loading,
+    pagination,
+    filterConfigs,
+    onSearchChange,
+    handlePageChange,
+    handlePageSizeChange,
+  } = useAllCompaniesPage();
 
-      <div className="grid grid-cols-3 gap-y-3 gap-x-4">
-        <AllCompaniesFormCard />
+  return (
+    <div className="flex flex-col gap-6 mb-0">
+      <div className="flex flex-col gap-4">
+        <div className="text-lg font-bold text-gray-900">All Companies</div>
+
+        <Filters
+          onSearchChange={onSearchChange}
+          searchPlaceholder="Search companies, industries, or locations..."
+          filters={filterConfigs}
+        />
       </div>
+      {pagination && (
+        <Pagination
+          pageSizeOptions={[9, 18]}
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          totalItems={pagination.totalItems}
+          pageSize={pagination.pageSize}
+          hasNextPage={pagination.hasNextPage}
+          hasPreviousPage={pagination.hasPreviousPage}
+          from={pagination.from}
+          to={pagination.to}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+        />
+      )}
+
+      <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-3 gap-x-4">
+          <AllCompaniesFormCard companies={companies} loading={loading} />
+        </div>
+      </div>
+      {pagination && (
+        <Pagination
+          pageSizeOptions={[9, 18]}
+          currentPage={pagination.currentPage}
+          totalPages={pagination.totalPages}
+          totalItems={pagination.totalItems}
+          pageSize={pagination.pageSize}
+          hasNextPage={pagination.hasNextPage}
+          hasPreviousPage={pagination.hasPreviousPage}
+          from={pagination.from}
+          to={pagination.to}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+        />
+      )}
     </div>
   );
 }

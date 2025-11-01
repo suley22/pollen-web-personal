@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, MapPin, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCompanies } from "../_hooks/useCompanies";
+import { useCompanies } from "@/job-seeker/companies/_hooks/companies-page-hook";
 import { PrimaryButton } from "@/components/design-system/primary-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Building2 } from "lucide-react";
@@ -94,9 +94,29 @@ export function RecommendedCompaniesFormCard() {
   );
 }
 
-export function AllCompaniesFormCard() {
-  const { allCompanies, loading } = useCompanies();
+type AllCompaniesFormCardProps = {
+  companies?: Array<{
+    id: string;
+    name: string;
+    industry: string;
+    description: string;
+    logo: string;
+    openRoles: number;
+    size: string;
+    location: string;
+  }>;
+  loading?: boolean;
+};
+
+export function AllCompaniesFormCard({
+  companies,
+  loading: loadingOverride,
+}: AllCompaniesFormCardProps = {}) {
+  const { allCompanies, loading: hookLoading } = useCompanies();
   const router = useRouter();
+
+  const data = companies ?? allCompanies;
+  const loading = loadingOverride ?? hookLoading;
 
   return (
     <>
@@ -127,7 +147,7 @@ export function AllCompaniesFormCard() {
               </CardContent>
             </Card>
           ))
-        : allCompanies.map((company) => (
+        : data.map((company) => (
             <Card
               key={company.id}
               className="flex p-4 gap-6 justify-between hover:shadow-lg transition-shadow"

@@ -2,7 +2,10 @@
 
 import { X } from "lucide-react";
 
-export function TaskDrawer({ isOpen, task, onClose }) {
+// TODO(playground):
+// - Reemplazar por un componente Drawer del design-system para consistencia (focus trap, aria, portal).
+// - Añadir rol="dialog" aria-modal y gestionar focus al abrir/cerrar.
+export function TaskDrawer({ isOpen, jobSeeker, onClose }) {
   if (!isOpen) return null;
 
   return (
@@ -18,7 +21,7 @@ export function TaskDrawer({ isOpen, task, onClose }) {
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold">Task Details</h2>
+            <h2 className="text-xl font-bold">Job Seeker Details</h2>
             <button
               onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -30,22 +33,22 @@ export function TaskDrawer({ isOpen, task, onClose }) {
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto p-6">
-            {task && (
+            {jobSeeker && (
               <div className="flex flex-col gap-6">
-                {/* Task Title */}
+                {/* Job Seeker Name */}
                 <div>
                   <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
-                    Title
+                    Name
                   </label>
-                  <p className="mt-2 text-lg font-medium">{task.content}</p>
+                  <p className="mt-2 text-lg font-medium">{jobSeeker.name}</p>
                 </div>
 
-                {/* Task ID */}
+                {/* Job Seeker ID */}
                 <div>
                   <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
-                    Task ID
+                    ID
                   </label>
-                  <p className="mt-2 text-gray-700">{task.id}</p>
+                  <p className="mt-2 text-gray-700">{jobSeeker.id}</p>
                 </div>
 
                 {/* Status */}
@@ -55,9 +58,9 @@ export function TaskDrawer({ isOpen, task, onClose }) {
                   </label>
                   <div className="mt-2">
                     <span
-                      className={`${task.statusColor} text-white text-xs px-2 py-1 rounded-full`}
+                      className={`${jobSeeker.statusColor} text-white text-xs px-2 py-1 rounded-full`}
                     >
-                      {task.statusLabel}
+                      {jobSeeker.statusLabel}
                     </span>
                   </div>
                 </div>

@@ -10,7 +10,7 @@ import {
 import { Building2, Plus } from "lucide-react";
 import { SecondaryButton } from "@/components/design-system/primary-button";
 import { Label } from "@/components/ui/label";
-import type { AssessmentCategory } from "@/types/assessment-category";
+import type { AssessmentCategory } from "@/types/assessment-types";
 
 interface QuestionOption {
   value: string;

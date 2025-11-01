@@ -2,6 +2,9 @@
 
 import { LayoutGrid, Columns3 } from "lucide-react";
 
+// TODO(playground):
+// - Convertir en un ToggleGroup del design-system para estilos/estados consistentes.
+// - Añadir aria-pressed y labels accesibles.
 export function ViewToggle({ viewMode, onViewModeChange }) {
   return (
     <div className="flex gap-2 bg-gray-100 p-1 rounded-lg">

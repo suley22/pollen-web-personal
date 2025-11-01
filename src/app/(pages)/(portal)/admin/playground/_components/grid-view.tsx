@@ -1,8 +1,12 @@
 "use client";
 
-import { GridRow } from "./grid-row";
+import GridRow from "./grid-row";
 
-export function GridView({ tasks, onTaskClick }) {
+// TODO(playground):
+// - Considerar semántica de tabla (<table>) para accesibilidad y navegación.
+// - Añadir paginación/virtualización si el volumen de filas es grande.
+// - Extraer cabecera a un componente reutilizable si hay más vistas tipo grid.
+export function GridView({ jobSeekers, onJobSeekerClick }) {
   return (
     <div className="w-full">
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
@@ -18,8 +22,12 @@ export function GridView({ tasks, onTaskClick }) {
 
         {/* Table Rows */}
         <div className="divide-y divide-gray-200">
-          {tasks.map((task) => (
-            <GridRow key={task.id} task={task} onClick={onTaskClick} />
+          {jobSeekers.map((jobSeeker) => (
+            <GridRow
+              key={jobSeeker.id}
+              jobSeeker={jobSeeker}
+              onClick={onJobSeekerClick}
+            />
           ))}
         </div>
       </div>

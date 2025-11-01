@@ -20,11 +20,7 @@ export function AccoladesAccreditations({
     >
       <div className="flex flex-wrap gap-2">
         {accolades.map((accolade) => (
-          <Badge
-            key={accolade}
-            variant="outline"
-            className="text-xs"
-          >
+          <Badge key={accolade} variant="outline" className="text-xs">
             {accolade}
           </Badge>
         ))}

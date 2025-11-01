@@ -39,7 +39,7 @@ export function PrimaryButton({
       size="default"
       onClick={onClick}
       disabled={disabled || loading}
-      className={cn("max-w-xs font-sora gap-2", className)}
+      className={cn("font-sora gap-2", className)}
     >
       {iconWithSize}
       {loading ? "Loading..." : text}

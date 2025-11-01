@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import type { AssessmentCategory } from "@/types/assessment-category";
-import { useCreateAssessment } from "../../_services/assessments-page-service";
+import type { AssessmentCategory } from "@/types/assessment-types";
+import {
+  useCreateAssessment,
+  useUpdateAssessment,
+} from "../../_services/assessments-page-service";
 import { AdminRoutes } from "@/admin/router";
+import type { AssessmentQuestion } from "@/types/assessment-types";
 
 interface MultipleChoiceQuestion {
   title: string;
@@ -14,17 +18,16 @@ interface MultipleChoiceQuestion {
   categoryId?: string;
 }
 
-export function useAssessmentCreate({ id = null }) {
+export function useAssessmentCreate({
+  questions: initialQuestions,
+  categories: initialCategories,
+}: {
+  questions?: AssessmentQuestion[];
+  categories?: AssessmentCategory[];
+}) {
   const router = useRouter();
   const createAssessmentMutation = useCreateAssessment();
-
-  // Estado para el assessment
-  const [internalPollenTitle, setInternalPollenTitle] = useState("");
-  const [assessmentTitle, setAssessmentTitle] = useState("");
-  const [assessmentDescription, setAssessmentDescription] = useState("");
-  const [estimatedDuration, setEstimatedDuration] = useState("");
-  const [instructionsTitle, setInstructionsTitle] = useState("");
-  const [instructionsDescription, setInstructionsDescription] = useState("");
+  const updateAssessmentMutation = useUpdateAssessment();
 
   // Estado para categorías
   const [categories, setCategories] = useState<AssessmentCategory[]>([]);
@@ -47,6 +50,32 @@ export function useAssessmentCreate({ id = null }) {
   const [editingQuestionIndex, setEditingQuestionIndex] = useState<
     number | null
   >(null);
+
+  // Initialize state from props (edit mode)
+  useEffect(() => {
+    // Load categories if available
+    if (initialCategories && initialCategories.length > 0) {
+      const loadedCategories = initialCategories.map((cat) => ({
+        id: cat.id,
+        name: cat.name,
+        description: cat.description || "",
+        color: cat.color,
+      }));
+      setCategories(loadedCategories);
+    }
+
+    // Load questions and convert them from the new structure
+    if (initialQuestions && initialQuestions.length > 0) {
+      const loadedQuestions = initialQuestions.map((q) => ({
+        title: q.title,
+        description: q.subtitle || "",
+        options_title: q.multiple_choice?.options_title || "",
+        options: q.multiple_choice?.options || [],
+        categoryId: q.multiple_choice?.categoryId,
+      }));
+      setQuestions(loadedQuestions);
+    }
+  }, [initialQuestions, initialCategories]);
 
   // Funciones para categorías
   const handleAddCategory = () => {
@@ -193,9 +222,10 @@ export function useAssessmentCreate({ id = null }) {
 
   const handleSubmit = async (
     assessmentType: "multiple_choice" | "free_input" | "file_upload",
-    assessmentData?: {
+    assessmentData: {
+      id?: string;
       internalPollenTitle?: string;
-      assessmentTitle?: string;
+      assessmentTitle: string;
       assessmentDescription?: string;
       estimatedDuration?: string;
       instructionsTitle?: string;
@@ -209,23 +239,8 @@ export function useAssessmentCreate({ id = null }) {
       );
       console.log("[Multiple Choice Hook] Questions count:", questions.length);
 
-      // Use provided data or fall back to hook state
-      const dataToSubmit = {
-        internalPollenTitle:
-          assessmentData?.internalPollenTitle ?? internalPollenTitle,
-        assessmentTitle: assessmentData?.assessmentTitle ?? assessmentTitle,
-        assessmentDescription:
-          assessmentData?.assessmentDescription ?? assessmentDescription,
-        estimatedDuration:
-          assessmentData?.estimatedDuration ?? estimatedDuration,
-        instructionsTitle:
-          assessmentData?.instructionsTitle ?? instructionsTitle,
-        instructionsDescription:
-          assessmentData?.instructionsDescription ?? instructionsDescription,
-      };
-
       // Validate required fields
-      if (!dataToSubmit.assessmentTitle.trim()) {
+      if (!assessmentData.assessmentTitle.trim()) {
         throw new Error("Assessment title is required");
       }
 
@@ -234,15 +249,14 @@ export function useAssessmentCreate({ id = null }) {
         throw new Error("At least one question is required");
       }
 
-      // Create assessment using mutation
-      const result = await createAssessmentMutation.mutateAsync({
-        internal_pollen_title: dataToSubmit.internalPollenTitle || undefined,
-        title: dataToSubmit.assessmentTitle,
-        subtitle: dataToSubmit.assessmentDescription || undefined,
-        estimated_duration: dataToSubmit.estimatedDuration || undefined,
-        instructions_title: dataToSubmit.instructionsTitle || undefined,
+      const assessmentInput = {
+        internal_pollen_title: assessmentData.internalPollenTitle || null,
+        title: assessmentData.assessmentTitle,
+        subtitle: assessmentData.assessmentDescription || null,
+        estimated_duration: assessmentData.estimatedDuration || null,
+        instructions_title: assessmentData.instructionsTitle || null,
         instructions_description:
-          dataToSubmit.instructionsDescription || undefined,
+          assessmentData.instructionsDescription || null,
         type: assessmentType,
         categories: categories.length > 0 ? categories : undefined,
         questions: questions.map((q) => ({
@@ -255,9 +269,22 @@ export function useAssessmentCreate({ id = null }) {
             categoryId: q.categoryId,
           },
         })),
-      });
+      };
 
-      console.log("Assessment created successfully:", result);
+      // Use update mutation if assessment id exists, otherwise create
+      const result = assessmentData.id
+        ? await updateAssessmentMutation.mutateAsync({
+            id: assessmentData.id,
+            input: assessmentInput,
+          })
+        : await createAssessmentMutation.mutateAsync(assessmentInput);
+
+      console.log(
+        assessmentData.id
+          ? "Assessment updated successfully:"
+          : "Assessment created successfully:",
+        result,
+      );
 
       // Navigate to assessments list
       router.push(AdminRoutes.assessments);
@@ -268,20 +295,6 @@ export function useAssessmentCreate({ id = null }) {
   };
 
   return {
-    // Assessment data
-    internalPollenTitle,
-    setInternalPollenTitle,
-    assessmentTitle,
-    setAssessmentTitle,
-    assessmentDescription,
-    setAssessmentDescription,
-    estimatedDuration,
-    setEstimatedDuration,
-    instructionsTitle,
-    setInstructionsTitle,
-    instructionsDescription,
-    setInstructionsDescription,
-
     // Categories
     categories,
     categoryName,
@@ -323,7 +336,8 @@ export function useAssessmentCreate({ id = null }) {
     handleSubmit,
 
     // Mutation states
-    isSaving: createAssessmentMutation.isPending,
-    saveError: createAssessmentMutation.error,
+    isSaving:
+      createAssessmentMutation.isPending || updateAssessmentMutation.isPending,
+    saveError: createAssessmentMutation.error || updateAssessmentMutation.error,
   };
 }

@@ -13,17 +13,18 @@ export function FeaturedJobs() {
   const router = useRouter();
 
   return (
-    <FormCard
-      title="This Week's Featured Jobs"
-      icon={<Star className="h-5 w-5" />}
-      titleButtons={
+    <>
+      <div className="flex flex-rows items-center justify-between">
+        <div className="text-lg font-medium text-gray-900">
+          My Assigned Jobs
+        </div>
         <SecondaryButton
           text="View All Jobs"
           onClick={() => router.push("/jobs")}
           icon={<ChevronRight className="h-4 w-4" />}
         />
-      }
-    >
+      </div>
+
       <div className="flex flex-col gap-4">
         <FeatureJobCards
           jobs={jobs}
@@ -37,6 +38,6 @@ export function FeaturedJobs() {
           saveFavoriteJob={saveFavoriteJob}
         />
       </div>
-    </FormCard>
+    </>
   );
 }

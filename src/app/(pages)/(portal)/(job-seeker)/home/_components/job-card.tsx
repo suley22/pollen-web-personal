@@ -42,7 +42,7 @@ export function JobCard({ job, isSaved, onToggleSave, onApply }) {
             <div className="font-semibold text-gray-900 text-base">
               {job.title}
             </div>
-            <div className="flex flex-row items-center gap-3 mt-1">
+            <div className="flex flex-col items-start gap-2">
               <span className="flex items-center gap-1">
                 <Building className="w-3 h-3" />
                 <a

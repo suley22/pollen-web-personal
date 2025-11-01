@@ -2,7 +2,6 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/utils/supabase/client";
-import { DateHelper } from "@/lib/helpers/date-helper";
 import { getLoggedInUserId } from "@/services/userService";
 
 const supabase = createClient();
@@ -30,14 +29,14 @@ export function useJobsList(filters: JobFilters) {
       let countQuery = supabase
         .from("job")
         .select("*", { count: "exact", head: true })
-        .filter("deleted_at", "is", null);
+        .is("deleted_at", null);
 
       if (filters.status && filters.status !== "all") {
         countQuery = countQuery.eq("status", filters.status);
       }
 
       if (filters.assignment && filters.assignment !== "all") {
-        countQuery = countQuery.eq("assigned_to", filters.assignment);
+        countQuery = countQuery.eq("user_id", filters.assignment);
       }
 
       if (filters.searchTerm) {
@@ -52,7 +51,7 @@ export function useJobsList(filters: JobFilters) {
         throw new Error(countError.message);
       }
 
-      // Data query with employer_profile join to get current company name
+      // Data query with employer_profile join
       let query = supabase
         .from("job")
         .select(
@@ -65,7 +64,7 @@ export function useJobsList(filters: JobFilters) {
         `,
         )
         .order("created_at", { ascending: false })
-        .filter("deleted_at", "is", null)
+        .is("deleted_at", null)
         .range(from, to);
 
       if (filters.status && filters.status !== "all") {
@@ -73,7 +72,7 @@ export function useJobsList(filters: JobFilters) {
       }
 
       if (filters.assignment && filters.assignment !== "all") {
-        query = query.eq("assigned_to", filters.assignment);
+        query = query.eq("user_id", filters.assignment);
       }
 
       if (filters.searchTerm) {
@@ -90,23 +89,48 @@ export function useJobsList(filters: JobFilters) {
 
       const totalPages = Math.ceil((count || 0) / pageSize);
 
+      // Get unique user_ids to fetch profiles
+      const userIds = [
+        ...new Set(data?.map((job) => job.user_id).filter(Boolean)),
+      ];
+
+      // Fetch profiles for all user_ids in one query
+      let profilesMap = new Map();
+      if (userIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("profile")
+          .select("id, first_name, last_name")
+          .in("id", userIds);
+
+        profiles?.forEach((profile) => {
+          profilesMap.set(profile.id, profile);
+        });
+      }
+
       // Normalize jobs data - prioritize employer_profile company_name
       const normalizedJobs =
-        data?.map((job) => ({
-          ...job,
-          assigned_date: job.published_at || job.created_at,
-          total_applications: job.total_applications || 0,
-          newApplicationsToReview: job.new_applications_to_review || 0,
-          pollenInterviewsBooked: job.pollen_interviews_booked || 0,
-          needsApproval: job.needs_approval || false,
-          company_name:
-            job.employer_profile?.company_name ||
-            job.company_name ||
-            "Unknown Company",
-          company_logo_url: job.employer_profile?.logo_url || null,
-          responsibilities: job.responsibilities || [],
-          who_would_love: job.who_would_love || [],
-        })) || [];
+        data?.map((job) => {
+          const profile = job.user_id ? profilesMap.get(job.user_id) : null;
+          return {
+            ...job,
+            assigned_date: job.published_at || job.created_at,
+            total_applications: job.total_applications || 0,
+            newApplicationsToReview: job.new_applications_to_review || 0,
+            pollenInterviewsBooked: job.pollen_interviews_booked || 0,
+            needsApproval: job.needs_approval || false,
+            company_name:
+              job.employer_profile?.company_name ||
+              job.company_name ||
+              "Unknown Company",
+            company_logo_url: job.employer_profile?.logo_url || null,
+            responsibilities: job.responsibilities || [],
+            who_would_love: job.who_would_love || [],
+            admin:
+              profile?.first_name || profile?.last_name
+                ? `${profile?.last_name || ""} ${profile?.first_name || ""}`.trim()
+                : "Unassigned",
+          };
+        }) || [];
 
       return {
         jobs: normalizedJobs,
@@ -129,10 +153,15 @@ export function useJobsStatistics(filters?: JobFilters) {
   return useQuery({
     queryKey: [jobsQueryKey, "statistics", filters],
     queryFn: async () => {
+      console.log(
+        "📊 useJobsStatistics - Fetching statistics with filters:",
+        filters,
+      );
+
       let query = supabase
         .from("job")
-        .select("status, assigned_to")
-        .filter("deleted_at", "is", null);
+        .select("status, user_id")
+        .is("deleted_at", null);
 
       if (filters?.searchTerm) {
         query = query.or(
@@ -143,19 +172,26 @@ export function useJobsStatistics(filters?: JobFilters) {
       const { data, error } = await query;
 
       if (error) {
+        console.error("❌ Error fetching statistics:", error);
         throw new Error(error.message);
       }
 
-      return {
+      console.log("✅ Statistics data received:", data?.length, "jobs");
+      console.log("📊 Raw data:", data);
+
+      const stats = {
         total: data?.length || 0,
         draft: data?.filter((j) => j.status === "draft").length || 0,
         live: data?.filter((j) => j.status === "live").length || 0,
         paused: data?.filter((j) => j.status === "paused").length || 0,
         complete: data?.filter((j) => j.status === "complete").length || 0,
         cancelled: data?.filter((j) => j.status === "cancelled").length || 0,
-        assigned: data?.filter((j) => j.assigned_to).length || 0,
-        unassigned: data?.filter((j) => !j.assigned_to).length || 0,
+        assigned: data?.filter((j) => j.user_id).length || 0,
+        unassigned: data?.filter((j) => !j.user_id).length || 0,
       };
+
+      console.log("📊 Calculated statistics:", stats);
+      return stats;
     },
   });
 }
@@ -167,7 +203,7 @@ export function useSearchEmployers(searchTerm: string) {
       let query = supabase
         .from("employer_profile")
         .select("id, company_name, logo_url")
-        .filter("deleted_at", "is", null)
+        .is("deleted_at", null)
         .eq("approval_status", "live")
         .order("company_name", { ascending: true });
 
@@ -187,13 +223,61 @@ export function useSearchEmployers(searchTerm: string) {
   });
 }
 
+export function useAdminsList() {
+  return useQuery({
+    queryKey: ["admins", "list"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profile")
+        .select("id, first_name, last_name")
+        .eq("role", "admin")
+        .order("first_name", { ascending: true });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data || [];
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
+
+export function useSearchAdmins(searchTerm: string) {
+  return useQuery({
+    queryKey: ["admins", "search", searchTerm],
+    queryFn: async () => {
+      let query = supabase
+        .from("profile")
+        .select("id, first_name, last_name")
+        .eq("role", "admin")
+        .order("first_name", { ascending: true });
+
+      if (searchTerm && searchTerm.trim()) {
+        query = query.or(
+          `first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%`,
+        );
+      }
+
+      const { data, error } = await query.limit(50);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data || [];
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
+
 export function useJobById(id: string) {
   return useQuery({
     enabled: !!id,
     queryKey: [jobsQueryKey, "profile", id],
     queryFn: async () => {
-      // TODO: Ejemplo de consulta de url de companía asociada a un job
-      const { data, error } = await supabase
+      // First get the job data
+      const { data: jobData, error: jobError } = await supabase
         .from("job")
         .select(
           `
@@ -207,10 +291,32 @@ export function useJobById(id: string) {
         .eq("id", id)
         .single();
 
-      if (error) {
-        console.error("JobService: Error fetching job by ID:", error);
-        throw new Error(error.message);
+      if (jobError) {
+        console.error("JobService: Error fetching job by ID:", jobError);
+        throw new Error(jobError.message);
       }
+
+      if (!jobData) {
+        throw new Error("Job not found");
+      }
+
+      // Then get the profile data if user_id exists
+      let profileData = null;
+      if (jobData.user_id) {
+        const { data: profile } = await supabase
+          .from("profile")
+          .select("first_name, last_name")
+          .eq("id", jobData.user_id)
+          .single();
+
+        profileData = profile;
+      }
+
+      // Combine the data
+      const data = {
+        ...jobData,
+        profile: profileData,
+      };
 
       // Normalize the job data
       const job = {
@@ -230,6 +336,10 @@ export function useJobById(id: string) {
           complete: data?.candidate_counts?.complete || 8,
           hired: data?.candidate_counts?.hired || 2,
         },
+        admin:
+          data?.profile?.first_name || data?.profile?.last_name
+            ? `${data?.profile?.last_name || ""} ${data?.profile?.first_name || ""}`.trim()
+            : "Unassigned",
       };
 
       return job;
@@ -346,6 +456,7 @@ const transformFormDataToDatabase = (formData: FormData) => {
     success_looks: formJobData.success_looks,
     pollen_approved_requirements: pollen_approved_requirements,
     internal_notes: formJobData.internal_notes,
+    user_id: formJobData.user_id || null,
   };
 };
 
@@ -596,6 +707,170 @@ export function useDeleteJob() {
     onSuccess: () => {
       // Invalidate all jobs queries to refresh the lists and statistics
       queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
+    },
+  });
+}
+
+// External Jobs Services
+const externalJobsQueryKey = "external_jobs";
+
+export function useExternalJobById(id: string) {
+  return useQuery({
+    enabled: !!id,
+    queryKey: [externalJobsQueryKey, "profile", id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("external_jobs")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        console.error("JobService: Error fetching external job by ID:", error);
+        throw new Error(error.message);
+      }
+
+      // Normalize the external job data
+      const externalJob = {
+        ...data,
+        external_links: data?.external_links || [],
+      };
+
+      return externalJob;
+    },
+  });
+}
+
+export const useCreateExternalJob = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ formData }: { formData: FormData }) => {
+      const userId = await getLoggedInUserId();
+
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
+
+      const transformedData = transformExternalJobFormDataToDatabase(formData);
+
+      // Validate required fields
+      if (
+        !transformedData.job_title ||
+        !transformedData.job_title.toString().trim()
+      ) {
+        throw new Error("Job title is required");
+      }
+
+      if (
+        !transformedData.company_name ||
+        !transformedData.company_name.toString().trim()
+      ) {
+        throw new Error("Company name is required");
+      }
+
+      // Create the external job
+      const { data: externalJobData, error: externalJobError } = await supabase
+        .from("external_jobs")
+        .insert({
+          ...transformedData,
+        })
+        .select()
+        .single();
+
+      if (externalJobError) {
+        console.error(
+          "JobService: Error creating external job:",
+          externalJobError,
+        );
+        throw new Error(
+          externalJobError.message || "Failed to create external job",
+        );
+      }
+
+      console.log("JobService: Created external job:", externalJobData);
+
+      return externalJobData;
+    },
+    onSuccess: () => {
+      // Invalidate all external jobs queries
+      queryClient.invalidateQueries({ queryKey: [externalJobsQueryKey] });
+    },
+  });
+};
+
+const transformExternalJobFormDataToDatabase = (formData: FormData) => {
+  const formJobData = Object.fromEntries(formData.entries());
+
+  // Parse external_links array field
+  const external_links = parseArrayField(formJobData.external_links);
+
+  return {
+    job_title: formJobData.job_title,
+    company_name: formJobData.company_name,
+    industries: formJobData.industries,
+    location: formJobData.location,
+    salary_range: formJobData.salary_range,
+    working_hours: formJobData.working_hours,
+    employment_type: formJobData.employment_type,
+    application_deadline: formJobData.application_deadline,
+    external_links: external_links,
+  };
+};
+
+export function useUpdateExternalJob() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      formData,
+    }: {
+      id: string;
+      formData: FormData;
+    }) => {
+      const transformedData = transformExternalJobFormDataToDatabase(formData);
+
+      // Validate required fields
+      if (
+        !transformedData.job_title ||
+        !transformedData.job_title.toString().trim()
+      ) {
+        throw new Error("Job title is required");
+      }
+
+      if (
+        !transformedData.company_name ||
+        !transformedData.company_name.toString().trim()
+      ) {
+        throw new Error("Company name is required");
+      }
+
+      const { data, error } = await supabase
+        .from("external_jobs")
+        .update({
+          ...transformedData,
+        })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("JobService: Error updating external job:", error);
+        throw new Error(error.message || "Failed to update external job");
+      }
+
+      console.log("JobService: Updated external job:", data);
+
+      return data;
+    },
+    onSuccess: (_data, variables) => {
+      // Invalidate the specific external job profile
+      queryClient.invalidateQueries({
+        queryKey: [externalJobsQueryKey, "profile", variables.id],
+      });
+      // Invalidate all external jobs queries
+      queryClient.invalidateQueries({ queryKey: [externalJobsQueryKey] });
     },
   });
 }

@@ -13,6 +13,7 @@ import {
   Select,
 } from "@/components/design-system";
 import { CompanySearchSelect } from "../jobs-create-company-select";
+import { AdminSearchSelect } from "../jobs-create-admin-select";
 import {
   WORK_ARRANGEMENT_OPTIONS,
   EMPLOYMENT_TYPE_OPTIONS,
@@ -44,10 +45,9 @@ export function JobDescriptionTab({ initialData: editedJob, formRef }) {
             onValueChange={() => {}}
           />
 
-          {/* TODO: admin assigned */}
-          <CompanySearchSelect
-            initialCompanyId={editedJob?.company_id}
-            initialCompanyName={editedJob?.company_name}
+          <AdminSearchSelect
+            initialUserId={editedJob?.user_id}
+            initialAdminName={editedJob?.admin_name}
             onValueChange={() => {}}
           />
 

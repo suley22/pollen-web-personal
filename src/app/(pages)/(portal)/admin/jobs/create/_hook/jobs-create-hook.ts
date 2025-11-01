@@ -7,6 +7,9 @@ import {
   useJobById,
   useCreateJob,
   useUpdateJob,
+  useExternalJobById,
+  useCreateExternalJob,
+  useUpdateExternalJob,
 } from "@/jobs/_services/jobs-page-service";
 import { getLoggedInUserId } from "@/services/userService";
 
@@ -76,5 +79,70 @@ export function useJobsCreatePage({ id = null }) {
     setIsDialogOpen,
     handleBack,
     saveJob,
+  };
+}
+
+export function useJobsCreateExternalPage({ id = null }) {
+  const router = useRouter();
+  const formRef = useRef(null);
+
+  const isEditMode = !!id;
+
+  // Query para obtener external job (solo si hay id - modo edición)
+  const { data: externalJob, isLoading } = useExternalJobById(id || "");
+
+  // Mutation para crear
+  const createMutation = useCreateExternalJob();
+
+  // Mutation para actualizar
+  const updateMutation = useUpdateExternalJob();
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Update state when external job data loads
+  useEffect(() => {
+    if (externalJob) {
+      // Aquí puedes inicializar estados adicionales cuando el external job cargue
+    }
+  }, [externalJob]);
+
+  const handleBack = () => {
+    router.push(AdminRoutes.jobs);
+  };
+
+  const saveExternalJob = async () => {
+    try {
+      const formData = new FormData(formRef.current);
+
+      const userId = await getLoggedInUserId();
+
+      if (!userId) {
+        throw new Error("User not authenticated");
+      }
+
+      if (id) {
+        await updateMutation.mutateAsync({ id, formData });
+      } else {
+        await createMutation.mutateAsync({ formData });
+      }
+
+      // Redirect to jobs list after success
+      router.push(AdminRoutes.jobs);
+    } catch (error) {
+      console.error("Error saving external job:", error);
+      throw error;
+    }
+  };
+
+  return {
+    externalJob,
+    formRef,
+    isLoading:
+      isLoading || createMutation.isPending || updateMutation.isPending,
+    isEditMode,
+    isDialogOpen,
+    setIsDialogOpen,
+    handleBack,
+    saveExternalJob,
   };
 }

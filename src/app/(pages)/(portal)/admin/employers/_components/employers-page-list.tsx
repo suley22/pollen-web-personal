@@ -6,16 +6,7 @@ import { EmployerProfileHelper } from "@/types/employers-types";
 import { Building2 } from "lucide-react";
 import { ResultsCount } from "@/app/(pages)/(portal)/admin/employers/_components/employers-page-results-count";
 
-import {
-  User,
-  Users,
-  Globe,
-  Mail,
-  Phone,
-  Eye,
-  Edit,
-  Trash2,
-} from "lucide-react";
+import { User, Users, Globe, Mail, Phone, Eye, Edit } from "lucide-react";
 import { EmployerStatusBadge } from "@/components/design-system";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";

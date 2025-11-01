@@ -17,15 +17,15 @@ export function HomeJobs() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border">
-      <div className="px-6 py-4 border-b border-gray-200">
+    <div>
+      <div className="pl-1 mb-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-medium text-gray-900">
+          <div className="text-lg font-medium text-gray-900">
             My Assigned Jobs
-          </h2>
+          </div>
           <Button
             variant="outline"
-            className="justify-start h-12"
+            className="justify-start"
             size="sm"
             onClick={() => router.push(AdminRoutes.jobs)}
           >
@@ -33,8 +33,7 @@ export function HomeJobs() {
           </Button>
         </div>
       </div>
-
-      <div className="p-6 space-y-3">
+      <div className="grid grid-cols-2 gap-4">
         {homeState.loading ? (
           <ListSkeleton />
         ) : homeState.jobs && homeState.jobs.length > 0 ? (
@@ -44,7 +43,7 @@ export function HomeJobs() {
             );
           })
         ) : (
-          <div className="text-center text-gray-400 py-8">
+          <div className="col-span-2 text-center text-gray-400 py-8">
             No jobs assigned.
           </div>
         )}

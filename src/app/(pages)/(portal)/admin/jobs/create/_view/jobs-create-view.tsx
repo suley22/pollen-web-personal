@@ -2,7 +2,6 @@
 
 import { FileText, UserCheck, Brain, CheckCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 
 import {
   PageContainer,

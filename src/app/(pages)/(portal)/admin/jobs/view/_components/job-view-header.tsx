@@ -1,6 +1,7 @@
 "use client";
 
 import { PageHeader } from "@/components/design-system/page-header";
+import { JobStatusBadge } from "@/components/design-system/job-status-badge";
 import {
   SuccessButton,
   CompleteButton,
@@ -33,7 +34,12 @@ export function JobViewHeader({
 
   return (
     <PageHeader
-      title={`${jobTitle} at ${companyName}`}
+      title={
+        <div className="flex items-center gap-3">
+          <span>{`${jobTitle} at ${companyName}`}</span>
+          <JobStatusBadge status={jobStatus} />
+        </div>
+      }
       showBackButton={true}
       onBack={onBack}
     >
@@ -139,22 +145,30 @@ export function JobViewHeader({
         </>
       )}
 
-      {/* Complete or Cancelled Status: Only Delete (soft delete with deleted_at) */}
+      {/* Complete or Cancelled Status: Set Live and Delete */}
       {(isComplete || isCancelled) && (
-        <DeleteConfirmationDialog
-          trigger={
-            <DangerButton
-              text="Delete"
-              icon={<Trash2 />}
-              disabled={isUpdating || isDeleting}
-            />
-          }
-          title="Delete Job"
-          description="Are you sure you want to permanently delete {itemName}? This action cannot be undone."
-          itemName={jobTitle}
-          onConfirm={onDelete}
-          confirmText="Delete Job"
-        />
+        <>
+          <SuccessButton
+            text="Set Live"
+            icon={<Play />}
+            onClick={onGoLive}
+            disabled={isUpdating || isDeleting}
+          />
+          <DeleteConfirmationDialog
+            trigger={
+              <DangerButton
+                text="Delete"
+                icon={<Trash2 />}
+                disabled={isUpdating || isDeleting}
+              />
+            }
+            title="Delete Job"
+            description="Are you sure you want to permanently delete {itemName}? This action cannot be undone."
+            itemName={jobTitle}
+            onConfirm={onDelete}
+            confirmText="Delete Job"
+          />
+        </>
       )}
     </PageHeader>
   );

@@ -5,12 +5,16 @@ import { Divider } from "@/components/design-system";
 import { AssessmentCreateFileUploadQuestions } from "../_components/assessment-create-file-upload-questions";
 import { AssessmentCreateFileUploadPreview } from "../_components/assessment-create-file-upload-preview";
 import { useAssessmentCreateFileUpload } from "../_hooks/assessment-create-file-upload-hook";
+import type { Assessment } from "@/types/assessment-types";
 
 interface AssessmentCreateFileUploadViewProps {
   assessmentTitle: string;
   assessmentDescription: string;
+  estimatedDuration: string;
+  internalPollenTitle: string;
   instructionsTitle: string;
   instructionsDescription: string;
+  assessment?: Assessment;
   onSaveRef?: (fn: () => Promise<void>) => void;
   onSavingChange?: (isSaving: boolean) => void;
 }
@@ -18,8 +22,11 @@ interface AssessmentCreateFileUploadViewProps {
 export function AssessmentCreateFileUploadView({
   assessmentTitle,
   assessmentDescription,
+  estimatedDuration,
+  internalPollenTitle,
   instructionsTitle,
   instructionsDescription,
+  assessment,
   onSaveRef,
   onSavingChange,
 }: AssessmentCreateFileUploadViewProps) {
@@ -43,21 +50,25 @@ export function AssessmentCreateFileUploadView({
     handleBack,
     handleSubmit,
     isSaving,
-  } = useAssessmentCreateFileUpload();
+  } = useAssessmentCreateFileUpload({ questions: assessment?.questions });
 
   const handleSaveDraft = useCallback(async () => {
     await handleSubmit("file_upload", {
-      internal_pollen_title: "",
+      id: assessment?.id,
+      internal_pollen_title: internalPollenTitle,
       title: assessmentTitle,
       subtitle: assessmentDescription,
-      estimated_duration: "",
+      estimated_duration: estimatedDuration,
       instructions_title: instructionsTitle,
       instructions_description: instructionsDescription,
     });
   }, [
     handleSubmit,
+    assessment?.id,
+    internalPollenTitle,
     assessmentTitle,
     assessmentDescription,
+    estimatedDuration,
     instructionsTitle,
     instructionsDescription,
   ]);

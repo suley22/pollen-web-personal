@@ -23,8 +23,8 @@ export function JobOverviewCard({ job }) {
 
           {/* TODO: admin assigned */}
           <InfoField
-            label="Company"
-            value={job?.company_name}
+            label="Asiggned to"
+            value={job?.admin}
             icon={<Building className="h-4 w-4 text-muted-foreground" />}
           />
           <InfoField

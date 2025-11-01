@@ -22,9 +22,9 @@ export interface JobsFilters {
 // ===============
 // Hook: fetch jobs with filters
 // ===============
-export function useJobs(filters: JobsFilters) {
+export function usePollenJobs(filters: JobsFilters) {
   return useQuery({
-    queryKey: [jobsQueryKey, "list", filters],
+    queryKey: [jobsQueryKey, "pollen", "list", filters],
     queryFn: async () => {
       // Solo traer trabajos aprobados por Pollen y en estado "live"
       let jobQuery = supabase
@@ -74,9 +74,12 @@ export function useJobs(filters: JobsFilters) {
 
 export function useExternalJobs(filters: JobsFilters) {
   return useQuery({
-    queryKey: [jobsQueryKey, "list", filters],
+    queryKey: [jobsQueryKey, "external", "list", filters],
     queryFn: async () => {
-      let jobQuery = supabase.from("external_jobs").select("*").eq("status", "live");
+      let jobQuery = supabase
+        .from("external_jobs")
+        .select("*")
+        .eq("status", "live");
 
       if (filters.industry && filters.industry !== "all") {
         jobQuery = jobQuery.eq("industry", filters.industry);

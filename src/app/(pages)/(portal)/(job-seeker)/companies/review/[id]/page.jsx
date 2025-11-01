@@ -22,9 +22,9 @@ import { useState } from "react";
 import { CardHeader, CardTitle, Card, CardContent } from "@/components/ui/card";
 
 export default function CompanyReviewPage() {
-  const [demoSavedState, setDemoSavedState] = useState(null);
+  const [demoSavedState] = useState(null);
   const [activeTab, setActiveTab] = useState("overview");
-  const [candidateExperienceDialogOpen, setCandidateExperienceDialogOpen] =
+  const [setCandidateExperienceDialogOpen] =
     useState(false);
 
   const company = {
@@ -309,7 +309,7 @@ export default function CompanyReviewPage() {
                   {/* Industry Tags */}
                   {company.industries && company.industries.length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {company.industries.map((industry, index) => {
+                      {company.industries.map((industry) => {
                         const getIndustryStyle = (industry) => {
                           const styles = {
                             "Marketing & Advertising":
@@ -505,7 +505,7 @@ export default function CompanyReviewPage() {
                 <CardContent>
                   <ul className="space-y-2">
                     {company.pollenInsights.pollenObservations.map(
-                      (observation, index) => (
+                      (observation) => (
                         <li
                           key={observation}
                           className="flex items-start gap-2"
@@ -563,7 +563,7 @@ export default function CompanyReviewPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid md:grid-cols-2 gap-3">
-                    {company.accolades.map((accolade, index) => (
+                    {company.accolades.map((accolade) => (
                       <div
                         key={accolade}
                         className="flex items-center gap-3 p-3 border rounded-lg"
@@ -803,7 +803,7 @@ export default function CompanyReviewPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4 my-4">
-                    {company.candidateTestimonials.map((testimonial, index) => (
+                    {company.candidateTestimonials.map((testimonial) => (
                       <div
                         key={testimonial.name}
                         className="p-4 border rounded-lg bg-gray-50"

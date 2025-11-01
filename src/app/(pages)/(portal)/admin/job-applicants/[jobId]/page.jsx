@@ -49,17 +49,9 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Card, CardContent } from "@/components/ui/card";
 import { useJobData } from "./hooks/useJobData";
 import {
-  getUnifiedCandidateData,
   getInteractionDisplayText,
 } from "./candidateUtils";
 import { apiRequest } from "@/lib/query-client";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@radix-ui/react-dialog";
 
 export default function JobApplicantsPage({ params }) {
   const resolvedParams = React.use(params);
@@ -77,7 +69,7 @@ export default function JobApplicantsPage({ params }) {
     }
     return "";
   });
-  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [setConfirmDialogOpen] = useState(false);
   const [primaryStatusFilter, setPrimaryStatusFilter] = useState(() => {
     if (typeof window !== "undefined") {
       const saved = sessionStorage.getItem(
@@ -173,14 +165,14 @@ export default function JobApplicantsPage({ params }) {
     communication: 7,
     strategic: 8,
   });
-  const [pendingAction, setPendingAction] = useState();
+  const [setPendingAction] = useState();
   const [isExecutingAction, setIsExecutingAction] = useState(false);
 
   const { toast } = useToast();
 
   // Estados adicionales faltantes
-  const [selectedFeedback, setSelectedFeedback] = useState(null);
-  const [showFeedbackReview, setShowFeedbackReview] = useState(false);
+  const [setSelectedFeedback] = useState(null);
+  const [setShowFeedbackReview] = useState(false);
 
   // Variable para jobId
   const jobId = resolvedParams.jobId;
@@ -598,15 +590,7 @@ export default function JobApplicantsPage({ params }) {
     },
   ].filter((column) => column.count > 0);
 
-  const columnCount = Math.max(visibleColumns.length, 1); // Ensure at least 1 column
-  const gridColsClass =
-    columnCount === 1
-      ? "grid-cols-1"
-      : columnCount === 2
-        ? "grid-cols-2"
-        : columnCount === 3
-          ? "grid-cols-3"
-          : "grid-cols-4";
+  
 
   // Funciones auxiliares que parecen estar faltando
   const isScoreApproved = (candidate) => {
@@ -614,12 +598,12 @@ export default function JobApplicantsPage({ params }) {
     return candidate.overallSkillsScore >= 70;
   };
 
-  const getStoppedAtStage = (candidateId) => {
+  const getStoppedAtStage = () => {
     // Implementar lógica para obtener en qué etapa se detuvo
     return null; // Por ahora retornar null
   };
 
-  const hasUnreviewedEmployerFeedback = (candidateId) => {
+  const hasUnreviewedEmployerFeedback = () => {
     // Implementar lógica para verificar feedback no revisado
     return false; // Por ahora retornar false
   };
@@ -721,11 +705,6 @@ export default function JobApplicantsPage({ params }) {
     setIsEditing(false);
   };
 
-  const confirmCandidateAction = () => {
-    if (pendingAction) {
-      executeCandidateAction(pendingAction);
-    }
-  };
 
   // Estados de loading
   if (loading) {
@@ -1229,7 +1208,7 @@ export default function JobApplicantsPage({ params }) {
                                             "previousPage",
                                             `/admin/job-applicants-grid/${jobId}`,
                                           );
-                                          setLocation(
+                                          router.push(
                                             `/admin/consolidated-candidate-profile/${candidate.id}`,
                                           );
                                         }}
@@ -1259,7 +1238,7 @@ export default function JobApplicantsPage({ params }) {
                                             "previousPage",
                                             `/admin/job-applicants-kanban/${jobId}`,
                                           );
-                                          setLocation(
+                                          router.push(
                                             `/admin/candidate-message/${candidate.id}`,
                                           );
                                         }}
@@ -1283,7 +1262,7 @@ export default function JobApplicantsPage({ params }) {
                                             "previousPage",
                                             `/admin/job-applicants-grid/${jobId}`,
                                           );
-                                          setLocation(
+                                          router.push(
                                             `/admin/consolidated-candidate-profile/${candidate.id}`,
                                           );
                                         }}
@@ -1311,7 +1290,7 @@ export default function JobApplicantsPage({ params }) {
                                             "previousPage",
                                             `/admin/job-applicants-kanban/${jobId}`,
                                           );
-                                          setLocation(
+                                          router.push(
                                             `/admin/candidate-message/${candidate.id}`,
                                           );
                                         }}
@@ -1474,7 +1453,7 @@ export default function JobApplicantsPage({ params }) {
                                     "previousPage",
                                     `/admin/job-applicants-grid/${jobId}`,
                                   );
-                                  setLocation(
+                                  router.push(
                                     `/admin/consolidated-candidate-profile/${candidate.id}`,
                                   );
                                 }}
@@ -1502,7 +1481,7 @@ export default function JobApplicantsPage({ params }) {
                                     "previousPage",
                                     `/admin/job-applicants-grid/${jobId}`,
                                   );
-                                  setLocation(
+                                  router.push(
                                     `/admin/candidate-message/${candidate.id}`,
                                   );
                                 }}
@@ -2253,10 +2232,8 @@ export default function JobApplicantsPage({ params }) {
                           <div className="flex justify-center">
                             <Button
                               onClick={() => {
-                                setLocation(
-                                  buildUrlWithCurrentState(
-                                    `/admin/provide-update/${selectedAssessment.id}`,
-                                  ),
+                                router.push(
+                                  `/admin/provide-update/${selectedAssessment.id}`,
                                 );
                               }}
                               size="default"

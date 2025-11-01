@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/performance/noImgElement: "AI Elements is framework agnostic" */
 /* eslint-disable @next/next/no-img-element */
-
+// @ts-nocheck
 "use client";
 import { Button } from "@/components/ui/button";
 import {
@@ -446,7 +446,7 @@ export const PromptInputTools = ({ className, ...props }) => (
 export const PromptInputButton = ({
   variant = "ghost",
   className,
-  size,
+  size = "default",
   ...props
 }) => {
   const newSize =

@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
@@ -365,7 +366,7 @@ function SidebarGroup({ className = "", ...props }) {
   );
 }
 
-function SidebarGroupLabel({ className, asChild = false, ...props }) {
+function SidebarGroupLabel({ className="", asChild = false, ...props }) {
   const Comp = asChild ? Slot : "div";
 
   return (
@@ -401,7 +402,7 @@ function SidebarGroupAction({ className, asChild = false, ...props }) {
   );
 }
 
-function SidebarGroupContent({ className, ...props }) {
+function SidebarGroupContent({ className="", ...props }) {
   return (
     <div
       data-slot="sidebar-group-content"

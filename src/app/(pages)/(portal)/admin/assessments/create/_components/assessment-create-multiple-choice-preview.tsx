@@ -11,7 +11,7 @@ import {
   WarningBadge,
 } from "@/components/design-system";
 import { QuestionActionButtons } from "./question-action-buttons";
-import type { AssessmentCategory } from "@/types/assessment-category";
+import type { AssessmentCategory } from "@/types/assessment-types";
 
 interface AssessmentOption {
   value: string;

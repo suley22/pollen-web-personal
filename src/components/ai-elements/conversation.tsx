@@ -13,11 +13,15 @@ export const Conversation = ({ className, ...props }) => (
     resize="smooth"
     role="log"
     {...props}
-  />
+  >
+    {props.children}
+  </StickToBottom>
 );
 
 export const ConversationContent = ({ className, ...props }) => (
-  <StickToBottom.Content className={cn("p-4", className)} {...props} />
+  <StickToBottom.Content className={cn("p-4", className)} {...props} >
+    {props.children}
+  </StickToBottom.Content>
 );
 
 export const ConversationEmptyState = ({

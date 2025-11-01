@@ -5,10 +5,6 @@
  * DEPRECATED: This component is no longer used. Industry selection is now handled
  * in CompanyInformation component.
  */
-export function IndustryCategoriesSection({
-  initialSelectedIndustries = [],
-  onChange,
-  allowCustomItems = true,
-}) {
+export function IndustryCategoriesSection() {
   return null;
 }

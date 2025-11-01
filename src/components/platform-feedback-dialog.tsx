@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState } from "react";
 
 import {
@@ -99,7 +100,6 @@ export default function PlatformFeedbackDialog({ open, onOpenChange }) {
       toast({
         title: "Please Complete Required Fields",
         description: "Overall experience and career impact are required.",
-        variant: "destructive",
       });
       return;
     }

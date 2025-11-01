@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import type { AssessmentCategory } from "@/types/assessment-category";
+import type { AssessmentCategory } from "@/types/assessment-types";
 import type { AssessmentQuestion } from "@/types/assessment-question";
 
 interface CategoryDistributionChartProps {

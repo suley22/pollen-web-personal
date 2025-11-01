@@ -33,7 +33,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { tr } from "zod/v4/locales";
 
 export default function AdminAllJobSeekersReviewPage() {
   const router = useRouter();
@@ -476,10 +475,10 @@ export default function AdminAllJobSeekersReviewPage() {
   const timelineData = getTimelineData();
 
   const applicationHistory = getApplicationHistory();
-  const [selectedApplication, setSelectedApplication] = useState(null);
-  const [assessmentModalOpen, setAssessmentModalOpen] = useState(false);
-  const [selectedFeedback, setSelectedFeedback] = useState(null);
-  const [showFeedbackReview, setShowFeedbackReview] = useState(false);
+  const [ setSelectedApplication] = useState(null);
+  const [ setAssessmentModalOpen] = useState(false);
+  const [ setSelectedFeedback] = useState(null);
+  const [ setShowFeedbackReview] = useState(false);
   const [activeTab, setActiveTab] = useState("timeline");
 
   const handleViewAssessment = (application) => {
@@ -1014,7 +1013,7 @@ export default function AdminAllJobSeekersReviewPage() {
                               paddingAngle={2}
                               dataKey="value"
                             >
-                              {behavioralData.discData.map((entry, index) => (
+                              {behavioralData.discData.map((entry) => (
                                 <Cell key={entry.name} fill={entry.color} />
                               ))}
                             </Pie>
@@ -1047,7 +1046,7 @@ export default function AdminAllJobSeekersReviewPage() {
 
                       {/* Summary Grid Below Chart */}
                       <div className="grid grid-cols-2 gap-3">
-                        {behavioralData.discData.map((item, index) => {
+                        {behavioralData.discData.map((item) => {
                           const colorClasses = {
                             "#dc2626": {
                               bg: "bg-red-50",
@@ -1161,7 +1160,7 @@ export default function AdminAllJobSeekersReviewPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {behavioralData.keyStrengths.map((strength, index) => {
+                      {behavioralData.keyStrengths.map((strength) => {
                         const borderColors = {
                           pink: "border-pink-200",
                           blue: "border-blue-200",

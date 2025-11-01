@@ -9,7 +9,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select/select.jsx";
+} from "@/components/ui/select/select";
 
 export function Select({
   label = null,

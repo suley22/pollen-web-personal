@@ -6,14 +6,11 @@ import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, Trophy, Briefcase, Code } from "lucide-react";
 import { LandingImagePaths } from "@/lib/configs/constants/image_paths";
-import { useRouter } from "next/navigation";
 
 import { LoginStatusButton } from "@/app/_components/LoginStatusButton";
 import { FindJobsButton } from "@/app/_components/FindJobsButton";
-import { PrimaryButton } from "@/components/design-system";
 
 export default function LandingPage() {
-  const router = useRouter();
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation */}

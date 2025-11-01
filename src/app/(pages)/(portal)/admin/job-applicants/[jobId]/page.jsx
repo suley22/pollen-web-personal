@@ -6,10 +6,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { AdminRoutes } from "../../../router";
 import { PageContainer, PageHeader } from "@/components/design-system";
 import {
-  ArrowLeft,
   Eye,
   Search,
   ChevronDown,

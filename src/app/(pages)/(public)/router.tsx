@@ -17,6 +17,7 @@ export const LoginRoutes = {
   authConfirm: `${basePath}/auth/confirm`,
   authResetPassword: `${basePath}/auth/reset-password`,
   authCodeCallback: `${basePath}/auth/code-callback`,
+  calendlyCallback: `/api/calendly`,
 };
 
 export const PUBLIC_ROUTES = Object.values(PublicRoutes).concat(

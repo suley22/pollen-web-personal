@@ -1,8 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { FormCard, PrimaryButton } from "@/components/design-system";
-import { HelpCircle, Upload, Trash, CheckCircle } from "lucide-react";
-import type { AssessmentQuestion } from "@/types/assessment-question";
+import {
+  HelpCircle,
+  Upload,
+  Trash,
+  CheckCircle,
+  Link as LinkIcon,
+  Paperclip,
+} from "lucide-react";
+import type { AssessmentQuestion } from "@/types/assessment-types";
+import { FileViewerDialog } from "@/components/design-system";
 
 interface UploadedFile {
   name: string;
@@ -33,8 +42,14 @@ export function PreviewFileUploadQuestion({
   onEdit,
   onError,
 }: PreviewFileUploadQuestionProps) {
-  const MAX_FILE_SIZE_MB = question.max_file_size || 10;
+  const MAX_FILE_SIZE_MB = 10;
   const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024;
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<{
+    name: string;
+    fileName: string;
+    file?: File | null;
+  } | null>(null);
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return "0 Bytes";
@@ -44,14 +59,49 @@ export function PreviewFileUploadQuestion({
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
   };
 
+  const handleViewFile = (file: {
+    name: string;
+    fileName: string;
+    file?: File | null;
+  }) => {
+    setSelectedFile(file);
+    setViewerOpen(true);
+  };
+
+  const referenceFiles = question.file_upload?.referenceFiles || [];
+
   return (
     <FormCard title={question.title} icon={<HelpCircle className="h-5 w-5" />}>
       <div className="flex flex-col gap-4">
-        {/* Question Description */}
-        {question.description && (
+        {/* Question Subtitle */}
+        {question.subtitle && (
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            {question.description}
+            {question.subtitle}
           </p>
+        )}
+
+        {/* Reference Files */}
+        {referenceFiles.length > 0 && (
+          <div className="rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30 p-4 space-y-2">
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                Reference Files
+              </p>
+            </div>
+            <div className="space-y-2">
+              {referenceFiles.map((file) => (
+                <div key={file.id} className="flex items-center gap-2 text-sm">
+                  <LinkIcon className="h-4 w-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                  <button
+                    onClick={() => handleViewFile(file)}
+                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline text-left truncate"
+                  >
+                    {file.name}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         {/* File Upload Area */}
@@ -70,19 +120,12 @@ export function PreviewFileUploadQuestion({
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                     Maximum file size: {MAX_FILE_SIZE_MB}MB
                   </p>
-                  {question.accepted_file_types &&
-                    question.accepted_file_types.length > 0 && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        Accepted: {question.accepted_file_types.join(", ")}
-                      </p>
-                    )}
                 </div>
               </div>
               <input
                 type="file"
                 id={`file_upload_${questionNumber}`}
                 className="hidden"
-                accept={question.accepted_file_types?.join(",")}
                 onChange={(e) => {
                   if (e.target.files && e.target.files.length > 0) {
                     const file = e.target.files[0];
@@ -108,14 +151,23 @@ export function PreviewFileUploadQuestion({
                   Selected File:
                 </p>
                 <div className="py-3 px-5 flex items-center gap-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                  <button
+                    onClick={() =>
+                      handleViewFile({
+                        name: uploadedFile.name,
+                        fileName: uploadedFile.name,
+                        file: uploadedFile.file,
+                      })
+                    }
+                    className="flex-1 min-w-0 text-left group"
+                  >
+                    <p className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline truncate">
                       {uploadedFile.name}
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {formatFileSize(uploadedFile.size)}
+                      {formatFileSize(uploadedFile.size)} • Click to preview
                     </p>
-                  </div>
+                  </button>
                   <button
                     onClick={onRemoveFile}
                     className="hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 flex-shrink-0"
@@ -133,14 +185,23 @@ export function PreviewFileUploadQuestion({
         {isSubmitted && uploadedFile && (
           <div className="space-y-2">
             <div className="py-3 px-5 flex items-center gap-4 rounded-lg border border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20">
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+              <button
+                onClick={() =>
+                  handleViewFile({
+                    name: uploadedFile.name,
+                    fileName: uploadedFile.name,
+                    file: uploadedFile.file,
+                  })
+                }
+                className="flex-1 min-w-0 text-left group"
+              >
+                <p className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline truncate">
                   {uploadedFile.name}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {formatFileSize(uploadedFile.size)}
+                  {formatFileSize(uploadedFile.size)} • Click to preview
                 </p>
-              </div>
+              </button>
               <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0" />
             </div>
           </div>
@@ -165,6 +226,13 @@ export function PreviewFileUploadQuestion({
           )}
         </div>
       </div>
+
+      {/* File Viewer Dialog */}
+      <FileViewerDialog
+        open={viewerOpen}
+        onOpenChange={setViewerOpen}
+        file={selectedFile}
+      />
     </FormCard>
   );
 }

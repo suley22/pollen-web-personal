@@ -1,7 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sheet, SheetContent, SheetFooter } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import {
   Input,
   TextareaInput,
@@ -151,13 +157,13 @@ export function AddFileUploadQuestionDialog({
         side="right"
         className="!w-[50vw] !max-w-[50vw] overflow-y-auto p-6"
       >
-        <PageHeader
-          title={
-            editingQuestion
+        <SheetHeader className="py-0">
+          <SheetTitle className="">
+            {editingQuestion
               ? "Edit File Upload Question"
-              : "Add File Upload Question"
-          }
-        />
+              : "Add File Upload Question"}
+          </SheetTitle>
+        </SheetHeader>
 
         <div className="flex flex-col gap-4 py-4">
           <div className="flex gap-2 items-center text-lg font-medium mt-4">

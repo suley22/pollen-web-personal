@@ -145,21 +145,23 @@ export function FileViewerDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)] h-[calc(100vh-2rem)] w-[calc(100vw-2rem)] flex flex-col p-0 [&>button]:hidden">
         <div className="flex flex-col h-full px-5 py-3">
-          <DialogHeader className="border-b pb-3 mb-4">
-            <div className="flex items-center justify-between">
-              <div className="flex-1 min-w-0 mr-4">
-                <DialogTitle className="truncate">{file?.name}</DialogTitle>
-                <p className="text-sm text-muted-foreground truncate mt-1">
-                  {file?.fileName}
-                </p>
+          <div className="border-b pb-3 mb-4">
+            <DialogHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex-1 min-w-0 mr-4">
+                  <DialogTitle className="truncate">{file?.name}</DialogTitle>
+                  <p className="text-sm text-muted-foreground truncate mt-1">
+                    {file?.fileName}
+                  </p>
+                </div>
+                <SecondaryButton
+                  text="Close"
+                  icon={<X className="h-4 w-4" />}
+                  onClick={() => onOpenChange(false)}
+                />
               </div>
-              <SecondaryButton
-                text="Close"
-                icon={<X className="h-4 w-4" />}
-                onClick={() => onOpenChange(false)}
-              />
-            </div>
-          </DialogHeader>
+            </DialogHeader>
+          </div>
 
           <div className="flex-1 overflow-hidden">{renderFilePreview()}</div>
         </div>

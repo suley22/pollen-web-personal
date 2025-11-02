@@ -1,7 +1,13 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Sheet, SheetContent, SheetFooter } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import {
   Input,
@@ -167,15 +173,15 @@ export function AddMultipleChoiceQuestionDialog({
         side="right"
         className="!w-[50vw] !max-w-[50vw] overflow-y-auto p-6"
       >
-        <PageHeader
-          title={
-            editingQuestion
+        <SheetHeader className="py-0">
+          <SheetTitle className="">
+            {editingQuestion
               ? "Edit Multiple Choice Question"
-              : "Add Multiple Choice Question"
-          }
-        />
+              : "Add Multiple Choice Question"}
+          </SheetTitle>
+        </SheetHeader>
 
-        <div className="flex flex-col gap-4 py-4">
+        <div className="flex flex-col gap-4">
           {/* Categories Section */}
           {onAddCategory && (
             <>

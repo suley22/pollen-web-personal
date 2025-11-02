@@ -50,6 +50,12 @@ export function JobOverviewCard({ job }) {
           />
         </div>
       </FormCard>
+    </div>
+  );
+}
+export function JobEmploymentTypeCard({ job }) {
+  return (
+    <div className="flex flex-col gap-6">
       <FormCard title="Employment Details" icon={<Info className="h-5 w-5" />}>
         <div className="grid grid-cols-2 gap-x-8 gap-y-6">
           <InfoField label="Employment Type" value={job.employment_type} />

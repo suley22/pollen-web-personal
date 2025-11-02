@@ -1,16 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, ListChecks, FileText, Upload } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { ListChecks, FileText, Upload } from "lucide-react";
 import type { QuestionType } from "@/types/assessment-question";
-import { SecondaryButton } from "@/components/design-system";
 
 interface AddQuestionButtonProps {
   onSelectType: (type: QuestionType) => void;
@@ -22,46 +13,63 @@ export function AddQuestionButton({
   disabled = false,
 }: AddQuestionButtonProps) {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <div className="flex">
-          <SecondaryButton
-            disabled={disabled}
-            className="w-full"
-            icon={<Plus className="h-5 w-5 mr-2" />}
-            text="Add Question"
-          />
-        </div>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuItem onClick={() => onSelectType("multiple_choice")}>
-          <ListChecks className="h-4 w-4 mr-2" />
-          <div className="flex flex-col">
-            <span className="font-medium">Multiple Choice</span>
-            <span className="text-xs text-muted-foreground">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Multiple Choice Button */}
+      <button
+        onClick={() => onSelectType("multiple_choice")}
+        disabled={disabled}
+        className="p-6 rounded-lg border-2 transition-all border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <div className="flex flex-col items-center text-center gap-3">
+          <div className="p-3 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+            <ListChecks className="h-8 w-8" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-lg mb-1">Multiple Choice</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Question with predefined options
-            </span>
+            </p>
           </div>
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onSelectType("free_input")}>
-          <FileText className="h-4 w-4 mr-2" />
-          <div className="flex flex-col">
-            <span className="font-medium">Free Input</span>
-            <span className="text-xs text-muted-foreground">
+        </div>
+      </button>
+
+      {/* Free Input Button */}
+      <button
+        onClick={() => onSelectType("free_input")}
+        disabled={disabled}
+        className="p-6 rounded-lg border-2 transition-all border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <div className="flex flex-col items-center text-center gap-3">
+          <div className="p-3 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+            <FileText className="h-8 w-8" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-lg mb-1">Free Input</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Open-ended text response
-            </span>
+            </p>
           </div>
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onSelectType("file_upload")}>
-          <Upload className="h-4 w-4 mr-2" />
-          <div className="flex flex-col">
-            <span className="font-medium">File Upload</span>
-            <span className="text-xs text-muted-foreground">
+        </div>
+      </button>
+
+      {/* File Upload Button */}
+      <button
+        onClick={() => onSelectType("file_upload")}
+        disabled={disabled}
+        className="p-6 rounded-lg border-2 transition-all border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <div className="flex flex-col items-center text-center gap-3">
+          <div className="p-3 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+            <Upload className="h-8 w-8" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-lg mb-1">File Upload</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Upload documents or files
-            </span>
+            </p>
           </div>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </div>
+      </button>
+    </div>
   );
 }

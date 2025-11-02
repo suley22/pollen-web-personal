@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetFooter,
+} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import {
   Input,
@@ -149,13 +149,16 @@ export function AddMultipleChoiceQuestionDialog({
   const canSave = title.trim() && description.trim() && options.length > 0;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        side="right"
+        className="!w-[50vw] !max-w-[50vw] overflow-y-auto p-6"
+      >
+        <SheetHeader className="">
+          <SheetTitle className="">
             {editingQuestion ? "Edit" : "Add"} Multiple Choice Question
-          </DialogTitle>
-        </DialogHeader>
+          </SheetTitle>
+        </SheetHeader>
 
         <div className="space-y-4 py-4">
           {/* Categories Section */}
@@ -288,7 +291,7 @@ export function AddMultipleChoiceQuestionDialog({
           )}
         </div>
 
-        <DialogFooter>
+        <SheetFooter className="mt-6">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
@@ -299,8 +302,8 @@ export function AddMultipleChoiceQuestionDialog({
           <Button onClick={handleSave} disabled={!canSave} size="default">
             {editingQuestion ? "Update" : "Add"} Question
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 }

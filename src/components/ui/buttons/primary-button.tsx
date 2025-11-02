@@ -1,6 +1,6 @@
 import { Button } from "./button";
 
-function PrimaryButton({ text, size = "default" , onClick, icon, ...props }) {
+function PrimaryButton({ text, size = "md", onClick, icon, ...props }) {
   return (
     <Button
       variant="default"

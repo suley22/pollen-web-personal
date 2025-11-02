@@ -7,12 +7,14 @@ import { TaskDrawer } from "../_components/task-drawer";
 import { ViewToggle } from "../_components/view-toggle";
 import { PageContainer, PageHeader } from "@/components/design-system";
 
-// TODO(playground): Este contenedor podría recibir el jobId vía props/route params.
-export default function PlaygroundView({ jobId }: { jobId: string }) {
+interface PlaygroundViewProps {
+  jobId?: string | null;
+}
+
+export default function PlaygroundView({ jobId = null }: PlaygroundViewProps) {
   const {
     jobSeekers,
     isLoading,
-    draggedItem,
     viewMode,
     setViewMode,
     selectedJobSeeker,
@@ -20,15 +22,31 @@ export default function PlaygroundView({ jobId }: { jobId: string }) {
     handleJobSeekerClick,
     closeDrawer,
     handleDragStart,
+    handleDragEnd,
     handleDragOver,
-    handleDragEnter,
     handleDragLeave,
     handleDrop,
-    handleDragEnd,
+    dragPreview,
+    draggedItem,
     getAllJobSeekersWithStatus,
-    dropPreview,
+    isUpdatingStatus,
   } = usePlaygroundHook(jobId);
 
+  // Handle no jobId case
+  if (!jobId) {
+    return (
+      <div className="w-full h-[600px] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <p className="text-gray-500 text-sm">No job ID provided</p>
+          <p className="text-xs text-gray-400">
+            Please select a job to view applicants
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Handle loading state
   if (isLoading) {
     return (
       <div className="w-full h-[600px] flex items-center justify-center">
@@ -49,8 +67,20 @@ export default function PlaygroundView({ jobId }: { jobId: string }) {
             title="Applicants Pipeline"
             subtitle="Manage and track candidate applications"
           />
-          {/* View Toggle */}
-          <ViewToggle viewMode={viewMode} onViewModeChange={setViewMode} />
+
+          {/* Controls */}
+          <div className="flex items-center gap-3">
+            {/* Loading indicator for mutations */}
+            {isUpdatingStatus && (
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                <span>Updating...</span>
+              </div>
+            )}
+
+            {/* View Toggle */}
+            <ViewToggle viewMode={viewMode} onViewModeChange={setViewMode} />
+          </div>
         </div>
 
         {/* Content area that fills remaining height */}
@@ -61,13 +91,12 @@ export default function PlaygroundView({ jobId }: { jobId: string }) {
               <BoardView
                 jobSeekers={jobSeekers}
                 onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
                 onDragOver={handleDragOver}
-                onDragEnter={handleDragEnter}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
                 onJobSeekerClick={handleJobSeekerClick}
-                onDragEnd={handleDragEnd}
-                dropPreview={dropPreview}
+                dragPreview={dragPreview}
                 draggedItem={draggedItem}
               />
             </div>

@@ -1,6 +1,5 @@
 "use client";
 
-import React, { memo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/buttons/button";
@@ -10,6 +9,7 @@ import {
   FileText,
   MessageSquare,
   AlertTriangle,
+  ClipboardCheck,
 } from "lucide-react";
 
 // Map de colores para diferentes sub_status
@@ -26,25 +26,12 @@ const SUB_STATUS_STYLES = {
   "Not Progressing": "bg-gray-100 text-gray-700 border-gray-300",
 };
 
-// Card del candidato:
-// - Presenta datos del job seeker
-// - Es draggable: onDragStart inicia el arrastre y onDragEnd limpia estados
-// - onClick abre el drawer con detalles
-// TODO(playground): Consider splitting visual Card from drag handlers to ease reuse in Grid.
-function JobSeekerCard({
+export default function JobSeekerCard({
   jobSeeker,
   columnId,
   onDragStart,
-  onClick,
   onDragEnd,
-  isHiddenWhileDragging,
-}: {
-  jobSeeker: any;
-  columnId: string;
-  onDragStart: (e: any, jobSeeker: any, columnId: string) => void;
-  onClick: (jobSeeker: any, columnId: string) => void;
-  onDragEnd?: () => void;
-  isHiddenWhileDragging?: boolean;
+  onClick,
 }) {
   // Datos reales desde el jobSeeker (job_application + job_seeker)
   const candidateName = jobSeeker.name;
@@ -60,33 +47,11 @@ function JobSeekerCard({
   return (
     <div
       draggable
-      onDragStart={(e) => {
-        try {
-          // Safari/WebKit requiere setData para habilitar correctamente el DnD
-          e.dataTransfer?.setData("text/plain", String(jobSeeker.id));
-        } catch (err) {
-          // noop: fall back, algunos navegadores pueden lanzar si no permiten setData
-        }
-        onDragStart(e, jobSeeker, columnId);
-      }}
+      onDragStart={(e) => onDragStart(e, jobSeeker, columnId)}
       onDragEnd={onDragEnd}
       onClick={() => onClick(jobSeeker, columnId)}
       className="bg-white rounded-lg border border-gray-200 hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-move group"
-      // Colapsar el nodo durante el drag para no ocupar espacio, pero mantenerlo en el DOM
-      // Mantener draggable y data-attrs permite que el cálculo de índice lo ignore y no cancele el drag
-      style={
-        isHiddenWhileDragging
-          ? {
-              visibility: "hidden",
-              height: 0,
-              padding: 0,
-              margin: 0,
-              borderWidth: 0,
-            }
-          : undefined
-      }
-      data-draggable-item="true"
-      data-drag-hidden={isHiddenWhileDragging ? "true" : "false"}
+      data-card-item="true"
     >
       <div className="flex flex-col gap-3 p-4">
         {/* Header: Avatar, Name, Score */}
@@ -131,50 +96,33 @@ function JobSeekerCard({
         <div className="border-t border-gray-100" />
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-between">
+        <div className="flex gap-2">
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 hover:bg-gray-100 text-gray-600"
+            className="flex-1 h-8 px-3 hover:bg-gray-100 text-gray-600 text-xs font-normal"
             onClick={(e) => {
               e.stopPropagation();
               // Handle profile action
             }}
           >
-            <User className="h-4 w-4" />
+            <User className="h-3.5 w-3.5 mr-1.5" />
+            Profile
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 hover:bg-gray-100 text-gray-600"
+            className="flex-1 h-8 px-3 hover:bg-gray-100 text-gray-600 text-xs font-normal"
             onClick={(e) => {
               e.stopPropagation();
-              // Handle documents action
+              // Handle assessment action
             }}
           >
-            <FileText className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0 hover:bg-gray-100 text-gray-600"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Handle messages action
-            }}
-          >
-            <MessageSquare className="h-4 w-4" />
+            <ClipboardCheck className="h-3.5 w-3.5 mr-1.5" />
+            Assessment
           </Button>
         </div>
       </div>
     </div>
   );
 }
-
-export default memo(
-  JobSeekerCard,
-  (prev, next) =>
-    prev.jobSeeker === next.jobSeeker &&
-    prev.columnId === next.columnId &&
-    prev.isHiddenWhileDragging === next.isHiddenWhileDragging,
-);

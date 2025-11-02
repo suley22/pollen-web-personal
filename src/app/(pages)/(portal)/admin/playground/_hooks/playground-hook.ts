@@ -1,27 +1,29 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import {
-  getJobApplicants,
+  useJobApplicants,
+  useUpdateApplicantStatus,
   transformJobSeekersToList,
   getColumnInfo,
-  updateJobApplicationStatus,
+  type GroupedApplicants,
 } from "../_services/playground-service";
-import { getInsertionIndex } from "@/lib/utils/dnd";
 
-export function usePlaygroundHook(jobId: string) {
-  // TODO(playground):
-  // - Migrar fetching a react-query/tanstack-query para caching y estados (loading/error) consistentes.
-  // - Tipar correctamente los modelos (JobSeeker, Application) para evitar uso de any.
-  // - Mover constantes y helpers de DnD a un archivo utilitario si se reutilizan en otros módulos.
-  // State para los job seekers
-  const [jobSeekers, setJobSeekers] = useState<Record<string, any[]>>({
-    new_applicants: [],
-    in_progress: [],
-    matched_to_employer: [],
-    complete: [],
-  });
-  const [isLoading, setIsLoading] = useState(true);
+export function usePlaygroundHook(jobId: string | null) {
+  // Fetch job applicants using React Query
+  const {
+    data: jobSeekers = {
+      new_applicants: [],
+      in_progress: [],
+      matched_to_employer: [],
+      complete: [],
+    } as GroupedApplicants,
+    isLoading,
+    error,
+  } = useJobApplicants(jobId);
+
+  // Get mutation hook for updating applicant status
+  const updateApplicantStatusMutation = useUpdateApplicantStatus();
 
   // View state
   const [viewMode, setViewMode] = useState<"board" | "grid">("board");
@@ -30,79 +32,41 @@ export function usePlaygroundHook(jobId: string) {
 
   // Drag & Drop state
   const [draggedItem, setDraggedItem] = useState<any>(null);
-  // dropPreview: índice/columna donde se mostraría la inserción, y altura estimada
-  const [dropPreview, setDropPreview] = useState<{
-    columnId: string | null;
-    index: number | null;
-    height?: number | null;
-  }>({ columnId: null, index: null, height: null });
-  // hoverDepth por columna (ref, para evitar re-renders por cada enter/leave)
-  const hoverDepthRef = useRef<Record<string, number>>({});
-
-  // Refs para throttling del preview (reduce renders durante dragover):
-  const previewStateRef = useRef<{
-    columnId: string | null;
-    index: number | null;
-    height?: number | null;
-  }>({ columnId: null, index: null, height: null });
-  const pendingPreviewRef = useRef<{
-    columnId: string | null;
-    index: number | null;
-    height?: number | null;
+  const [dragPreview, setDragPreview] = useState<{
+    columnId: string;
+    position: number;
   } | null>(null);
-  const rafIdRef = useRef<number | null>(null);
 
-  const schedulePreviewUpdate = (next: {
-    columnId: string | null;
-    index: number | null;
-    height?: number | null;
-  }) => {
-    pendingPreviewRef.current = next;
-    if (rafIdRef.current != null) return;
-    rafIdRef.current = requestAnimationFrame(() => {
-      rafIdRef.current = null;
-      const pending = pendingPreviewRef.current;
-      if (!pending) return;
-      // Only update state if actually changed (columnId or index or height)
-      const curr = previewStateRef.current;
-      if (
-        curr.columnId === pending.columnId &&
-        curr.index === pending.index &&
-        curr.height === pending.height
-      ) {
-        return;
+  // Computes the insertion index inside a container based on mouse Y position
+  // Falls back to container.children if no specific draggable selector matches
+  const getInsertionIndex = (container: HTMLElement, clientY: number) => {
+    // Prefer specific draggable nodes if available
+    const preferred = container.querySelectorAll(
+      '[data-draggable-item="true"], [data-js-item], [draggable="true"]',
+    );
+    const list: HTMLElement[] = (
+      preferred.length ? Array.from(preferred) : Array.from(container.children)
+    ) as HTMLElement[];
+
+    if (!list.length) return 0;
+
+    let closest = { offset: Number.NEGATIVE_INFINITY, index: list.length };
+    list.forEach((el, index) => {
+      const rect = el.getBoundingClientRect();
+      const offset = clientY - (rect.top + rect.height / 2);
+      // We look for the closest element above the cursor (offset < 0)
+      if (offset < 0 && offset > closest.offset) {
+        closest = { offset, index };
       }
-      previewStateRef.current = pending;
-      setDropPreview(pending);
     });
+
+    // If none is above, insert at end
+    return closest.offset === Number.NEGATIVE_INFINITY
+      ? list.length
+      : closest.index;
   };
 
-  // Ref para imagen de drag custom (asegura ghost estable aunque el nodo fuente no esté en el DOM)
-  const dragImageRef = useRef<HTMLElement | null>(null);
-
-  // getInsertionIndex importado desde @/lib/utils/dnd
-
-  /**
-   * Cargar aplicantes desde la BD al montar el componente
-   */
-  useEffect(() => {
-    async function loadApplicants() {
-      setIsLoading(true);
-      try {
-        const applicants = await getJobApplicants(jobId);
-        setJobSeekers(applicants);
-      } catch (error) {
-        console.error("Error loading applicants:", error);
-        // Mantener estado vacío en caso de error
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    if (jobId) {
-      loadApplicants();
-    }
-  }, [jobId]);
+  // No need for useEffect - React Query handles data fetching automatically
 
   /**
    * Maneja el click en un job seeker para abrir el drawer
@@ -130,248 +94,99 @@ export function usePlaygroundHook(jobId: string) {
    * Inicia el drag de un job seeker
    */
   const handleDragStart = (e: any, item: any, columnId: string) => {
-    // NOTE: Consider extracting DnD logic to a dedicated hook for reuse/testing.
-    const el = e.currentTarget as HTMLElement | null;
-    const rect = el?.getBoundingClientRect?.();
-    const estimatedHeight = rect?.height ?? null;
-    setDraggedItem({ item, sourceColumn: columnId, height: estimatedHeight });
-    const initialPreview = {
-      columnId: null,
-      index: null,
-      height: estimatedHeight,
-    };
-    previewStateRef.current = initialPreview;
-    setDropPreview(initialPreview);
+    setDraggedItem({ item, sourceColumn: columnId });
     e.dataTransfer.effectAllowed = "move";
-
-    // Crear imagen de arrastre estable
-    try {
-      if (el && e.dataTransfer) {
-        const clone = el.cloneNode(true) as HTMLElement;
-        clone.style.position = "fixed";
-        clone.style.top = "-10000px";
-        clone.style.left = "-10000px";
-        clone.style.width = `${rect?.width ?? el.clientWidth}px`;
-        clone.style.height = `${rect?.height ?? el.clientHeight}px`;
-        clone.style.pointerEvents = "none";
-        document.body.appendChild(clone);
-        dragImageRef.current = clone;
-        // Usar un pequeño offset para que el cursor no tape totalmente la card
-        e.dataTransfer.setDragImage(clone, 10, 10);
-        // WebKit necesita además datos para habilitar drop
-        try {
-          e.dataTransfer.setData("text/plain", String(item?.id ?? "drag"));
-        } catch (err) {
-          // ignore
-        }
-      }
-    } catch (err) {
-      // ignore
-    }
   };
 
   /**
-   * Permite el drop en la columna
+   * Limpia el estado cuando el drag termina sin drop
+   */
+  const handleDragEnd = () => {
+    setDraggedItem(null);
+    setDragPreview(null);
+  };
+
+  /**
+   * Permite el drop en la columna y maneja el preview
    */
   const handleDragOver = (e: any, targetColumnId?: string) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
 
-    // Update live preview position when hovering a column
-    if (!draggedItem || !targetColumnId) return;
-    const container: HTMLElement | null =
-      (e.currentTarget as HTMLElement) || null;
-    const rawIndex = container ? getInsertionIndex(container, e.clientY) : 0;
-    schedulePreviewUpdate({
-      columnId: targetColumnId,
-      index: Math.max(0, rawIndex ?? 0),
-      height: draggedItem?.height ?? null,
-    });
-  };
-
-  /** Marca que estamos entrando a una columna (incrementa profundidad de hover)
-   *  Ayuda a ignorar dragleave que ocurre al entrar/salir de elementos hijos
-   */
-  const handleDragEnter = (e: any, targetColumnId: string) => {
-    e.preventDefault();
-    hoverDepthRef.current[targetColumnId] =
-      (hoverDepthRef.current[targetColumnId] || 0) + 1;
-
-    // Mostrar inmediatamente el preview al entrar en la columna
-    if (!draggedItem) return;
-    const container: HTMLElement | null =
-      (e.currentTarget as HTMLElement) || null;
-    const rawIndex = container ? getInsertionIndex(container, e.clientY) : 0;
-    schedulePreviewUpdate({
-      columnId: targetColumnId,
-      index: Math.max(0, rawIndex ?? 0),
-      height: draggedItem?.height ?? null,
-    });
-  };
-
-  /** Marca que salimos de una columna; cuando la profundidad llega a 0, limpiamos el preview */
-  const handleDragLeave = (e: any, targetColumnId: string) => {
-    e.preventDefault();
-    const nextDepth = Math.max(
-      0,
-      (hoverDepthRef.current[targetColumnId] || 0) - 1,
-    );
-    hoverDepthRef.current[targetColumnId] = nextDepth;
+    // Solo mostrar preview si estamos arrastrando algo y es una columna diferente
     if (
-      nextDepth === 0 &&
-      previewStateRef.current.columnId === targetColumnId
+      draggedItem &&
+      targetColumnId &&
+      targetColumnId !== draggedItem.sourceColumn
     ) {
-      const cleared = {
-        columnId: null,
-        index: null,
-        height: draggedItem?.height ?? null,
-      };
-      previewStateRef.current = cleared;
-      setDropPreview(cleared);
+      // Calcular posición basada en la posición Y del mouse
+      const dropZone = e.currentTarget;
+      const rect = dropZone.getBoundingClientRect();
+      const y = e.clientY - rect.top;
+
+      // Obtener todas las cards en esta columna
+      const cards = dropZone.querySelectorAll('[data-card="true"]');
+      let position = 0;
+
+      // Encontrar la posición correcta basada en la posición Y
+      for (let i = 0; i < cards.length; i++) {
+        const cardRect = cards[i].getBoundingClientRect();
+        const cardY = cardRect.top - rect.top + cardRect.height / 2;
+
+        if (y < cardY) {
+          position = i;
+          break;
+        }
+        position = i + 1;
+      }
+
+      setDragPreview({
+        columnId: targetColumnId,
+        position: position,
+      });
     }
   };
 
   /**
-   * Maneja el drop de un job seeker en una columna (actualiza UI y BD)
+   * Maneja cuando el drag sale de una columna
    */
-  const handleDrop = async (e: any, targetColumnId: string) => {
+  const handleDragLeave = (e: any) => {
+    // Solo limpiar si realmente salimos del área
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      setDragPreview(null);
+    }
+  };
+
+  /**
+   * Maneja el drop de un job seeker en una columna (actualiza BD y UI)
+   */
+  const handleDrop = (e: any, targetColumnId: string) => {
     e.preventDefault();
 
-    if (!draggedItem) return;
+    if (!draggedItem || !jobId) return;
 
     const { item, sourceColumn } = draggedItem;
 
-    // Compute insertion index based on drop height within the target column container
-    const container: HTMLElement | null =
-      (e.currentTarget as HTMLElement) || null;
-    const rawIndex = container
-      ? getInsertionIndex(container, e.clientY)
-      : undefined;
-
-    // Limpiamos el preview en el siguiente frame para no desaparecerlo antes de que la card vuelva a ser visible
-    const clearPreview = () => {
-      const cleared = { columnId: null, index: null, height: null } as const;
-      previewStateRef.current = cleared;
-      setDropPreview(cleared);
-    };
-
-    // Si cambia de columna, actualizar estado en la base de datos
-    if (sourceColumn !== targetColumnId) {
-      try {
-        await updateJobApplicationStatus(item.application_id, targetColumnId);
-        console.log(
-          `✅ Application ${item.application_id} moved from ${sourceColumn} to ${targetColumnId}`,
-        );
-      } catch (error) {
-        console.error("❌ Failed to update application status:", error);
-        // TODO: Mostrar toast de error al usuario
-        return; // No actualizar UI si falla la BD
-      }
-    }
+    // Limpiar estados de drag
+    setDraggedItem(null);
+    setDragPreview(null);
 
     // Si es la misma columna, no hacer nada
-    // Si es la misma columna, permitir reordenar dentro de la columna
-    setJobSeekers((prevJobSeekers) => {
-      const newJobSeekers: Record<string, any[]> = {
-        ...prevJobSeekers,
-      };
+    if (sourceColumn === targetColumnId) {
+      return;
+    }
 
-      const sourceList = [...(newJobSeekers[sourceColumn] || [])];
-      const targetList =
-        sourceColumn === targetColumnId
-          ? sourceList
-          : [...(newJobSeekers[targetColumnId] || [])];
-
-      // Encontrar el índice actual del ítem en la lista fuente
-      const currentIndex = sourceList.findIndex((js) => js.id === item.id);
-
-      // Si por alguna razón no está, no hacemos nada
-      if (currentIndex === -1) {
-        return prevJobSeekers;
-      }
-
-      // Remover de la fuente
-      sourceList.splice(currentIndex, 1);
-
-      // Calcular índice de inserción en destino
-      let insertIndex =
-        typeof rawIndex === "number" && rawIndex >= 0
-          ? rawIndex
-          : targetList.length;
-
-      if (sourceColumn === targetColumnId) {
-        // Ajustar índice si venimos de la misma lista y el removal movió posiciones
-        if (insertIndex > currentIndex) insertIndex = insertIndex - 1;
-
-        // Edge cases: soltar "encima de sí mismo" o posición equivalente => no-op
-        if (insertIndex === currentIndex) {
-          return prevJobSeekers; // nada cambia
-        }
-
-        // Insertar en la misma lista
-        sourceList.splice(insertIndex, 0, item);
-
-        newJobSeekers[sourceColumn] = sourceList;
-        return newJobSeekers;
-      } else {
-        // Movimiento entre columnas diferentes
-        // Asegurar límites de índice
-        if (insertIndex < 0) insertIndex = 0;
-        if (insertIndex > targetList.length) insertIndex = targetList.length;
-
-        targetList.splice(insertIndex, 0, item);
-
-        newJobSeekers[sourceColumn] = sourceList;
-        newJobSeekers[targetColumnId] = targetList;
-        return newJobSeekers;
-      }
+    // Actualizar status en BD
+    updateApplicantStatusMutation.mutate({
+      applicationId: item.application_id,
+      newStatus: targetColumnId,
+      jobId: jobId,
     });
-
-    // Restauramos visibilidad de la card inmediatamente
-    setDraggedItem(null);
-    // Limpiar imagen de drag si existe
-    if (dragImageRef.current) {
-      try {
-        document.body.removeChild(dragImageRef.current);
-      } catch (err) {
-        // ignore
-      }
-      dragImageRef.current = null;
-    }
-    // y limpiamos el preview en el próximo frame para evitar superposición
-    if (typeof window !== "undefined" && "requestAnimationFrame" in window) {
-      window.requestAnimationFrame(clearPreview);
-    } else {
-      clearPreview();
-    }
-    hoverDepthRef.current[targetColumnId] = 0;
   };
-
-  /**
-   * Finaliza el drag (cancelado o completado fuera de drop)
-   */
-  const handleDragEnd = () => {
-    setDraggedItem(null);
-    const cleared = { columnId: null, index: null, height: null } as const;
-    previewStateRef.current = cleared;
-    setDropPreview(cleared);
-    hoverDepthRef.current = {};
-    if (dragImageRef.current) {
-      try {
-        document.body.removeChild(dragImageRef.current);
-      } catch (err) {
-        // ignore
-      }
-      dragImageRef.current = null;
-    }
-  };
-
-  // Asegura limpieza incluso si el drag termina fuera de la card/board
-  useEffect(() => {
-    const onGlobalDragEnd = () => handleDragEnd();
-    window.addEventListener("dragend", onGlobalDragEnd);
-    return () => window.removeEventListener("dragend", onGlobalDragEnd);
-  }, []);
 
   /**
    * Obtiene todos los job seekers en formato de lista con su status
@@ -384,7 +199,11 @@ export function usePlaygroundHook(jobId: string) {
     // Data
     jobSeekers,
     isLoading,
-    draggedItem,
+    error,
+
+    // Mutations
+    isUpdatingStatus: updateApplicantStatusMutation.isPending,
+    updateError: updateApplicantStatusMutation.error,
 
     // View state
     viewMode,
@@ -398,17 +217,14 @@ export function usePlaygroundHook(jobId: string) {
 
     // Drag & Drop
     handleDragStart,
+    handleDragEnd,
     handleDragOver,
-    handleDragEnter,
     handleDragLeave,
     handleDrop,
-    handleDragEnd,
+    dragPreview,
+    draggedItem,
 
     // Helpers
     getAllJobSeekersWithStatus,
-
-    // Preview state (para UI)
-    dropPreview,
-    // hoverDepth is internal (ref) now; not returned to avoid triggering re-renders
   };
 }

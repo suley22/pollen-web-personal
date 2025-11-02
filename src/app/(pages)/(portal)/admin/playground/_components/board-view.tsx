@@ -2,102 +2,138 @@
 
 import { JOB_SEEKER_COLUMNS } from "../_services/playground-service";
 import JobSeekerCard from "./task-card";
-import DroppableColumn from "@/components/design-system/kanban/droppable-column";
-import { EmptyState } from "@/components/design-system/empty-state";
-import { Inbox } from "lucide-react";
 
-// TODO(playground): Mejoras potenciales
-// - Extraer el header de columna a un componente (<BoardColumnHeader />) y unificar estilos.
-// - Considerar React.memo para JobSeekerCard si la lista crece (evitar renders en drag hover).
-// - Añadir soporte de accesibilidad: teclado para reordenar y aria-dropeffect/aria-grabbed.
-// - Virtualización (e.g. react-virtual) si hay muchas tarjetas por columna.
-
-// TODO(playground): Este placeholder podría exportarse al design-system si se reutiliza en otros boards.
-function PlaceholderCard({ height }: { height?: number | null }) {
+// Componente de preview que imita el tamaño y estructura de una JobSeekerCard real
+function DropPreviewCard() {
   return (
-    <div
-      aria-hidden
-      className="bg-white rounded-lg border border-gray-200"
-      style={{ height: height ?? 120 }}
-    />
+    <div className="relative bg-blue-50 rounded-lg border-2 border-dashed border-blue-300 transition-all duration-200">
+      <div className="flex flex-col gap-3 p-4 opacity-40">
+        {/* Header: Avatar placeholder, Name, Score */}
+        <div className="flex items-start gap-3">
+          <div className="h-10 w-10 rounded-full bg-blue-200 border-2 border-blue-300 flex-shrink-0 flex items-center justify-center">
+            <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+          </div>
+
+          <div className="flex-1 min-w-0">
+            <div className="h-4 bg-blue-200 rounded mb-1"></div>
+            <div className="h-3 bg-blue-200 rounded w-20"></div>
+          </div>
+        </div>
+
+        {/* Applied Date placeholder */}
+        <div className="flex items-center gap-1.5">
+          <div className="h-3.5 w-3.5 bg-blue-200 rounded"></div>
+          <div className="h-3 bg-blue-200 rounded w-24"></div>
+        </div>
+
+        {/* Sub Status Badge placeholder */}
+        <div className="w-full h-7 bg-blue-200 rounded"></div>
+
+        {/* Divider */}
+        <div className="border-t border-blue-200" />
+
+        {/* Action Buttons placeholder */}
+        <div className="flex items-center justify-between">
+          <div className="h-8 w-8 bg-blue-200 rounded"></div>
+          <div className="h-8 w-8 bg-blue-200 rounded"></div>
+          <div className="h-8 w-8 bg-blue-200 rounded"></div>
+        </div>
+      </div>
+
+      {/* "Drop here" text centrado por encima */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="bg-blue-500 text-white text-xs font-medium px-3 py-1.5 rounded shadow-lg border border-blue-600">
+          Drop here
+        </div>
+      </div>
+    </div>
   );
 }
 
 export function BoardView({
   jobSeekers,
   onDragStart,
+  onDragEnd,
   onDragOver,
-  onDragEnter,
   onDragLeave,
   onDrop,
   onJobSeekerClick,
-  onDragEnd,
-  dropPreview,
+  dragPreview,
   draggedItem,
 }) {
-  // Props esperados:
-  // - jobSeekers: mapa columna -> lista de candidatos
-  // - onDragStart: inicia el drag de una card
-  // - onDragOver: calcula índice de inserción (preview) cuando el cursor está sobre una columna
-  // - onDragEnter/onDragLeave: manejan contador de hover para limpiar el preview cuando se sale de la columna
-  // - onDrop: mueve/reordena el candidato en el estado
-  // - onJobSeekerClick: abre el drawer con detalles
-  // - onDragEnd: resetea estados si se cancela o finaliza el drag fuera
-  // - dropPreview: { columnId, index, height } posición/altura del placeholder
-  // - draggedItem: referencia al item arrastrado para ocultar la card original
   return (
-    <div className="flex items-stretch gap-6 w-full min-h-screen overflow-x-auto overflow-y-hidden">
-      {JOB_SEEKER_COLUMNS.map((column) => (
-        <div
-          key={column.id}
-          className="flex-none shrink-0 w-[320px] flex flex-col gap-0 bg-gray-50 h-full min-h-0"
-        >
-          {/* Column Header */}
+    <div className="h-full w-full overflow-x-auto overflow-y-hidden">
+      <div className="flex gap-4 w-full h-full pb-1 px-1">
+        {JOB_SEEKER_COLUMNS.map((column) => (
           <div
-            className={`sticky top-0 z-10 flex items-center justify-between ${column.color} rounded-t-xl p-4 border border-gray-200`}
+            key={column.id}
+            className="flex-none shrink-0 w-[320px] flex flex-col gap-0"
           >
-            <div className="font-semibold text-base text-gray-900">
-              {column.title}
-            </div>
-            <span
-              className={`${column.badgeColor} text-white text-sm font-bold px-3 py-1 rounded-full`}
+            {/* Column Header */}
+            <div
+              className={`flex items-center justify-between ${column.color} rounded-t-xl px-4 py-2 border border-gray-200`}
             >
-              {jobSeekers[column.id]?.length || 0}
-            </span>
-          </div>
+              <div className="text-sm font-bold text-gray-900 uppercase">
+                {column.title}
+              </div>
+              <span
+                className={`${column.badgeColor} text-white text-xs font-medium px-2 py-0.5 rounded-full min-w-[20px] text-center`}
+              >
+                {jobSeekers[column.id]?.length || 0}
+              </span>
+            </div>
 
-          {/* Drop Zone delegado al componente de design-system */}
-          <DroppableColumn
-            columnId={column.id}
-            items={jobSeekers[column.id] || []}
-            dropPreview={dropPreview}
-            draggedItem={draggedItem}
-            onDragOver={onDragOver}
-            onDragEnter={onDragEnter}
-            onDragLeave={onDragLeave}
-            onDrop={onDrop}
-            renderEmpty={() => (
-              <EmptyState
-                icon={Inbox}
-                title="No applicants"
-                description="Drag and drop candidates here to add them to this stage."
-                className="h-32 py-4"
-              />
-            )}
-            renderItem={(jobSeeker: any, index: number, isHidden: boolean) => (
-              <JobSeekerCard
-                key={jobSeeker.application_id ?? jobSeeker.id}
-                jobSeeker={jobSeeker}
-                columnId={column.id}
-                onDragStart={onDragStart}
-                onDragEnd={onDragEnd}
-                onClick={onJobSeekerClick}
-                isHiddenWhileDragging={isHidden}
-              />
-            )}
-          />
-        </div>
-      ))}
+            {/* Drop Zone - Auto height based on content */}
+            <div
+              onDragOver={(e) => onDragOver(e, column.id)}
+              onDragLeave={onDragLeave}
+              onDrop={(e) => onDrop(e, column.id)}
+              className={`bg-white rounded-b-xl p-4 border-x border-b border-gray-200 transition-colors ${
+                jobSeekers[column.id]?.length === 0
+                  ? "min-h-[80px]"
+                  : "min-h-[200px]"
+              } ${dragPreview?.columnId === column.id ? "bg-blue-50" : ""}`}
+            >
+              <div className="flex flex-col gap-3">
+                {jobSeekers[column.id]?.length === 0 ? (
+                  <div className="flex items-center justify-center h-12 text-gray-400 text-xs">
+                    No applicants
+                  </div>
+                ) : (
+                  jobSeekers[column.id]?.map((jobSeeker, index) => {
+                    // Mostrar preview antes de esta card si corresponde
+                    const showPreviewBefore =
+                      dragPreview?.columnId === column.id &&
+                      dragPreview?.position === index &&
+                      draggedItem?.sourceColumn !== column.id;
+
+                    return (
+                      <div key={jobSeeker.id} data-card="true">
+                        {showPreviewBefore && <DropPreviewCard />}
+                        <JobSeekerCard
+                          jobSeeker={jobSeeker}
+                          columnId={column.id}
+                          onDragStart={onDragStart}
+                          onDragEnd={onDragEnd}
+                          onClick={onJobSeekerClick}
+                        />
+                      </div>
+                    );
+                  })
+                )}
+
+                {/* Preview al final si corresponde */}
+                {dragPreview?.columnId === column.id &&
+                  dragPreview?.position >=
+                    (jobSeekers[column.id]?.length || 0) &&
+                  draggedItem?.sourceColumn !== column.id && (
+                    <DropPreviewCard />
+                  )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

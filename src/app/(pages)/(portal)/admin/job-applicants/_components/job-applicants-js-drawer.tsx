@@ -24,30 +24,46 @@ const SUB_STATUS_OPTIONS = [
   "Not Progressing",
 ];
 
-export function TaskDrawer({ isOpen, jobSeeker, onClose }) {
+interface TaskDrawerProps {
+  isOpen: boolean;
+  jobSeeker: any;
+  onClose: () => void;
+  onUpdateScores: (
+    applicationId: string,
+    scores: {
+      score1: number;
+      score2: number;
+      score3: number;
+      score4: number;
+    },
+  ) => void;
+}
+
+export function TaskDrawer({
+  isOpen,
+  jobSeeker,
+  onClose,
+  onUpdateScores,
+}: TaskDrawerProps) {
   const [subStatus, setSubStatus] = useState(jobSeeker?.sub_status || "");
   const [assessmentScores, setAssessmentScores] = useState({
-    creative_campaign: 0,
-    data_analysis: 0,
-    communication: 0,
-    strategic_thinking: 0,
+    score1: 0,
+    score2: 0,
+    score3: 0,
+    score4: 0,
   });
 
-  // Actualizar substatus cuando cambie el jobSeeker
+  // Actualizar substatus y scores cuando cambie el jobSeeker
   useEffect(() => {
-    if (jobSeeker?.sub_status) {
-      setSubStatus(jobSeeker.sub_status);
-    }
-    // TODO: Cargar scores desde la BD cuando estén disponibles
-    if (jobSeeker?.assessment_scores) {
-      setAssessmentScores(jobSeeker.assessment_scores);
-    } else {
-      // Valores por defecto cuando es new_applicants
+    if (jobSeeker) {
+      setSubStatus(jobSeeker.sub_status || "");
+
+      // Cargar scores desde la BD
       setAssessmentScores({
-        creative_campaign: 0,
-        data_analysis: 0,
-        communication: 0,
-        strategic_thinking: 0,
+        score1: jobSeeker.score1 || 0,
+        score2: jobSeeker.score2 || 0,
+        score3: jobSeeker.score3 || 0,
+        score4: jobSeeker.score4 || 0,
       });
     }
   }, [jobSeeker]);
@@ -59,12 +75,17 @@ export function TaskDrawer({ isOpen, jobSeeker, onClose }) {
   };
 
   const handleScoreChange = (criteriaId: string, value: number) => {
-    setAssessmentScores((prev) => ({
-      ...prev,
+    // Actualizar estado local inmediatamente para feedback visual
+    const newScores = {
+      ...assessmentScores,
       [criteriaId]: value,
-    }));
-    // TODO: Implementar lógica para guardar en BD
-    console.log(`Score changed: ${criteriaId} = ${value}`);
+    };
+    setAssessmentScores(newScores);
+
+    // Guardar en BD si tenemos application_id
+    if (jobSeeker?.application_id) {
+      onUpdateScores(jobSeeker.application_id, newScores);
+    }
   };
 
   // Determinar si los scores son editables (solo en new_applicants)

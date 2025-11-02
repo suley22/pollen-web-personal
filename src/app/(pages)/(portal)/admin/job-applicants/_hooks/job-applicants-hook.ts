@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   useJobApplicants,
   useUpdateApplicantStatus,
+  useUpdateAssessmentScores,
   transformJobSeekersToList,
   getColumnInfo,
   type GroupedApplicants,
@@ -22,8 +23,9 @@ export function useJobApplicantsHook(jobId: string | null) {
     error,
   } = useJobApplicants(jobId);
 
-  // Get mutation hook for updating applicant status
+  // Get mutation hooks
   const updateApplicantStatusMutation = useUpdateApplicantStatus();
+  const updateAssessmentScoresMutation = useUpdateAssessmentScores();
 
   // View state
   const [viewMode, setViewMode] = useState<"board" | "grid">("board");
@@ -88,6 +90,27 @@ export function useJobApplicantsHook(jobId: string | null) {
   const closeDrawer = () => {
     setIsDrawerOpen(false);
     setTimeout(() => setSelectedJobSeeker(null), 300); // Wait for animation
+  };
+
+  /**
+   * Actualiza los assessment scores de un aplicante
+   */
+  const handleUpdateAssessmentScores = (
+    applicationId: string,
+    scores: {
+      score1: number;
+      score2: number;
+      score3: number;
+      score4: number;
+    },
+  ) => {
+    if (!jobId) return;
+
+    updateAssessmentScoresMutation.mutate({
+      applicationId,
+      scores,
+      jobId,
+    });
   };
 
   /**
@@ -204,6 +227,7 @@ export function useJobApplicantsHook(jobId: string | null) {
     // Mutations
     isUpdatingStatus: updateApplicantStatusMutation.isPending,
     updateError: updateApplicantStatusMutation.error,
+    isUpdatingScores: updateAssessmentScoresMutation.isPending,
 
     // View state
     viewMode,
@@ -214,6 +238,7 @@ export function useJobApplicantsHook(jobId: string | null) {
     isDrawerOpen,
     handleJobSeekerClick: handleClick,
     closeDrawer,
+    handleUpdateAssessmentScores,
 
     // Drag & Drop
     handleDragStart,

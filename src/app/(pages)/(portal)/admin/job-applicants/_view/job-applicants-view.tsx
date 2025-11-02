@@ -23,6 +23,7 @@ export default function JobApplicantsView({
     isDrawerOpen,
     handleJobSeekerClick,
     closeDrawer,
+    handleUpdateAssessmentScores,
     handleDragStart,
     handleDragEnd,
     handleDragOver,
@@ -121,6 +122,7 @@ export default function JobApplicantsView({
         isOpen={isDrawerOpen}
         jobSeeker={selectedJobSeeker}
         onClose={closeDrawer}
+        onUpdateScores={handleUpdateAssessmentScores}
       />
     </PageContainer>
   );

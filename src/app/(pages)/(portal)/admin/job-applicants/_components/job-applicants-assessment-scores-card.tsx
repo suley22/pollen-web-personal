@@ -4,22 +4,22 @@ import { Lightbulb, BarChart3, MessageSquare, TrendingUp } from "lucide-react";
 
 const ASSESSMENT_CRITERIA = [
   {
-    id: "creative_campaign",
+    id: "score1",
     label: "Creative Campaign Development",
     icon: Lightbulb,
   },
   {
-    id: "data_analysis",
+    id: "score2",
     label: "Data Analysis & Insights",
     icon: BarChart3,
   },
   {
-    id: "communication",
+    id: "score3",
     label: "Communication & Presentation",
     icon: MessageSquare,
   },
   {
-    id: "strategic_thinking",
+    id: "score4",
     label: "Strategic Thinking",
     icon: TrendingUp,
   },
@@ -27,10 +27,10 @@ const ASSESSMENT_CRITERIA = [
 
 interface AssessmentScoresCardProps {
   scores: {
-    creative_campaign: number;
-    data_analysis: number;
-    communication: number;
-    strategic_thinking: number;
+    score1: number;
+    score2: number;
+    score3: number;
+    score4: number;
   };
   isEditable: boolean;
   onScoreChange?: (criteriaId: string, value: number) => void;

@@ -29,6 +29,7 @@ export default function JobSeekerCard({
   jobSeeker,
   columnId,
   onDragStart,
+  onDragEnd,
   onClick,
 }) {
   // Datos reales desde el jobSeeker (job_application + job_seeker)
@@ -46,8 +47,10 @@ export default function JobSeekerCard({
     <div
       draggable
       onDragStart={(e) => onDragStart(e, jobSeeker, columnId)}
+      onDragEnd={onDragEnd}
       onClick={() => onClick(jobSeeker, columnId)}
       className="bg-white rounded-lg border border-gray-200 hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-move group"
+      data-card-item="true"
     >
       <div className="flex flex-col gap-3 p-4">
         {/* Header: Avatar, Name, Score */}

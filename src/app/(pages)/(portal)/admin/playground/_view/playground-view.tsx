@@ -22,8 +22,12 @@ export default function PlaygroundView({ jobId = null }: PlaygroundViewProps) {
     handleJobSeekerClick,
     closeDrawer,
     handleDragStart,
+    handleDragEnd,
     handleDragOver,
+    handleDragLeave,
     handleDrop,
+    dragPreview,
+    draggedItem,
     getAllJobSeekersWithStatus,
     isUpdatingStatus,
   } = usePlaygroundHook(jobId);
@@ -87,9 +91,13 @@ export default function PlaygroundView({ jobId = null }: PlaygroundViewProps) {
               <BoardView
                 jobSeekers={jobSeekers}
                 onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
                 onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
                 onJobSeekerClick={handleJobSeekerClick}
+                dragPreview={dragPreview}
+                draggedItem={draggedItem}
               />
             </div>
           )}

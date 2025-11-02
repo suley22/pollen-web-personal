@@ -32,6 +32,10 @@ export function usePlaygroundHook(jobId: string | null) {
 
   // Drag & Drop state
   const [draggedItem, setDraggedItem] = useState<any>(null);
+  const [dragPreview, setDragPreview] = useState<{
+    columnId: string;
+    position: number;
+  } | null>(null);
 
   // Computes the insertion index inside a container based on mouse Y position
   // Falls back to container.children if no specific draggable selector matches
@@ -95,11 +99,66 @@ export function usePlaygroundHook(jobId: string | null) {
   };
 
   /**
-   * Permite el drop en la columna
+   * Limpia el estado cuando el drag termina sin drop
    */
-  const handleDragOver = (e: any) => {
+  const handleDragEnd = () => {
+    setDraggedItem(null);
+    setDragPreview(null);
+  };
+
+  /**
+   * Permite el drop en la columna y maneja el preview
+   */
+  const handleDragOver = (e: any, targetColumnId?: string) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
+
+    // Solo mostrar preview si estamos arrastrando algo y es una columna diferente
+    if (
+      draggedItem &&
+      targetColumnId &&
+      targetColumnId !== draggedItem.sourceColumn
+    ) {
+      // Calcular posición basada en la posición Y del mouse
+      const dropZone = e.currentTarget;
+      const rect = dropZone.getBoundingClientRect();
+      const y = e.clientY - rect.top;
+
+      // Obtener todas las cards en esta columna
+      const cards = dropZone.querySelectorAll('[data-card="true"]');
+      let position = 0;
+
+      // Encontrar la posición correcta basada en la posición Y
+      for (let i = 0; i < cards.length; i++) {
+        const cardRect = cards[i].getBoundingClientRect();
+        const cardY = cardRect.top - rect.top + cardRect.height / 2;
+
+        if (y < cardY) {
+          position = i;
+          break;
+        }
+        position = i + 1;
+      }
+
+      setDragPreview({
+        columnId: targetColumnId,
+        position: position,
+      });
+    }
+  };
+
+  /**
+   * Maneja cuando el drag sale de una columna
+   */
+  const handleDragLeave = (e: any) => {
+    // Solo limpiar si realmente salimos del área
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX;
+    const y = e.clientY;
+
+    if (x < rect.left || x > rect.right || y < rect.top || y > rect.bottom) {
+      setDragPreview(null);
+    }
   };
 
   /**
@@ -112,9 +171,12 @@ export function usePlaygroundHook(jobId: string | null) {
 
     const { item, sourceColumn } = draggedItem;
 
+    // Limpiar estados de drag
+    setDraggedItem(null);
+    setDragPreview(null);
+
     // Si es la misma columna, no hacer nada
     if (sourceColumn === targetColumnId) {
-      setDraggedItem(null);
       return;
     }
 
@@ -124,8 +186,6 @@ export function usePlaygroundHook(jobId: string | null) {
       newStatus: targetColumnId,
       jobId: jobId,
     });
-
-    setDraggedItem(null);
   };
 
   /**
@@ -157,8 +217,12 @@ export function usePlaygroundHook(jobId: string | null) {
 
     // Drag & Drop
     handleDragStart,
+    handleDragEnd,
     handleDragOver,
+    handleDragLeave,
     handleDrop,
+    dragPreview,
+    draggedItem,
 
     // Helpers
     getAllJobSeekersWithStatus,

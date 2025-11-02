@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { getJobApplicants, transformJobSeekersToList, getColumnInfo } from "../_services/playground-service";
+import {
+  getJobApplicants,
+  transformJobSeekersToList,
+  getColumnInfo,
+  updateJobApplicationStatus,
+} from "../_services/playground-service";
 import { getInsertionIndex } from "@/lib/utils/dnd";
 
 export function usePlaygroundHook(jobId: string) {
@@ -35,15 +40,23 @@ export function usePlaygroundHook(jobId: string) {
   const hoverDepthRef = useRef<Record<string, number>>({});
 
   // Refs para throttling del preview (reduce renders durante dragover):
-  const previewStateRef = useRef<{ columnId: string | null; index: number | null; height?: number | null }>(
-    { columnId: null, index: null, height: null },
-  );
-  const pendingPreviewRef = useRef<{ columnId: string | null; index: number | null; height?: number | null } | null>(
-    null,
-  );
+  const previewStateRef = useRef<{
+    columnId: string | null;
+    index: number | null;
+    height?: number | null;
+  }>({ columnId: null, index: null, height: null });
+  const pendingPreviewRef = useRef<{
+    columnId: string | null;
+    index: number | null;
+    height?: number | null;
+  } | null>(null);
   const rafIdRef = useRef<number | null>(null);
 
-  const schedulePreviewUpdate = (next: { columnId: string | null; index: number | null; height?: number | null }) => {
+  const schedulePreviewUpdate = (next: {
+    columnId: string | null;
+    index: number | null;
+    height?: number | null;
+  }) => {
     pendingPreviewRef.current = next;
     if (rafIdRef.current != null) return;
     rafIdRef.current = requestAnimationFrame(() => {
@@ -121,10 +134,14 @@ export function usePlaygroundHook(jobId: string) {
     const el = e.currentTarget as HTMLElement | null;
     const rect = el?.getBoundingClientRect?.();
     const estimatedHeight = rect?.height ?? null;
-  setDraggedItem({ item, sourceColumn: columnId, height: estimatedHeight });
-  const initialPreview = { columnId: null, index: null, height: estimatedHeight };
-  previewStateRef.current = initialPreview;
-  setDropPreview(initialPreview);
+    setDraggedItem({ item, sourceColumn: columnId, height: estimatedHeight });
+    const initialPreview = {
+      columnId: null,
+      index: null,
+      height: estimatedHeight,
+    };
+    previewStateRef.current = initialPreview;
+    setDropPreview(initialPreview);
     e.dataTransfer.effectAllowed = "move";
 
     // Crear imagen de arrastre estable
@@ -162,7 +179,8 @@ export function usePlaygroundHook(jobId: string) {
 
     // Update live preview position when hovering a column
     if (!draggedItem || !targetColumnId) return;
-    const container: HTMLElement | null = (e.currentTarget as HTMLElement) || null;
+    const container: HTMLElement | null =
+      (e.currentTarget as HTMLElement) || null;
     const rawIndex = container ? getInsertionIndex(container, e.clientY) : 0;
     schedulePreviewUpdate({
       columnId: targetColumnId,
@@ -176,11 +194,13 @@ export function usePlaygroundHook(jobId: string) {
    */
   const handleDragEnter = (e: any, targetColumnId: string) => {
     e.preventDefault();
-    hoverDepthRef.current[targetColumnId] = (hoverDepthRef.current[targetColumnId] || 0) + 1;
+    hoverDepthRef.current[targetColumnId] =
+      (hoverDepthRef.current[targetColumnId] || 0) + 1;
 
     // Mostrar inmediatamente el preview al entrar en la columna
     if (!draggedItem) return;
-    const container: HTMLElement | null = (e.currentTarget as HTMLElement) || null;
+    const container: HTMLElement | null =
+      (e.currentTarget as HTMLElement) || null;
     const rawIndex = container ? getInsertionIndex(container, e.clientY) : 0;
     schedulePreviewUpdate({
       columnId: targetColumnId,
@@ -192,19 +212,29 @@ export function usePlaygroundHook(jobId: string) {
   /** Marca que salimos de una columna; cuando la profundidad llega a 0, limpiamos el preview */
   const handleDragLeave = (e: any, targetColumnId: string) => {
     e.preventDefault();
-    const nextDepth = Math.max(0, (hoverDepthRef.current[targetColumnId] || 0) - 1);
+    const nextDepth = Math.max(
+      0,
+      (hoverDepthRef.current[targetColumnId] || 0) - 1,
+    );
     hoverDepthRef.current[targetColumnId] = nextDepth;
-    if (nextDepth === 0 && previewStateRef.current.columnId === targetColumnId) {
-      const cleared = { columnId: null, index: null, height: draggedItem?.height ?? null };
+    if (
+      nextDepth === 0 &&
+      previewStateRef.current.columnId === targetColumnId
+    ) {
+      const cleared = {
+        columnId: null,
+        index: null,
+        height: draggedItem?.height ?? null,
+      };
       previewStateRef.current = cleared;
       setDropPreview(cleared);
     }
   };
 
   /**
-   * Maneja el drop de un job seeker en una columna (solo UI, sin BD)
+   * Maneja el drop de un job seeker en una columna (actualiza UI y BD)
    */
-  const handleDrop = (e: any, targetColumnId: string) => {
+  const handleDrop = async (e: any, targetColumnId: string) => {
     e.preventDefault();
 
     if (!draggedItem) return;
@@ -212,15 +242,32 @@ export function usePlaygroundHook(jobId: string) {
     const { item, sourceColumn } = draggedItem;
 
     // Compute insertion index based on drop height within the target column container
-    const container: HTMLElement | null = (e.currentTarget as HTMLElement) || null;
-    const rawIndex = container ? getInsertionIndex(container, e.clientY) : undefined;
+    const container: HTMLElement | null =
+      (e.currentTarget as HTMLElement) || null;
+    const rawIndex = container
+      ? getInsertionIndex(container, e.clientY)
+      : undefined;
 
-  // Limpiamos el preview en el siguiente frame para no desaparecerlo antes de que la card vuelva a ser visible
-  const clearPreview = () => {
+    // Limpiamos el preview en el siguiente frame para no desaparecerlo antes de que la card vuelva a ser visible
+    const clearPreview = () => {
       const cleared = { columnId: null, index: null, height: null } as const;
       previewStateRef.current = cleared;
       setDropPreview(cleared);
     };
+
+    // Si cambia de columna, actualizar estado en la base de datos
+    if (sourceColumn !== targetColumnId) {
+      try {
+        await updateJobApplicationStatus(item.application_id, targetColumnId);
+        console.log(
+          `✅ Application ${item.application_id} moved from ${sourceColumn} to ${targetColumnId}`,
+        );
+      } catch (error) {
+        console.error("❌ Failed to update application status:", error);
+        // TODO: Mostrar toast de error al usuario
+        return; // No actualizar UI si falla la BD
+      }
+    }
 
     // Si es la misma columna, no hacer nada
     // Si es la misma columna, permitir reordenar dentro de la columna
@@ -248,7 +295,9 @@ export function usePlaygroundHook(jobId: string) {
 
       // Calcular índice de inserción en destino
       let insertIndex =
-        typeof rawIndex === "number" && rawIndex >= 0 ? rawIndex : targetList.length;
+        typeof rawIndex === "number" && rawIndex >= 0
+          ? rawIndex
+          : targetList.length;
 
       if (sourceColumn === targetColumnId) {
         // Ajustar índice si venimos de la misma lista y el removal movió posiciones

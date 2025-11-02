@@ -188,7 +188,7 @@ export async function getJobApplicants(jobId: string) {
         .in("id", userIds);
 
       if (jobSeekersError) {
-  console.error("❌ Error fetching job seekers:", jobSeekersError);
+        console.error("❌ Error fetching job seekers:", jobSeekersError);
         // Continuar sin los datos de job_seeker
       } else {
         console.log(
@@ -278,4 +278,39 @@ export function transformJobSeekersToList(jobSeekers: Record<string, any[]>) {
  */
 export function getColumnInfo(columnId: string) {
   return JOB_SEEKER_COLUMNS.find((col) => col.id === columnId);
+}
+
+/**
+ * Actualiza el estado de una aplicación de trabajo
+ */
+export async function updateJobApplicationStatus(
+  applicationId: string,
+  newStatus: string,
+) {
+  try {
+    console.log("🔄 Updating application status:", {
+      applicationId,
+      newStatus,
+    });
+
+    const { data, error } = await supabase
+      .from("job_applications")
+      .update({
+        status: newStatus,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", applicationId)
+      .select();
+
+    if (error) {
+      console.error("❌ Error updating application status:", error);
+      throw error;
+    }
+
+    console.log("✅ Application status updated successfully:", data);
+    return data;
+  } catch (error) {
+    console.error("Error in updateJobApplicationStatus:", error);
+    throw error;
+  }
 }

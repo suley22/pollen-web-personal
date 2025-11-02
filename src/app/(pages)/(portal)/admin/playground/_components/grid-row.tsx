@@ -16,7 +16,6 @@ export default function GridRow({ jobSeeker, onClick }) {
   const matchScore = jobSeeker.match_score;
   const appliedDate = jobSeeker.applied_date;
   const subStatus = jobSeeker.sub_status;
-  const isVerified = jobSeeker.is_verified;
 
   return (
     <div

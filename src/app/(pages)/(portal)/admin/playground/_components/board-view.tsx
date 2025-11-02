@@ -56,7 +56,7 @@ export function BoardView({
           <div
             className={`sticky top-0 z-10 flex items-center justify-between ${column.color} rounded-t-xl p-4 border border-gray-200`}
           >
-            <div className="font-semibold text-base text-base text-gray-900">
+            <div className="font-semibold text-base text-gray-900">
               {column.title}
             </div>
             <span

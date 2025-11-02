@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
-import { useAssignedJobs } from "../_services/home-page-service";
+import { useAssignedJobs } from "./_services/home-service";
 
 export function useHome() {
   const [selectedStatus, setSelectedStatus] = useState("all");

@@ -7,11 +7,8 @@ import { TaskDrawer } from "../_components/task-drawer";
 import { ViewToggle } from "../_components/view-toggle";
 import { PageContainer, PageHeader } from "@/components/design-system";
 
-// Mock jobId - por el momento usamos este valor fijo
-const jobId = "139ad003-8062-4cf2-8aee-354451d51798";
-
 // TODO(playground): Este contenedor podría recibir el jobId vía props/route params.
-export default function PlaygroundView() {
+export default function PlaygroundView({ jobId }: { jobId: string }) {
   const {
     jobSeekers,
     isLoading,

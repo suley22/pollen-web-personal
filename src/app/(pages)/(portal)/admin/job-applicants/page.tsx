@@ -1,4 +1,4 @@
-import PlaygroundView from "./_view/playground-view";
+import PlaygroundView from "./_view/job-applicants-view";
 
 export default function PlaygroundPage() {
   // TODO: En el futuro, recibir jobId desde params o searchParams

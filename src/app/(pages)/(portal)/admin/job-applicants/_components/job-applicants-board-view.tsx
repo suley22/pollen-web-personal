@@ -1,7 +1,7 @@
 "use client";
 
-import { JOB_SEEKER_COLUMNS } from "../_services/playground-service";
-import JobSeekerCard from "./task-card";
+import { JOB_SEEKER_COLUMNS } from "../_services/job-applicants-service";
+import JobSeekerCard from "./job-applicants-js-card";
 
 // Componente de preview que imita el tamaño y estructura de una JobSeekerCard real
 function DropPreviewCard() {

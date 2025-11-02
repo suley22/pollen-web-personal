@@ -1,10 +1,10 @@
 "use client";
 
-import { usePlaygroundHook } from "../_hooks/playground-hook";
-import { BoardView } from "../_components/board-view";
-import { GridView } from "../_components/grid-view";
-import { TaskDrawer } from "../_components/task-drawer";
-import { ViewToggle } from "../_components/view-toggle";
+import { usePlaygroundHook } from "../_hooks/job-applicants-hook";
+import { BoardView } from "../_components/job-applicants-board-view";
+import { GridView } from "../_components/job-applicants-grid-view";
+import { TaskDrawer } from "../_components/job-applicants-js-drawer";
+import { ViewToggle } from "../_components/job-applicants-view-toggle";
 import { PageContainer, PageHeader } from "@/components/design-system";
 
 interface PlaygroundViewProps {

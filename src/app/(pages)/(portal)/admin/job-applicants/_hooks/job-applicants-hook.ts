@@ -7,7 +7,7 @@ import {
   transformJobSeekersToList,
   getColumnInfo,
   type GroupedApplicants,
-} from "../_services/playground-service";
+} from "../_services/job-applicants-service";
 
 export function usePlaygroundHook(jobId: string | null) {
   // Fetch job applicants using React Query

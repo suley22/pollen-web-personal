@@ -1,5 +1,5 @@
-import AssessmentCreateUnifiedView from "../create/_view/assessment-create-unified-view";
+import AssessmentCreateView from "../create/_view/assessment-create-view";
 
-export default function AssessmentCreateV2Page() {
-  return <AssessmentCreateUnifiedView />;
+export default function AssessmentCreatePage() {
+  return <AssessmentCreateView />;
 }

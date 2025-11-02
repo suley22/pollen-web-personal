@@ -14,6 +14,9 @@ import {
   TextareaInput,
   CategorySelector,
   Divider,
+  PrimaryButton,
+  SecondaryButton,
+  PageHeader,
 } from "@/components/design-system";
 import { AssessmentCreateCategories } from "./assessment-create-categories";
 import { Plus, X } from "lucide-react";
@@ -154,11 +157,13 @@ export function AddMultipleChoiceQuestionDialog({
         side="right"
         className="!w-[50vw] !max-w-[50vw] overflow-y-auto p-6"
       >
-        <SheetHeader className="">
-          <SheetTitle className="">
-            {editingQuestion ? "Edit" : "Add"} Multiple Choice Question
-          </SheetTitle>
-        </SheetHeader>
+        <PageHeader
+          title={
+            editingQuestion
+              ? "Edit Multiple Choice Question"
+              : "Add Multiple Choice Question"
+          }
+        />
 
         <div className="space-y-4 py-4">
           {/* Categories Section */}
@@ -213,44 +218,41 @@ export function AddMultipleChoiceQuestionDialog({
           />
 
           {/* Add Option Section */}
-          <div className="space-y-2">
+          <div className="space-y-2 mt-2">
             <p className="text-sm font-medium">Add Options *</p>
-            <div className="flex gap-2">
-              <div className="flex-1">
-                <Input
-                  label=""
-                  name="currentOption"
-                  id="currentOption"
-                  value={currentOption}
-                  onChange={(e) => setCurrentOption(e.target.value)}
-                  placeholder="Enter option text"
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddOption();
-                    }
-                  }}
-                />
-              </div>
+
+            <div className="flex flex-1 gap-4 items-end">
               {categories.length > 0 && (
                 <div className="w-48">
                   <CategorySelector
                     categories={categories}
                     value={currentOptionCategory}
                     onValueChange={setCurrentOptionCategory}
-                    label=""
                     placeholder="Category (optional)"
                   />
                 </div>
               )}
-              <Button
+              <Input
+                label=" Option Text"
+                name="currentOption"
+                id="currentOption"
+                value={currentOption}
+                onChange={(e) => setCurrentOption(e.target.value)}
+                placeholder="Enter option text"
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddOption();
+                  }
+                }}
+              />
+              <PrimaryButton
+                icon={<Plus className="h-4 w-4" />}
                 onClick={handleAddOption}
                 disabled={!currentOption.trim()}
-                size="default"
-                className="mt-0"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
+                text="Add"
+                className="mb-0"
+              />
             </div>
           </div>
 
@@ -292,16 +294,12 @@ export function AddMultipleChoiceQuestionDialog({
         </div>
 
         <SheetFooter className="mt-6">
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            size="default"
-          >
-            Cancel
-          </Button>
-          <Button onClick={handleSave} disabled={!canSave} size="default">
-            {editingQuestion ? "Update" : "Add"} Question
-          </Button>
+          <SecondaryButton text="Cancel" onClick={() => onOpenChange(false)} />
+          <PrimaryButton
+            text={editingQuestion ? "Update Question" : "Add Question"}
+            onClick={handleSave}
+            disabled={!canSave}
+          />
         </SheetFooter>
       </SheetContent>
     </Sheet>

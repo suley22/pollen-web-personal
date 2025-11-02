@@ -170,17 +170,13 @@ export default function AssessmentCreateUnifiedView({
         {/* Categories - TODO: Implement category management UI */}
         {/* Will be added in next iteration */}
 
+        <AddQuestionButton
+          onSelectType={handleOpenDialog}
+          disabled={isSaving}
+        />
+
         {/* Questions Section with Unified Preview */}
-        <FormCard
-          title="Questions"
-          icon={<ListPlus className="h-5 w-5" />}
-          titleButtons={
-            <AddQuestionButton
-              onSelectType={handleOpenDialog}
-              disabled={isSaving}
-            />
-          }
-        >
+        <div title="Questions" icon={<ListPlus className="h-5 w-5" />}>
           {questions.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <ListPlus className="h-12 w-12 mx-auto mb-4 opacity-50" />
@@ -204,7 +200,7 @@ export default function AssessmentCreateUnifiedView({
               onRemoveQuestion={handleDeleteQuestion}
             />
           )}
-        </FormCard>
+        </div>
 
         {/* Form Actions */}
         <FormActions>

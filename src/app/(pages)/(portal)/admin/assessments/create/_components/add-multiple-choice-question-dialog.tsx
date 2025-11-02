@@ -19,7 +19,7 @@ import {
   PageHeader,
 } from "@/components/design-system";
 import { AssessmentCreateCategories } from "./assessment-create-categories";
-import { Palette, Plus, X } from "lucide-react";
+import { CheckCircle, Palette, Plus, X } from "lucide-react";
 import type {
   AssessmentQuestion,
   AssessmentQuestionOption,
@@ -182,13 +182,12 @@ export function AddMultipleChoiceQuestionDialog({
                 onMoveCategoryUp={handleMoveCategoryUp}
                 getCategoryOptionsCount={getCategoryOptionsCount}
               />
-              <Divider />
             </>
           )}
 
-          <div className="flex gap-2 items-center text-lg font-medium">
-            <Palette className="h-5 w-5" />
-            Categories
+          <div className="flex gap-2 items-center text-lg font-medium mt-4">
+            <CheckCircle className="h-5 w-5" />
+            Question Details
           </div>
 
           <Divider />
@@ -309,7 +308,8 @@ export function AddMultipleChoiceQuestionDialog({
           )}
         </div>
 
-        <SheetFooter className="mt-6">
+        <SheetFooter className="mt-6 gap-4">
+          <Divider />
           <SecondaryButton text="Cancel" onClick={() => onOpenChange(false)} />
           <PrimaryButton
             text={editingQuestion ? "Update Question" : "Add Question"}

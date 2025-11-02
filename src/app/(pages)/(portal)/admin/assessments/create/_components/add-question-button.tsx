@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { QuestionType } from "@/types/assessment-question";
+import { SecondaryButton } from "@/components/design-system";
 
 interface AddQuestionButtonProps {
   onSelectType: (type: QuestionType) => void;
@@ -23,10 +24,14 @@ export function AddQuestionButton({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button disabled={disabled} size="lg">
-          <Plus className="h-5 w-5 mr-2" />
-          Add Question
-        </Button>
+        <div className="flex">
+          <SecondaryButton
+            disabled={disabled}
+            className="w-full"
+            icon={<Plus className="h-5 w-5 mr-2" />}
+            text="Add Question"
+          />
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuItem onClick={() => onSelectType("multiple_choice")}>

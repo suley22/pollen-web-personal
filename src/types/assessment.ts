@@ -1,5 +1,5 @@
 import type { AssessmentQuestion } from "./assessment-question";
-import type { AssessmentCategory } from "./assessment-category";
+import type { AssessmentCategory } from "./assessment-types";
 
 export interface Assessment {
   id: string;

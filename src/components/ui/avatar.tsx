@@ -28,7 +28,7 @@ function AvatarImage({ className = "", ...props }) {
   );
 }
 
-function AvatarFallback({ className, ...props }) {
+function AvatarFallback({ className = "", ...props }) {
   return (
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"

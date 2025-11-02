@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { CategoryStats } from "@/types/assessment-category";
+import type { CategoryStats } from "@/types/assessment-types";
 
 interface CategoryChartProps {
   stats: CategoryStats[];

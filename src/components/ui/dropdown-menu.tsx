@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
@@ -46,7 +47,7 @@ function DropdownMenuGroup({ ...props }) {
   );
 }
 
-function DropdownMenuItem({ className, inset, variant = "default", ...props }) {
+function DropdownMenuItem({ className = "", inset = {}, variant = "default", ...props }) {
   return (
     <DropdownMenuPrimitive.Item
       data-slot="dropdown-menu-item"

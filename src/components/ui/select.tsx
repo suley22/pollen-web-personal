@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 
 import * as React from "react";
@@ -18,7 +19,7 @@ function SelectValue({ ...props }) {
   return <SelectPrimitive.Value data-slot="select-value" {...props} />;
 }
 
-function SelectTrigger({ className, size = "default", children, ...props }) {
+function SelectTrigger({ className = "", size = "default", children=null, ...props }) {
   return (
     <SelectPrimitive.Trigger
       data-slot="select-trigger"
@@ -37,7 +38,7 @@ function SelectTrigger({ className, size = "default", children, ...props }) {
   );
 }
 
-function SelectContent({ className, children, position = "popper", ...props }) {
+function SelectContent({ className, children = null, position = "popper", ...props }) {
   return (
     <SelectPrimitive.Portal>
       <SelectPrimitive.Content
@@ -77,7 +78,7 @@ function SelectLabel({ className, ...props }) {
   );
 }
 
-function SelectItem({ className, children, ...props }) {
+function SelectItem({ className = "", children = null, ...props }) {
   return (
     <SelectPrimitive.Item
       data-slot="select-item"

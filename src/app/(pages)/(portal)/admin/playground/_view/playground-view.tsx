@@ -10,10 +10,12 @@ import { PageContainer, PageHeader } from "@/components/design-system";
 // Mock jobId - por el momento usamos este valor fijo
 const jobId = "139ad003-8062-4cf2-8aee-354451d51798";
 
+// TODO(playground): Este contenedor podría recibir el jobId vía props/route params.
 export default function PlaygroundView() {
   const {
     jobSeekers,
     isLoading,
+    draggedItem,
     viewMode,
     setViewMode,
     selectedJobSeeker,
@@ -22,8 +24,12 @@ export default function PlaygroundView() {
     closeDrawer,
     handleDragStart,
     handleDragOver,
+    handleDragEnter,
+    handleDragLeave,
     handleDrop,
+    handleDragEnd,
     getAllJobSeekersWithStatus,
+    dropPreview,
   } = usePlaygroundHook(jobId);
 
   if (isLoading) {
@@ -59,8 +65,13 @@ export default function PlaygroundView() {
                 jobSeekers={jobSeekers}
                 onDragStart={handleDragStart}
                 onDragOver={handleDragOver}
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
                 onJobSeekerClick={handleJobSeekerClick}
+                onDragEnd={handleDragEnd}
+                dropPreview={dropPreview}
+                draggedItem={draggedItem}
               />
             </div>
           )}

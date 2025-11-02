@@ -5,6 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/buttons/button";
 import { User, FileText, MessageSquare, CheckCircle } from "lucide-react";
 
+// TODO(playground):
+// - Usar <tr>/<td> dentro de <table> si se prioriza accesibilidad de tablas.
+// - Extraer los botones de acción a un subcomponente y estandarizar tooltips/aria-labels.
+// - Memoizar filas si el dataset es grande para evitar renders innecesarios.
 export default function GridRow({ jobSeeker, onClick }) {
   // Datos reales desde el jobSeeker (job_application + job_seeker)
   const candidateName = jobSeeker.name;

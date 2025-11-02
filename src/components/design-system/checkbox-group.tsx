@@ -147,8 +147,6 @@ export function CheckboxGroup({
           return (
             <div className="flex items-center space-x-2" key={item.label}>
               <Checkbox
-                name={name}
-                value={item.label}
                 checked={isSelected}
                 onCheckedChange={(checked) =>
                   handleCheckboxChange(item.label, checked, item.isCustom)
@@ -161,7 +159,7 @@ export function CheckboxGroup({
                 )}
                 onClick={(e) => {
                   // Prevenir si es custom o si se hace clic en el botón de eliminar
-                  if (item.isCustom || e.target.closest("button")) {
+                  if (item.isCustom || (e.target as HTMLElement).closest("button")) {
                     return;
                   }
                   // Toggle el estado del checkbox

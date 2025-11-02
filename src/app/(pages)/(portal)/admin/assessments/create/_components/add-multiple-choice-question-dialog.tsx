@@ -1,13 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
-} from "@/components/ui/sheet";
+import { useState, useEffect, useRef } from "react";
+import { Sheet, SheetContent, SheetFooter } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import {
   Input,
@@ -19,7 +13,7 @@ import {
   PageHeader,
 } from "@/components/design-system";
 import { AssessmentCreateCategories } from "./assessment-create-categories";
-import { CheckCircle, Palette, Plus, X } from "lucide-react";
+import { CheckCircle, Plus, X } from "lucide-react";
 import type {
   AssessmentQuestion,
   AssessmentQuestionOption,
@@ -63,6 +57,9 @@ export function AddMultipleChoiceQuestionDialog({
   const [categoryDescription, setCategoryDescription] = useState("");
   const [categoryColor, setCategoryColor] = useState("#3B82F6");
 
+  // Ref for the question section
+  const questionSectionRef = useRef<HTMLDivElement>(null);
+
   // Reset form when dialog opens/closes or when editing question changes
   useEffect(() => {
     if (open) {
@@ -81,6 +78,19 @@ export function AddMultipleChoiceQuestionDialog({
       setCurrentOptionCategory(undefined);
     }
   }, [open, editingQuestion]);
+
+  // Auto-scroll to question section if categories exist
+  useEffect(() => {
+    if (open && categories.length > 0 && questionSectionRef.current) {
+      // Small delay to ensure the sheet is fully rendered
+      setTimeout(() => {
+        questionSectionRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 300);
+    }
+  }, [open, categories.length]);
 
   const handleAddOption = () => {
     if (currentOption.trim()) {
@@ -185,7 +195,10 @@ export function AddMultipleChoiceQuestionDialog({
             </>
           )}
 
-          <div className="flex gap-2 items-center text-lg font-medium mt-4">
+          <div
+            ref={questionSectionRef}
+            className="flex gap-2 items-center text-lg font-medium mt-4"
+          >
             <CheckCircle className="h-5 w-5" />
             Question Details
           </div>

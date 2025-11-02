@@ -176,7 +176,7 @@ export default function AssessmentCreateUnifiedView({
         />
 
         {/* Questions Section with Unified Preview */}
-        <div title="Questions" icon={<ListPlus className="h-5 w-5" />}>
+        <div>
           {questions.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <ListPlus className="h-12 w-12 mx-auto mb-4 opacity-50" />

@@ -1,18 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Sheet, SheetContent, SheetFooter } from "@/components/ui/sheet";
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/design-system";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import type { AssessmentQuestion } from "@/types/assessment-question";
+  Input,
+  TextareaInput,
+  Divider,
+  PrimaryButton,
+  SecondaryButton,
+  PageHeader,
+} from "@/components/design-system";
+import { CheckCircle } from "lucide-react";
+import type { AssessmentQuestion } from "@/types/assessment-types";
 
 interface AddFreeInputQuestionDialogProps {
   open: boolean;
@@ -28,20 +27,20 @@ export function AddFreeInputQuestionDialog({
   editingQuestion,
 }: AddFreeInputQuestionDialogProps) {
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [maxCharacters, setMaxCharacters] = useState<number>(1000);
+  const [subtitle, setSubtitle] = useState("");
+  const [placeholder, setPlaceholder] = useState("");
 
   // Reset form when dialog opens/closes or when editing question changes
   useEffect(() => {
     if (open) {
       if (editingQuestion) {
         setTitle(editingQuestion.title);
-        setDescription(editingQuestion.description);
-        setMaxCharacters(editingQuestion.max_characters || 1000);
+        setSubtitle(editingQuestion.subtitle || "");
+        setPlaceholder(editingQuestion.free_input?.placeholder || "");
       } else {
         setTitle("");
-        setDescription("");
-        setMaxCharacters(1000);
+        setSubtitle("");
+        setPlaceholder("");
       }
     }
   }, [open, editingQuestion]);
@@ -50,85 +49,84 @@ export function AddFreeInputQuestionDialog({
     const question: Omit<AssessmentQuestion, "id"> = {
       type: "free_input",
       title,
-      description,
-      max_characters: maxCharacters,
+      subtitle: subtitle,
+      free_input: {
+        placeholder: placeholder,
+      },
     };
     onSave(question);
     onOpenChange(false);
   };
 
-  const canSave = title.trim() && description.trim() && maxCharacters > 0;
+  const canSave = title.trim() !== "";
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>
-            {editingQuestion ? "Edit" : "Add"} Free Input Question
-          </DialogTitle>
-        </DialogHeader>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        side="right"
+        className="!w-[50vw] !max-w-[50vw] overflow-y-auto p-6"
+      >
+        <PageHeader
+          title={
+            editingQuestion
+              ? "Edit Free Input Question"
+              : "Add Free Input Question"
+          }
+        />
 
-        <div className="space-y-4 py-4">
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-2 items-center text-lg font-medium mt-2">
+            <CheckCircle className="h-5 w-5" />
+            Question Details
+          </div>
+
+          <Divider />
+
           {/* Question Title */}
-          <div className="space-y-2">
-            <Label className="" htmlFor="title">
-              Question Title *
-            </Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter question title"
-            />
-          </div>
+          <Input
+            label="Question Title *"
+            name="title"
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter the question title"
+          />
 
-          {/* Question Description */}
-          <div className="space-y-2">
-            <Label className="" htmlFor="description">
-              Question Description *
-            </Label>
-            <Textarea
-              className=""
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter question description"
-              rows={3}
-            />
-          </div>
+          {/* Question Subtitle */}
+          <Input
+            label="Question Subtitle"
+            name="subtitle"
+            id="subtitle"
+            value={subtitle}
+            onChange={(e) => setSubtitle(e.target.value)}
+            placeholder="Enter a subtitle or additional context (optional)"
+          />
 
-          {/* Max Characters */}
-          <div className="space-y-2">
-            <Label className="" htmlFor="maxChars">
-              Maximum Characters
-            </Label>
-            <Input
-              id="maxChars"
-              type="number"
-              value={maxCharacters}
-              onChange={(e) => setMaxCharacters(Number(e.target.value))}
-              placeholder="1000"
-              min={1}
-            />
-            <p className="text-xs text-muted-foreground">
-              Maximum number of characters allowed in the response
-            </p>
-          </div>
+          {/* Answer Placeholder */}
+          <TextareaInput
+            label="Answer Placeholder"
+            name="placeholder"
+            id="placeholder"
+            value={placeholder}
+            onChange={(e) => setPlaceholder(e.target.value)}
+            placeholder="Enter placeholder text for the answer field"
+            rows={3}
+          />
+          <p className="text-xs text-muted-foreground -mt-2">
+            This text will appear in the answer textarea to guide users
+          </p>
         </div>
 
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            size="default"
-          >
-            Cancel
-          </Button>
-          <Button onClick={handleSave} disabled={!canSave} size="default">
-            {editingQuestion ? "Update" : "Add"} Question
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        <SheetFooter className="mt-6 gap-4">
+          <Divider />
+          <SecondaryButton text="Cancel" onClick={() => onOpenChange(false)} />
+          <PrimaryButton
+            text={editingQuestion ? "Update Question" : "Add Question"}
+            onClick={handleSave}
+            disabled={!canSave}
+          />
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 }

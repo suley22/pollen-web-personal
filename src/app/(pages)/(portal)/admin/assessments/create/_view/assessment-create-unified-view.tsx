@@ -18,9 +18,7 @@ import { AddQuestionButton } from "../_components/add-question-button";
 import { AddMultipleChoiceQuestionDialog } from "../_components/add-multiple-choice-question-dialog";
 import { AddFreeInputQuestionDialog } from "../_components/add-free-input-question-dialog";
 import { AddFileUploadQuestionDialog } from "../_components/add-file-upload-question-dialog";
-import { AssessmentCreateMultipleChoicePreview } from "../_components/assessment-create-multiple-choice-preview";
-import { AssessmentCreateFreeInputPreview } from "../_components/assessment-create-free-input-preview";
-import { AssessmentCreateFileUploadPreview } from "../_components/assessment-create-file-upload-preview";
+import { AssessmentCreateUnifiedPreview } from "../_components/assessment-create-unified-preview";
 
 export default function AssessmentCreateUnifiedView({
   id = null,
@@ -172,7 +170,7 @@ export default function AssessmentCreateUnifiedView({
         {/* Categories - TODO: Implement category management UI */}
         {/* Will be added in next iteration */}
 
-        {/* Questions Section with Preview */}
+        {/* Questions Section with Unified Preview */}
         <FormCard
           title="Questions"
           icon={<ListPlus className="h-5 w-5" />}
@@ -192,154 +190,19 @@ export default function AssessmentCreateUnifiedView({
               </p>
             </div>
           ) : (
-            <>
-              {/* Multiple Choice Preview */}
-              {questions.filter((q) => q.type === "multiple_choice").length >
-                0 && (
-                <div className="mb-8">
-                  <AssessmentCreateMultipleChoicePreview
-                    assessmentTitle={assessmentTitle || "Assessment Preview"}
-                    assessmentDescription={assessmentDescription || ""}
-                    instructionsTitle={instructionsTitle || ""}
-                    instructionsDescription={instructionsDescription || ""}
-                    questions={questions
-                      .filter((q) => q.type === "multiple_choice")
-                      .map((q) => ({
-                        title: q.title,
-                        description: q.description,
-                        options_title: q.options_title || "",
-                        options: q.options || [],
-                      }))}
-                    categories={categories}
-                    isEditMode={true}
-                    onMoveQuestionUp={(index) => {
-                      const mcQuestions = questions.filter(
-                        (q) => q.type === "multiple_choice",
-                      );
-                      const actualIndex = questions.indexOf(mcQuestions[index]);
-                      handleMoveQuestionUp(actualIndex);
-                    }}
-                    onMoveQuestionDown={(index) => {
-                      const mcQuestions = questions.filter(
-                        (q) => q.type === "multiple_choice",
-                      );
-                      const actualIndex = questions.indexOf(mcQuestions[index]);
-                      handleMoveQuestionDown(actualIndex);
-                    }}
-                    onEditQuestion={(index) => {
-                      const mcQuestions = questions.filter(
-                        (q) => q.type === "multiple_choice",
-                      );
-                      const actualIndex = questions.indexOf(mcQuestions[index]);
-                      handleEditQuestion(actualIndex);
-                    }}
-                    onRemoveQuestion={(index) => {
-                      const mcQuestions = questions.filter(
-                        (q) => q.type === "multiple_choice",
-                      );
-                      const actualIndex = questions.indexOf(mcQuestions[index]);
-                      handleDeleteQuestion(actualIndex);
-                    }}
-                  />
-                </div>
-              )}
-
-              {/* Free Input Preview */}
-              {questions.filter((q) => q.type === "free_input").length > 0 && (
-                <div className="mb-8">
-                  <AssessmentCreateFreeInputPreview
-                    assessmentTitle={assessmentTitle || "Assessment Preview"}
-                    assessmentDescription={assessmentDescription || ""}
-                    instructionsTitle={instructionsTitle || ""}
-                    instructionsDescription={instructionsDescription || ""}
-                    questions={questions
-                      .filter((q) => q.type === "free_input")
-                      .map((q) => ({
-                        title: q.title,
-                        subtitle: q.description,
-                        placeholder: "Enter your answer here...",
-                      }))}
-                    isEditMode={true}
-                    onMoveQuestionUp={(index) => {
-                      const fiQuestions = questions.filter(
-                        (q) => q.type === "free_input",
-                      );
-                      const actualIndex = questions.indexOf(fiQuestions[index]);
-                      handleMoveQuestionUp(actualIndex);
-                    }}
-                    onMoveQuestionDown={(index) => {
-                      const fiQuestions = questions.filter(
-                        (q) => q.type === "free_input",
-                      );
-                      const actualIndex = questions.indexOf(fiQuestions[index]);
-                      handleMoveQuestionDown(actualIndex);
-                    }}
-                    onEditQuestion={(index) => {
-                      const fiQuestions = questions.filter(
-                        (q) => q.type === "free_input",
-                      );
-                      const actualIndex = questions.indexOf(fiQuestions[index]);
-                      handleEditQuestion(actualIndex);
-                    }}
-                    onRemoveQuestion={(index) => {
-                      const fiQuestions = questions.filter(
-                        (q) => q.type === "free_input",
-                      );
-                      const actualIndex = questions.indexOf(fiQuestions[index]);
-                      handleDeleteQuestion(actualIndex);
-                    }}
-                  />
-                </div>
-              )}
-
-              {/* File Upload Preview */}
-              {questions.filter((q) => q.type === "file_upload").length > 0 && (
-                <div className="mb-8">
-                  <AssessmentCreateFileUploadPreview
-                    assessmentTitle={assessmentTitle || "Assessment Preview"}
-                    assessmentDescription={assessmentDescription || ""}
-                    instructionsTitle={instructionsTitle || ""}
-                    instructionsDescription={instructionsDescription || ""}
-                    questions={questions
-                      .filter((q) => q.type === "file_upload")
-                      .map((q) => ({
-                        title: q.title,
-                        subtitle: q.description,
-                        referenceFiles: [],
-                      }))}
-                    isEditMode={true}
-                    onMoveQuestionUp={(index) => {
-                      const fuQuestions = questions.filter(
-                        (q) => q.type === "file_upload",
-                      );
-                      const actualIndex = questions.indexOf(fuQuestions[index]);
-                      handleMoveQuestionUp(actualIndex);
-                    }}
-                    onMoveQuestionDown={(index) => {
-                      const fuQuestions = questions.filter(
-                        (q) => q.type === "file_upload",
-                      );
-                      const actualIndex = questions.indexOf(fuQuestions[index]);
-                      handleMoveQuestionDown(actualIndex);
-                    }}
-                    onEditQuestion={(index) => {
-                      const fuQuestions = questions.filter(
-                        (q) => q.type === "file_upload",
-                      );
-                      const actualIndex = questions.indexOf(fuQuestions[index]);
-                      handleEditQuestion(actualIndex);
-                    }}
-                    onRemoveQuestion={(index) => {
-                      const fuQuestions = questions.filter(
-                        (q) => q.type === "file_upload",
-                      );
-                      const actualIndex = questions.indexOf(fuQuestions[index]);
-                      handleDeleteQuestion(actualIndex);
-                    }}
-                  />
-                </div>
-              )}
-            </>
+            <AssessmentCreateUnifiedPreview
+              assessmentTitle={assessmentTitle || "Assessment Preview"}
+              assessmentDescription={assessmentDescription || ""}
+              instructionsTitle={instructionsTitle || ""}
+              instructionsDescription={instructionsDescription || ""}
+              questions={questions}
+              categories={categories}
+              isEditMode={true}
+              onMoveQuestionUp={handleMoveQuestionUp}
+              onMoveQuestionDown={handleMoveQuestionDown}
+              onEditQuestion={handleEditQuestion}
+              onRemoveQuestion={handleDeleteQuestion}
+            />
           )}
         </FormCard>
 

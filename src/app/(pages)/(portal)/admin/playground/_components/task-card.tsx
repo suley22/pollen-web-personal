@@ -9,6 +9,7 @@ import {
   FileText,
   MessageSquare,
   AlertTriangle,
+  ClipboardCheck,
 } from "lucide-react";
 
 // Map de colores para diferentes sub_status
@@ -95,39 +96,30 @@ export default function JobSeekerCard({
         <div className="border-t border-gray-100" />
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-between">
+        <div className="flex gap-2">
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 hover:bg-gray-100 text-gray-600"
+            className="flex-1 h-8 px-3 hover:bg-gray-100 text-gray-600 text-xs font-normal"
             onClick={(e) => {
               e.stopPropagation();
               // Handle profile action
             }}
           >
-            <User className="h-4 w-4" />
+            <User className="h-3.5 w-3.5 mr-1.5" />
+            Profile
           </Button>
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 w-8 p-0 hover:bg-gray-100 text-gray-600"
+            className="flex-1 h-8 px-3 hover:bg-gray-100 text-gray-600 text-xs font-normal"
             onClick={(e) => {
               e.stopPropagation();
-              // Handle documents action
+              // Handle assessment action
             }}
           >
-            <FileText className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 w-8 p-0 hover:bg-gray-100 text-gray-600"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Handle messages action
-            }}
-          >
-            <MessageSquare className="h-4 w-4" />
+            <ClipboardCheck className="h-3.5 w-3.5 mr-1.5" />
+            Assessment
           </Button>
         </div>
       </div>

@@ -62,71 +62,78 @@ export function BoardView({
   draggedItem,
 }) {
   return (
-    <div className="flex gap-4 w-full overflow-x-auto pb-6 px-1">
-      {JOB_SEEKER_COLUMNS.map((column) => (
-        <div
-          key={column.id}
-          className="flex-none shrink-0 w-[320px] flex flex-col gap-0"
-        >
-          {/* Column Header */}
+    <div className="h-full w-full overflow-x-auto overflow-y-hidden">
+      <div className="flex gap-4 w-full h-full pb-1 px-1">
+        {JOB_SEEKER_COLUMNS.map((column) => (
           <div
-            className={`flex items-center justify-between ${column.color} rounded-t-xl px-4 py-2 border border-gray-200`}
+            key={column.id}
+            className="flex-none shrink-0 w-[320px] flex flex-col gap-0"
           >
-            <div className="text-sm font-bold text-gray-900 uppercase">
-              {column.title}
-            </div>
-            <span
-              className={`${column.badgeColor} text-white text-xs font-medium px-2 py-0.5 rounded-full min-w-[20px] text-center`}
+            {/* Column Header */}
+            <div
+              className={`flex items-center justify-between ${column.color} rounded-t-xl px-4 py-2 border border-gray-200`}
             >
-              {jobSeekers[column.id]?.length || 0}
-            </span>
-          </div>
+              <div className="text-sm font-bold text-gray-900 uppercase">
+                {column.title}
+              </div>
+              <span
+                className={`${column.badgeColor} text-white text-xs font-medium px-2 py-0.5 rounded-full min-w-[20px] text-center`}
+              >
+                {jobSeekers[column.id]?.length || 0}
+              </span>
+            </div>
 
-          {/* Drop Zone - Auto height based on content */}
-          <div
-            onDragOver={(e) => onDragOver(e, column.id)}
-            onDragLeave={onDragLeave}
-            onDrop={(e) => onDrop(e, column.id)}
-            className={`bg-white rounded-b-xl p-4 border-x border-b border-gray-200 transition-colors min-h-[200px] ${
-              dragPreview?.columnId === column.id ? "bg-blue-50" : ""
-            }`}
-          >
-            <div className="flex flex-col gap-3">
-              {jobSeekers[column.id]?.length === 0 ? (
-                <div className="flex items-center justify-center h-32 text-gray-400 text-sm">
-                  No applicants
-                </div>
-              ) : (
-                jobSeekers[column.id]?.map((jobSeeker, index) => {
-                  // Mostrar preview antes de esta card si corresponde
-                  const showPreviewBefore =
-                    dragPreview?.columnId === column.id &&
-                    dragPreview?.position === index &&
-                    draggedItem?.sourceColumn !== column.id;
+            {/* Drop Zone - Auto height based on content */}
+            <div
+              onDragOver={(e) => onDragOver(e, column.id)}
+              onDragLeave={onDragLeave}
+              onDrop={(e) => onDrop(e, column.id)}
+              className={`bg-white rounded-b-xl p-4 border-x border-b border-gray-200 transition-colors ${
+                jobSeekers[column.id]?.length === 0
+                  ? "min-h-[80px]"
+                  : "min-h-[200px]"
+              } ${dragPreview?.columnId === column.id ? "bg-blue-50" : ""}`}
+            >
+              <div className="flex flex-col gap-3">
+                {jobSeekers[column.id]?.length === 0 ? (
+                  <div className="flex items-center justify-center h-12 text-gray-400 text-xs">
+                    No applicants
+                  </div>
+                ) : (
+                  jobSeekers[column.id]?.map((jobSeeker, index) => {
+                    // Mostrar preview antes de esta card si corresponde
+                    const showPreviewBefore =
+                      dragPreview?.columnId === column.id &&
+                      dragPreview?.position === index &&
+                      draggedItem?.sourceColumn !== column.id;
 
-                  return (
-                    <div key={jobSeeker.id} data-card="true">
-                      {showPreviewBefore && <DropPreviewCard />}
-                      <JobSeekerCard
-                        jobSeeker={jobSeeker}
-                        columnId={column.id}
-                        onDragStart={onDragStart}
-                        onDragEnd={onDragEnd}
-                        onClick={onJobSeekerClick}
-                      />
-                    </div>
-                  );
-                })
-              )}
+                    return (
+                      <div key={jobSeeker.id} data-card="true">
+                        {showPreviewBefore && <DropPreviewCard />}
+                        <JobSeekerCard
+                          jobSeeker={jobSeeker}
+                          columnId={column.id}
+                          onDragStart={onDragStart}
+                          onDragEnd={onDragEnd}
+                          onClick={onJobSeekerClick}
+                        />
+                      </div>
+                    );
+                  })
+                )}
 
-              {/* Preview al final si corresponde */}
-              {dragPreview?.columnId === column.id &&
-                dragPreview?.position >= (jobSeekers[column.id]?.length || 0) &&
-                draggedItem?.sourceColumn !== column.id && <DropPreviewCard />}
+                {/* Preview al final si corresponde */}
+                {dragPreview?.columnId === column.id &&
+                  dragPreview?.position >=
+                    (jobSeekers[column.id]?.length || 0) &&
+                  draggedItem?.sourceColumn !== column.id && (
+                    <DropPreviewCard />
+                  )}
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

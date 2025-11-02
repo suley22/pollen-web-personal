@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/buttons/button";
-import { User, FileText, MessageSquare, CheckCircle } from "lucide-react";
+import { User, ClipboardCheck } from "lucide-react";
 
 export default function GridRow({ jobSeeker, onClick }) {
   // Datos reales desde el jobSeeker (job_application + job_seeker)
@@ -67,7 +67,7 @@ export default function GridRow({ jobSeeker, onClick }) {
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 w-8 p-0 hover:bg-muted"
+          className="h-8 w-8 p-0 hover:bg-gray-100 text-gray-600"
           onClick={(e) => {
             e.stopPropagation();
             // Handle profile action
@@ -78,24 +78,13 @@ export default function GridRow({ jobSeeker, onClick }) {
         <Button
           variant="ghost"
           size="sm"
-          className="h-8 w-8 p-0 hover:bg-muted"
+          className="h-8 w-8 p-0 hover:bg-gray-100 text-gray-600"
           onClick={(e) => {
             e.stopPropagation();
-            // Handle documents action
+            // Handle assessment action
           }}
         >
-          <FileText className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-8 w-8 p-0 hover:bg-muted"
-          onClick={(e) => {
-            e.stopPropagation();
-            // Handle messages action
-          }}
-        >
-          <MessageSquare className="h-4 w-4" />
+          <ClipboardCheck className="h-4 w-4" />
         </Button>
       </div>
     </div>

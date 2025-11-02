@@ -9,10 +9,13 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/design-system";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { CategorySelector } from "@/components/design-system/category-selector";
+import {
+  Input,
+  TextareaInput,
+  CategorySelector,
+  Divider,
+} from "@/components/design-system";
+import { AssessmentCreateCategories } from "./assessment-create-categories";
 import { Plus, X } from "lucide-react";
 import type {
   AssessmentQuestion,
@@ -26,6 +29,10 @@ interface AddMultipleChoiceQuestionDialogProps {
   onSave: (question: Omit<AssessmentQuestion, "id">) => void;
   categories: AssessmentCategory[];
   editingQuestion?: AssessmentQuestion | null;
+  // Category management
+  onAddCategory?: (category: Omit<AssessmentCategory, "id">) => void;
+  onRemoveCategory?: (categoryId: string) => void;
+  onUpdateCategories?: (categories: AssessmentCategory[]) => void;
 }
 
 export function AddMultipleChoiceQuestionDialog({
@@ -34,7 +41,11 @@ export function AddMultipleChoiceQuestionDialog({
   onSave,
   categories,
   editingQuestion,
+  onAddCategory,
+  onRemoveCategory,
+  onUpdateCategories,
 }: AddMultipleChoiceQuestionDialogProps) {
+  // Question state
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [optionsTitle, setOptionsTitle] = useState("");
@@ -43,6 +54,11 @@ export function AddMultipleChoiceQuestionDialog({
   const [currentOptionCategory, setCurrentOptionCategory] = useState<
     string | undefined
   >();
+
+  // Category state
+  const [categoryName, setCategoryName] = useState("");
+  const [categoryDescription, setCategoryDescription] = useState("");
+  const [categoryColor, setCategoryColor] = useState("#3B82F6");
 
   // Reset form when dialog opens/closes or when editing question changes
   useEffect(() => {
@@ -82,6 +98,42 @@ export function AddMultipleChoiceQuestionDialog({
     setOptions(options.filter((opt) => opt.value !== value));
   };
 
+  // Category handlers
+  const handleAddCategory = () => {
+    if (categoryName.trim() && onAddCategory) {
+      const newCategory: Omit<AssessmentCategory, "id"> = {
+        name: categoryName.trim(),
+        description: categoryDescription.trim(),
+        color: categoryColor,
+      };
+      onAddCategory(newCategory);
+      setCategoryName("");
+      setCategoryDescription("");
+      setCategoryColor("#3B82F6");
+    }
+  };
+
+  const handleRemoveCategoryLocal = (categoryId: string) => {
+    if (onRemoveCategory) {
+      onRemoveCategory(categoryId);
+    }
+  };
+
+  const handleMoveCategoryUp = (index: number) => {
+    if (index > 0 && onUpdateCategories) {
+      const newCategories = [...categories];
+      [newCategories[index - 1], newCategories[index]] = [
+        newCategories[index],
+        newCategories[index - 1],
+      ];
+      onUpdateCategories(newCategories);
+    }
+  };
+
+  const getCategoryOptionsCount = (categoryId: string) => {
+    return options.filter((opt) => opt.categoryId === categoryId).length;
+  };
+
   const handleSave = () => {
     const question: Omit<AssessmentQuestion, "id"> = {
       type: "multiple_choice",
@@ -106,68 +158,93 @@ export function AddMultipleChoiceQuestionDialog({
         </DialogHeader>
 
         <div className="space-y-4 py-4">
+          {/* Categories Section */}
+          {onAddCategory && (
+            <>
+              <AssessmentCreateCategories
+                categories={categories}
+                categoryName={categoryName}
+                categoryDescription={categoryDescription}
+                categoryColor={categoryColor}
+                onCategoryNameChange={setCategoryName}
+                onCategoryDescriptionChange={setCategoryDescription}
+                onCategoryColorChange={setCategoryColor}
+                onAddCategory={handleAddCategory}
+                onRemoveCategory={handleRemoveCategoryLocal}
+                onMoveCategoryUp={handleMoveCategoryUp}
+                getCategoryOptionsCount={getCategoryOptionsCount}
+              />
+              <Divider />
+            </>
+          )}
+
           {/* Question Title */}
-          <div className="space-y-2">
-            <Label htmlFor="title">Question Title *</Label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Enter question title"
-            />
-          </div>
+          <Input
+            label="Question Title *"
+            name="title"
+            id="title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter question title"
+          />
 
           {/* Question Description */}
-          <div className="space-y-2">
-            <Label htmlFor="description">Question Description *</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter question description"
-              rows={3}
-            />
-          </div>
+          <TextareaInput
+            label="Question Description *"
+            name="description"
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Enter question description"
+            rows={3}
+          />
 
           {/* Options Title */}
-          <div className="space-y-2">
-            <Label htmlFor="optionsTitle">Options Title</Label>
-            <Input
-              id="optionsTitle"
-              value={optionsTitle}
-              onChange={(e) => setOptionsTitle(e.target.value)}
-              placeholder="e.g., 'Choose your answer'"
-            />
-          </div>
+          <Input
+            label="Options Title"
+            name="optionsTitle"
+            id="optionsTitle"
+            value={optionsTitle}
+            onChange={(e) => setOptionsTitle(e.target.value)}
+            placeholder="e.g., 'Choose your answer'"
+          />
 
           {/* Add Option Section */}
           <div className="space-y-2">
-            <Label>Add Options *</Label>
+            <p className="text-sm font-medium">Add Options *</p>
             <div className="flex gap-2">
-              <Input
-                value={currentOption}
-                onChange={(e) => setCurrentOption(e.target.value)}
-                placeholder="Enter option text"
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddOption();
-                  }
-                }}
-              />
-              {categories.length > 0 && (
-                <CategorySelector
-                  categories={categories}
-                  value={currentOptionCategory}
-                  onValueChange={setCurrentOptionCategory}
+              <div className="flex-1">
+                <Input
                   label=""
-                  placeholder="Category (optional)"
+                  name="currentOption"
+                  id="currentOption"
+                  value={currentOption}
+                  onChange={(e) => setCurrentOption(e.target.value)}
+                  placeholder="Enter option text"
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddOption();
+                    }
+                  }}
                 />
+              </div>
+              {categories.length > 0 && (
+                <div className="w-48">
+                  <CategorySelector
+                    categories={categories}
+                    value={currentOptionCategory}
+                    onValueChange={setCurrentOptionCategory}
+                    label=""
+                    placeholder="Category (optional)"
+                  />
+                </div>
               )}
               <Button
                 onClick={handleAddOption}
                 disabled={!currentOption.trim()}
                 size="default"
+                className="mt-0"
               >
                 <Plus className="h-4 w-4" />
               </Button>
@@ -177,7 +254,7 @@ export function AddMultipleChoiceQuestionDialog({
           {/* Options List */}
           {options.length > 0 && (
             <div className="space-y-2">
-              <Label className="">Options ({options.length})</Label>
+              <p className="text-sm font-medium">Options ({options.length})</p>
               <div className="space-y-2 max-h-48 overflow-y-auto border rounded-lg p-3">
                 {options.map((option) => {
                   const category = categories.find(

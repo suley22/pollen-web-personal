@@ -246,6 +246,16 @@ export default function AssessmentCreateUnifiedView({
         onSave={handleAddQuestion}
         categories={categories}
         editingQuestion={editingQuestion}
+        onAddCategory={handleAddCategory}
+        onRemoveCategory={handleDeleteCategory}
+        onUpdateCategories={(updatedCategories) => {
+          // Update all categories at once
+          updatedCategories.forEach((cat, index) => {
+            if (categories[index]?.id !== cat.id) {
+              handleUpdateCategory(cat.id, cat);
+            }
+          });
+        }}
       />
 
       <AddFreeInputQuestionDialog

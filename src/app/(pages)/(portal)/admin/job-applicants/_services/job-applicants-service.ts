@@ -5,11 +5,11 @@ import { createClient } from "@/lib/utils/supabase/client";
 
 const supabase = createClient();
 
-// Query key for playground-related queries
-export const playgroundQueryKey = "playground";
+// Query key for job-applicants-related queries
+export const jobApplicantsQueryKey = "job_applicants";
 
 // Columnas del Kanban
-// TODO(playground): Exportar tipos/enum para ColumnId y centralizar estilos (colors/badges) en theme.
+// TODO(job_applicants): Exportar tipos/enum para ColumnId y centralizar estilos (colors/badges) en theme.
 export const JOB_SEEKER_COLUMNS = [
   {
     id: "new_applicants",
@@ -38,7 +38,7 @@ export const JOB_SEEKER_COLUMNS = [
 ];
 
 // Mock Data - Datos de ejemplo (deprecated - usar getJobApplicants)
-// TODO(playground): Eliminar mocks o aislar en archivos .mock.ts y controlarlos vía feature flag.
+// TODO(job_applicants): Eliminar mocks o aislar en archivos .mock.ts y controlarlos vía feature flag.
 const MOCK_JOB_SEEKERS = {
   new_applicants: [
     {
@@ -133,7 +133,7 @@ const MOCK_JOB_SEEKERS = {
 export function useJobApplicants(jobId: string | null) {
   return useQuery({
     enabled: !!jobId,
-    queryKey: [playgroundQueryKey, "applicants", jobId],
+    queryKey: [jobApplicantsQueryKey, "applicants", jobId],
     queryFn: () => getJobApplicants(jobId!),
   });
 }
@@ -160,7 +160,7 @@ export function getMockApplicants() {
  */
 async function getJobApplicants(jobId: string): Promise<GroupedApplicants> {
   try {
-    // TODO(playground): Reemplazar console.log por logger centralizado (con niveles y toggles por entorno).
+    // TODO(job_applicants): Reemplazar console.log por logger centralizado (con niveles y toggles por entorno).
     console.log("🔍 getJobApplicants called with jobId:", jobId);
 
     // 1. Obtener las aplicaciones para este job
@@ -348,7 +348,7 @@ export function useUpdateApplicantStatus() {
     onSuccess: (_data, variables) => {
       // Invalidate the applicants query to refresh the UI
       queryClient.invalidateQueries({
-        queryKey: [playgroundQueryKey, "applicants", variables.jobId],
+        queryKey: [jobApplicantsQueryKey, "applicants", variables.jobId],
       });
     },
   });
@@ -388,7 +388,7 @@ export function useUpdateApplicantSubStatus() {
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: [playgroundQueryKey, "applicants", variables.jobId],
+        queryKey: [jobApplicantsQueryKey, "applicants", variables.jobId],
       });
     },
   });

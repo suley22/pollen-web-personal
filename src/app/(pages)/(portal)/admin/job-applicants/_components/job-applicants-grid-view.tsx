@@ -2,7 +2,7 @@
 
 import GridRow from "./job-applicants-grid-row";
 
-// TODO(playground):
+// TODO(job_applicants):
 // - Considerar semántica de tabla (<table>) para accesibilidad y navegación.
 // - Añadir paginación/virtualización si el volumen de filas es grande.
 // - Extraer cabecera a un componente reutilizable si hay más vistas tipo grid.

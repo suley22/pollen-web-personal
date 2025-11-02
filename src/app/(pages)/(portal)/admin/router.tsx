@@ -30,7 +30,7 @@ export const AdminRoutes = {
   assessmentCreate: `${basePath}/assessments/create`,
   assessmentEdit: (id) => `${basePath}/assessments/edit/${id}`,
   assessmentView: (id) => `${basePath}/assessments/view/${id}`,
-  playground: `${basePath}/playground`,
+  jobApplicants: `${basePath}/job-applicants`,
 };
 
 export const ADMIN_ROUTES = Object.values(AdminRoutes);
@@ -74,8 +74,8 @@ export const ADMIN_NAVIGATION = [
   },
   {
     icon: FlaskConical,
-    label: "Playground",
-    path: AdminRoutes.playground,
+    label: "Job Applicants",
+    path: AdminRoutes.jobApplicants,
     section: "Development",
   },
 ];

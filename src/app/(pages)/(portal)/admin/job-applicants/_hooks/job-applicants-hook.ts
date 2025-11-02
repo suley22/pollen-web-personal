@@ -9,7 +9,7 @@ import {
   type GroupedApplicants,
 } from "../_services/job-applicants-service";
 
-export function usePlaygroundHook(jobId: string | null) {
+export function useJobApplicantsHook(jobId: string | null) {
   // Fetch job applicants using React Query
   const {
     data: jobSeekers = {

@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/buttons/button";
 import { User, ClipboardCheck } from "lucide-react";
 
-// TODO(playground):
+// TODO(job_applicants):
 // - Usar <tr>/<td> dentro de <table> si se prioriza accesibilidad de tablas.
 // - Extraer los botones de acción a un subcomponente y estandarizar tooltips/aria-labels.
 // - Memoizar filas si el dataset es grande para evitar renders innecesarios.

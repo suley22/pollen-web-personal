@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { AssessmentScoresCard } from "./job-applicants-assessment-scores-card";
 
 const SUB_STATUS_OPTIONS = [
   "Under Review",
@@ -25,11 +26,29 @@ const SUB_STATUS_OPTIONS = [
 
 export function TaskDrawer({ isOpen, jobSeeker, onClose }) {
   const [subStatus, setSubStatus] = useState(jobSeeker?.sub_status || "");
+  const [assessmentScores, setAssessmentScores] = useState({
+    creative_campaign: 0,
+    data_analysis: 0,
+    communication: 0,
+    strategic_thinking: 0,
+  });
 
   // Actualizar substatus cuando cambie el jobSeeker
   useEffect(() => {
     if (jobSeeker?.sub_status) {
       setSubStatus(jobSeeker.sub_status);
+    }
+    // TODO: Cargar scores desde la BD cuando estén disponibles
+    if (jobSeeker?.assessment_scores) {
+      setAssessmentScores(jobSeeker.assessment_scores);
+    } else {
+      // Valores por defecto cuando es new_applicants
+      setAssessmentScores({
+        creative_campaign: 0,
+        data_analysis: 0,
+        communication: 0,
+        strategic_thinking: 0,
+      });
     }
   }, [jobSeeker]);
 
@@ -38,6 +57,18 @@ export function TaskDrawer({ isOpen, jobSeeker, onClose }) {
     // TODO: Aquí se debe implementar la lógica para actualizar el substatus en la BD
     console.log("Substatus changed to:", newSubStatus);
   };
+
+  const handleScoreChange = (criteriaId: string, value: number) => {
+    setAssessmentScores((prev) => ({
+      ...prev,
+      [criteriaId]: value,
+    }));
+    // TODO: Implementar lógica para guardar en BD
+    console.log(`Score changed: ${criteriaId} = ${value}`);
+  };
+
+  // Determinar si los scores son editables (solo en new_applicants)
+  const isScoresEditable = jobSeeker?.status === "new_applicants";
 
   if (!isOpen) return null;
 
@@ -84,11 +115,35 @@ export function TaskDrawer({ isOpen, jobSeeker, onClose }) {
                   </div>
                 </div>
 
-                {/* Placeholder for future fields */}
+                {/* Sub Status */}
+                <div>
+                  <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2 block">
+                    Sub Status
+                  </label>
+                  <Select
+                    value={subStatus}
+                    onValueChange={handleSubStatusChange}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select sub status" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[300px]">
+                      {SUB_STATUS_OPTIONS.map((option) => (
+                        <SelectItem key={option} value={option}>
+                          {option}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Assessment Scores Card */}
                 <div className="pt-4 border-t border-gray-200">
-                  <p className="text-sm text-gray-500 italic">
-                    More details will be added here in the future...
-                  </p>
+                  <AssessmentScoresCard
+                    scores={assessmentScores}
+                    isEditable={isScoresEditable}
+                    onScoreChange={handleScoreChange}
+                  />
                 </div>
               </div>
             )}

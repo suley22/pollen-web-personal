@@ -19,7 +19,7 @@ import {
   PageHeader,
 } from "@/components/design-system";
 import { AssessmentCreateCategories } from "./assessment-create-categories";
-import { Plus, X } from "lucide-react";
+import { Palette, Plus, X } from "lucide-react";
 import type {
   AssessmentQuestion,
   AssessmentQuestionOption,
@@ -165,7 +165,7 @@ export function AddMultipleChoiceQuestionDialog({
           }
         />
 
-        <div className="space-y-4 py-4">
+        <div className="flex flex-col gap-4 py-4">
           {/* Categories Section */}
           {onAddCategory && (
             <>
@@ -185,6 +185,13 @@ export function AddMultipleChoiceQuestionDialog({
               <Divider />
             </>
           )}
+
+          <div className="flex gap-2 items-center text-lg font-medium">
+            <Palette className="h-5 w-5" />
+            Categories
+          </div>
+
+          <Divider />
 
           {/* Question Title */}
           <Input
@@ -209,7 +216,7 @@ export function AddMultipleChoiceQuestionDialog({
 
           {/* Options Title */}
           <Input
-            label="Options Title"
+            label="Options Title (Optional)"
             name="optionsTitle"
             id="optionsTitle"
             value={optionsTitle}
@@ -218,7 +225,7 @@ export function AddMultipleChoiceQuestionDialog({
           />
 
           {/* Add Option Section */}
-          <div className="space-y-2 mt-2">
+          <div className="space-y-2 mt-4">
             <p className="text-sm font-medium">Add Options *</p>
 
             <div className="flex flex-1 gap-4 items-end">
@@ -270,10 +277,19 @@ export function AddMultipleChoiceQuestionDialog({
                       key={option.value}
                       className="flex items-center justify-between gap-2 p-2 bg-muted rounded"
                     >
-                      <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        {category && (
+                          <div
+                            className="w-3 h-3 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: category.color }}
+                          />
+                        )}
                         <span className="text-sm">{option.label}</span>
                         {category && (
-                          <span className="ml-2 text-xs text-muted-foreground">
+                          <span
+                            className="ml-2 text-xs text-muted-foreground"
+                            style={{ color: category.color }}
+                          >
                             ({category.name})
                           </span>
                         )}

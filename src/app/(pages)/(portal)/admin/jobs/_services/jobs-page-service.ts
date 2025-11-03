@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/utils/supabase/client";
+import { JobHelper } from "@/types/jobs-types";
 import { getLoggedInUserId } from "@/services/userService";
 
 const supabase = createClient();
@@ -343,7 +344,10 @@ export function useJobById(id: string) {
             : "Unassigned",
       };
 
-      return job;
+      return {
+        ...job,
+        profile_completeness: JobHelper.calculateProfileCompleteness(job),
+      };
     },
   });
 }

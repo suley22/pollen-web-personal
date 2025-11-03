@@ -71,7 +71,7 @@ export function SecondaryButton({
       size="default"
       onClick={onClick}
       disabled={disabled || loading}
-      className={cn("max-w-xs font-sora gap-2", className)}
+      className={cn("font-sora gap-2", className)}
     >
       {iconWithSize}
       {loading ? "Loading..." : text}
@@ -103,7 +103,7 @@ export function GhostButton({
       size="default"
       onClick={onClick}
       disabled={disabled || loading}
-      className={cn("max-w-xs font-sora gap-2", className)}
+      className={cn("font-sora gap-2", className)}
     >
       {iconWithSize}
       {loading ? "Loading..." : text}

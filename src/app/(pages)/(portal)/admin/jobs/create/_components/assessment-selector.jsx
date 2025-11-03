@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { useAssessmentsList } from "@/app/(pages)/(portal)/admin/assessments/_services/assessments-page-service";
+import { useAssessmentsList } from "@/assessments/_services/assessments-page-service";
 
 const ASSESSMENT_TYPE_LABELS = {
   multiple_choice: "Multiple Choice",

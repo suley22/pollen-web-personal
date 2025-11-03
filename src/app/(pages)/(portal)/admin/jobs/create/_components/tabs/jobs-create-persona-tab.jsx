@@ -9,10 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { AssessmentSelector } from "../assessment-selector";
-import { useAssessmentById } from "@/app/(pages)/(portal)/admin/assessments/_services/assessments-page-service";
-import { AssessmentCreateMultipleChoicePreview } from "@/app/(pages)/(portal)/admin/assessments/create/_components/assessment-create-multiple-choice-preview";
-import { AssessmentCreateFreeInputPreview } from "@/app/(pages)/(portal)/admin/assessments/create/_components/assessment-create-free-input-preview";
-import { AssessmentCreateFileUploadPreview } from "@/app/(pages)/(portal)/admin/assessments/create/_components/assessment-create-file-upload-preview";
+import { useAssessmentById } from "@/assessments/_services/assessments-page-service";
+import { AssessmentCreateMultipleChoicePreview } from "@/assessments/create/_components/assessment-create-multiple-choice-preview";
+import { AssessmentCreateFreeInputPreview } from "@/assessments/create/_components/assessment-create-free-input-preview";
+import { AssessmentCreateFileUploadPreview } from "@/assessments/create/_components/assessment-create-file-upload-preview";
 
 const STATUS_COLORS = {
   draft: "bg-yellow-50 text-yellow-700 border-yellow-200",

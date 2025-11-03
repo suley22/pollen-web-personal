@@ -40,6 +40,10 @@ export function TaskDrawer({
     score3: 0,
     score4: 0,
   });
+  const [pendingStatusChange, setPendingStatusChange] = useState<{
+    status: string;
+    subStatus: string;
+  } | null>(null);
 
   // Actualizar substatus y scores cuando cambie el jobSeeker
   useEffect(() => {
@@ -77,24 +81,51 @@ export function TaskDrawer({
     }
   };
 
+  const handleStatusSelect = (status: string, newSubStatus: string) => {
+    setPendingStatusChange({ status, subStatus: newSubStatus });
+    setSubStatus(newSubStatus);
+  };
+
+  const handleSaveStatusChange = () => {
+    if (pendingStatusChange && jobSeeker?.application_id) {
+      onUpdateStatusAndSubStatus(
+        jobSeeker.application_id,
+        pendingStatusChange.status,
+        pendingStatusChange.subStatus,
+      );
+      setPendingStatusChange(null);
+    }
+  };
+
+  const handleCancelStatusChange = () => {
+    setPendingStatusChange(null);
+    setSubStatus(jobSeeker?.sub_status || "");
+  };
+
   // Determinar si los scores son editables (solo en new_applicants)
   const isScoresEditable = jobSeeker?.status === "new_applicants";
 
-  // Helper para determinar el estilo del botón según si es el sub_status actual
+  // Helper para determinar el estilo del botón según si es el sub_status actual o pendiente
   const getButtonStyle = (buttonSubStatus: string, isDestructive = false) => {
     const isCurrentStatus = jobSeeker?.sub_status === buttonSubStatus;
+    const isPendingStatus = pendingStatusChange?.subStatus === buttonSubStatus;
 
-    if (isCurrentStatus) {
+    if (isCurrentStatus && !pendingStatusChange) {
       return isDestructive
         ? "px-4 py-3 bg-red-100 text-red-700 border-2 border-red-300 font-medium rounded-lg cursor-default"
         : "px-4 py-3 bg-blue-100 text-blue-700 border-2 border-blue-300 font-medium rounded-lg cursor-default";
+    }
+
+    if (isPendingStatus) {
+      return isDestructive
+        ? "px-4 py-3 bg-yellow-100 text-yellow-800 border-2 border-yellow-400 font-medium rounded-lg"
+        : "px-4 py-3 bg-yellow-100 text-yellow-800 border-2 border-yellow-400 font-medium rounded-lg";
     }
 
     return isDestructive
       ? "px-4 py-3 bg-white text-red-600 border border-red-200 font-medium rounded-lg hover:bg-red-50 hover:border-red-300 transition-colors"
       : "px-4 py-3 bg-white text-gray-700 border border-gray-200 font-medium rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-colors";
   };
-
   if (!isOpen) return null;
 
   return (
@@ -211,8 +242,7 @@ export function TaskDrawer({
                         <div className="space-y-2">
                           <button
                             onClick={() =>
-                              onUpdateStatusAndSubStatus(
-                                jobSeeker.application_id,
+                              handleStatusSelect(
                                 "matched_to_employer",
                                 "Interview Requested",
                               )
@@ -223,8 +253,7 @@ export function TaskDrawer({
                           </button>
                           <button
                             onClick={() =>
-                              onUpdateStatusAndSubStatus(
-                                jobSeeker.application_id,
+                              handleStatusSelect(
                                 "not_progressing",
                                 "",
                               )
@@ -240,66 +269,51 @@ export function TaskDrawer({
                         <div className="grid grid-cols-2 gap-2">
                           <button
                             onClick={() =>
-                              onUpdateStatusAndSubStatus(
-                                jobSeeker.application_id,
+                              handleStatusSelect(
                                 "matched_to_employer",
                                 "Interview Booked",
                               )
                             }
                             className={getButtonStyle("Interview Booked")}
-                            disabled={
-                              jobSeeker?.sub_status === "Interview Booked"
-                            }
                           >
                             Interview Booked
                           </button>
                           <button
                             onClick={() =>
-                              onUpdateStatusAndSubStatus(
-                                jobSeeker.application_id,
+                              handleStatusSelect(
                                 "matched_to_employer",
                                 "Interview Complete",
                               )
                             }
                             className={getButtonStyle("Interview Complete")}
-                            disabled={
-                              jobSeeker?.sub_status === "Interview Complete"
-                            }
                           >
                             Interview Complete
                           </button>
                           <button
                             onClick={() =>
-                              onUpdateStatusAndSubStatus(
-                                jobSeeker.application_id,
+                              handleStatusSelect(
                                 "matched_to_employer",
                                 "Awaiting Employer",
                               )
                             }
                             className={getButtonStyle("Awaiting Employer")}
-                            disabled={
-                              jobSeeker?.sub_status === "Awaiting Employer"
-                            }
                           >
                             Awaiting Employer
                           </button>
                           <button
                             onClick={() =>
-                              onUpdateStatusAndSubStatus(
-                                jobSeeker.application_id,
+                              handleStatusSelect(
                                 "matched_to_employer",
                                 "Offer Issued",
                               )
                             }
                             className={getButtonStyle("Offer Issued")}
-                            disabled={jobSeeker?.sub_status === "Offer Issued"}
                           >
                             Offer Issued
                           </button>
                           <button
                             onClick={() =>
-                              onUpdateStatusAndSubStatus(
-                                jobSeeker.application_id,
+                              handleStatusSelect(
                                 "not_progressing",
                                 "",
                               )
@@ -310,8 +324,7 @@ export function TaskDrawer({
                           </button>
                           <button
                             onClick={() =>
-                              onUpdateStatusAndSubStatus(
-                                jobSeeker.application_id,
+                              handleStatusSelect(
                                 "complete",
                                 "Hired",
                               )
@@ -320,6 +333,36 @@ export function TaskDrawer({
                           >
                             Hired
                           </button>
+                        </div>
+                      )}
+                      
+                      {/* Save/Cancel Buttons - Show when there's a pending change */}
+                      {pendingStatusChange && (
+                        <div className="mt-4 pt-4 border-t border-gray-300">
+                          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                            <div className="flex items-center">
+                              <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
+                              <p className="text-sm text-yellow-800">
+                                <span className="font-medium">Pending change:</span> {pendingStatusChange.subStatus || "No status"}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex gap-3">
+                            <button
+                              onClick={handleSaveStatusChange}
+                              className="flex-1 px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                            >
+                              <Save className="w-4 h-4" />
+                              Save Changes
+                            </button>
+                            <button
+                              onClick={handleCancelStatusChange}
+                              className="flex-1 px-4 py-2.5 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors flex items-center justify-center gap-2"
+                            >
+                              <X className="w-4 h-4" />
+                              Cancel
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>

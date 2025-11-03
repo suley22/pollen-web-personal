@@ -7,7 +7,6 @@ import { getLoggedInUserId } from "@/services/userService";
 
 const supabase = createClient();
 
-const homeQueryKey = "home";
 const jobsQueryKey = "jobs";
 
 export interface JobFilters {
@@ -429,7 +428,6 @@ export const useCreateJob = () => {
     onSuccess: () => {
       // Invalidate all jobs lists and statistics
       queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
-      queryClient.invalidateQueries({ queryKey: [homeQueryKey] });
     },
   });
 };
@@ -652,7 +650,6 @@ export function useUpdateJob() {
       });
       // Invalidate all jobs lists and statistics
       queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
-      queryClient.invalidateQueries({ queryKey: [homeQueryKey] });
     },
   });
 }

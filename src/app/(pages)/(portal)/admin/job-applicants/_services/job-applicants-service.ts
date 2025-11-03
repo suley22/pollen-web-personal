@@ -1,8 +1,12 @@
 "use client";
 
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/utils/supabase/client";
 
 const supabase = createClient();
+
+// Query key for playground-related queries
+export const playgroundQueryKey = "playground";
 
 // Columnas del Kanban
 // TODO(playground): Exportar tipos/enum para ColumnId y centralizar estilos (colors/badges) en theme.
@@ -115,10 +119,33 @@ const MOCK_JOB_SEEKERS = {
   ],
 };
 
+// ===============
+// React Query Hooks
+// ===============
+
+/**
+ * Hook: fetch job applicants grouped by status for Kanban board
+ * Returns applicants organized by status columns (new_applicants, in_progress, etc.)
+ *
+ * @param jobId - The UUID of the job to fetch applicants for
+ * @returns React Query result with grouped applicants data
+ */
+export function useJobApplicants(jobId: string | null) {
+  return useQuery({
+    enabled: !!jobId,
+    queryKey: [playgroundQueryKey, "applicants", jobId],
+    queryFn: () => getJobApplicants(jobId!),
+  });
+}
+
+// ===============
+// Service Functions (used by hooks)
+// ===============
+
 /**
  * Función mockeada para obtener los aplicantes
  * Retorna datos estáticos para testing de UI
- * @deprecated Usar getJobApplicants en su lugar
+ * @deprecated Usar useJobApplicants hook en su lugar
  */
 export function getMockApplicants() {
   return MOCK_JOB_SEEKERS;
@@ -127,8 +154,11 @@ export function getMockApplicants() {
 /**
  * Obtiene los aplicantes reales desde la base de datos para un job específico
  * Agrupa los aplicantes por status (columnas del Kanban)
+ *
+ * @param jobId - The UUID of the job to fetch applicants for
+ * @returns Promise with grouped applicants data
  */
-export async function getJobApplicants(jobId: string) {
+async function getJobApplicants(jobId: string): Promise<GroupedApplicants> {
   try {
     // TODO(playground): Reemplazar console.log por logger centralizado (con niveles y toggles por entorno).
     console.log("🔍 getJobApplicants called with jobId:", jobId);
@@ -188,7 +218,7 @@ export async function getJobApplicants(jobId: string) {
         .in("id", userIds);
 
       if (jobSeekersError) {
-  console.error("❌ Error fetching job seekers:", jobSeekersError);
+        console.error("❌ Error fetching job seekers:", jobSeekersError);
         // Continuar sin los datos de job_seeker
       } else {
         console.log(
@@ -203,7 +233,7 @@ export async function getJobApplicants(jobId: string) {
     }
 
     // 4. Agrupar aplicantes por status
-    const groupedApplicants: Record<string, any[]> = {
+    const groupedApplicants: GroupedApplicants = {
       new_applicants: [],
       in_progress: [],
       matched_to_employer: [],
@@ -233,8 +263,8 @@ export async function getJobApplicants(jobId: string) {
       };
 
       // Agregar a la columna correspondiente
-      if (groupedApplicants[app.status]) {
-        groupedApplicants[app.status].push(transformedApplicant);
+      if (app.status in groupedApplicants) {
+        (groupedApplicants as any)[app.status].push(transformedApplicant);
       }
     });
 
@@ -255,27 +285,192 @@ export async function getJobApplicants(jobId: string) {
 /**
  * Transforma las aplicaciones agrupadas por columna en una lista plana con status
  * Para la vista Grid
+ *
+ * @param jobSeekers - Applicants grouped by status
+ * @returns Flattened list of applicants with status information
  */
-export function transformJobSeekersToList(jobSeekers: Record<string, any[]>) {
-  const allJobSeekers: any[] = [];
+export function transformJobSeekersToList(
+  jobSeekers: GroupedApplicants,
+): JobApplicant[] {
+  const allJobSeekers: JobApplicant[] = [];
 
   JOB_SEEKER_COLUMNS.forEach((column) => {
-    jobSeekers[column.id]?.forEach((jobSeeker) => {
+    jobSeekers[column.id as keyof GroupedApplicants]?.forEach((jobSeeker) => {
       allJobSeekers.push({
         ...jobSeeker,
         status: column.id,
         statusLabel: column.title,
         statusColor: column.badgeColor,
-      });
+      } as JobApplicant & { statusLabel: string; statusColor: string });
     });
   });
 
   return allJobSeekers;
 }
 
+// ===============
+// Mutation Hooks
+// ===============
+
+/**
+ * Hook: update applicant status (for drag & drop functionality)
+ * Updates the status of a job application in the database
+ */
+export function useUpdateApplicantStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      newStatus,
+      jobId,
+    }: {
+      applicationId: string;
+      newStatus: string;
+      jobId: string;
+    }) => {
+      const { data, error } = await supabase
+        .from("job_applications")
+        .update({
+          status: newStatus,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", applicationId)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
+    },
+    onSuccess: (_data, variables) => {
+      // Invalidate the applicants query to refresh the UI
+      queryClient.invalidateQueries({
+        queryKey: [playgroundQueryKey, "applicants", variables.jobId],
+      });
+    },
+  });
+}
+
+/**
+ * Hook: update applicant sub-status
+ */
+export function useUpdateApplicantSubStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      subStatus,
+      jobId,
+    }: {
+      applicationId: string;
+      subStatus: string;
+      jobId: string;
+    }) => {
+      const { data, error } = await supabase
+        .from("job_applications")
+        .update({
+          sub_status: subStatus,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", applicationId)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [playgroundQueryKey, "applicants", variables.jobId],
+      });
+    },
+  });
+}
+
+// ===============
+// Types
+// ===============
+
+export interface JobApplicant {
+  id: string;
+  application_id: string;
+  name: string;
+  avatar_url: string | null;
+  match_score: number;
+  applied_date: string;
+  sub_status: string;
+  is_fast_track?: boolean;
+  is_verified?: boolean;
+  email?: string;
+  status: string;
+}
+
+export interface GroupedApplicants {
+  new_applicants: JobApplicant[];
+  in_progress: JobApplicant[];
+  matched_to_employer: JobApplicant[];
+  complete: JobApplicant[];
+}
+
+export interface KanbanColumn {
+  id: string;
+  title: string;
+  color: string;
+  badgeColor: string;
+}
+
+// ===============
+// Helper Functions
+// ===============
+
 /**
  * Obtiene información de una columna por su ID
+ *
+ * @param columnId - The ID of the column to find
+ * @returns Column information or undefined if not found
  */
-export function getColumnInfo(columnId: string) {
+export function getColumnInfo(columnId: string): KanbanColumn | undefined {
   return JOB_SEEKER_COLUMNS.find((col) => col.id === columnId);
+}
+
+/**
+ * Actualiza el estado de una aplicación de trabajo
+ */
+export async function updateJobApplicationStatus(
+  applicationId: string,
+  newStatus: string,
+) {
+  try {
+    console.log("🔄 Updating application status:", {
+      applicationId,
+      newStatus,
+    });
+
+    const { data, error } = await supabase
+      .from("job_applications")
+      .update({
+        status: newStatus,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", applicationId)
+      .select();
+
+    if (error) {
+      console.error("❌ Error updating application status:", error);
+      throw error;
+    }
+
+    console.log("✅ Application status updated successfully:", data);
+    return data;
+  } catch (error) {
+    console.error("Error in updateJobApplicationStatus:", error);
+    throw error;
+  }
 }

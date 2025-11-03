@@ -1,6 +1,6 @@
 "use client";
 
-import GridRow from "./grid-row";
+import GridRow from "./job-applicants-grid-row";
 
 // TODO(playground):
 // - Considerar semántica de tabla (<table>) para accesibilidad y navegación.

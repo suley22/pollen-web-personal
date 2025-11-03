@@ -1,11 +1,44 @@
 "use client";
 
 import { X } from "lucide-react";
+import { useState, useEffect } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-// TODO(playground):
-// - Reemplazar por un componente Drawer del design-system para consistencia (focus trap, aria, portal).
-// - Añadir rol="dialog" aria-modal y gestionar focus al abrir/cerrar.
+const SUB_STATUS_OPTIONS = [
+  "Under Review",
+  "Invited to Pollen Interview",
+  "Pollen Interview Complete",
+  "Interview Requested",
+  "Interview Booked",
+  "Interview Complete",
+  "Awaiting Employer",
+  "Offer Issued",
+  "Hired",
+  "Not Progressing",
+];
+
 export function TaskDrawer({ isOpen, jobSeeker, onClose }) {
+  const [subStatus, setSubStatus] = useState(jobSeeker?.sub_status || "");
+
+  // Actualizar substatus cuando cambie el jobSeeker
+  useEffect(() => {
+    if (jobSeeker?.sub_status) {
+      setSubStatus(jobSeeker.sub_status);
+    }
+  }, [jobSeeker]);
+
+  const handleSubStatusChange = (newSubStatus: string) => {
+    setSubStatus(newSubStatus);
+    // TODO: Aquí se debe implementar la lógica para actualizar el substatus en la BD
+    console.log("Substatus changed to:", newSubStatus);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -17,11 +50,13 @@ export function TaskDrawer({ isOpen, jobSeeker, onClose }) {
       />
 
       {/* Drawer Panel */}
-      <div className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out">
+      <div className="fixed right-0 top-0 h-full w-full max-w-screen-lg bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out">
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h2 className="text-xl font-bold">Job Seeker Details</h2>
+            <div className="text-xl font-bold">
+              {jobSeeker.name} - Assessment
+            </div>
             <button
               onClick={onClose}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -35,22 +70,6 @@ export function TaskDrawer({ isOpen, jobSeeker, onClose }) {
           <div className="flex-1 overflow-y-auto p-6">
             {jobSeeker && (
               <div className="flex flex-col gap-6">
-                {/* Job Seeker Name */}
-                <div>
-                  <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
-                    Name
-                  </label>
-                  <p className="mt-2 text-lg font-medium">{jobSeeker.name}</p>
-                </div>
-
-                {/* Job Seeker ID */}
-                <div>
-                  <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
-                    ID
-                  </label>
-                  <p className="mt-2 text-gray-700">{jobSeeker.id}</p>
-                </div>
-
                 {/* Status */}
                 <div>
                   <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">

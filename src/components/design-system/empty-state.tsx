@@ -9,33 +9,33 @@ interface EmptyStateProps {
   description: string;
   action?: ReactNode;
   className?: string;
-  /**
-   * When true, the component will expand to fill its parent's height/width.
-   * Useful to center content within any sized container (not the whole screen).
-   */
-  fill?: boolean;
 }
 
-export function EmptyState({
-  icon: Icon,
-  title,
-  description,
-  action,
-  className = "",
-  fill = false,
+export function EmptyState({ 
+  icon: Icon, 
+  title, 
+  description, 
+  action, 
+  className = "" 
 }: EmptyStateProps) {
   return (
-    <div
-      className={`flex flex-col items-center justify-center px-4 text-center ${fill ? "h-full w-full" : ""} ${className}`}
-    >
+    <div className={`flex flex-col items-center justify-center py-16 px-4 text-center ${className}`}>
       {Icon && (
-        <div className="rounded-full bg-gray-100 p-5 mb-2">
-          <Icon className="h-9 w-9 text-gray-400" />
+        <div className="rounded-full bg-gray-100 p-4 mb-4">
+          <Icon className="h-12 w-12 text-gray-400" />
         </div>
       )}
-      <div className="text-lg font-semibold text-gray-900">{title}</div>
-      <p className="text-sm text-muted-foreground max-w-md">{description}</p>
-      {action && <div className="mt-2">{action}</div>}
+      <h3 className="text-xl font-semibold text-gray-900 mb-2">
+        {title}
+      </h3>
+      <p className="text-sm text-muted-foreground max-w-md mb-6">
+        {description}
+      </p>
+      {action && (
+        <div className="mt-2">
+          {action}
+        </div>
+      )}
     </div>
   );
 }

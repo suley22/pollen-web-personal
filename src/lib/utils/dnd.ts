@@ -6,16 +6,18 @@ export function getInsertionIndex(container: HTMLElement, clientY: number) {
   const preferred = container.querySelectorAll(
     '[data-draggable-item="true"], [data-js-item], [draggable="true"]',
   );
-  const list: HTMLElement[] = (preferred.length
-    ? Array.from(preferred)
-    : Array.from(container.children)) as HTMLElement[];
+  const list: HTMLElement[] = (
+    preferred.length ? Array.from(preferred) : Array.from(container.children)
+  ) as HTMLElement[];
 
   // Excluir cualquier elemento marcado como oculto durante el drag
-  const visibleList = list.filter((el) => el.getAttribute("data-drag-hidden") !== "true");
+  const visibleList = list.filter(
+    (el) => el.getAttribute("data-drag-hidden") !== "true",
+  );
 
   if (!visibleList.length) return 0;
 
-  let closest = { offset: Number.NEGATIVE_INFINITY, index: list.length };
+  let closest = { offset: Number.NEGATIVE_INFINITY, index: visibleList.length };
   visibleList.forEach((el, index) => {
     const rect = el.getBoundingClientRect();
     const offset = clientY - (rect.top + rect.height / 2);
@@ -24,5 +26,7 @@ export function getInsertionIndex(container: HTMLElement, clientY: number) {
     }
   });
 
-  return closest.offset === Number.NEGATIVE_INFINITY ? visibleList.length : closest.index;
+  return closest.offset === Number.NEGATIVE_INFINITY
+    ? visibleList.length
+    : closest.index;
 }

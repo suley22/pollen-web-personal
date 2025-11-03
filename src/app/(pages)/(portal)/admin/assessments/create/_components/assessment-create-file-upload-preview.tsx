@@ -8,6 +8,7 @@ import {
   WarningBadge,
   Divider,
   PrimaryButton,
+  FileViewerDialog,
 } from "@/components/design-system";
 import { QuestionActionButtons } from "./question-action-buttons";
 import { AssessmentProgress } from "../../_components/assessment-progress";
@@ -66,6 +67,14 @@ export function AssessmentCreateFileUploadPreview({
     new Set(),
   );
 
+  // Estado para el visor de archivos
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<{
+    name: string;
+    fileName: string;
+    file?: File | null;
+  } | null>(null);
+
   const handleFileUpload = (questionIndex: number, file: File) => {
     const newFile: UploadedFile = {
       name: file.name,
@@ -92,6 +101,15 @@ export function AssessmentCreateFileUploadPreview({
     if (hasFile) {
       setSubmittedAnswers((prev) => new Set(prev).add(index));
     }
+  };
+
+  const handleViewFile = (file: {
+    name: string;
+    fileName: string;
+    file?: File | null;
+  }) => {
+    setSelectedFile(file);
+    setViewerOpen(true);
   };
 
   const handleEditAnswer = (index: number) => {
@@ -177,29 +195,37 @@ export function AssessmentCreateFileUploadPreview({
                     )}
 
                     {/* Reference Files - Download Links */}
-                    {question.referenceFiles.length > 0 && (
-                      <div className="rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 p-4 space-y-2">
-                        <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                          Reference Materials:
-                        </p>
-                        {question.referenceFiles.map((refFile) => (
-                          <button
-                            key={refFile.id}
-                            className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline"
-                            onClick={() => {
-                              // In production, this would download the file
-                              console.log("Download:", refFile.name);
-                            }}
-                          >
-                            <Download className="h-4 w-4" />
-                            <span>{refFile.name}</span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
-                              ({refFile.fileName})
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                    {(() => {
+                      const refFiles =
+                        (question as any).file_upload?.referenceFiles ||
+                        question.referenceFiles ||
+                        [];
+                      return (
+                        refFiles.length > 0 && (
+                          <div className="rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20 p-4 space-y-2">
+                            <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                              Reference Materials:
+                            </p>
+                            {refFiles.map((refFile: any) => (
+                              <button
+                                key={refFile.id}
+                                className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline"
+                                onClick={() => {
+                                  // In production, this would download the file
+                                  console.log("Download:", refFile.name);
+                                }}
+                              >
+                                <Download className="h-4 w-4" />
+                                <span>{refFile.name}</span>
+                                <span className="text-xs text-gray-500 dark:text-gray-400">
+                                  ({refFile.fileName})
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        )
+                      );
+                    })()}
 
                     {/* File Upload Area */}
                     {!isSubmitted && (
@@ -248,14 +274,24 @@ export function AssessmentCreateFileUploadPreview({
                               Selected File:
                             </p>
                             <div className="py-3 px-5 flex items-center gap-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800">
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                              <button
+                                onClick={() =>
+                                  handleViewFile({
+                                    name: questionFile.name,
+                                    fileName: questionFile.name,
+                                    file: questionFile.file,
+                                  })
+                                }
+                                className="flex-1 min-w-0 text-left group"
+                              >
+                                <p className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline truncate">
                                   {questionFile.name}
                                 </p>
                                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                                  {formatFileSize(questionFile.size)}
+                                  {formatFileSize(questionFile.size)} • Click to
+                                  preview
                                 </p>
-                              </div>
+                              </button>
                               <button
                                 onClick={() => handleRemoveFile(index)}
                                 className=" hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 flex-shrink-0"
@@ -273,14 +309,24 @@ export function AssessmentCreateFileUploadPreview({
                     {isSubmitted && questionFile && (
                       <div className="space-y-2">
                         <div className="py-3 px-5 flex items-center gap-4 rounded-lg border border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-900/20 ">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+                          <button
+                            onClick={() =>
+                              handleViewFile({
+                                name: questionFile.name,
+                                fileName: questionFile.name,
+                                file: questionFile.file,
+                              })
+                            }
+                            className="flex-1 min-w-0 text-left group"
+                          >
+                            <p className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline truncate">
                               {questionFile.name}
                             </p>
                             <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {formatFileSize(questionFile.size)}
+                              {formatFileSize(questionFile.size)} • Click to
+                              preview
                             </p>
-                          </div>
+                          </button>
                           <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400 flex-shrink-0" />
                         </div>
                       </div>
@@ -336,6 +382,13 @@ export function AssessmentCreateFileUploadPreview({
           />
         </div>
       </div>
+
+      {/* File Viewer Dialog */}
+      <FileViewerDialog
+        open={viewerOpen}
+        onOpenChange={setViewerOpen}
+        file={selectedFile}
+      />
     </div>
   );
 }

@@ -253,10 +253,7 @@ export function TaskDrawer({
                           </button>
                           <button
                             onClick={() =>
-                              handleStatusSelect(
-                                "not_progressing",
-                                "",
-                              )
+                              handleStatusSelect("not_progressing", "")
                             }
                             className={getButtonStyle("", true)}
                           >
@@ -313,10 +310,7 @@ export function TaskDrawer({
                           </button>
                           <button
                             onClick={() =>
-                              handleStatusSelect(
-                                "not_progressing",
-                                "",
-                              )
+                              handleStatusSelect("not_progressing", "")
                             }
                             className={getButtonStyle("", true)}
                           >
@@ -324,10 +318,7 @@ export function TaskDrawer({
                           </button>
                           <button
                             onClick={() =>
-                              handleStatusSelect(
-                                "complete",
-                                "Hired",
-                              )
+                              handleStatusSelect("complete", "Hired")
                             }
                             className="px-4 py-3 bg-white text-green-600 border border-green-200 font-medium rounded-lg hover:bg-green-50 hover:border-green-300 transition-colors"
                           >
@@ -335,7 +326,7 @@ export function TaskDrawer({
                           </button>
                         </div>
                       )}
-                      
+
                       {/* Save/Cancel Buttons - Show when there's a pending change */}
                       {pendingStatusChange && (
                         <div className="mt-4 pt-4 border-t border-gray-300">
@@ -343,7 +334,10 @@ export function TaskDrawer({
                             <div className="flex items-center">
                               <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></div>
                               <p className="text-sm text-yellow-800">
-                                <span className="font-medium">Pending change:</span> {pendingStatusChange.subStatus || "No status"}
+                                <span className="font-medium">
+                                  Pending change:
+                                </span>{" "}
+                                {pendingStatusChange.subStatus || "No status"}
                               </p>
                             </div>
                           </div>

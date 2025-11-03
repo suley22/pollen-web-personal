@@ -115,7 +115,7 @@ export function TaskDrawer({
         jobSeeker.application_id,
         "complete",
         "Not Progressing",
-        jobSeeker.status, // stopped_at_stage = current status before changing to complete
+        jobSeeker.sub_status, // stopped_at_stage = current sub_status before changing to complete
       );
     }
   };
@@ -129,7 +129,7 @@ export function TaskDrawer({
     if (pendingStatusChange && jobSeeker?.application_id) {
       const stoppedAtStage =
         pendingStatusChange.status === "complete"
-          ? jobSeeker.status
+          ? jobSeeker.sub_status
           : undefined;
       onUpdateStatusAndSubStatus(
         jobSeeker.application_id,

@@ -317,19 +317,28 @@ export function useUpdateApplicantStatusAndSubStatus() {
       status,
       subStatus,
       jobId,
+      stoppedAtStage,
     }: {
       applicationId: string;
       status: string;
       subStatus: string;
       jobId: string;
+      stoppedAtStage?: string;
     }) => {
+      const updateData: any = {
+        status: status,
+        sub_status: subStatus,
+        updated_at: new Date().toISOString(),
+      };
+
+      // Only update stopped_at_stage when status changes to "complete" and stoppedAtStage is provided
+      if (status === "complete" && stoppedAtStage) {
+        updateData.stopped_at_stage = stoppedAtStage;
+      }
+
       const { data, error } = await supabase
         .from("job_applications")
-        .update({
-          status: status,
-          sub_status: subStatus,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq("id", applicationId)
         .select()
         .single();

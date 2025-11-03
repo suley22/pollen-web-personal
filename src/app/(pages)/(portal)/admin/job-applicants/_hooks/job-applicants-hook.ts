@@ -148,6 +148,7 @@ export function useJobApplicantsHook(jobId: string | null) {
     applicationId: string,
     status: string,
     subStatus: string,
+    stoppedAtStage?: string,
   ) => {
     if (!jobId) return;
 
@@ -156,6 +157,7 @@ export function useJobApplicantsHook(jobId: string | null) {
       status,
       subStatus,
       jobId,
+      stoppedAtStage,
     });
   };
 

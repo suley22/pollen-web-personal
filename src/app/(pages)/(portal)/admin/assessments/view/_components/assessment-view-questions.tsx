@@ -1,7 +1,7 @@
 "use client";
 
 import { AssessmentQuestion } from "@/types/assessment-types";
-import { AssessmentCreateUnifiedPreview } from "@/app/(pages)/(portal)/admin/assessments/create/_components/assessment-create-unified-preview";
+import { AssessmentCreateUnifiedPreview } from "@/assessments/create/_components/assessment-create-unified-preview";
 
 interface AssessmentQuestionsProps {
   questions: AssessmentQuestion[];

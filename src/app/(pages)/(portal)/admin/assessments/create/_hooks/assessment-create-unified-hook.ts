@@ -13,7 +13,7 @@ import {
   useCreateAssessment,
   useUpdateAssessment,
   useAssessmentById,
-} from "@/app/(pages)/(portal)/admin/assessments/_services/assessments-page-service";
+} from "@/assessments/_services/assessments-page-service";
 
 export function useAssessmentCreateUnified({
   id = null,

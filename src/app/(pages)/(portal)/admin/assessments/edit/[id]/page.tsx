@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import AssessmentCreateUnifiedView from "@/app/(pages)/(portal)/admin/assessments/create/_view/assessment-create-unified-view";
+import AssessmentCreateUnifiedView from "@/assessments/create/_view/assessment-create-unified-view";
 
 export default async function Page({
   params,

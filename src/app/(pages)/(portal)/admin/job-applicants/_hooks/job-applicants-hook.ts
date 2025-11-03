@@ -5,6 +5,7 @@ import {
   useJobApplicants,
   useUpdateApplicantStatus,
   useUpdateAssessmentScores,
+  useUpdateApplicantStatusAndSubStatus,
   transformJobSeekersToList,
   getColumnInfo,
   type GroupedApplicants,
@@ -26,6 +27,8 @@ export function useJobApplicantsHook(jobId: string | null) {
   // Get mutation hooks
   const updateApplicantStatusMutation = useUpdateApplicantStatus();
   const updateAssessmentScoresMutation = useUpdateAssessmentScores();
+  const updateStatusAndSubStatusMutation =
+    useUpdateApplicantStatusAndSubStatus();
 
   // View state
   const [viewMode, setViewMode] = useState<"board" | "grid">("board");
@@ -109,6 +112,39 @@ export function useJobApplicantsHook(jobId: string | null) {
     updateAssessmentScoresMutation.mutate({
       applicationId,
       scores,
+      jobId,
+    });
+  };
+
+  /**
+   * Invita al aplicante a una entrevista de Pollen
+   * Actualiza status a "in_progress" y sub_status a "Invited to Pollen Interview"
+   */
+  const handleInviteToPollenInterview = (applicationId: string) => {
+    if (!jobId) return;
+
+    updateStatusAndSubStatusMutation.mutate({
+      applicationId,
+      status: "in_progress",
+      subStatus: "Invited to Pollen Interview",
+      jobId,
+    });
+  };
+
+  /**
+   * Actualiza status y sub_status de un aplicante
+   */
+  const handleUpdateStatusAndSubStatus = (
+    applicationId: string,
+    status: string,
+    subStatus: string,
+  ) => {
+    if (!jobId) return;
+
+    updateStatusAndSubStatusMutation.mutate({
+      applicationId,
+      status,
+      subStatus,
       jobId,
     });
   };
@@ -239,6 +275,8 @@ export function useJobApplicantsHook(jobId: string | null) {
     handleJobSeekerClick: handleClick,
     closeDrawer,
     handleUpdateAssessmentScores,
+    handleInviteToPollenInterview,
+    handleUpdateStatusAndSubStatus,
 
     // Drag & Drop
     handleDragStart,

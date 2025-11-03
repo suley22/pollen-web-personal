@@ -55,7 +55,7 @@ export function AssessmentScoresCard({
           Individual Assessment Scores
         </h3>
         <p className="text-sm text-gray-500 mt-1">
-          Rate performance across key areas (1-10 scale)
+          Rate performance across key areas (0-10 scale)
         </p>
       </div>
 
@@ -102,6 +102,7 @@ export function AssessmentScoresCard({
 
                 {/* Scale labels */}
                 <div className="flex justify-between text-xs text-gray-400 mt-1">
+                  <span>0</span>
                   <span>1</span>
                   <span>2</span>
                   <span>3</span>

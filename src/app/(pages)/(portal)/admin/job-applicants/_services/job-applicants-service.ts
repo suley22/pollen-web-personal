@@ -402,6 +402,53 @@ export function useUpdateApplicantSubStatus() {
 }
 
 /**
+ * Hook: update both status and sub_status for an applicant
+ * Used when inviting to interview or similar state changes
+ */
+export function useUpdateApplicantStatusAndSubStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      status,
+      subStatus,
+      jobId,
+    }: {
+      applicationId: string;
+      status: string;
+      subStatus: string;
+      jobId: string;
+    }) => {
+      const { data, error } = await supabase
+        .from("job_applications")
+        .update({
+          status: status,
+          sub_status: subStatus,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", applicationId)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [jobApplicantsQueryKey, "applicants", variables.jobId],
+      });
+    },
+    onError: (error) => {
+      console.error("Error updating applicant status and sub-status:", error);
+    },
+  });
+}
+
+/**
  * Hook: update assessment scores for an applicant
  * Updates score1, score2, score3, score4 in the job_applications table
  */

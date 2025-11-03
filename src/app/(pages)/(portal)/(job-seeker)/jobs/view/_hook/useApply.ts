@@ -7,11 +7,13 @@ import {
   useCheckIfUserApplied,
 } from "../../_services/jobs-service";
 import { useToastNotifications } from "@/hooks/useToastNotifications";
+import { useAssessmentById } from "@/assessments/_services/assessments-page-service";
 
 export function useApply() {
   const [currentStep, setCurrentStep] = useState(1);
   const [showCompanyProfile, setShowCompanyProfile] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showAssessment, setShowAssessment] = useState(false);
   const router = useRouter();
   const params = useParams();
   const [savedJobs, setSavedJobs] = useState<Set<string>>(new Set());
@@ -21,6 +23,12 @@ export function useApply() {
 
   // React Query: Fetch job by ID
   const { data: job = null, isLoading: loading } = useJobById(jobId);
+
+  // React Query: Fetch assessment if job has one assigned
+  const { data: assessment, isLoading: isLoadingAssessment } =
+    useAssessmentById(
+      job?.persona_result_assessment_id || job?.skills_assessment_id || "",
+    );
 
   // React Query: Check if user has applied
   const { data: applicationStatus } = useCheckIfUserApplied(jobId);
@@ -36,8 +44,21 @@ export function useApply() {
     router.back();
   };
 
-  // Create job application
-  const handleStart = useCallback(async () => {
+  // Show assessment instead of creating application directly
+  const handleStart = useCallback(() => {
+    setIsDialogOpen(false);
+    setShowAssessment(true);
+    setCurrentStep(2); // Cambiar al paso 2: Assessment
+  }, []);
+
+  // Hide assessment and go back to step 1
+  const handleHideAssessment = useCallback(() => {
+    setShowAssessment(false);
+    setCurrentStep(1); // Volver al paso 1: Job Overview
+  }, []);
+
+  // Create job application (will be called after assessment)
+  const handleSubmitApplication = useCallback(async () => {
     if (!job?.id) {
       console.error("❌ No job ID available");
       showError("Error", "Job information is not available");
@@ -46,7 +67,6 @@ export function useApply() {
 
     createApplicationMutation.mutate(job.id, {
       onSuccess: () => {
-        setIsDialogOpen(false);
         showSuccess(
           "Application submitted successfully!",
           "Your application has been submitted. We'll review it and get back to you soon.",
@@ -58,7 +78,6 @@ export function useApply() {
         }, 1500);
       },
       onError: (error: any) => {
-        setIsDialogOpen(false);
         showError(
           "Application failed",
           error?.message ||
@@ -124,11 +143,17 @@ export function useApply() {
     setShowCompanyProfile,
     handleBack,
     handleStart,
+    handleSubmitApplication,
     job,
+    assessment,
     loading,
+    isLoadingAssessment,
     hasApplied,
     isDialogOpen,
     setIsDialogOpen,
+    showAssessment,
+    setShowAssessment,
+    handleHideAssessment,
     isApplying: createApplicationMutation.isPending,
     saveFavoriteJob,
     isSaved,

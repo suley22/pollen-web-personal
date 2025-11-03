@@ -1,35 +1,23 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { AssessmentProgress } from "../../_components/assessment-progress";
-import { AssessmentCategoryProgress } from "../../_components/assessment-category-progress";
-import {
-  PageHeader,
-  InfoCard,
-  Divider,
-  WarningBadge,
-} from "@/components/design-system";
-import { QuestionActionButtons } from "./question-action-buttons";
-import { PreviewMultipleChoiceQuestion } from "./preview-multiple-choice-question";
-import { PreviewFreeInputQuestion } from "./preview-free-input-question";
-import { PreviewFileUploadQuestion } from "./preview-file-upload-question";
+import { AssessmentProgress } from "@/app/(pages)/(portal)/admin/assessments/_components/assessment-progress";
+import { AssessmentCategoryProgress } from "@/app/(pages)/(portal)/admin/assessments/_components/assessment-category-progress";
+import { PageHeader, InfoCard, Divider } from "@/components/design-system";
+import { PreviewMultipleChoiceQuestion } from "@/app/(pages)/(portal)/admin/assessments/create/_components/preview-multiple-choice-question";
+import { PreviewFreeInputQuestion } from "@/app/(pages)/(portal)/admin/assessments/create/_components/preview-free-input-question";
+import { PreviewFileUploadQuestion } from "@/app/(pages)/(portal)/admin/assessments/create/_components/preview-file-upload-question";
 import type { AssessmentQuestion } from "@/types/assessment-question";
 import type { AssessmentCategory } from "@/types/assessment-types";
 import { useToastNotifications } from "@/hooks/useToastNotifications";
 
-interface AssessmentCreateUnifiedPreviewProps {
+interface AssessmentPreviewProps {
   assessmentTitle: string;
   assessmentDescription: string;
   instructionsTitle: string;
   instructionsDescription: string;
   questions: AssessmentQuestion[];
   categories?: AssessmentCategory[];
-  isEditMode?: boolean;
-  showAdminBadge?: boolean;
-  onMoveQuestionUp?: (index: number) => void;
-  onMoveQuestionDown?: (index: number) => void;
-  onEditQuestion?: (index: number) => void;
-  onRemoveQuestion?: (index: number) => void;
 }
 
 interface UploadedFile {
@@ -38,20 +26,14 @@ interface UploadedFile {
   file: File;
 }
 
-export function AssessmentCreateUnifiedPreview({
+export function AssessmentPreview({
   assessmentTitle,
   assessmentDescription,
   instructionsTitle,
   instructionsDescription,
   questions,
   categories = [],
-  isEditMode = false,
-  showAdminBadge = true,
-  onMoveQuestionUp,
-  onMoveQuestionDown,
-  onEditQuestion,
-  onRemoveQuestion,
-}: AssessmentCreateUnifiedPreviewProps) {
+}: AssessmentPreviewProps) {
   const { showError } = useToastNotifications();
 
   // Estado para Multiple Choice questions
@@ -207,15 +189,6 @@ export function AssessmentCreateUnifiedPreview({
     <div className="flex flex-col gap-6">
       <Divider />
 
-      {showAdminBadge && (
-        <WarningBadge className="h-8 justify-center">
-          This is an admin preview of the assessment. Answer submission is not
-          available.
-        </WarningBadge>
-      )}
-
-      {showAdminBadge && <Divider />}
-
       <PageHeader title={assessmentTitle} subtitle={assessmentDescription} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -274,18 +247,6 @@ export function AssessmentCreateUnifiedPreview({
                     onSubmit={() => handleFileUploadSubmit(index)}
                     onEdit={() => handleFileUploadEdit(index)}
                     onError={showError}
-                  />
-                )}
-
-                {/* Action Buttons - Only in Edit Mode */}
-                {isEditMode && (
-                  <QuestionActionButtons
-                    index={index}
-                    totalQuestions={questions.length}
-                    onMoveUp={onMoveQuestionUp!}
-                    onMoveDown={onMoveQuestionDown!}
-                    onEdit={onEditQuestion!}
-                    onRemove={onRemoveQuestion!}
                   />
                 )}
               </div>

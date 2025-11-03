@@ -1,14 +1,18 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { getJobSeeker } from "@/admin/job-seekers/actions";
+import {
+  getJobSeeker,
+  getDistinctRoles,
+} from "@/app/(pages)/(portal)/admin/job-seekers/_services/job-seekers-page-service";
 import { Badge } from "@/components/ui/badge";
 
 export function useJobSeeker() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [profileFilter, setProfileFilter] = useState("all");
-  const [applicationFilter, setApplicationFilter] = useState("all");
+  const [roleFilter, setRoleFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [jobSeekers, setJobSeekers] = useState([]);
+  const [roleOptions, setRoleOptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const loadingRef = useRef(false);
@@ -37,7 +41,7 @@ export function useJobSeeker() {
         status: statusFilter,
         searchTerm: debouncedSearchTerm.trim(),
         profile: profileFilter,
-        application: applicationFilter,
+        role: roleFilter,
       });
 
       if (result.success) {
@@ -54,12 +58,32 @@ export function useJobSeeker() {
       setLoading(false);
       loadingRef.current = false;
     }
-  }, [statusFilter, profileFilter, applicationFilter, debouncedSearchTerm]);
+  }, [statusFilter, profileFilter, roleFilter, debouncedSearchTerm]);
 
   // Load job seekers when loadJobSeekers function changes
   useEffect(() => {
     loadJobSeekers();
   }, [loadJobSeekers]);
+
+  // Load distinct roles based on search term only (not affected by current role/status/profile filters)
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const result = await getDistinctRoles({
+          searchTerm: debouncedSearchTerm.trim(),
+        });
+        if (!cancelled && result.success) {
+          setRoleOptions(result.data || []);
+        }
+      } catch {
+        // non-blocking; omit error surface here
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [debouncedSearchTerm]);
 
   const getStatusBadge = useCallback((status) => {
     switch (status) {
@@ -74,6 +98,10 @@ export function useJobSeeker() {
           <Badge className="text-sm bg-gray-100 text-gray-800 border-gray-200">
             Inactive
           </Badge>
+        );
+      case "undefined":
+        return (
+          <Badge className="text-sm bg-gray-200 text-gray-700">Undefined</Badge>
         );
       default:
         return (
@@ -112,14 +140,15 @@ export function useJobSeeker() {
       form: {
         statusFilter: statusFilter,
         profileFilter: profileFilter,
-        applicationFilter: applicationFilter,
+        roleFilter: roleFilter,
         jobSeekers: jobSeekers,
+        roleOptions: roleOptions,
         loading: loading,
         error: error,
         setSearchTerm: setSearchTerm,
         setStatusFilter: setStatusFilter,
         setProfileFilter: setProfileFilter,
-        setApplicationFilter: setApplicationFilter,
+        setRoleFilter: setRoleFilter,
         loadJobSeekers: loadJobSeekers,
         getStatusBadge: getStatusBadge,
         getProfileCompleteBadge: getProfileCompleteBadge,
@@ -128,8 +157,9 @@ export function useJobSeeker() {
     [
       statusFilter,
       profileFilter,
-      applicationFilter,
+      roleFilter,
       jobSeekers,
+      roleOptions,
       loading,
       error,
       loadJobSeekers,

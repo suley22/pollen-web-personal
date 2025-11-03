@@ -25,4 +25,17 @@ export interface FiltersProps {
   searchPlaceholder?: string;
   filters?: FilterConfig[];
   debounceMs?: number;
+  /**
+   * When true, the dynamic filters are hidden behind a toggle button.
+   * The search input remains visible. Default is false.
+   */
+  collapsible?: boolean;
+  /**
+   * Initial collapsed state when `collapsible` is true. Default is true.
+   */
+  defaultCollapsed?: boolean;
+  /**
+   * Optional label for the toggle button.
+   */
+  toggleButtonLabel?: string;
 }

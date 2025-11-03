@@ -206,8 +206,8 @@ export function AssessmentCreateUnifiedPreview({
       <Divider />
 
       <WarningBadge className="h-8 justify-center">
-        This is a preview of the assessment. In edit mode, answers cannot be
-        submitted.
+        This is an admin preview of the assessment. Answer submission is not
+        available.
       </WarningBadge>
 
       <Divider />

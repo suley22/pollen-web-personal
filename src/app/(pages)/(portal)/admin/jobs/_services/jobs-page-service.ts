@@ -461,6 +461,9 @@ const transformFormDataToDatabase = (formData: FormData) => {
     pollen_approved_requirements: pollen_approved_requirements,
     internal_notes: formJobData.internal_notes,
     user_id: formJobData.user_id || null,
+    persona_result_assessment_id:
+      formJobData.persona_result_assessment_id || null,
+    skills_assessment_id: formJobData.skills_assessment_id || null,
   };
 };
 

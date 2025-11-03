@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UserCheck, Search, Plus, Edit, Eye, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,11 +8,9 @@ import { FormCard } from "@/components/design-system/form-card";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { AssessmentSelector } from "../assessment-selector";
+import { AssessmentSelector } from "../jobs-create-assessment-selector";
 import { useAssessmentById } from "@/assessments/_services/assessments-page-service";
-import { AssessmentCreateMultipleChoicePreview } from "@/assessments/create/_components/assessment-create-multiple-choice-preview";
-import { AssessmentCreateFreeInputPreview } from "@/assessments/create/_components/assessment-create-free-input-preview";
-import { AssessmentCreateFileUploadPreview } from "@/assessments/create/_components/assessment-create-file-upload-preview";
+import { AssessmentCreateUnifiedPreview } from "@/app/(pages)/(portal)/admin/assessments/create/_components/assessment-create-unified-preview";
 
 const STATUS_COLORS = {
   draft: "bg-yellow-50 text-yellow-700 border-yellow-200",
@@ -34,63 +32,85 @@ const ASSESSMENT_TYPE_LABELS = {
   file_upload: "File Upload",
 };
 
-export function PersonaTab({ personaData }) {
+export function PersonaTab({
+  personaData,
+  initialAssessmentId = null,
+  onAssessmentChange,
+}) {
   const [selectedAssessment, setSelectedAssessment] = useState(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isAssessmentSelectorOpen, setIsAssessmentSelectorOpen] =
+    useState(false);
   const [showPreview, setShowPreview] = useState(false);
+
+  // Debug logging
+  console.log(
+    "PersonaTab render - isAssessmentSelectorOpen:",
+    isAssessmentSelectorOpen,
+  );
 
   // Cargar datos completos del assessment seleccionado
   const { data: fullAssessment, isLoading: isLoadingFullAssessment } =
-    useAssessmentById(selectedAssessment?.id, {
-      enabled: !!selectedAssessment?.id && showPreview,
-    });
+    useAssessmentById(selectedAssessment?.id || "");
+
+  // Cargar assessment inicial si existe
+  const { data: initialAssessment } = useAssessmentById(
+    initialAssessmentId || "",
+  );
+
+  // Efecto para establecer el assessment inicial
+  useEffect(() => {
+    if (initialAssessment && !selectedAssessment) {
+      setSelectedAssessment(initialAssessment);
+    }
+  }, [initialAssessment, selectedAssessment]);
 
   const handleSelectAssessment = (assessment) => {
     setSelectedAssessment(assessment);
+    // Notificar al componente padre del cambio
+    if (onAssessmentChange) {
+      onAssessmentChange(assessment?.id || null);
+    }
   };
 
   const handleRemoveAssessment = () => {
     setSelectedAssessment(null);
     setShowPreview(false);
+    // Notificar al componente padre que se removió
+    if (onAssessmentChange) {
+      onAssessmentChange(null);
+    }
   };
 
   const handleEditAssessment = () => {
-    setIsDialogOpen(true);
+    setIsAssessmentSelectorOpen(true);
   };
 
-  // Renderizar preview según tipo de assessment
-  const renderAssessmentPreview = () => {
-    if (!fullAssessment) return null;
+  // Convertir preguntas para preview (mismo patrón que assessment-view-page.tsx)
+  const convertQuestionsForPreview = (assessment) => {
+    if (!assessment?.questions) return [];
 
-    const commonProps = {
-      assessmentTitle:
-        fullAssessment.internal_pollen_title || fullAssessment.title,
-      assessmentDescription: fullAssessment.subtitle || "",
-      instructionsTitle: fullAssessment.instructions_title || "",
-      instructionsDescription: fullAssessment.instructions_description || "",
-      questions: fullAssessment.questions || [],
-      categories: fullAssessment.categories || [],
-      isEditMode: false, // No mostramos botones de edición en el preview
-    };
+    return assessment.questions.map((q, index) => {
+      const baseQuestion: any = {
+        id: q.id || `question-${index}`,
+        type: q.type,
+        title: q.title,
+        description: q.subtitle || "",
+      };
 
-    switch (fullAssessment.type) {
-      case "multiple_choice":
-        return <AssessmentCreateMultipleChoicePreview {...commonProps} />;
-      case "free_input":
-        return <AssessmentCreateFreeInputPreview {...commonProps} />;
-      case "file_upload":
-        return <AssessmentCreateFileUploadPreview {...commonProps} />;
-      default:
-        return (
-          <div className="border rounded-lg p-8 bg-muted/30">
-            <div className="text-center space-y-2">
-              <p className="text-sm text-muted-foreground">
-                Preview not available for this assessment type
-              </p>
-            </div>
-          </div>
-        );
-    }
+      if (q.type === "multiple_choice" && q.multiple_choice) {
+        baseQuestion.options_title = q.multiple_choice.options_title || "";
+        baseQuestion.options = q.multiple_choice.options || [];
+        baseQuestion.categoryId = q.multiple_choice.categoryId;
+      } else if (q.type === "free_input" && q.free_input) {
+        baseQuestion.max_characters = q.free_input.placeholder || "";
+      } else if (q.type === "file_upload") {
+        baseQuestion.file_upload = {
+          referenceFiles: q.file_upload?.referenceFiles || [],
+        };
+      }
+
+      return baseQuestion;
+    });
   };
 
   return (
@@ -109,9 +129,15 @@ export function PersonaTab({ personaData }) {
 
             {!selectedAssessment ? (
               <Button
+                size="default"
                 variant="outline"
                 className="w-full"
-                onClick={() => setIsDialogOpen(true)}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsAssessmentSelectorOpen(true);
+                }}
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Assessment
@@ -181,25 +207,42 @@ export function PersonaTab({ personaData }) {
                 {/* Action Buttons */}
                 <div className="flex gap-2">
                   <Button
+                    type="button"
                     variant="outline"
+                    size="default"
                     className="flex-1"
-                    onClick={handleEditAssessment}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleEditAssessment();
+                    }}
                   >
                     <Edit className="w-4 h-4 mr-2" />
                     Change Assessment
                   </Button>
                   <Button
+                    type="button"
+                    size="default"
                     variant="outline"
                     className="flex-1"
-                    onClick={() => setShowPreview(!showPreview)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowPreview(!showPreview);
+                    }}
                   >
                     <Eye className="w-4 h-4 mr-2" />
                     {showPreview ? "Hide" : "Preview"} Assessment
                   </Button>
                   <Button
+                    type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={handleRemoveAssessment}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleRemoveAssessment();
+                    }}
                   >
                     <X className="w-4 h-4" />
                   </Button>
@@ -210,22 +253,27 @@ export function PersonaTab({ personaData }) {
         </div>
       </FormCard>
 
-      {/* Assessment Preview - Outside cards */}
+      {/* Assessment Preview - Inline */}
       {showPreview && selectedAssessment && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold">Assessment Preview</h3>
             <Button
+              type="button"
               variant="ghost"
               size="sm"
-              onClick={() => setShowPreview(false)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowPreview(false);
+              }}
             >
               <X className="w-4 h-4 mr-2" />
               Close Preview
             </Button>
           </div>
 
-          {isLoadingFullAssessment ? (
+          {isLoadingFullAssessment || !fullAssessment ? (
             <div className="border rounded-lg p-8 bg-muted/30">
               <div className="text-center space-y-2">
                 <p className="text-sm text-muted-foreground">
@@ -234,37 +282,29 @@ export function PersonaTab({ personaData }) {
               </div>
             </div>
           ) : (
-            renderAssessmentPreview()
+            <div className="border rounded-lg p-6 bg-background">
+              <AssessmentCreateUnifiedPreview
+                assessmentTitle={fullAssessment.title || ""}
+                assessmentDescription={fullAssessment.subtitle || ""}
+                instructionsTitle={fullAssessment.instructions_title || ""}
+                instructionsDescription={
+                  fullAssessment.instructions_description || ""
+                }
+                questions={convertQuestionsForPreview(fullAssessment)}
+                categories={fullAssessment.categories || []}
+                isEditMode={false}
+              />
+            </div>
           )}
         </div>
       )}
 
       {/* Assessment Selector Dialog */}
       <AssessmentSelector
-        isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
+        isOpen={isAssessmentSelectorOpen}
+        onClose={() => setIsAssessmentSelectorOpen(false)}
         onSelect={handleSelectAssessment}
       />
-
-      {/* Persona Results Card */}
-      <FormCard
-        title="Employer Persona Questionnaire Results"
-        icon={<UserCheck className="h-5 w-5" />}
-      >
-        {personaData ? (
-          <div className="space-y-4"></div>
-        ) : (
-          <div className="text-center py-8">
-            <UserCheck className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No Persona Data Available
-            </h3>
-            <p className="text-gray-600">
-              Persona questionnaire has not been completed yet.
-            </p>
-          </div>
-        )}
-      </FormCard>
     </div>
   );
 }

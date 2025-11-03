@@ -7,7 +7,6 @@ import {
 } from "lucide-react";
 import {
   FormCard,
-  FormContainer,
   Input,
   TextAreaCard,
   Select,
@@ -24,9 +23,9 @@ import { Responsibilities } from "./_components/jobs-create-responsabilities";
 import { WhoWouldLove } from "./_components/jobs-create-who_would_love";
 import { Requirement } from "./_components/jobs-create-requirement";
 
-export function JobDescriptionTab({ initialData: editedJob, formRef }) {
+export function JobDescriptionTab({ initialData: editedJob }) {
   return (
-    <FormContainer ref={formRef}>
+    <>
       <FormCard icon={<Briefcase className="h-5 w-5" />} title="Job Overview">
         <div className="flex flex-row mb-6 gap-6">
           <Input
@@ -162,6 +161,6 @@ export function JobDescriptionTab({ initialData: editedJob, formRef }) {
         placeholder="Add internal notes about this role..."
         defaultValue={editedJob?.internal_notes || ""}
       />
-    </FormContainer>
+    </>
   );
 }

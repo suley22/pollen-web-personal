@@ -22,6 +22,7 @@ interface TaskDrawerProps {
     applicationId: string,
     status: string,
     subStatus: string,
+    stoppedAtStage?: string,
   ) => void;
 }
 
@@ -44,6 +45,13 @@ export function TaskDrawer({
     status: string;
     subStatus: string;
   } | null>(null);
+  const [hasScoreChanges, setHasScoreChanges] = useState(false);
+  const [originalScores, setOriginalScores] = useState({
+    score1: 0,
+    score2: 0,
+    score3: 0,
+    score4: 0,
+  });
 
   // Actualizar substatus y scores cuando cambie el jobSeeker
   useEffect(() => {
@@ -51,33 +59,64 @@ export function TaskDrawer({
       setSubStatus(jobSeeker.sub_status || "");
 
       // Cargar scores desde la BD
-      setAssessmentScores({
+      const scores = {
         score1: jobSeeker.score1 || 0,
         score2: jobSeeker.score2 || 0,
         score3: jobSeeker.score3 || 0,
         score4: jobSeeker.score4 || 0,
-      });
+      };
+
+      setAssessmentScores(scores);
+      setOriginalScores(scores);
+      setHasScoreChanges(false);
     }
   }, [jobSeeker]);
 
   const handleScoreChange = (criteriaId: string, value: number) => {
-    // Solo actualizar estado local (no guardar automáticamente)
-    setAssessmentScores((prev) => ({
-      ...prev,
-      [criteriaId]: value,
-    }));
+    // Actualizar estado local
+    setAssessmentScores((prev) => {
+      const newScores = {
+        ...prev,
+        [criteriaId]: value,
+      };
+
+      // Verificar si hay cambios comparando con scores originales
+      const hasChanges = Object.keys(newScores).some(
+        (key) => newScores[key] !== originalScores[key],
+      );
+      setHasScoreChanges(hasChanges);
+
+      return newScores;
+    });
   };
 
   const handleSaveScores = () => {
     // Guardar en BD cuando se hace click en el botón
     if (jobSeeker?.application_id) {
       onUpdateScores(jobSeeker.application_id, assessmentScores);
+      setOriginalScores(assessmentScores);
+      setHasScoreChanges(false);
     }
   };
 
   const handleInviteToInterview = () => {
     if (jobSeeker?.application_id) {
-      onInviteToInterview(jobSeeker.application_id);
+      onUpdateStatusAndSubStatus(
+        jobSeeker.application_id,
+        "in_progress",
+        "Invited to Pollen Interview",
+      );
+    }
+  };
+
+  const handleNotProgressing = () => {
+    if (jobSeeker?.application_id) {
+      onUpdateStatusAndSubStatus(
+        jobSeeker.application_id,
+        "complete",
+        "Not Progressing",
+        jobSeeker.status, // stopped_at_stage = current status before changing to complete
+      );
     }
   };
 
@@ -88,10 +127,15 @@ export function TaskDrawer({
 
   const handleSaveStatusChange = () => {
     if (pendingStatusChange && jobSeeker?.application_id) {
+      const stoppedAtStage =
+        pendingStatusChange.status === "complete"
+          ? jobSeeker.status
+          : undefined;
       onUpdateStatusAndSubStatus(
         jobSeeker.application_id,
         pendingStatusChange.status,
         pendingStatusChange.subStatus,
+        stoppedAtStage,
       );
       setPendingStatusChange(null);
     }
@@ -141,8 +185,15 @@ export function TaskDrawer({
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <div className="text-xl font-bold">
-              {jobSeeker.name} - Assessment
+            <div className="flex items-center gap-4">
+              <div className="text-xl font-bold">
+                {jobSeeker.name} - Assessment
+              </div>
+              <div
+                className={`${jobSeeker.statusColor} text-white text-xs px-2 py-1 rounded-full`}
+              >
+                {jobSeeker.statusLabel}
+              </div>
             </div>
             <button
               onClick={onClose}
@@ -158,34 +209,19 @@ export function TaskDrawer({
             {jobSeeker && (
               <div className="flex flex-col gap-6">
                 {/* Status and Sub Status - Side by side */}
-                <div className="flex gap-6">
-                  {/* Status */}
-                  <div className="flex-1">
-                    <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
-                      Status
-                    </label>
-                    <div className="mt-2">
-                      <span
-                        className={`${jobSeeker.statusColor} text-white text-xs px-2 py-1 rounded-full`}
-                      >
-                        {jobSeeker.statusLabel}
-                      </span>
-                    </div>
-                  </div>
 
-                  {/* Sub Status */}
-                  <div className="flex-1">
-                    <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
-                      Current Sub Status
-                    </label>
-                    <div className="mt-2">
-                      <div className="bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
-                        <div className="flex items-center">
-                          <div className="w-2 h-2 bg-blue-400 rounded-full mr-2"></div>
-                          <span className="text-blue-800 font-medium text-sm">
-                            {subStatus || "No status assigned"}
-                          </span>
-                        </div>
+                {/* Sub Status */}
+                <div className="flex-1">
+                  <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
+                    Current Sub Status
+                  </label>
+                  <div className="mt-2">
+                    <div className="bg-blue-50 border-l-4 border-blue-400 p-3 rounded">
+                      <div className="flex items-center">
+                        <div className="w-2 h-2 bg-blue-400 rounded-full mr-2"></div>
+                        <span className="text-blue-800 font-medium text-sm">
+                          {subStatus || "No status assigned"}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -199,22 +235,39 @@ export function TaskDrawer({
                     onScoreChange={handleScoreChange}
                   />
 
-                  {/* Action Buttons */}
+                  {/* Action Buttons - 3 botones para new_applicants */}
                   {isScoresEditable && (
-                    <div className="flex gap-3 mt-6">
+                    <div className="space-y-3 mt-6">
+                      {/* Save Score Button - Solo activo si hay cambios */}
                       <button
                         onClick={handleSaveScores}
-                        className="flex-1 px-4 py-2.5 bg-pink-600 text-white font-medium rounded-lg hover:bg-pink-700 transition-colors flex items-center justify-center gap-2"
+                        disabled={!hasScoreChanges}
+                        className={`w-full px-4 py-2.5 font-medium rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                          hasScoreChanges
+                            ? "bg-pink-600 text-white hover:bg-pink-700"
+                            : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        }`}
                       >
                         <Save className="w-4 h-4" />
                         Save Score
                       </button>
+
+                      {/* Invited to Pollen Interview Button */}
                       <button
                         onClick={handleInviteToInterview}
-                        className="flex-1 px-4 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                        className="w-full px-4 py-2.5 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
                       >
                         <Send className="w-4 h-4" />
-                        Invite to Pollen Interview
+                        Invited to Pollen Interview
+                      </button>
+
+                      {/* Not Progressing Button */}
+                      <button
+                        onClick={handleNotProgressing}
+                        className="w-full px-4 py-2.5 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
+                      >
+                        <X className="w-4 h-4" />
+                        Not Progressing
                       </button>
                     </div>
                   )}
@@ -239,7 +292,7 @@ export function TaskDrawer({
                       </div>
 
                       {jobSeeker.status === "in_progress" && (
-                        <div className="space-y-2">
+                        <div className=" flex flex-row justify-center gap-6 ">
                           <button
                             onClick={() =>
                               handleStatusSelect(
@@ -247,13 +300,13 @@ export function TaskDrawer({
                                 "Interview Requested",
                               )
                             }
-                            className="w-full px-4 py-3 bg-white text-gray-700 border border-gray-200 font-medium rounded-lg hover:bg-green-50 hover:border-green-300 hover:text-green-700 transition-colors text-left"
+                            className="flex px-4 py-3 bg-white text-gray-700 border border-gray-200 font-medium rounded-lg hover:bg-green-50 hover:border-green-300 hover:text-green-700 transition-colors text-left"
                           >
                             Pollen Interview Complete
                           </button>
                           <button
                             onClick={() =>
-                              handleStatusSelect("not_progressing", "")
+                              handleStatusSelect("complete", "Not Progressing")
                             }
                             className={getButtonStyle("", true)}
                           >
@@ -310,7 +363,7 @@ export function TaskDrawer({
                           </button>
                           <button
                             onClick={() =>
-                              handleStatusSelect("not_progressing", "")
+                              handleStatusSelect("complete", "Not Progressing")
                             }
                             className={getButtonStyle("", true)}
                           >

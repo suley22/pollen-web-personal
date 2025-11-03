@@ -37,88 +37,6 @@ export const JOB_SEEKER_COLUMNS = [
   },
 ];
 
-// Mock Data - Datos de ejemplo (deprecated - usar getJobApplicants)
-// TODO(job_applicants): Eliminar mocks o aislar en archivos .mock.ts y controlarlos vía feature flag.
-const MOCK_JOB_SEEKERS = {
-  new_applicants: [
-    {
-      id: "1",
-      application_id: "app-1",
-      name: "Sarah Johnson",
-      avatar_url: null,
-      match_score: 92,
-      applied_date: "15/01/2025",
-      sub_status: "Unopened",
-    },
-    {
-      id: "2",
-      application_id: "app-2",
-      name: "Michael Chen",
-      avatar_url: null,
-      match_score: 88,
-      applied_date: "16/01/2025",
-      sub_status: "Unopened",
-    },
-    {
-      id: "3",
-      application_id: "app-3",
-      name: "Emma Rodriguez",
-      avatar_url: null,
-      match_score: 85,
-      applied_date: "17/01/2025",
-      sub_status: "Unopened",
-    },
-  ],
-  in_progress: [
-    {
-      id: "4",
-      application_id: "app-4",
-      name: "David Kim",
-      avatar_url: null,
-      match_score: 90,
-      applied_date: "14/01/2025",
-      sub_status: "Interview Scheduled",
-    },
-    {
-      id: "5",
-      application_id: "app-5",
-      name: "Lisa Anderson",
-      avatar_url: null,
-      match_score: 87,
-      applied_date: "13/01/2025",
-      sub_status: "Under Review",
-      is_verified: true,
-      is_fast_track: false,
-    },
-  ],
-  matched_to_employer: [
-    {
-      id: "6",
-      application_id: "app-6",
-      name: "James Wilson",
-      avatar_url: null,
-      match_score: 95,
-      applied_date: "10/01/2025",
-      sub_status: "Awaiting Response",
-      is_verified: true,
-      is_fast_track: true,
-    },
-  ],
-  complete: [
-    {
-      id: "7",
-      application_id: "app-7",
-      name: "Sophia Martinez",
-      avatar_url: null,
-      match_score: 93,
-      applied_date: "08/01/2025",
-      sub_status: "Hired",
-      is_verified: true,
-      is_fast_track: false,
-    },
-  ],
-};
-
 // ===============
 // React Query Hooks
 // ===============
@@ -143,15 +61,6 @@ export function useJobApplicants(jobId: string | null) {
 // ===============
 
 /**
- * Función mockeada para obtener los aplicantes
- * Retorna datos estáticos para testing de UI
- * @deprecated Usar useJobApplicants hook en su lugar
- */
-export function getMockApplicants() {
-  return MOCK_JOB_SEEKERS;
-}
-
-/**
  * Obtiene los aplicantes reales desde la base de datos para un job específico
  * Agrupa los aplicantes por status (columnas del Kanban)
  *
@@ -160,10 +69,8 @@ export function getMockApplicants() {
  */
 async function getJobApplicants(jobId: string): Promise<GroupedApplicants> {
   try {
-    // TODO(job_applicants): Reemplazar console.log por logger centralizado (con niveles y toggles por entorno).
     console.log("🔍 getJobApplicants called with jobId:", jobId);
 
-    // 1. Obtener las aplicaciones para este job
     const { data: applications, error: applicationsError } = await supabase
       .from("job_applications")
       .select("*")
@@ -308,10 +215,6 @@ export function transformJobSeekersToList(
 
   return allJobSeekers;
 }
-
-// ===============
-// Mutation Hooks
-// ===============
 
 /**
  * Hook: update applicant status (for drag & drop functionality)
@@ -470,15 +373,36 @@ export function useUpdateAssessmentScores() {
       };
       jobId: string;
     }) => {
+      // First, get the current status of the application
+      const { data: currentApplication, error: fetchError } = await supabase
+        .from("job_applications")
+        .select("status")
+        .eq("id", applicationId)
+        .single();
+
+      if (fetchError) {
+        throw new Error(fetchError.message);
+      }
+
+      // Calculate overall_score if status is "new_applicants"
+      const updateData: any = {
+        score1: scores.score1,
+        score2: scores.score2,
+        score3: scores.score3,
+        score4: scores.score4,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (currentApplication?.status === "new_applicants") {
+        const averageScore =
+          (scores.score1 + scores.score2 + scores.score3 + scores.score4) / 4;
+        const overallScore = (averageScore / 10) * 100;
+        updateData.overall_score = overallScore;
+      }
+
       const { data, error } = await supabase
         .from("job_applications")
-        .update({
-          score1: scores.score1,
-          score2: scores.score2,
-          score3: scores.score3,
-          score4: scores.score4,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq("id", applicationId)
         .select()
         .single();

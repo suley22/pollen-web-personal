@@ -3,14 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/buttons/button";
-import {
-  Calendar,
-  User,
-  FileText,
-  MessageSquare,
-  AlertTriangle,
-  ClipboardCheck,
-} from "lucide-react";
+import { Calendar, User, ClipboardCheck } from "lucide-react";
 
 // Map de colores para diferentes sub_status
 const SUB_STATUS_STYLES = {
@@ -103,7 +96,6 @@ export default function JobSeekerCard({
             className="flex-1 h-8 px-3 hover:bg-gray-100 text-gray-600 text-xs font-normal"
             onClick={(e) => {
               e.stopPropagation();
-              // Handle profile action
             }}
           >
             <User className="h-3.5 w-3.5 mr-1.5" />
@@ -115,7 +107,7 @@ export default function JobSeekerCard({
             className="flex-1 h-8 px-3 hover:bg-gray-100 text-gray-600 text-xs font-normal"
             onClick={(e) => {
               e.stopPropagation();
-              // Handle assessment action
+              onClick(jobSeeker, columnId);
             }}
           >
             <ClipboardCheck className="h-3.5 w-3.5 mr-1.5" />

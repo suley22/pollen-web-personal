@@ -1,11 +1,18 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useJobApplicantsHook } from "../_hooks/job-applicants-hook";
 import { BoardView } from "../_components/job-applicants-board-view";
 import { GridView } from "../_components/job-applicants-grid-view";
 import { TaskDrawer } from "../_components/job-applicants-js-drawer";
 import { ViewToggle } from "../_components/job-applicants-view-toggle";
-import { PageContainer, PageHeader } from "@/components/design-system";
+import {
+  PageContainer,
+  PageHeader,
+  PrimaryButton,
+} from "@/components/design-system";
+import { AdminRoutes } from "@/admin/router";
+import { Eye } from "lucide-react";
 
 interface JobApplicantsViewProps {
   jobId?: string | null;
@@ -14,8 +21,11 @@ interface JobApplicantsViewProps {
 export default function JobApplicantsView({
   jobId = null,
 }: JobApplicantsViewProps) {
+  const router = useRouter();
+
   const {
     jobSeekers,
+    jobInfo,
     isLoading,
     viewMode,
     setViewMode,
@@ -36,6 +46,13 @@ export default function JobApplicantsView({
     getAllJobSeekersWithStatus,
     isUpdatingStatus,
   } = useJobApplicantsHook(jobId);
+
+  // Handle job details navigation
+  const handleJobDetails = () => {
+    if (jobId) {
+      router.push(AdminRoutes.jobView(jobId));
+    }
+  };
 
   // Handle no jobId case
   if (!jobId) {
@@ -69,12 +86,27 @@ export default function JobApplicantsView({
         {/* Header */}
         <div className="w-full flex flex-row items-center justify-between">
           <PageHeader
-            title="Applicants Pipeline"
+            title={
+              jobInfo
+                ? `Applicants to ${jobInfo.job_title} at ${jobInfo.company_name}`
+                : "Applicants Pipeline"
+            }
             subtitle="Manage and track candidate applications"
           />
 
           {/* Controls */}
           <div className="flex items-center gap-3">
+            {/* Job Details Button */}
+            {jobInfo && (
+              <PrimaryButton
+                text="Job Details"
+                icon={<Eye className="h-4 w-4" />}
+                onClick={handleJobDetails}
+                style="outline"
+                className="text-sm"
+              />
+            )}
+
             {/* Loading indicator for mutations */}
             {isUpdatingStatus && (
               <div className="flex items-center gap-2 text-sm text-gray-600">

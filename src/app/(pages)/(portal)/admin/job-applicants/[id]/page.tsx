@@ -1,4 +1,4 @@
-import JobApplicantsView from "./_view/job-applicants-view";
+import JobApplicantsView from "../_view/job-applicants-view";
 
 export default function JobApplicantsPage() {
   // TODO: En el futuro, recibir jobId desde params o searchParams

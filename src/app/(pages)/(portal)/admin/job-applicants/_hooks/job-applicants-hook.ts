@@ -10,8 +10,16 @@ import {
   getColumnInfo,
   type GroupedApplicants,
 } from "../_services/job-applicants-service";
+import { useJobById } from "../../jobs/_services/jobs-page-service";
 
 export function useJobApplicantsHook(jobId: string | null) {
+  // Fetch job info using React Query
+  const {
+    data: jobInfo,
+    isLoading: isJobLoading,
+    error: jobError,
+  } = useJobById(jobId!);
+
   // Fetch job applicants using React Query
   const {
     data: jobSeekers = {
@@ -20,9 +28,11 @@ export function useJobApplicantsHook(jobId: string | null) {
       matched_to_employer: [],
       complete: [],
     } as GroupedApplicants,
-    isLoading,
+    isLoading: isApplicantsLoading,
     error,
   } = useJobApplicants(jobId);
+
+  const isLoading = isJobLoading || isApplicantsLoading;
 
   // Get mutation hooks
   const updateApplicantStatusMutation = useUpdateApplicantStatus();
@@ -257,6 +267,7 @@ export function useJobApplicantsHook(jobId: string | null) {
   return {
     // Data
     jobSeekers,
+    jobInfo,
     isLoading,
     error,
 

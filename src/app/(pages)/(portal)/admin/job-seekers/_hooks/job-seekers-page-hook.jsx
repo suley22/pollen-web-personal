@@ -1,5 +1,8 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { getJobSeeker } from "@/app/(pages)/(portal)/admin/job-seekers/_services/job-seekers-page-service";
+import {
+  getJobSeeker,
+  getDistinctRoles,
+} from "@/app/(pages)/(portal)/admin/job-seekers/_services/job-seekers-page-service";
 import { Badge } from "@/components/ui/badge";
 
 export function useJobSeeker() {
@@ -9,6 +12,7 @@ export function useJobSeeker() {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [jobSeekers, setJobSeekers] = useState([]);
+  const [roleOptions, setRoleOptions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const loadingRef = useRef(false);
@@ -60,6 +64,26 @@ export function useJobSeeker() {
   useEffect(() => {
     loadJobSeekers();
   }, [loadJobSeekers]);
+
+  // Load distinct roles based on search term only (not affected by current role/status/profile filters)
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const result = await getDistinctRoles({
+          searchTerm: debouncedSearchTerm.trim(),
+        });
+        if (!cancelled && result.success) {
+          setRoleOptions(result.data || []);
+        }
+      } catch {
+        // non-blocking; omit error surface here
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [debouncedSearchTerm]);
 
   const getStatusBadge = useCallback((status) => {
     switch (status) {
@@ -118,6 +142,7 @@ export function useJobSeeker() {
         profileFilter: profileFilter,
         roleFilter: roleFilter,
         jobSeekers: jobSeekers,
+        roleOptions: roleOptions,
         loading: loading,
         error: error,
         setSearchTerm: setSearchTerm,
@@ -134,6 +159,7 @@ export function useJobSeeker() {
       profileFilter,
       roleFilter,
       jobSeekers,
+      roleOptions,
       loading,
       error,
       loadJobSeekers,

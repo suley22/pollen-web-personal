@@ -48,3 +48,37 @@ export async function getJobSeeker(filters = {}) {
     return { success: false, error: "Failed to fetch job seekers" };
   }
 }
+
+export async function getDistinctRoles(filters = {}) {
+  try {
+    const supabase = await createClient();
+
+    let query = supabase.from("profile").select("role").not("role", "is", null);
+
+    // Filtro de búsqueda opcional (coherente con la UI), pero NO filtramos por role/status/profile
+    if (filters.searchTerm) {
+      query = query.or(
+        `name.ilike.%${filters.searchTerm}%,email.ilike.%${filters.searchTerm}%`,
+      );
+    }
+
+    const { data, error } = await query;
+    if (error) {
+      console.error("Error fetching distinct roles:", error);
+      return { success: false, error: error.message };
+    }
+
+    const roles = Array.from(
+      new Set(
+        (data || [])
+          .map((r) => (r.role ? String(r.role).trim() : ""))
+          .filter((v) => !!v),
+      ),
+    ).sort((a, b) => a.localeCompare(b));
+
+    return { success: true, data: roles };
+  } catch (error) {
+    console.error("Unexpected error (roles):", error);
+    return { success: false, error: "Failed to fetch roles" };
+  }
+}

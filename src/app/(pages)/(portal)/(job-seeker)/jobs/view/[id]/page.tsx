@@ -17,8 +17,7 @@ import WhatHappensNext from "../_components/what-happens-next";
 export default function ApplyJobPage() {
   const {
     currentStep,
-    showCompanyProfile,
-    setShowCompanyProfile,
+
     handleBack,
     job,
     assessment,
@@ -33,6 +32,7 @@ export default function ApplyJobPage() {
     showAssessment,
     setShowAssessment,
     handleHideAssessment,
+    handleCompanyDetails,
     isApplying,
   } = useApply();
 
@@ -70,8 +70,7 @@ export default function ApplyJobPage() {
       <ApplyJobHeader
         job={job}
         isSaved={isSaved}
-        showCompanyProfile={showCompanyProfile}
-        setShowCompanyProfile={setShowCompanyProfile}
+        handleCompanyDetails={handleCompanyDetails}
         onToggleSave={() => saveFavoriteJob(job.id)}
         onBack={handleBack}
       />

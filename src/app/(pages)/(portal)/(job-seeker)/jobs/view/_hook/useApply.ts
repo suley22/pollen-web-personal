@@ -8,6 +8,8 @@ import {
 } from "../../_services/jobs-service";
 import { useToastNotifications } from "@/hooks/useToastNotifications";
 import { useAssessmentById } from "@/assessments/_services/assessments-page-service";
+import { AdminRoutes } from "@/app/(pages)/(portal)/admin/router";
+import { JobSeekerRoutes } from "../../../router";
 
 export function useApply() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -137,6 +139,12 @@ export function useApply() {
     [savedJobs],
   );
 
+  const handleCompanyDetails = useCallback(() => {
+    if (job?.company_id) {
+      router.push(JobSeekerRoutes.companyView(job.company_id));
+    }
+  }, [job?.company_id, router]);
+
   return {
     currentStep,
     showCompanyProfile,
@@ -144,6 +152,7 @@ export function useApply() {
     handleBack,
     handleStart,
     handleSubmitApplication,
+    handleCompanyDetails,
     job,
     assessment,
     loading,

@@ -2,7 +2,7 @@
 
 import { LayoutGrid, Columns3 } from "lucide-react";
 
-// TODO(playground):
+// TODO(job_applicants):
 // - Convertir en un ToggleGroup del design-system para estilos/estados consistentes.
 // - Añadir aria-pressed y labels accesibles.
 export function ViewToggle({ viewMode, onViewModeChange }) {

@@ -1,32 +1,32 @@
-# Playground - Kanban Board (React Query + Real Database)
+# Job Applicants - Kanban Board (React Query + Real Database)
 
-Esta feature del Playground implementa un **sistema completo con React Query y base de datos real** siguiendo los patrones establecidos en el proyecto.
+Esta feature de Job Applicants implementa un **sistema completo con React Query y base de datos real** siguiendo los patrones establecidos en el proyecto.
 
 ## 📁 Estructura de Archivos
 
 ```
-playground/
-├── page.jsx                          # Entry point - delega a la vista
+job-applicants/
+├── page.tsx                                      # Entry point - delega a la vista
 ├── _view/
-│   └── playground-view.tsx          # UI principal - orquesta componentes
+│   └── job-applicants-view.tsx                  # UI principal - orquesta componentes
 ├── _hooks/
-│   └── playground-hook.ts           # Lógica de negocio y estado local
+│   └── job-applicants-hook.ts                   # Lógica de negocio y estado local
 ├── _services/
-│   └── playground-service.ts        # Mock data y helpers
+│   └── job-applicants-service.ts                # Data layer con React Query
 └── _components/
-    ├── board-view.tsx               # Vista de tablero Kanban
-    ├── grid-view.tsx                # Vista de tabla
-    ├── task-drawer.tsx              # Panel lateral de detalles
-    ├── task-card.tsx                # Tarjeta de tarea
-    ├── grid-row.tsx                 # Fila de tabla
-    └── view-toggle.tsx              # Toggle entre vistas
+    ├── job-applicants-board-view.tsx           # Vista de tablero Kanban
+    ├── job-applicants-grid-view.tsx            # Vista de tabla
+    ├── job-applicants-js-drawer.tsx            # Panel lateral de detalles
+    ├── job-applicants-js-card.tsx              # Tarjeta de aplicante
+    ├── job-applicants-grid-row.tsx             # Fila de tabla
+    └── job-applicants-view-toggle.tsx          # Toggle entre vistas
 ```
 
 ---
 
 ## 🏗️ Arquitectura Simplificada
 
-### 1. **SERVICE LAYER** (`_services/playground-service.ts`)
+### 1. **SERVICE LAYER** (`_services/job-applicants-service.ts`)
 
 **Responsabilidad:** React Query hooks y llamadas a BD
 
@@ -50,7 +50,7 @@ playground/
 
 ---
 
-### 2. **HOOK LAYER** (`_hooks/playground-hook.ts`)
+### 2. **HOOK LAYER** (`_hooks/job-applicants-hook.ts`)
 
 **Responsabilidad:** Lógica de negocio y orquestación de React Query
 
@@ -80,15 +80,15 @@ playground/
 
 ---
 
-### 3. **VIEW LAYER** (`_view/playground-view.tsx` + `_components/`)
+### 3. **VIEW LAYER** (`_view/job-applicants-view.tsx` + `_components/`)
 
 **Responsabilidad:** Presentación pura
 
 **Componentes:**
 
-#### `PlaygroundView` (Orquestador principal)
+#### `JobApplicantsView` (Orquestador principal)
 
-- Usa el hook `usePlaygroundHook()`
+- Usa el hook `useJobApplicantsHook()`
 - Renderiza header con título y toggle
 - Renderiza vista activa (Board o Grid)
 - Renderiza drawer
@@ -204,18 +204,19 @@ UI RE-RENDER (automático)
 ## 📝 Ejemplo de Uso
 
 ```tsx
-// page.jsx - Super simple
-import PlaygroundView from "./_view/playground-view";
+// page.tsx
+import JobApplicantsView from "./_view/job-applicants-view";
 
-export default function PlaygroundPage() {
-  return <PlaygroundView />;
+export default function JobApplicantsPage() {
+  const MOCK_JOB_ID = "139ad003-8062-4cf2-8aee-354451d51798";
+  return <JobApplicantsView jobId={MOCK_JOB_ID} />;
 }
 ```
 
 ```tsx
 // Para agregar una nueva columna:
-// 1. Actualizar TASK_COLUMNS en playground-service.ts
-// 2. Agregar datos iniciales en MOCK_TASKS
+// 1. Actualizar JOB_SEEKER_COLUMNS en job-applicants-service.ts
+// 2. Agregar mapeo de status en la base de datos
 // 3. ¡Listo! El resto se actualiza automáticamente
 ```
 
@@ -242,7 +243,7 @@ export default function PlaygroundPage() {
 ### 🔄 **Migración a React Query**
 
 - ✅ **Hooks consistentes**: Siguiendo patrones de `employers-page-service.ts` y `jobs-service.ts`
-- ✅ **Query keys organizados**: `playgroundQueryKey = "playground"`
+- ✅ **Query keys organizados**: `jobApplicantsQueryKey = "job_applicants"`
 - ✅ **Cache automático**: No más `useEffect` manuales
 - ✅ **Invalidaciones inteligentes**: Cache se actualiza automáticamente
 

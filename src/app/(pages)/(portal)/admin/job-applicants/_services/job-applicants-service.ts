@@ -5,11 +5,11 @@ import { createClient } from "@/lib/utils/supabase/client";
 
 const supabase = createClient();
 
-// Query key for playground-related queries
-export const playgroundQueryKey = "playground";
+// Query key for job-applicants-related queries
+export const jobApplicantsQueryKey = "job_applicants";
 
 // Columnas del Kanban
-// TODO(playground): Exportar tipos/enum para ColumnId y centralizar estilos (colors/badges) en theme.
+// TODO(job_applicants): Exportar tipos/enum para ColumnId y centralizar estilos (colors/badges) en theme.
 export const JOB_SEEKER_COLUMNS = [
   {
     id: "new_applicants",
@@ -38,7 +38,7 @@ export const JOB_SEEKER_COLUMNS = [
 ];
 
 // Mock Data - Datos de ejemplo (deprecated - usar getJobApplicants)
-// TODO(playground): Eliminar mocks o aislar en archivos .mock.ts y controlarlos vía feature flag.
+// TODO(job_applicants): Eliminar mocks o aislar en archivos .mock.ts y controlarlos vía feature flag.
 const MOCK_JOB_SEEKERS = {
   new_applicants: [
     {
@@ -133,7 +133,7 @@ const MOCK_JOB_SEEKERS = {
 export function useJobApplicants(jobId: string | null) {
   return useQuery({
     enabled: !!jobId,
-    queryKey: [playgroundQueryKey, "applicants", jobId],
+    queryKey: [jobApplicantsQueryKey, "applicants", jobId],
     queryFn: () => getJobApplicants(jobId!),
   });
 }
@@ -160,23 +160,13 @@ export function getMockApplicants() {
  */
 async function getJobApplicants(jobId: string): Promise<GroupedApplicants> {
   try {
-    // TODO(playground): Reemplazar console.log por logger centralizado (con niveles y toggles por entorno).
+    // TODO(job_applicants): Reemplazar console.log por logger centralizado (con niveles y toggles por entorno).
     console.log("🔍 getJobApplicants called with jobId:", jobId);
 
     // 1. Obtener las aplicaciones para este job
     const { data: applications, error: applicationsError } = await supabase
       .from("job_applications")
-      .select(
-        `
-        id,
-        created_at,
-        status,
-        sub_status,
-        overall_score,
-        is_fast_track,
-        user_id
-      `,
-      )
+      .select("*")
       .eq("job_id", jobId)
       .order("created_at", { ascending: false });
 
@@ -242,36 +232,47 @@ async function getJobApplicants(jobId: string): Promise<GroupedApplicants> {
 
     // 5. Transformar y agrupar los datos
     applications.forEach((app) => {
-      const jobSeeker = app.user_id ? jobSeekersMap.get(app.user_id) : null;
+      try {
+        const jobSeeker = app.user_id ? jobSeekersMap.get(app.user_id) : null;
 
-      const transformedApplicant = {
-        id: jobSeeker?.id?.toString() || app.user_id?.toString() || "unknown",
-        application_id: app.id.toString(),
-        name: jobSeeker?.name || "Unknown",
-        avatar_url: jobSeeker?.profile_picture || null,
-        match_score: app.overall_score || jobSeeker?.overall_skills_score || 0,
-        applied_date: new Date(app.created_at).toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        }),
-        sub_status: app.sub_status || "Unopened",
-        is_fast_track: app.is_fast_track || false,
-        // Campos adicionales por si se necesitan
-        email: jobSeeker?.email || "",
-        status: app.status,
-      };
+        const transformedApplicant = {
+          id: jobSeeker?.id?.toString() || app.user_id?.toString() || "unknown",
+          application_id: app.id.toString(),
+          name: jobSeeker?.name || "Unknown",
+          avatar_url: jobSeeker?.profile_picture || null,
+          match_score:
+            app.overall_score || jobSeeker?.overall_skills_score || 0,
+          applied_date: new Date(app.created_at).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          }),
+          sub_status: app.sub_status || "Unopened",
+          is_fast_track: app.is_fast_track || false,
+          // Assessment scores - usando optional chaining por si no existen
+          score1: (app as any).score1 ?? 0,
+          score2: (app as any).score2 ?? 0,
+          score3: (app as any).score3 ?? 0,
+          score4: (app as any).score4 ?? 0,
+          // Campos adicionales por si se necesitan
+          email: jobSeeker?.email || "",
+          status: app.status,
+        };
 
-      // Agregar a la columna correspondiente
-      if (app.status in groupedApplicants) {
-        (groupedApplicants as any)[app.status].push(transformedApplicant);
+        // Agregar a la columna correspondiente
+        if (app.status in groupedApplicants) {
+          (groupedApplicants as any)[app.status].push(transformedApplicant);
+        }
+      } catch (appError) {
+        console.error("❌ Error transforming application:", appError, app);
       }
     });
 
     console.log("📊 Grouped applicants:", groupedApplicants);
     return groupedApplicants;
   } catch (error) {
-    console.error("Error in getJobApplicants:", error);
+    console.error("❌ Error in getJobApplicants:", error);
+    console.error("Error details:", JSON.stringify(error, null, 2));
     // En caso de error, retornar estructura vacía
     return {
       new_applicants: [],
@@ -348,8 +349,11 @@ export function useUpdateApplicantStatus() {
     onSuccess: (_data, variables) => {
       // Invalidate the applicants query to refresh the UI
       queryClient.invalidateQueries({
-        queryKey: [playgroundQueryKey, "applicants", variables.jobId],
+        queryKey: [jobApplicantsQueryKey, "applicants", variables.jobId],
       });
+    },
+    onError: (error) => {
+      console.error("Error updating applicant status:", error);
     },
   });
 }
@@ -388,8 +392,111 @@ export function useUpdateApplicantSubStatus() {
     },
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: [playgroundQueryKey, "applicants", variables.jobId],
+        queryKey: [jobApplicantsQueryKey, "applicants", variables.jobId],
       });
+    },
+    onError: (error) => {
+      console.error("Error updating applicant sub-status:", error);
+    },
+  });
+}
+
+/**
+ * Hook: update both status and sub_status for an applicant
+ * Used when inviting to interview or similar state changes
+ */
+export function useUpdateApplicantStatusAndSubStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      status,
+      subStatus,
+      jobId,
+    }: {
+      applicationId: string;
+      status: string;
+      subStatus: string;
+      jobId: string;
+    }) => {
+      const { data, error } = await supabase
+        .from("job_applications")
+        .update({
+          status: status,
+          sub_status: subStatus,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", applicationId)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [jobApplicantsQueryKey, "applicants", variables.jobId],
+      });
+    },
+    onError: (error) => {
+      console.error("Error updating applicant status and sub-status:", error);
+    },
+  });
+}
+
+/**
+ * Hook: update assessment scores for an applicant
+ * Updates score1, score2, score3, score4 in the job_applications table
+ */
+export function useUpdateAssessmentScores() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      scores,
+      jobId,
+    }: {
+      applicationId: string;
+      scores: {
+        score1: number;
+        score2: number;
+        score3: number;
+        score4: number;
+      };
+      jobId: string;
+    }) => {
+      const { data, error } = await supabase
+        .from("job_applications")
+        .update({
+          score1: scores.score1,
+          score2: scores.score2,
+          score3: scores.score3,
+          score4: scores.score4,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", applicationId)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
+    },
+    onSuccess: (_data, variables) => {
+      // Invalidate the applicants query to refresh the UI
+      queryClient.invalidateQueries({
+        queryKey: [jobApplicantsQueryKey, "applicants", variables.jobId],
+      });
+    },
+    onError: (error) => {
+      console.error("Error updating assessment scores:", error);
     },
   });
 }

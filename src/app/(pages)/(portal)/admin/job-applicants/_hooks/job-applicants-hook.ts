@@ -4,12 +4,14 @@ import { useState } from "react";
 import {
   useJobApplicants,
   useUpdateApplicantStatus,
+  useUpdateAssessmentScores,
+  useUpdateApplicantStatusAndSubStatus,
   transformJobSeekersToList,
   getColumnInfo,
   type GroupedApplicants,
 } from "../_services/job-applicants-service";
 
-export function usePlaygroundHook(jobId: string | null) {
+export function useJobApplicantsHook(jobId: string | null) {
   // Fetch job applicants using React Query
   const {
     data: jobSeekers = {
@@ -22,8 +24,11 @@ export function usePlaygroundHook(jobId: string | null) {
     error,
   } = useJobApplicants(jobId);
 
-  // Get mutation hook for updating applicant status
+  // Get mutation hooks
   const updateApplicantStatusMutation = useUpdateApplicantStatus();
+  const updateAssessmentScoresMutation = useUpdateAssessmentScores();
+  const updateStatusAndSubStatusMutation =
+    useUpdateApplicantStatusAndSubStatus();
 
   // View state
   const [viewMode, setViewMode] = useState<"board" | "grid">("board");
@@ -88,6 +93,60 @@ export function usePlaygroundHook(jobId: string | null) {
   const closeDrawer = () => {
     setIsDrawerOpen(false);
     setTimeout(() => setSelectedJobSeeker(null), 300); // Wait for animation
+  };
+
+  /**
+   * Actualiza los assessment scores de un aplicante
+   */
+  const handleUpdateAssessmentScores = (
+    applicationId: string,
+    scores: {
+      score1: number;
+      score2: number;
+      score3: number;
+      score4: number;
+    },
+  ) => {
+    if (!jobId) return;
+
+    updateAssessmentScoresMutation.mutate({
+      applicationId,
+      scores,
+      jobId,
+    });
+  };
+
+  /**
+   * Invita al aplicante a una entrevista de Pollen
+   * Actualiza status a "in_progress" y sub_status a "Invited to Pollen Interview"
+   */
+  const handleInviteToPollenInterview = (applicationId: string) => {
+    if (!jobId) return;
+
+    updateStatusAndSubStatusMutation.mutate({
+      applicationId,
+      status: "in_progress",
+      subStatus: "Invited to Pollen Interview",
+      jobId,
+    });
+  };
+
+  /**
+   * Actualiza status y sub_status de un aplicante
+   */
+  const handleUpdateStatusAndSubStatus = (
+    applicationId: string,
+    status: string,
+    subStatus: string,
+  ) => {
+    if (!jobId) return;
+
+    updateStatusAndSubStatusMutation.mutate({
+      applicationId,
+      status,
+      subStatus,
+      jobId,
+    });
   };
 
   /**
@@ -204,6 +263,7 @@ export function usePlaygroundHook(jobId: string | null) {
     // Mutations
     isUpdatingStatus: updateApplicantStatusMutation.isPending,
     updateError: updateApplicantStatusMutation.error,
+    isUpdatingScores: updateAssessmentScoresMutation.isPending,
 
     // View state
     viewMode,
@@ -214,6 +274,9 @@ export function usePlaygroundHook(jobId: string | null) {
     isDrawerOpen,
     handleJobSeekerClick: handleClick,
     closeDrawer,
+    handleUpdateAssessmentScores,
+    handleInviteToPollenInterview,
+    handleUpdateStatusAndSubStatus,
 
     // Drag & Drop
     handleDragStart,

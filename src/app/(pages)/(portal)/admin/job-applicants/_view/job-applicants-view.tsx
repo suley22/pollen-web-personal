@@ -1,17 +1,19 @@
 "use client";
 
-import { usePlaygroundHook } from "../_hooks/job-applicants-hook";
+import { useJobApplicantsHook } from "../_hooks/job-applicants-hook";
 import { BoardView } from "../_components/job-applicants-board-view";
 import { GridView } from "../_components/job-applicants-grid-view";
 import { TaskDrawer } from "../_components/job-applicants-js-drawer";
 import { ViewToggle } from "../_components/job-applicants-view-toggle";
 import { PageContainer, PageHeader } from "@/components/design-system";
 
-interface PlaygroundViewProps {
+interface JobApplicantsViewProps {
   jobId?: string | null;
 }
 
-export default function PlaygroundView({ jobId = null }: PlaygroundViewProps) {
+export default function JobApplicantsView({
+  jobId = null,
+}: JobApplicantsViewProps) {
   const {
     jobSeekers,
     isLoading,
@@ -21,6 +23,9 @@ export default function PlaygroundView({ jobId = null }: PlaygroundViewProps) {
     isDrawerOpen,
     handleJobSeekerClick,
     closeDrawer,
+    handleUpdateAssessmentScores,
+    handleInviteToPollenInterview,
+    handleUpdateStatusAndSubStatus,
     handleDragStart,
     handleDragEnd,
     handleDragOver,
@@ -30,7 +35,7 @@ export default function PlaygroundView({ jobId = null }: PlaygroundViewProps) {
     draggedItem,
     getAllJobSeekersWithStatus,
     isUpdatingStatus,
-  } = usePlaygroundHook(jobId);
+  } = useJobApplicantsHook(jobId);
 
   // Handle no jobId case
   if (!jobId) {
@@ -119,6 +124,9 @@ export default function PlaygroundView({ jobId = null }: PlaygroundViewProps) {
         isOpen={isDrawerOpen}
         jobSeeker={selectedJobSeeker}
         onClose={closeDrawer}
+        onUpdateScores={handleUpdateAssessmentScores}
+        onInviteToInterview={handleInviteToPollenInterview}
+        onUpdateStatusAndSubStatus={handleUpdateStatusAndSubStatus}
       />
     </PageContainer>
   );

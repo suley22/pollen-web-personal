@@ -1043,3 +1043,45 @@ body {
   margin: 0 !important;
   background: white !important;
 }
+
+/* Assessment Scores Slider Styles */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 5px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ec4899;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ec4899;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"]:disabled::-webkit-slider-thumb {
+  cursor: not-allowed;
+  background: #9ca3af;
+}
+
+input[type="range"]:disabled::-moz-range-thumb {
+  cursor: not-allowed;
+  background: #9ca3af;
+}

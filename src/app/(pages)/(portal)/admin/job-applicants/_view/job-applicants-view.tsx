@@ -96,17 +96,6 @@ export default function JobApplicantsView({
 
           {/* Controls */}
           <div className="flex items-center gap-3">
-            {/* Job Details Button */}
-            {jobInfo && (
-              <PrimaryButton
-                text="Job Details"
-                icon={<Eye className="h-4 w-4" />}
-                onClick={handleJobDetails}
-                style="outline"
-                className="text-sm"
-              />
-            )}
-
             {/* Loading indicator for mutations */}
             {isUpdatingStatus && (
               <div className="flex items-center gap-2 text-sm text-gray-600">
@@ -117,6 +106,16 @@ export default function JobApplicantsView({
 
             {/* View Toggle */}
             <ViewToggle viewMode={viewMode} onViewModeChange={setViewMode} />
+            {/* Job Details Button */}
+            {jobInfo && (
+              <PrimaryButton
+                text="Job Details"
+                icon={<Eye className="h-4 w-4" />}
+                onClick={handleJobDetails}
+                style="outline"
+                className="text-sm"
+              />
+            )}
           </div>
         </div>
 

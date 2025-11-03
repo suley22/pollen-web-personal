@@ -2,16 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  MapPin,
-  Eye,
-  Mail,
-  Trophy,
-  Clock,
-  Briefcase,
-  Building2,
-  Search,
-} from "lucide-react";
+import { MapPin, Eye, Mail, Building2, Search } from "lucide-react";
 import { Button } from "@/components/ui/buttons/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,10 +12,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select/select";
-import { useJobSeeker } from "./_hooks/job-seekers-page-hook";
+import { useJobSeeker } from "../_hooks/job-seekers-page-hook";
 import { PageContainer, PageHeader } from "@/components/design-system";
 
-export default function JobsPage() {
+export default function JobSeekersPageView({ jobSeekers }) {
   const router = useRouter();
   const { form } = useJobSeeker();
 
@@ -43,7 +34,14 @@ export default function JobsPage() {
         ),
       ),
     ],
-    profile: [...new Set(form.jobSeekers.map((j) => j.profile_complete))],
+    // Use friendly labels for profile completeness
+    profile: [
+      ...new Set(
+        form.jobSeekers.map((j) =>
+          j.profile_complete ? "complete" : "incomplete",
+        ),
+      ),
+    ],
   };
 
   // binding de cada facet con su estado correspondiente
@@ -71,6 +69,7 @@ export default function JobsPage() {
             <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Search jobs, companies, or industries..."
+              type={"search"}
               value={form.searchTerm}
               onChange={(e) => form.setSearchTerm(e.target.value)}
               className="pl-10"
@@ -109,15 +108,15 @@ export default function JobsPage() {
                 <th className="text-left py-3 px-4 font-medium text-gray-900 w-[140px]">
                   Profile
                 </th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 w-[100px]">
-                  Assessment
-                </th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 w-[120px]">
-                  Applications
-                </th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 w-[200px]">
-                  Last Activity
-                </th>
+                {/* <th className="text-left py-3 px-4 font-medium text-gray-900 w-[100px]">
+                      Assessment
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900 w-[120px]">
+                      Applications
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900 w-[200px]">
+                      Last Activity
+                    </th> */}
                 <th className="text-left py-3 px-4 font-medium text-gray-900 w-[200px]">
                   Actions
                 </th>
@@ -161,38 +160,39 @@ export default function JobsPage() {
                   <td className="py-2 px-4">
                     {form.getProfileCompleteBadge(jobSeeker.profile_complete)}
                   </td>
-                  <td className="py-2 px-4">
-                    <div className="flex items-center">
-                      {jobSeeker.assessment_completed ? (
-                        <>
-                          <Trophy className="h-4 w-4 text-blue-500 mr-1" />
-                          <span className="text-sm font-medium text-blue-600">
-                            {jobSeeker.overall_skills_score}%
+
+                  {/* <td className="py-2 px-4">
+                        <div className="flex items-center">
+                          {jobSeeker.assessment_completed ? (
+                            <>
+                              <Trophy className="h-4 w-4 text-blue-500 mr-1" />
+                              <span className="text-sm font-medium text-blue-600">
+                                {jobSeeker.overall_skills_score}%
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <Clock className="h-4 w-4 text-amber-500 mr-1" />
+                              <span className="text-sm text-gray-500">Pending</span>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-2 px-4">
+                        <div className="flex items-center">
+                          <Briefcase className="h-4 w-4 text-gray-400 mr-1" />
+                          <span className="text-sm">
+                            {jobSeeker.total_applications}
                           </span>
-                        </>
-                      ) : (
-                        <>
-                          <Clock className="h-4 w-4 text-amber-500 mr-1" />
-                          <span className="text-sm text-gray-500">Pending</span>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                  <td className="py-2 px-4">
-                    <div className="flex items-center">
-                      <Briefcase className="h-4 w-4 text-gray-400 mr-1" />
-                      <span className="text-sm">
-                        {jobSeeker.total_applications}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="py-2 px-4">
-                    <span className="text-sm text-gray-600">
-                      {new Date(jobSeeker.last_activity).toLocaleDateString(
-                        "en-GB",
-                      )}
-                    </span>
-                  </td>
+                        </div>
+                      </td>
+                      <td className="py-2 px-4">
+                        <span className="text-sm text-gray-600">
+                          {new Date(jobSeeker.last_activity).toLocaleDateString(
+                            "en-GB",
+                          )}
+                        </span>
+                      </td> */}
                   <td className="py-2 px-4">
                     <div className="flex items-center">
                       <Button

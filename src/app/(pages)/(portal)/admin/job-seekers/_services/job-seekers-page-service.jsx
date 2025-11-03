@@ -9,7 +9,7 @@ export async function getJobSeeker(filters = {}) {
     const supabase = await createClient();
 
     let query = supabase
-      .from("job_seeker")
+      .from("profile")
       .select("*")
       .order("created_at", { ascending: false });
 

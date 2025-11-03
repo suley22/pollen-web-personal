@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { getJobSeeker } from "@/admin/job-seekers/actions";
+import { getJobSeeker } from "@/app/(pages)/(portal)/admin/job-seekers/_services/job-seekers-page-service";
 import { Badge } from "@/components/ui/badge";
 
 export function useJobSeeker() {

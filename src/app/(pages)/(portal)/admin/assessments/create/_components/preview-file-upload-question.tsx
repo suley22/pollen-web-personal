@@ -10,7 +10,7 @@ import {
   Link as LinkIcon,
   Paperclip,
 } from "lucide-react";
-import type { AssessmentQuestion } from "@/types/assessment-types";
+import type { AssessmentQuestion } from "@/types/assessment-question";
 import { FileViewerDialog } from "@/components/design-system";
 
 interface UploadedFile {
@@ -68,15 +68,16 @@ export function PreviewFileUploadQuestion({
     setViewerOpen(true);
   };
 
-  const referenceFiles = question.file_upload?.referenceFiles || [];
+  // Support both old and new question formats
+  const referenceFiles = (question as any).file_upload?.referenceFiles || [];
 
   return (
     <FormCard title={question.title} icon={<HelpCircle className="h-5 w-5" />}>
       <div className="flex flex-col gap-4">
-        {/* Question Subtitle */}
-        {question.subtitle && (
+        {/* Question Description/Subtitle */}
+        {question.description && (
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            {question.subtitle}
+            {question.description}
           </p>
         )}
 

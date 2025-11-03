@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type {
   AssessmentQuestion,
@@ -12,6 +12,7 @@ import { useToastNotifications } from "@/hooks/useToastNotifications";
 import {
   useCreateAssessment,
   useUpdateAssessment,
+  useAssessmentById,
 } from "@/app/(pages)/(portal)/admin/assessments/_services/assessments-page-service";
 
 export function useAssessmentCreateUnified({
@@ -20,7 +21,11 @@ export function useAssessmentCreateUnified({
   id?: string | null;
 }) {
   const router = useRouter();
-  const { showSuccessToast, showErrorToast } = useToastNotifications();
+  const { showSuccess, showError } = useToastNotifications();
+
+  // Fetch assessment data if id is provided (edit mode)
+  const { data: existingAssessment, isLoading: isLoadingAssessment } =
+    useAssessmentById(id || "");
 
   // Assessment basic info
   const [internalPollenTitle, setInternalPollenTitle] = useState("");
@@ -46,6 +51,55 @@ export function useAssessmentCreateUnified({
 
   const isEditMode = !!id;
   const isSaving = createMutation.isPending || updateMutation.isPending;
+
+  // Load existing assessment data when in edit mode
+  useEffect(() => {
+    if (existingAssessment && id) {
+      setInternalPollenTitle(existingAssessment.internal_pollen_title || "");
+      setAssessmentTitle(existingAssessment.title || "");
+      setAssessmentDescription(existingAssessment.subtitle || "");
+      setEstimatedDuration(existingAssessment.estimated_duration || "");
+      setInstructionsTitle(existingAssessment.instructions_title || "");
+      setInstructionsDescription(
+        existingAssessment.instructions_description || "",
+      );
+
+      // Load categories if available
+      if (existingAssessment.categories) {
+        setCategories(existingAssessment.categories);
+      }
+
+      // Load and convert questions from new format to old format
+      if (existingAssessment.questions) {
+        const convertedQuestions = existingAssessment.questions.map(
+          (q: any, index: number) => {
+            const baseQuestion: AssessmentQuestion = {
+              id: q.id || `question-${index}`,
+              type: q.type,
+              title: q.title,
+              description: q.subtitle || "",
+            };
+
+            // Add type-specific fields
+            if (q.type === "multiple_choice" && q.multiple_choice) {
+              baseQuestion.options_title =
+                q.multiple_choice.options_title || "";
+              baseQuestion.options = q.multiple_choice.options || [];
+            } else if (q.type === "free_input" && q.free_input) {
+              baseQuestion.max_characters = q.free_input.placeholder || "";
+            } else if (q.type === "file_upload" && q.file_upload) {
+              (baseQuestion as any).file_upload = {
+                referenceFiles: q.file_upload.referenceFiles || [],
+              };
+            }
+
+            return baseQuestion;
+          },
+        );
+        setQuestions(convertedQuestions);
+      }
+    }
+  }, [existingAssessment, id]);
 
   // Question management
   const handleAddQuestion = useCallback(
@@ -188,15 +242,16 @@ export function useAssessmentCreateUnified({
             status: "draft" as const,
           },
         });
-        showSuccessToast("Assessment updated successfully");
+        showSuccess("Success!", "Assessment updated successfully");
       } else {
         await createMutation.mutateAsync(assessmentData);
-        showSuccessToast("Assessment created successfully");
+        showSuccess("Success!", "Assessment created successfully");
       }
 
       router.push(AdminRoutes.assessments);
     } catch (error) {
-      showErrorToast(
+      showError(
+        "Error",
         isEditMode
           ? "Failed to update assessment"
           : "Failed to create assessment",
@@ -217,8 +272,8 @@ export function useAssessmentCreateUnified({
     createMutation,
     updateMutation,
     router,
-    showSuccessToast,
-    showErrorToast,
+    showSuccess,
+    showError,
   ]);
 
   // Navigation
@@ -273,5 +328,7 @@ export function useAssessmentCreateUnified({
     canSave,
     isSaving,
     isEditMode,
+    isLoadingAssessment,
+    assessment: existingAssessment,
   };
 }

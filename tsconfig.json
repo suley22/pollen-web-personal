@@ -34,7 +34,8 @@
       "@/employers/*": ["./src/app/(pages)/(portal)/admin/employers/*"],
       "@/types/*": ["./src/types/*"],
       "@/ds/*": ["./src/components/design-system/*"],
-      "@/jobs/*": ["./src/app/(pages)/(portal)/admin/jobs/*"]
+      "@/jobs/*": ["./src/app/(pages)/(portal)/admin/jobs/*"],
+      "@/assessments/*": ["./src/app/(pages)/(portal)/admin/assessments/*"]
     },
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
@@ -50,7 +51,8 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.js",
-    "src/**/*.jsx"
-, "src/app/(pages)/(portal)/(job-seeker)/companies/view/_view/company-view-skeleton"  ],
+    "src/**/*.jsx",
+    "src/app/(pages)/(portal)/(job-seeker)/companies/view/_view/company-view-skeleton"
+  ],
   "exclude": ["node_modules"]
 }

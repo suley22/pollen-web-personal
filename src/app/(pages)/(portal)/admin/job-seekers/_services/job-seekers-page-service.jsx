@@ -29,13 +29,10 @@ export async function getJobSeeker(filters = {}) {
       query = query.eq("profile_complete", filters.profile);
     }
 
-    // Aplicar filtro de aplicaciones si existe
-    if (filters.application && filters.application !== "all") {
-      if (filters.application === "has_applied") {
-        query = query.gt("total_applications", 0);
-      } else if (filters.application === "not_applied") {
-        query = query.eq("total_applications", 0);
-      }
+    // Aplicar filtro por rol si existe
+    if (filters.role && filters.role !== "all") {
+      // Igualdad exacta sobre la columna 'role'
+      query = query.eq("role", filters.role);
     }
 
     const { data, error } = await query;

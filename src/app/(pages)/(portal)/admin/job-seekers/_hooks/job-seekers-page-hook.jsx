@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 export function useJobSeeker() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [profileFilter, setProfileFilter] = useState("all");
-  const [applicationFilter, setApplicationFilter] = useState("all");
+  const [roleFilter, setRoleFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [jobSeekers, setJobSeekers] = useState([]);
@@ -37,7 +37,7 @@ export function useJobSeeker() {
         status: statusFilter,
         searchTerm: debouncedSearchTerm.trim(),
         profile: profileFilter,
-        application: applicationFilter,
+        role: roleFilter,
       });
 
       if (result.success) {
@@ -54,7 +54,7 @@ export function useJobSeeker() {
       setLoading(false);
       loadingRef.current = false;
     }
-  }, [statusFilter, profileFilter, applicationFilter, debouncedSearchTerm]);
+  }, [statusFilter, profileFilter, roleFilter, debouncedSearchTerm]);
 
   // Load job seekers when loadJobSeekers function changes
   useEffect(() => {
@@ -74,6 +74,10 @@ export function useJobSeeker() {
           <Badge className="text-sm bg-gray-100 text-gray-800 border-gray-200">
             Inactive
           </Badge>
+        );
+      case "undefined":
+        return (
+          <Badge className="text-sm bg-gray-200 text-gray-700">Undefined</Badge>
         );
       default:
         return (
@@ -112,14 +116,14 @@ export function useJobSeeker() {
       form: {
         statusFilter: statusFilter,
         profileFilter: profileFilter,
-        applicationFilter: applicationFilter,
+        roleFilter: roleFilter,
         jobSeekers: jobSeekers,
         loading: loading,
         error: error,
         setSearchTerm: setSearchTerm,
         setStatusFilter: setStatusFilter,
         setProfileFilter: setProfileFilter,
-        setApplicationFilter: setApplicationFilter,
+        setRoleFilter: setRoleFilter,
         loadJobSeekers: loadJobSeekers,
         getStatusBadge: getStatusBadge,
         getProfileCompleteBadge: getProfileCompleteBadge,
@@ -128,7 +132,7 @@ export function useJobSeeker() {
     [
       statusFilter,
       profileFilter,
-      applicationFilter,
+      roleFilter,
       jobSeekers,
       loading,
       error,

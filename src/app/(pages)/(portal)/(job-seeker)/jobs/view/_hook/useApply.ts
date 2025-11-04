@@ -26,9 +26,7 @@ export function useApply() {
   const { data: job = null, isLoading: loading } = useJobById(jobId);
 
   const { data: assessment, isLoading: isLoadingAssessment } =
-    useAssessmentById(
-      job?.persona_result_assessment_id || job?.skills_assessment_id || "",
-    );
+    useAssessmentById(job?.skills_assessment_id);
 
   const { data: applicationStatus } = useCheckIfUserApplied(jobId);
   const hasApplied = applicationStatus?.hasApplied || false;

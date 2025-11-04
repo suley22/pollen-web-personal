@@ -45,13 +45,9 @@ export function Filters({
     return !defaultCollapsed;
   });
 
-  // Debounce search term
+  // Immediately propagate changes upward; outer layers may debounce if needed
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      onSearchChange(searchTerm.trim());
-    }, debounceMs);
-
-    return () => clearTimeout(timeoutId);
+    onSearchChange(searchTerm);
   }, [searchTerm, onSearchChange, debounceMs]);
 
   // Sync external searchValue into local state to reflect external changes (e.g., EmptyState actions)
@@ -80,6 +76,7 @@ export function Filters({
 
   const handleClearSearch = () => {
     setSearchTerm("");
+    onSearchChange("");
   };
 
   return (

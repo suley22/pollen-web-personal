@@ -45,6 +45,11 @@ export function useJobSeeker() {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [jobSeekers, setJobSeekers] = useState([]);
   const [roleOptions, setRoleOptions] = useState([]);
+  const [facetStatusValues, setFacetStatusValues] = useState([]);
+  const [facetProfileValues, setFacetProfileValues] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const loadingRef = useRef(false);
@@ -57,6 +62,11 @@ export function useJobSeeker() {
 
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
+
+  // Reset page on filter/search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter, profileFilter, roleFilter, debouncedSearchTerm]);
 
   const loadJobSeekers = useCallback(async () => {
     // Evitar llamadas duplicadas
@@ -74,10 +84,29 @@ export function useJobSeeker() {
         searchTerm: debouncedSearchTerm.trim(),
         profile: profileFilter,
         role: roleFilter,
+        page: currentPage,
+        pageSize: pageSize,
       });
 
       if (result.success) {
-        setJobSeekers(result.data || []);
+  const data = result.data || [];
+        setJobSeekers(data);
+  setPagination(result.pagination || null);
+        // Persist facet options from last non-empty dataset
+        if (Array.isArray(data) && data.length > 0) {
+          const statuses = Array.from(
+            new Set(data.map((j) => j.status).filter((v) => v != null)),
+          );
+          const profiles = Array.from(
+            new Set(
+              data
+                .map((j) => j.profile_complete)
+                .filter((v) => v !== undefined && v !== null),
+            ),
+          );
+          setFacetStatusValues(statuses);
+          setFacetProfileValues(profiles);
+        }
         setError(null);
       } else {
         console.error("❌ Error from server:", result.error);
@@ -90,23 +119,22 @@ export function useJobSeeker() {
       setLoading(false);
       loadingRef.current = false;
     }
-  }, [statusFilter, profileFilter, roleFilter, debouncedSearchTerm]);
+  }, [statusFilter, profileFilter, roleFilter, debouncedSearchTerm, currentPage, pageSize]);
 
   // Load job seekers when loadJobSeekers function changes
   useEffect(() => {
     loadJobSeekers();
   }, [loadJobSeekers]);
 
-  // Load distinct roles based on search term only (not affected by current role/status/profile filters)
+  // Load global distinct roles once (stable options)
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const result = await getDistinctRoles({
-          searchTerm: debouncedSearchTerm.trim(),
-        });
+        const result = await getDistinctRoles();
         if (!cancelled && result.success) {
-          setRoleOptions(result.data || []);
+          const roles = result.data || [];
+          if (roles.length > 0) setRoleOptions(roles);
         }
       } catch {
         // non-blocking; omit error surface here
@@ -115,7 +143,7 @@ export function useJobSeeker() {
     return () => {
       cancelled = true;
     };
-  }, [debouncedSearchTerm]);
+  }, []);
 
   const getStatusBadge = useCallback((status) => {
     const variant = STATUS_BADGE_VARIANTS[status];
@@ -131,7 +159,7 @@ export function useJobSeeker() {
   }, []);
 
   const getProfileCompleteBadge = useCallback((isComplete) => {
-    const badgeClass = "w-full text-sm";
+    const badgeClass = "w-full justify-center text-sm";
     const variant =
       PROFILE_BADGE_VARIANTS[isComplete] || PROFILE_BADGE_VARIANTS.incomplete;
     return (
@@ -150,12 +178,17 @@ export function useJobSeeker() {
         searchTerm: searchTerm,
         jobSeekers: jobSeekers,
         roleOptions: roleOptions,
+        facetStatusValues: facetStatusValues,
+        facetProfileValues: facetProfileValues,
+        pagination: pagination,
         loading: loading,
         error: error,
         setSearchTerm: setSearchTerm,
         setStatusFilter: setStatusFilter,
         setProfileFilter: setProfileFilter,
         setRoleFilter: setRoleFilter,
+        setCurrentPage: setCurrentPage,
+        setPageSize: setPageSize,
         loadJobSeekers: loadJobSeekers,
         getStatusBadge: getStatusBadge,
         getProfileCompleteBadge: getProfileCompleteBadge,
@@ -167,6 +200,9 @@ export function useJobSeeker() {
       roleFilter,
       jobSeekers,
       roleOptions,
+      facetStatusValues,
+      facetProfileValues,
+      pagination,
       searchTerm,
       loading,
       error,

@@ -187,9 +187,10 @@ export function AssessmentPreview({
 
   return (
     <div className="flex flex-col gap-6">
-      <Divider />
-
-      <PageHeader title={assessmentTitle} subtitle={assessmentDescription} />
+      <div className="flex flex-col gap-1">
+        <PageHeader title={assessmentTitle} subtitle={assessmentDescription} />
+        <Divider />
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Questions Section - 2/3 width */}

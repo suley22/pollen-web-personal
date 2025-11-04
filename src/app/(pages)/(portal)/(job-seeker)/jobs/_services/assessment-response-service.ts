@@ -106,12 +106,16 @@ export function useCreateAssessmentResponse() {
     onSuccess: (data, variables) => {
       // Invalidar queries relacionadas para actualizar UI inmediatamente
       queryClient.invalidateQueries({ queryKey: ["assessment-responses"] });
-      queryClient.invalidateQueries({ queryKey: ["assessment-response", data.id] });
-      
+      queryClient.invalidateQueries({
+        queryKey: ["assessment-response", data.id],
+      });
+
       // También invalidar job applicants para que el admin drawer se actualice
       queryClient.invalidateQueries({ queryKey: ["job-applicants"] });
-      
-      console.log("✅ Assessment response created successfully, cache invalidated");
+
+      console.log(
+        "✅ Assessment response created successfully, cache invalidated",
+      );
     },
     onError: (error) => {
       console.error("Error in assessment response mutation:", error);
@@ -278,21 +282,23 @@ export function useUpdateAssessmentResponse() {
     },
     onSuccess: (data, variables) => {
       // Invalidar cache específico de este assessment response
-      queryClient.invalidateQueries({ 
-        queryKey: ["assessment-response", variables.id] 
+      queryClient.invalidateQueries({
+        queryKey: ["assessment-response", variables.id],
       });
-      
+
       // Invalidar todas las assessment responses
-      queryClient.invalidateQueries({ 
-        queryKey: ["assessment-responses"] 
+      queryClient.invalidateQueries({
+        queryKey: ["assessment-responses"],
       });
-      
+
       // Invalidar job applicants para actualizar admin drawer
-      queryClient.invalidateQueries({ 
-        queryKey: ["job-applicants"] 
+      queryClient.invalidateQueries({
+        queryKey: ["job-applicants"],
       });
-      
-      console.log("✅ Assessment response updated successfully, cache invalidated");
+
+      console.log(
+        "✅ Assessment response updated successfully, cache invalidated",
+      );
     },
     onError: (error) => {
       console.error("❌ Error updating assessment response:", error);

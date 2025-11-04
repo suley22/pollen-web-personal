@@ -283,8 +283,9 @@ export function TaskDrawer({
 
                       {/* Questions and Responses */}
                       <div className="space-y-8">
-                        {assessmentResponse.questions?.map(
-                          (question, index) => {
+                        {assessmentResponse.questions
+                          ?.filter((q) => q.type !== "assessment_results")
+                          .map((question, index) => {
                             const userAnswer = question.user_answer;
 
                             return (
@@ -297,6 +298,11 @@ export function TaskDrawer({
                                   <h3 className="text-lg font-medium text-gray-900 mb-2">
                                     {question.title}
                                   </h3>
+                                  {question.subtitle && (
+                                    <p className="text-sm text-gray-600 mb-2">
+                                      {question.subtitle}
+                                    </p>
+                                  )}
                                   {question.description && (
                                     <p className="text-sm text-gray-600">
                                       {question.description}
@@ -418,9 +424,88 @@ export function TaskDrawer({
                                 </div>
                               </div>
                             );
-                          },
-                        )}
+                          })}
                       </div>
+
+                      {/* Category Results Summary */}
+                      {(() => {
+                        const resultsData = assessmentResponse.questions?.find(
+                          (q) => q.type === "assessment_results",
+                        );
+                        const categoryResults = resultsData?.category_results;
+
+                        if (categoryResults && categoryResults.length > 0) {
+                          return (
+                            <div className="mt-8 pt-6 border-t border-gray-200">
+                              <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                                Category Summary
+                              </h4>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {categoryResults.map((category) => (
+                                  <div
+                                    key={category.id}
+                                    className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4"
+                                  >
+                                    <div className="flex items-center justify-between mb-2">
+                                      <h5 className="font-medium text-gray-900">
+                                        {category.name ||
+                                          category.title ||
+                                          `Category ${category.id}`}
+                                      </h5>
+                                      <span className="text-lg font-bold text-blue-700">
+                                        {category.percentage}%
+                                      </span>
+                                    </div>
+
+                                    {/* Progress Bar */}
+                                    <div className="w-full bg-blue-100 rounded-full h-2 mb-2">
+                                      <div
+                                        className="bg-blue-600 h-2 rounded-full transition-all duration-500"
+                                        style={{
+                                          width: `${category.percentage}%`,
+                                        }}
+                                      ></div>
+                                    </div>
+
+                                    <div className="flex items-center justify-between text-sm text-gray-600">
+                                      <span>{category.count} responses</span>
+                                      <span className="font-medium">
+                                        {category.percentage > 50
+                                          ? "Strong"
+                                          : category.percentage > 25
+                                            ? "Moderate"
+                                            : "Low"}{" "}
+                                        tendency
+                                      </span>
+                                    </div>
+
+                                    {category.description && (
+                                      <p className="text-xs text-gray-600 mt-2">
+                                        {category.description}
+                                      </p>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+
+                              <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                                <p className="text-xs text-gray-600">
+                                  <span className="font-medium">Note:</span>{" "}
+                                  Category percentages are calculated based on
+                                  multiple choice responses. Results calculated
+                                  at:{" "}
+                                  {resultsData?.calculated_at
+                                    ? new Date(
+                                        resultsData.calculated_at,
+                                      ).toLocaleString()
+                                    : "N/A"}
+                                </p>
+                              </div>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()}
                     </div>
                   )}
                 </div>

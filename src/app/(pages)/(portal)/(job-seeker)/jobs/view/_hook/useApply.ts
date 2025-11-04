@@ -58,6 +58,27 @@ export function useApply() {
     setIsDialogOpen(false);
     setShowAssessment(true);
     setCurrentStep(2);
+
+    // Scroll automático hacia el assessment después de un pequeño delay para que el DOM se actualice
+    setTimeout(() => {
+      // Intentar encontrar el assessment específicamente
+      const assessmentElement = document.querySelector(
+        "[data-assessment-container]",
+      );
+      if (assessmentElement) {
+        assessmentElement.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+          inline: "nearest",
+        });
+      } else {
+        // Fallback: scroll hacia abajo
+        window.scrollTo({
+          top: window.innerHeight * 0.7,
+          behavior: "smooth",
+        });
+      }
+    }, 150);
   }, []);
 
   const handleHideAssessment = useCallback(() => {

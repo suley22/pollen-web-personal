@@ -254,6 +254,11 @@ export function useUpdateApplicantStatus() {
       queryClient.invalidateQueries({
         queryKey: [jobApplicantsQueryKey, "applicants", variables.jobId],
       });
+
+      // Invalidate assessment responses to update the drawer immediately
+      queryClient.invalidateQueries({
+        queryKey: ["assessment-responses"],
+      });
     },
     onError: (error) => {
       console.error("Error updating applicant status:", error);
@@ -296,6 +301,11 @@ export function useUpdateApplicantSubStatus() {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: [jobApplicantsQueryKey, "applicants", variables.jobId],
+      });
+
+      // Invalidate assessment responses to update the drawer immediately
+      queryClient.invalidateQueries({
+        queryKey: ["assessment-responses"],
       });
     },
     onError: (error) => {
@@ -352,6 +362,11 @@ export function useUpdateApplicantStatusAndSubStatus() {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: [jobApplicantsQueryKey, "applicants", variables.jobId],
+      });
+
+      // Invalidate assessment responses to update the drawer immediately
+      queryClient.invalidateQueries({
+        queryKey: ["assessment-responses"],
       });
     },
     onError: (error) => {
@@ -426,6 +441,11 @@ export function useUpdateAssessmentScores() {
       // Invalidate the applicants query to refresh the UI
       queryClient.invalidateQueries({
         queryKey: [jobApplicantsQueryKey, "applicants", variables.jobId],
+      });
+
+      // Invalidate assessment responses to update the drawer immediately
+      queryClient.invalidateQueries({
+        queryKey: ["assessment-responses"],
       });
     },
     onError: (error) => {

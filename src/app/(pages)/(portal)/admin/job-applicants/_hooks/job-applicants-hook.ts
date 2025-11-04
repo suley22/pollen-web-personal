@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   useJobApplicants,
   useUpdateApplicantStatus,
@@ -51,6 +51,34 @@ export function useJobApplicantsHook(jobId: string | null) {
     columnId: string;
     position: number;
   } | null>(null);
+
+  /**
+   * Actualiza el selectedJobSeeker cuando cambian los datos de React Query
+   * Esto asegura que el badge de status se actualice en tiempo real
+   */
+  useEffect(() => {
+    if (selectedJobSeeker && jobSeekers) {
+      // Buscar el job seeker actualizado en todas las columnas
+      const allJobSeekers = transformJobSeekersToList(jobSeekers);
+      const updatedJobSeeker = allJobSeekers.find(
+        (js) => js.application_id === selectedJobSeeker.application_id,
+      );
+
+      if (updatedJobSeeker) {
+        // Solo actualizar si hay cambios reales en status o sub_status para evitar loops infinitos
+        if (
+          updatedJobSeeker.status !== selectedJobSeeker.status ||
+          updatedJobSeeker.sub_status !== selectedJobSeeker.sub_status
+        ) {
+          // Actualizar con la información más reciente incluyendo statusLabel y statusColor
+          setSelectedJobSeeker({
+            ...updatedJobSeeker,
+          });
+        }
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobSeekers]);
 
   // Computes the insertion index inside a container based on mouse Y position
   // Falls back to container.children if no specific draggable selector matches

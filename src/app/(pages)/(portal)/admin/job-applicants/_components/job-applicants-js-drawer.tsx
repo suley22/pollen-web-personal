@@ -272,9 +272,9 @@ export function TaskDrawer({
 
                       {/* Assessment Info */}
                       <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-                        <h4 className="font-medium text-blue-900 mb-2">
+                        <div className="font-medium text-blue-900 mb-2">
                           {assessmentResponse.title || "Assessment"}
-                        </h4>
+                        </div>
                         <p className="text-sm text-blue-700">
                           {assessmentResponse.subtitle ||
                             "Assessment completed by the candidate"}

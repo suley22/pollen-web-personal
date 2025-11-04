@@ -33,7 +33,7 @@ export function AssessmentQuestionCard({
           <div className="flex flex-col gap-3 mt-2">
             {question.options.map((option, index) => (
               <div
-                key={`${question.id}-${option.value}-${index}`}
+                key={`${question.id}-option-${index}`}
                 className="flex items-center space-x-3"
               >
                 <input

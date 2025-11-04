@@ -32,12 +32,15 @@ export function useCreateAssessmentResponse() {
 
       // Clonar el assessment original y agregar respuestas
       const questionsWithAnswers = assessmentData.questions.map(
-        (question: any) => {
+        (question: any, index: number) => {
+          // Usar el mismo sistema de IDs que usa el estado (question-index)
+          const questionId = question.id || `question-${index}`;
+
           const questionWithAnswer = { ...question };
 
-          // Agregar respuesta del usuario si existe
-          if (userAnswers[question.id]) {
-            questionWithAnswer.user_answer = userAnswers[question.id];
+          // Buscar respuesta usando el ID consistente
+          if (userAnswers[questionId]) {
+            questionWithAnswer.user_answer = userAnswers[questionId];
             questionWithAnswer.answered_at = new Date().toISOString();
           }
 
@@ -98,22 +101,27 @@ export function prepareUserAnswers(
   const userAnswers: Record<string, any> = {};
 
   questions.forEach((question, index) => {
-    const questionId = question.id;
+    // Si la pregunta no tiene ID, usar el índice como fallback
+    const questionId = question.id || `question-${index}`;
 
     if (question.type === "multiple_choice") {
       // Para multiple choice, guardar el valor seleccionado
-      if (multipleChoiceAnswers[questionId]) {
+      const selectedValue = multipleChoiceAnswers[questionId];
+
+      if (selectedValue) {
         userAnswers[questionId] = {
           type: "multiple_choice",
-          selected_value: multipleChoiceAnswers[questionId],
+          selected_value: selectedValue,
         };
       }
     } else if (question.type === "free_input") {
       // Para free input, guardar el texto
-      if (freeInputAnswers[index]) {
+      const textAnswer = freeInputAnswers[index];
+
+      if (textAnswer) {
         userAnswers[questionId] = {
           type: "free_input",
-          text_response: freeInputAnswers[index],
+          text_response: textAnswer,
         };
       }
     } else if (question.type === "file_upload") {

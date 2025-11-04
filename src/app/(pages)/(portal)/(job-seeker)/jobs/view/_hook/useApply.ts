@@ -77,8 +77,6 @@ export function useApply() {
 
       // Si hay assessment, crear assessment response primero
       if (assessment) {
-        console.log("🔍 Creating assessment response...");
-
         // Preparar respuestas del usuario
         const userAnswers = prepareUserAnswers(
           multipleChoiceAnswers,
@@ -95,11 +93,9 @@ export function useApply() {
           });
 
         assessmentResponseId = responseResult.id;
-        console.log("✅ Assessment response created:", assessmentResponseId);
       }
 
       // Crear job application con el assessment response ID (si existe)
-      console.log("🔍 Creating job application...");
       await createApplicationMutation.mutateAsync({
         jobId: job.id,
         assessmentResponseId: assessmentResponseId,

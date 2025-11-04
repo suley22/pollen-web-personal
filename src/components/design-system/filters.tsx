@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Search,
   X,
@@ -16,6 +16,7 @@ import type { FiltersProps } from "@/types/filters";
 
 export function Filters({
   onSearchChange,
+  searchValue,
   searchPlaceholder = "Search...",
   filters = [],
   debounceMs = 500,
@@ -24,6 +25,7 @@ export function Filters({
   toggleButtonLabel = "Filters",
 }: FiltersProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const inputRef = useRef<HTMLInputElement | null>(null);
   // Persist the visibility of the filters bar so it doesn't collapse on re-mounts (e.g., after applying filters or searching)
   const storageKey =
     typeof window !== "undefined"
@@ -51,6 +53,18 @@ export function Filters({
 
     return () => clearTimeout(timeoutId);
   }, [searchTerm, onSearchChange, debounceMs]);
+
+  // Sync external searchValue into local state to reflect external changes (e.g., EmptyState actions)
+  useEffect(() => {
+    if (typeof searchValue !== "string") return;
+    if (searchValue === searchTerm) return;
+    // Don't override while the user is typing in the input
+    const isInputFocused =
+      typeof document !== "undefined" &&
+      inputRef.current === document.activeElement;
+    if (isInputFocused) return;
+    setSearchTerm(searchValue);
+  }, [searchValue, searchTerm]);
 
   // Persist open/closed state whenever it changes
   useEffect(() => {
@@ -81,6 +95,7 @@ export function Filters({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 pr-10"
+              ref={inputRef}
             />
             {searchTerm && (
               <Button

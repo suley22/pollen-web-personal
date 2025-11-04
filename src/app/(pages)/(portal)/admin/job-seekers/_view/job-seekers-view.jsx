@@ -5,7 +5,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Eye, Mail, User } from "lucide-react";
 import { Button } from "@/components/ui/buttons/button";
 import { useJobSeeker } from "../_hooks/job-seekers-page-hook";
-import { PageContainer, PageHeader, Filters } from "@/components/design-system";
+import {
+  PageContainer,
+  PageHeader,
+  Filters,
+  EmptyState,
+} from "@/components/design-system";
 import { JobSeekersTableSkeleton } from "./job-seekers-table-skeleton";
 
 export default function JobSeekersView() {
@@ -62,6 +67,7 @@ export default function JobSeekersView() {
         {/* Search and Filters - keep mounted so it doesn't collapse during loading */}
         <Filters
           onSearchChange={form.setSearchTerm}
+          searchValue={form.searchTerm}
           searchPlaceholder="Search job seekers, roles, or locations..."
           filters={filterConfigs}
           collapsible={true}
@@ -69,26 +75,71 @@ export default function JobSeekersView() {
 
         {/* Jobs Display */}
         <div className="bg-white rounded-lg border overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b">
-              <tr>
-                <th className="text-left py-3 px-4 w-auto font-medium text-gray-900">
-                  Job Seeker
-                </th>
-                <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
-                  Status
-                </th>
-                <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
-                  Profile
-                </th>
-                <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            {form.loading ? (
+          {form.loading ? (
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="text-left py-3 px-4 w-auto font-medium text-gray-900">
+                    Job Seeker
+                  </th>
+                  <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
+                    Status
+                  </th>
+                  <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
+                    Profile
+                  </th>
+                  <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
               <JobSeekersTableSkeleton rows={6} />
-            ) : (
+            </table>
+          ) : form.jobSeekers.length === 0 ? (
+            <EmptyState
+              title="No job seekers found"
+              description="Try clearing your search or resetting filters to see more results."
+              action={
+                <div className="flex gap-2">
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      form.setSearchTerm("");
+                    }}
+                  >
+                    Clear search
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      form.setStatusFilter("all");
+                      form.setProfileFilter("all");
+                      form.setRoleFilter("all");
+                    }}
+                  >
+                    Reset filters
+                  </Button>
+                </div>
+              }
+            />
+          ) : (
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="text-left py-3 px-4 w-auto font-medium text-gray-900">
+                    Job Seeker
+                  </th>
+                  <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
+                    Status
+                  </th>
+                  <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
+                    Profile
+                  </th>
+                  <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
               <tbody>
                 {form.jobSeekers.map((jobSeeker) => {
                   const status = jobSeeker.status
@@ -174,8 +225,8 @@ export default function JobSeekersView() {
                   );
                 })}
               </tbody>
-            )}
-          </table>
+            </table>
+          )}
         </div>
       </div>
     </PageContainer>

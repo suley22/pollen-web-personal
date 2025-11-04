@@ -277,7 +277,7 @@ export function useCreateJobApplication() {
         job_id: jobId,
         user_id: userAuthId,
         status: "new_applicants",
-        sub_status: "Unopened",
+        sub_status: "Review Not Started",
         application_stage: "application_received",
       };
 

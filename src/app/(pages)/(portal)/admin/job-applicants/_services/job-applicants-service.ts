@@ -152,7 +152,7 @@ async function getJobApplicants(jobId: string): Promise<GroupedApplicants> {
             month: "2-digit",
             year: "numeric",
           }),
-          sub_status: app.sub_status || "Unopened",
+          sub_status: app.sub_status || "Review Not Started",
           is_fast_track: app.is_fast_track || false,
           // Assessment scores - usando optional chaining por si no existen
           score1: (app as any).score1 ?? 0,

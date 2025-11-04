@@ -7,7 +7,7 @@ import { Calendar, User, ClipboardCheck } from "lucide-react";
 
 // Map de colores para diferentes sub_status
 const SUB_STATUS_STYLES = {
-  Unopened: "bg-blue-50 text-blue-700 border-blue-200",
+  "Review Not Started": "bg-blue-50 text-blue-700 border-blue-200",
   "Pollen Interview Complete": "bg-yellow-50 text-yellow-700 border-yellow-200",
   "Invited to Pollen Interview":
     "bg-yellow-50 text-yellow-700 border-yellow-200",

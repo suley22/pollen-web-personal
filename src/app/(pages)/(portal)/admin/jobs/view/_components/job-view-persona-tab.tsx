@@ -103,17 +103,15 @@ export function JobPersonaTab({ job = null, isLoading = false }) {
           </p>
         </div>
 
-        <div className="border rounded-lg p-6 bg-background">
-          <AssessmentCreateUnifiedPreview
-            assessmentTitle={assessment.title || ""}
-            assessmentDescription={assessment.subtitle || ""}
-            instructionsTitle={assessment.instructions_title || ""}
-            instructionsDescription={assessment.instructions_description || ""}
-            questions={convertQuestionsForPreview(assessment)}
-            categories={assessment.categories || []}
-            isEditMode={false}
-          />
-        </div>
+        <AssessmentCreateUnifiedPreview
+          assessmentTitle={assessment.title || ""}
+          assessmentDescription={assessment.subtitle || ""}
+          instructionsTitle={assessment.instructions_title || ""}
+          instructionsDescription={assessment.instructions_description || ""}
+          questions={convertQuestionsForPreview(assessment)}
+          categories={assessment.categories || []}
+          isEditMode={false}
+        />
       </div>
     </FormCard>
   );

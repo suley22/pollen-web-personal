@@ -364,7 +364,6 @@ export const useCreateJob = () => {
 
       const transformedData = transformFormDataToDatabase(formData);
 
-      // Validate required fields
       if (
         !transformedData.job_title ||
         !transformedData.job_title.toString().trim()

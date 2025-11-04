@@ -8,6 +8,10 @@ import {
 } from "../../_services/jobs-service";
 import { useToastNotifications } from "@/hooks/useToastNotifications";
 import { useAssessmentById } from "@/assessments/_services/assessments-page-service";
+import {
+  useCreateAssessmentResponse,
+  prepareUserAnswers,
+} from "../../_services/assessment-response-service";
 
 import { JobSeekerRoutes } from "../../../router";
 
@@ -16,6 +20,16 @@ export function useApply() {
   const [showCompanyProfile, setShowCompanyProfile] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [showAssessment, setShowAssessment] = useState(false);
+
+  // Estados para respuestas del assessment
+  const [multipleChoiceAnswers, setMultipleChoiceAnswers] = useState<
+    Record<string, string>
+  >({});
+  const [freeInputAnswers, setFreeInputAnswers] = useState<string[]>([]);
+  const [fileUploadAnswers, setFileUploadAnswers] = useState<
+    Record<number, any>
+  >({});
+
   const router = useRouter();
   const params = useParams();
   const [savedJobs, setSavedJobs] = useState<Set<string>>(new Set());
@@ -32,6 +46,7 @@ export function useApply() {
   const hasApplied = applicationStatus?.hasApplied || false;
 
   const createApplicationMutation = useCreateJobApplication();
+  const createAssessmentResponseMutation = useCreateAssessmentResponse();
 
   const saveJobMutation = useSaveJob();
 
@@ -57,26 +72,67 @@ export function useApply() {
       return;
     }
 
-    createApplicationMutation.mutate(job.id, {
-      onSuccess: () => {
-        showSuccess(
-          "Application submitted successfully!",
-          "Your application has been submitted. We'll review it and get back to you soon.",
+    try {
+      let assessmentResponseId: string | undefined;
+
+      // Si hay assessment, crear assessment response primero
+      if (assessment) {
+        console.log("🔍 Creating assessment response...");
+
+        // Preparar respuestas del usuario
+        const userAnswers = prepareUserAnswers(
+          multipleChoiceAnswers,
+          freeInputAnswers,
+          fileUploadAnswers,
+          assessment.questions || [],
         );
 
-        setTimeout(() => {
-          router.push("/jobs");
-        }, 1500);
-      },
-      onError: (error: any) => {
-        showError(
-          "Application failed",
-          error?.message ||
-            "Unable to submit your application. Please try again.",
-        );
-      },
-    });
-  }, [job?.id, createApplicationMutation, router, showSuccess, showError]);
+        // Crear assessment response
+        const responseResult =
+          await createAssessmentResponseMutation.mutateAsync({
+            assessmentData: assessment,
+            userAnswers: userAnswers,
+          });
+
+        assessmentResponseId = responseResult.id;
+        console.log("✅ Assessment response created:", assessmentResponseId);
+      }
+
+      // Crear job application con el assessment response ID (si existe)
+      console.log("🔍 Creating job application...");
+      await createApplicationMutation.mutateAsync({
+        jobId: job.id,
+        assessmentResponseId: assessmentResponseId,
+      });
+
+      showSuccess(
+        "Application submitted successfully!",
+        "Your application has been submitted. We'll review it and get back to you soon.",
+      );
+
+      setTimeout(() => {
+        router.push("/jobs");
+      }, 1500);
+    } catch (error: any) {
+      console.error("❌ Error in application submission:", error);
+      showError(
+        "Application failed",
+        error?.message ||
+          "Unable to submit your application. Please try again.",
+      );
+    }
+  }, [
+    job?.id,
+    assessment,
+    multipleChoiceAnswers,
+    freeInputAnswers,
+    fileUploadAnswers,
+    createApplicationMutation,
+    createAssessmentResponseMutation,
+    router,
+    showSuccess,
+    showError,
+  ]);
 
   const saveFavoriteJob = useCallback(
     (jobId: string) => {
@@ -130,6 +186,32 @@ export function useApply() {
     }
   }, [job?.company_id, router]);
 
+  // Funciones para manejar respuestas del assessment
+  const handleMultipleChoiceChange = useCallback(
+    (questionId: string, optionValue: string) => {
+      setMultipleChoiceAnswers((prev) => ({
+        ...prev,
+        [questionId]: optionValue,
+      }));
+    },
+    [],
+  );
+
+  const handleFreeInputChange = useCallback((index: number, value: string) => {
+    setFreeInputAnswers((prev) => {
+      const newAnswers = [...prev];
+      newAnswers[index] = value;
+      return newAnswers;
+    });
+  }, []);
+
+  const handleFileUploadChange = useCallback((index: number, file: any) => {
+    setFileUploadAnswers((prev) => ({
+      ...prev,
+      [index]: file,
+    }));
+  }, []);
+
   return {
     currentStep,
     showCompanyProfile,
@@ -148,8 +230,17 @@ export function useApply() {
     showAssessment,
     setShowAssessment,
     handleHideAssessment,
-    isApplying: createApplicationMutation.isPending,
+    isApplying:
+      createApplicationMutation.isPending ||
+      createAssessmentResponseMutation.isPending,
     saveFavoriteJob,
     isSaved,
+    // Assessment response handling
+    multipleChoiceAnswers,
+    freeInputAnswers,
+    fileUploadAnswers,
+    handleMultipleChoiceChange,
+    handleFreeInputChange,
+    handleFileUploadChange,
   };
 }

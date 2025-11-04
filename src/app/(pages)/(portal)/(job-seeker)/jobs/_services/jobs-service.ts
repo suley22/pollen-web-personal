@@ -232,7 +232,13 @@ export function useCreateJobApplication() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (jobId: string) => {
+    mutationFn: async ({
+      jobId,
+      assessmentResponseId,
+    }: {
+      jobId: string;
+      assessmentResponseId?: string;
+    }) => {
       console.log("🔍 Raw jobId received:", jobId, "Type:", typeof jobId);
 
       // Get the current user's auth ID (UUID)
@@ -267,15 +273,22 @@ export function useCreateJobApplication() {
       console.log("📝 Creating new job application...");
 
       // Create the job application with default values matching the database schema
+      const insertData: any = {
+        job_id: jobId,
+        user_id: userAuthId,
+        status: "new_applicants",
+        sub_status: "Unopened",
+        application_stage: "application_received",
+      };
+
+      // Add assessment_response_id if provided
+      if (assessmentResponseId) {
+        insertData.assessment_response_id = assessmentResponseId;
+      }
+
       const { data, error } = await supabase
         .from("job_applications")
-        .insert({
-          job_id: jobId,
-          user_id: userAuthId,
-          status: "new_applicants",
-          sub_status: "Unopened",
-          application_stage: "application_received",
-        })
+        .insert(insertData)
         .select()
         .single();
 
@@ -288,10 +301,10 @@ export function useCreateJobApplication() {
       console.log("✅ Job application created successfully:", data);
       return data;
     },
-    onSuccess: (data, jobId) => {
+    onSuccess: (data, variables) => {
       // Invalidate the application status query for this job
       queryClient.invalidateQueries({
-        queryKey: [jobsQueryKey, "application-status", jobId],
+        queryKey: [jobsQueryKey, "application-status", variables.jobId],
       });
       // Optionally invalidate other related queries
       queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });

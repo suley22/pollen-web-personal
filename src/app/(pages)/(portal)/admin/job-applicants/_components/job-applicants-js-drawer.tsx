@@ -1,12 +1,13 @@
 "use client";
 
 import { X, Save, Send, Eye, EyeOff } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { AssessmentScoresCard } from "./job-applicants-assessment-scores-card";
 import { useAssessmentResponse } from "../../../(job-seeker)/jobs/_services/assessment-response-service";
 import { SkillRatingGroup } from "@/components/design-system/skill-rating";
 import { useSkillRatings } from "@/hooks/useSkillRatings";
 import { AssessmentPreview } from "@/components/assessment/assessment-preview";
+import { SkillSliderRating } from "@/components/design-system/skill-slider-rating";
 import { PrimaryButton } from "@/components/design-system";
 
 interface TaskDrawerProps {
@@ -53,6 +54,22 @@ export function TaskDrawer({
     error: assessmentError,
   } = useAssessmentResponse(jobSeeker?.assessment_response_id);
 
+  // Memoize initial ratings to prevent unnecessary re-renders (trabajo directo con 0-10)
+  const initialRatings = useMemo(
+    () => ({
+      score1: jobSeeker?.score1 || 0,
+      score2: jobSeeker?.score2 || 0,
+      score3: jobSeeker?.score3 || 0,
+      score4: jobSeeker?.score4 || 0,
+    }),
+    [
+      jobSeeker?.score1,
+      jobSeeker?.score2,
+      jobSeeker?.score3,
+      jobSeeker?.score4,
+    ],
+  );
+
   // Use the skill ratings hook
   const {
     skillRatings,
@@ -84,20 +101,15 @@ export function TaskDrawer({
         description: "Strategic approach and long-term planning",
       },
     ],
-    initialRatings: {
-      score1: Math.round((jobSeeker?.score1 || 0) / 2), // Convertir de 0-10 a 0-5
-      score2: Math.round((jobSeeker?.score2 || 0) / 2),
-      score3: Math.round((jobSeeker?.score3 || 0) / 2),
-      score4: Math.round((jobSeeker?.score4 || 0) / 2),
-    },
+    initialRatings,
     onSave: async (ratings) => {
       if (jobSeeker?.application_id) {
-        // Convertir de 0-5 a 0-10 antes de guardar
+        // Los ratings ya están en escala 0-10, guardar directamente
         const scores = {
-          score1: ratings.score1 * 2,
-          score2: ratings.score2 * 2,
-          score3: ratings.score3 * 2,
-          score4: ratings.score4 * 2,
+          score1: ratings.score1,
+          score2: ratings.score2,
+          score3: ratings.score3,
+          score4: ratings.score4,
         };
         onUpdateScores(jobSeeker.application_id, scores);
       }
@@ -340,35 +352,25 @@ export function TaskDrawer({
                     </div>
                   </div>
 
-                  {/* Assessment Scores Card */}
+                  {/* Assessment Scores with Sliders */}
                   <div className="pt-4 border-t border-gray-200">
-                    <SkillRatingGroup
+                    <SkillSliderRating
                       title="Individual Assessment Scores"
                       skills={skillRatings}
-                      isEditable={isScoresEditable}
                       onChange={(skillId, value) => {
-                        updateRating(skillId, value);
+                        updateRating(skillId, value); // Trabajar directamente con 0-10
                       }}
-                      size="md"
+                      onSave={saveRatings}
+                      hasChanges={hasChanges}
+                      isSaving={isSaving}
+                      initialEditMode={isScoresEditable}
                     />
+                  </div>
 
-                    {/* Action Buttons - 3 botones para new_applicants */}
-                    {isScoresEditable && (
-                      <div className="space-y-3 mt-6">
-                        {/* Save Score Button - Solo activo si hay cambios */}
-                        <button
-                          onClick={saveRatings}
-                          disabled={!hasChanges || isSaving}
-                          className={`w-full px-4 py-2.5 font-medium rounded-lg transition-colors flex items-center justify-center gap-2 ${
-                            hasChanges && !isSaving
-                              ? "bg-pink-600 text-white hover:bg-pink-700"
-                              : "bg-gray-200 text-gray-500 cursor-not-allowed"
-                          }`}
-                        >
-                          <Save className="w-4 h-4" />
-                          {isSaving ? "Saving..." : "Save Score"}
-                        </button>
-
+                  {/* Action Buttons - 2 botones para new_applicants */}
+                  {isScoresEditable && (
+                    <div className="pt-6 border-t border-gray-200 mt-6">
+                      <div className="space-y-3">
                         {/* Invited to Pollen Interview Button */}
                         <button
                           onClick={handleInviteToInterview}
@@ -387,8 +389,8 @@ export function TaskDrawer({
                           Not Progressing
                         </button>
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
 
                   {/* Sub Status Action Card - Only show when status is not new_applicants */}
                   {jobSeeker.status !== "new_applicants" && (

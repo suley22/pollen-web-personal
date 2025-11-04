@@ -148,12 +148,14 @@ export function useSkillRatings({
     useState<Record<string, number>>(createInitialRatings);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Actualizar cuando cambien las skills o initialRatings
+  // Actualizar solo cuando el jobSeeker cambie (usando un string serializado de initialRatings)
+  const initialRatingsKey = JSON.stringify(initialRatings);
   useEffect(() => {
     const newRatings = createInitialRatings();
     setRatings(newRatings);
     setOriginalRatings(newRatings);
-  }, [createInitialRatings]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialRatingsKey]);
 
   // Verificar si hay cambios
   const hasChanges = Object.keys(ratings).some(

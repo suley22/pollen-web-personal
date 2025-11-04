@@ -2,16 +2,19 @@
 
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Eye, Mail, User } from "lucide-react";
+import { MapPin, Eye, Mail, User, UserRoundSearch } from "lucide-react";
 import { Button } from "@/components/ui/buttons/button";
 import { useJobSeeker } from "../_hooks/job-seekers-page-hook";
 import {
   PageContainer,
   PageHeader,
   Filters,
-  FiltersSkeleton,
+  EmptyState,
+  SecondaryButton,
+  Pagination,
 } from "@/components/design-system";
 import { JobSeekersTableSkeleton } from "./job-seekers-table-skeleton";
+import { PrimaryButton } from "@/components/design-system";
 
 export default function JobSeekersView() {
   const router = useRouter();
@@ -22,11 +25,13 @@ export default function JobSeekersView() {
       .replace(/_/g, " ")
       .replace(/\b\w/g, (c) => c.toUpperCase());
 
-  // valores únicos por facet (derivados del dataset)
-  const facets = {
-    status: [...new Set(form.jobSeekers.map((j) => j.status))],
-    profile: [...new Set(form.jobSeekers.map((j) => j.profile_complete))],
-  };
+  // Opciones estables de filtros (no dependen del dataset actual)
+  const statusDomain = ["active", "inactive"];
+  const profileOptions = [
+    { label: "All Profiles", value: "all" },
+    { label: "Complete", value: "true" },
+    { label: "Incomplete", value: "false" },
+  ];
 
   // binding de cada facet con su estado correspondiente
   const toOptions = (arr, allLabel) => [
@@ -41,7 +46,7 @@ export default function JobSeekersView() {
       name: "status",
       placeholder: "All Statuses",
       defaultValue: form.statusFilter,
-      options: toOptions(facets.status, "All Statuses"),
+      options: toOptions(statusDomain, "All Statuses"),
       onValueChange: form.setStatusFilter,
     },
     {
@@ -55,132 +60,215 @@ export default function JobSeekersView() {
       name: "profile",
       placeholder: "All Profiles",
       defaultValue: form.profileFilter,
-      options: toOptions(facets.profile, "All Profiles"),
+      options: profileOptions,
       onValueChange: form.setProfileFilter,
     },
   ];
 
   return (
     <PageContainer>
-      <PageHeader title="Job Seekers" subtitle="Manage job seekers" />
+      <PageHeader title="Users" subtitle="Manage all users" />
       <div className="flex flex-col w-full gap-5">
-        {/* Search and Filters */}
-        {form.loading ? (
-          <FiltersSkeleton />
-        ) : (
-          <Filters
-            onSearchChange={form.setSearchTerm}
-            searchPlaceholder="Search job seekers, roles, or locations..."
-            filters={filterConfigs}
-            collapsible={true}
-          />
-        )}
+        {/* Search and Filters - keep mounted so it doesn't collapse during loading */}
+        <Filters
+          onSearchChange={form.setSearchTerm}
+          searchValue={form.searchTerm}
+          searchPlaceholder="Search users, roles, or locations..."
+          filters={filterConfigs}
+          collapsible={true}
+          defaultCollapsed={false}
+        />
 
         {/* Jobs Display */}
         <div className="bg-white rounded-lg border overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b">
-              <tr>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 w-[280px]">
-                  Job Seeker
-                </th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 w-[140px]">
-                  Role
-                </th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 w-[180px]">
-                  Status
-                </th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 w-[140px]">
-                  Profile
-                </th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 w-[200px]">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            {form.loading ? (
+          {form.loading ? (
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b">
+                <tr>
+                  <th className="text-left py-3 px-4 w-auto font-medium text-gray-900">
+                    Users
+                  </th>
+                  <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
+                    Status
+                  </th>
+                  <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
+                    Profile
+                  </th>
+                  <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
               <JobSeekersTableSkeleton rows={6} />
-            ) : (
-              <tbody>
-                {form.jobSeekers.map((jobSeeker) => {
-                  const status = jobSeeker.status
-                    ? jobSeeker.status
-                    : "undefined";
-                  const name = jobSeeker.first_name + " " + jobSeeker.last_name;
-                  const role = jobSeeker.role
-                    ? toLabel(String(jobSeeker.role).trim())
-                    : "N/A";
+            </table>
+          ) : form.jobSeekers.length === 0 ? (
+            <EmptyState
+              title="No users found"
+              description="Try clearing your search or resetting filters to see more results."
+              icon={UserRoundSearch}
+              action={
+                <div className="flex gap-2">
+                  <PrimaryButton
+                    text="Clear search"
+                    onClick={() => {
+                      form.setSearchTerm("");
+                    }}
+                  />
+                  <SecondaryButton
+                    text="Reset filters"
+                    onClick={() => {
+                      form.setStatusFilter("all");
+                      form.setProfileFilter("all");
+                      form.setRoleFilter("all");
+                    }}
+                  />
+                </div>
+              }
+            />
+          ) : (
+            <>
+              <div className="px-4 py-2">
+                {form.pagination && (
+                  <Pagination
+                    currentPage={form.pagination.currentPage}
+                    totalPages={form.pagination.totalPages}
+                    totalItems={form.pagination.totalItems}
+                    pageSize={form.pagination.pageSize}
+                    hasNextPage={form.pagination.hasNextPage}
+                    hasPreviousPage={form.pagination.hasPreviousPage}
+                    from={form.pagination.from}
+                    to={form.pagination.to}
+                    onPageChange={(p) => form.setCurrentPage(p)}
+                    onPageSizeChange={(s) => form.setPageSize(s)}
+                  />
+                )}
+              </div>
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b">
+                  <tr>
+                    <th className="text-left py-3 px-4 w-auto font-medium text-gray-900">
+                      Users
+                    </th>
+                    <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
+                      Status
+                    </th>
+                    <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
+                      Profile
+                    </th>
+                    <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {form.jobSeekers.map((jobSeeker) => {
+                    const status = jobSeeker.status
+                      ? jobSeeker.status
+                      : "undefined";
+                    const name =
+                      jobSeeker.first_name + " " + jobSeeker.last_name;
+                    const role = jobSeeker.role
+                      ? toLabel(String(jobSeeker.role).trim())
+                      : "N/A";
 
-                  return (
-                    <tr
-                      key={jobSeeker.id}
-                      className="border-b hover:bg-gray-50"
-                    >
-                      {/* Job Seeker Column */}
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-2 space-x-3">
-                          <div className="flex-shrink-0">
-                            <Avatar className="h-16 w-16">
-                              <AvatarImage
-                                src={jobSeeker.avatar_url}
-                                alt={name}
-                              />
-                              <AvatarFallback>
-                                <User className="h-8 w-8 text-gray-300" />
-                              </AvatarFallback>
-                            </Avatar>
-                          </div>
-                          <div>
-                            <div className="font-medium text-base">{name}</div>
-                            <div className="text-sm text-gray-500 flex items-center">
-                              <Mail className="h-3 w-3 mr-1" />
-                              {jobSeeker.email || "N/A"}
+                    return (
+                      <tr
+                        key={jobSeeker.id}
+                        className="border-b hover:bg-gray-50"
+                      >
+                        {/* Job Seeker Column */}
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-2 space-x-3">
+                            <div className="flex-shrink-0">
+                              <Avatar className="h-16 w-16">
+                                <AvatarImage
+                                  src={jobSeeker.avatar_url}
+                                  alt={name}
+                                />
+                                <AvatarFallback>
+                                  <User className="h-8 w-8 text-gray-300" />
+                                </AvatarFallback>
+                              </Avatar>
                             </div>
-                            <div className="text-sm text-gray-500 flex items-center">
-                              <MapPin className="h-3 w-3 mr-1" />
-                              {jobSeeker.location || "N/A"}
+                            <div>
+                              <div className="font-medium text-base">
+                                {name}
+                              </div>
+                              <div className="text-sm text-gray-500 flex items-center">
+                                <Mail className="h-3 w-3 mr-1" />
+                                {jobSeeker.email || "N/A"}
+                              </div>
+                              <div className="text-sm text-gray-500 flex items-center">
+                                <MapPin className="h-3 w-3 mr-1" />
+                                {jobSeeker.location || "N/A"}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Role Column */}
-                      <td className="py-2 px-4">{role || "N/A"}</td>
+                        {/* Status Column */}
+                        <td className="py-2 px-4 w-[1%] whitespace-nowrap">
+                          <div className="w-fit inline-flex">
+                            {form.getStatusBadge(status)}
+                          </div>
+                        </td>
 
-                      {/* Status Column */}
-                      <td className="py-2 px-4">
-                        {form.getStatusBadge(status)}
-                      </td>
+                        {/* Profile Column */}
+                        <td className="py-2 px-4 w-[1%] whitespace-nowrap">
+                          <div className="w-full inline-flex">
+                            {role == "Admin" ? (
+                              form.getProfileCompleteBadge("admin")
+                            ) : (
+                              <>
+                                {form.getProfileCompleteBadge(
+                                  jobSeeker.profile_complete,
+                                )}
+                              </>
+                            )}
+                          </div>
+                        </td>
 
-                      {/* Profile Column */}
-                      <td className="py-2 px-4">
-                        {form.getProfileCompleteBadge(
-                          jobSeeker.profile_complete,
-                        ) || "N/A"}
-                      </td>
-
-                      {/* Actions Column */}
-                      <td className="py-2 px-4">
-                        <div className="flex items-center">
-                          <Button
-                            variant="ghost"
-                            size="lg"
-                            onClick={() =>
-                              router.push(`/admin/job-seekers/${jobSeeker.id}`)
-                            }
-                            className="!text-base !font-medium !font-sora text-blue-600 hover:text-blue-800"
-                          >
-                            <Eye className="h-4 w-4 mr-1" />
-                            View
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            )}
-          </table>
+                        {/* Actions Column */}
+                        <td className="py-2 px-4 w-[1%] whitespace-nowrap text-right">
+                          <div className="flex items-center w-fit inline-flex">
+                            <Button
+                              variant="ghost"
+                              size="lg"
+                              onClick={() =>
+                                router.push(
+                                  `/admin/job-seekers/${jobSeeker.id}`,
+                                )
+                              }
+                              className="!text-base !font-medium !font-sora text-blue-600 hover:text-blue-800"
+                            >
+                              <Eye className="h-4 w-4 mr-1" />
+                              View
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              <div className="px-4 py-2">
+                {form.pagination && (
+                  <Pagination
+                    currentPage={form.pagination.currentPage}
+                    totalPages={form.pagination.totalPages}
+                    totalItems={form.pagination.totalItems}
+                    pageSize={form.pagination.pageSize}
+                    hasNextPage={form.pagination.hasNextPage}
+                    hasPreviousPage={form.pagination.hasPreviousPage}
+                    from={form.pagination.from}
+                    to={form.pagination.to}
+                    onPageChange={(p) => form.setCurrentPage(p)}
+                    onPageSizeChange={(s) => form.setPageSize(s)}
+                  />
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </PageContainer>

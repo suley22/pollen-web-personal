@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Search,
   X,
@@ -16,6 +16,7 @@ import type { FiltersProps } from "@/types/filters";
 
 export function Filters({
   onSearchChange,
+  searchValue,
   searchPlaceholder = "Search...",
   filters = [],
   debounceMs = 500,
@@ -24,21 +25,58 @@ export function Filters({
   toggleButtonLabel = "Filters",
 }: FiltersProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [showFilters, setShowFilters] = useState(
-    !collapsible || !defaultCollapsed,
-  );
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  // Persist the visibility of the filters bar so it doesn't collapse on re-mounts (e.g., after applying filters or searching)
+  const storageKey =
+    typeof window !== "undefined"
+      ? `filters.open:${window.location.pathname}`
+      : "filters.open";
 
-  // Debounce search term
+  const [showFilters, setShowFilters] = useState<boolean>(() => {
+    if (!collapsible) return true;
+    try {
+      if (typeof window !== "undefined") {
+        const saved = window.localStorage.getItem(storageKey);
+        if (saved !== null) return saved === "1";
+      }
+    } catch (_) {
+      // ignore storage errors and fall back to default
+    }
+    return !defaultCollapsed;
+  });
+
+  // Immediately propagate changes upward; outer layers may debounce if needed
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      onSearchChange(searchTerm.trim());
-    }, debounceMs);
-
-    return () => clearTimeout(timeoutId);
+    onSearchChange(searchTerm);
   }, [searchTerm, onSearchChange, debounceMs]);
+
+  // Sync external searchValue into local state to reflect external changes (e.g., EmptyState actions)
+  useEffect(() => {
+    if (typeof searchValue !== "string") return;
+    if (searchValue === searchTerm) return;
+    // Don't override while the user is typing in the input
+    const isInputFocused =
+      typeof document !== "undefined" &&
+      inputRef.current === document.activeElement;
+    if (isInputFocused) return;
+    setSearchTerm(searchValue);
+  }, [searchValue, searchTerm]);
+
+  // Persist open/closed state whenever it changes
+  useEffect(() => {
+    if (!collapsible) return;
+    try {
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(storageKey, showFilters ? "1" : "0");
+      }
+    } catch (_) {
+      // ignore persistence errors
+    }
+  }, [showFilters, collapsible, storageKey]);
 
   const handleClearSearch = () => {
     setSearchTerm("");
+    onSearchChange("");
   };
 
   return (
@@ -54,6 +92,7 @@ export function Filters({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 pr-10"
+              ref={inputRef}
             />
             {searchTerm && (
               <Button

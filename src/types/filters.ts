@@ -22,6 +22,12 @@ export interface FilterConfig {
  */
 export interface FiltersProps {
   onSearchChange: (searchTerm: string) => void;
+  /**
+   * Current search value to display in the Filters input (controlled from parent).
+   * If provided, the search input will mirror this value. Useful to reflect
+   * external actions like clearing the search from an Empty State.
+   */
+  searchValue?: string;
   searchPlaceholder?: string;
   filters?: FilterConfig[];
   debounceMs?: number;

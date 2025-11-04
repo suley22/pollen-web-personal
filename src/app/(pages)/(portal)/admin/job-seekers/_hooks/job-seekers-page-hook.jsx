@@ -5,6 +5,38 @@ import {
 } from "@/app/(pages)/(portal)/admin/job-seekers/_services/job-seekers-page-service";
 import { Badge } from "@/components/ui/badge";
 
+// Variantes para el badge de "perfil completo"
+const PROFILE_BADGE_VARIANTS = {
+  complete: {
+    label: "Complete",
+    classes: "bg-green-100 text-green-800 border-green-200",
+  },
+  incomplete: {
+    label: "Incomplete",
+    classes: "bg-yellow-100 text-yellow-800 border-yellow-200",
+  },
+  admin: {
+    label: "Pollen Admin",
+    classes: "bg-pink-100 text-pink-800 border-pink-200",
+  },
+};
+
+// Variantes para el badge de "status"
+const STATUS_BADGE_VARIANTS = {
+  active: {
+    label: "Active",
+    classes: "text-sm bg-green-100 text-green-800 border-green-200",
+  },
+  inactive: {
+    label: "Inactive",
+    classes: "text-sm bg-gray-100 text-gray-800 border-gray-200",
+  },
+  undefined: {
+    label: "Undefined",
+    classes: "text-sm bg-gray-200 text-gray-700",
+  },
+};
+
 export function useJobSeeker() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [profileFilter, setProfileFilter] = useState("all");
@@ -86,53 +118,27 @@ export function useJobSeeker() {
   }, [debouncedSearchTerm]);
 
   const getStatusBadge = useCallback((status) => {
-    switch (status) {
-      case "active":
-        return (
-          <Badge className="text-sm bg-green-100 text-green-800 border-green-200">
-            Active
-          </Badge>
-        );
-      case "inactive":
-        return (
-          <Badge className="text-sm bg-gray-100 text-gray-800 border-gray-200">
-            Inactive
-          </Badge>
-        );
-      case "undefined":
-        return (
-          <Badge className="text-sm bg-gray-200 text-gray-700">Undefined</Badge>
-        );
-      default:
-        return (
-          <Badge className="text-sm bg-gray-100 text-gray-800 border-gray-200">
-            {status}
-          </Badge>
-        );
+    const variant = STATUS_BADGE_VARIANTS[status];
+    if (variant) {
+      return <Badge className={variant.classes}>{variant.label}</Badge>;
     }
+    // default: mostrar el status textual con estilo gris
+    return (
+      <Badge className="text-sm bg-gray-100 text-gray-800 border-gray-200">
+        {status}
+      </Badge>
+    );
   }, []);
 
   const getProfileCompleteBadge = useCallback((isComplete) => {
-    switch (isComplete) {
-      case "complete":
-        return (
-          <Badge className="text-sm bg-green-100 text-green-800 border-green-200">
-            Complete
-          </Badge>
-        );
-      case "incomplete":
-        return (
-          <Badge className="text-sm bg-yellow-100 text-yellow-800 border-yellow-200">
-            Incomplete
-          </Badge>
-        );
-      default:
-        return (
-          <Badge className="text-sm bg-yellow-100 text-yellow-800 border-yellow-200">
-            Incomplete
-          </Badge>
-        );
-    }
+    const badgeClass = "w-full text-sm";
+    const variant =
+      PROFILE_BADGE_VARIANTS[isComplete] || PROFILE_BADGE_VARIANTS.incomplete;
+    return (
+      <Badge className={`${badgeClass} ${variant.classes}`}>
+        {variant.label}
+      </Badge>
+    );
   }, []);
 
   return useMemo(

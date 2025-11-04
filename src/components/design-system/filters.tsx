@@ -24,9 +24,24 @@ export function Filters({
   toggleButtonLabel = "Filters",
 }: FiltersProps) {
   const [searchTerm, setSearchTerm] = useState("");
-  const [showFilters, setShowFilters] = useState(
-    !collapsible || !defaultCollapsed,
-  );
+  // Persist the visibility of the filters bar so it doesn't collapse on re-mounts (e.g., after applying filters or searching)
+  const storageKey =
+    typeof window !== "undefined"
+      ? `filters.open:${window.location.pathname}`
+      : "filters.open";
+
+  const [showFilters, setShowFilters] = useState<boolean>(() => {
+    if (!collapsible) return true;
+    try {
+      if (typeof window !== "undefined") {
+        const saved = window.localStorage.getItem(storageKey);
+        if (saved !== null) return saved === "1";
+      }
+    } catch (_) {
+      // ignore storage errors and fall back to default
+    }
+    return !defaultCollapsed;
+  });
 
   // Debounce search term
   useEffect(() => {
@@ -36,6 +51,18 @@ export function Filters({
 
     return () => clearTimeout(timeoutId);
   }, [searchTerm, onSearchChange, debounceMs]);
+
+  // Persist open/closed state whenever it changes
+  useEffect(() => {
+    if (!collapsible) return;
+    try {
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(storageKey, showFilters ? "1" : "0");
+      }
+    } catch (_) {
+      // ignore persistence errors
+    }
+  }, [showFilters, collapsible, storageKey]);
 
   const handleClearSearch = () => {
     setSearchTerm("");

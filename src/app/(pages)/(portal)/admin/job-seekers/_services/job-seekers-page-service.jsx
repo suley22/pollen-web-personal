@@ -18,15 +18,18 @@ export async function getJobSeeker(filters = {}) {
       query = query.eq("status", filters.status);
     }
 
-    // Aplicar filtro de búsqueda si existe
+    // Aplicar filtro de búsqueda si existe (primer nombre, apellido o email)
     if (filters.searchTerm) {
+      const t = String(filters.searchTerm).trim();
       query = query.or(
-        `name.ilike.%${filters.searchTerm}%,email.ilike.%${filters.searchTerm}%`,
+        `first_name.ilike.%${t}%,last_name.ilike.%${t}%,email.ilike.%${t}%`,
       );
     }
 
     if (filters.profile && filters.profile !== "all") {
-      query = query.eq("profile_complete", filters.profile);
+      const v = String(filters.profile).toLowerCase();
+      const boolVal = v === "true" ? true : v === "false" ? false : v;
+      query = query.eq("profile_complete", boolVal);
     }
 
     // Aplicar filtro por rol si existe
@@ -57,8 +60,9 @@ export async function getDistinctRoles(filters = {}) {
 
     // Filtro de búsqueda opcional (coherente con la UI), pero NO filtramos por role/status/profile
     if (filters.searchTerm) {
+      const t = String(filters.searchTerm).trim();
       query = query.or(
-        `name.ilike.%${filters.searchTerm}%,email.ilike.%${filters.searchTerm}%`,
+        `first_name.ilike.%${t}%,last_name.ilike.%${t}%,email.ilike.%${t}%`,
       );
     }
 

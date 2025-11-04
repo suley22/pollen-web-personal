@@ -5,12 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Eye, Mail, User } from "lucide-react";
 import { Button } from "@/components/ui/buttons/button";
 import { useJobSeeker } from "../_hooks/job-seekers-page-hook";
-import {
-  PageContainer,
-  PageHeader,
-  Filters,
-  FiltersSkeleton,
-} from "@/components/design-system";
+import { PageContainer, PageHeader, Filters } from "@/components/design-system";
 import { JobSeekersTableSkeleton } from "./job-seekers-table-skeleton";
 
 export default function JobSeekersView() {
@@ -64,36 +59,29 @@ export default function JobSeekersView() {
     <PageContainer>
       <PageHeader title="Job Seekers" subtitle="Manage job seekers" />
       <div className="flex flex-col w-full gap-5">
-        {/* Search and Filters */}
-        {form.loading ? (
-          <FiltersSkeleton />
-        ) : (
-          <Filters
-            onSearchChange={form.setSearchTerm}
-            searchPlaceholder="Search job seekers, roles, or locations..."
-            filters={filterConfigs}
-            collapsible={true}
-          />
-        )}
+        {/* Search and Filters - keep mounted so it doesn't collapse during loading */}
+        <Filters
+          onSearchChange={form.setSearchTerm}
+          searchPlaceholder="Search job seekers, roles, or locations..."
+          filters={filterConfigs}
+          collapsible={true}
+        />
 
         {/* Jobs Display */}
         <div className="bg-white rounded-lg border overflow-hidden">
           <table className="w-full">
             <thead className="bg-gray-50 border-b">
               <tr>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 w-[280px]">
+                <th className="text-left py-3 px-4 w-auto font-medium text-gray-900">
                   Job Seeker
                 </th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 w-[140px]">
-                  Role
-                </th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 w-[180px]">
+                <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
                   Status
                 </th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 w-[140px]">
+                <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
                   Profile
                 </th>
-                <th className="text-left py-3 px-4 font-medium text-gray-900 w-[200px]">
+                <th className="text-center py-3 px-4 font-medium text-gray-900 w-[1%] whitespace-nowrap">
                   Actions
                 </th>
               </tr>
@@ -144,24 +132,31 @@ export default function JobSeekersView() {
                         </div>
                       </td>
 
-                      {/* Role Column */}
-                      <td className="py-2 px-4">{role || "N/A"}</td>
-
                       {/* Status Column */}
-                      <td className="py-2 px-4">
-                        {form.getStatusBadge(status)}
+                      <td className="py-2 px-4 w-[1%] whitespace-nowrap">
+                        <div className="w-fit inline-flex">
+                          {form.getStatusBadge(status)}
+                        </div>
                       </td>
 
                       {/* Profile Column */}
-                      <td className="py-2 px-4">
-                        {form.getProfileCompleteBadge(
-                          jobSeeker.profile_complete,
-                        ) || "N/A"}
+                      <td className="py-2 px-4 w-[1%] whitespace-nowrap">
+                        <div className="w-fit inline-flex">
+                          {role == "Admin" ? (
+                            form.getProfileCompleteBadge("admin")
+                          ) : (
+                            <>
+                              {form.getProfileCompleteBadge(
+                                jobSeeker.profile_complete,
+                              )}
+                            </>
+                          )}
+                        </div>
                       </td>
 
                       {/* Actions Column */}
-                      <td className="py-2 px-4">
-                        <div className="flex items-center">
+                      <td className="py-2 px-4 w-[1%] whitespace-nowrap text-right">
+                        <div className="flex items-center w-fit inline-flex">
                           <Button
                             variant="ghost"
                             size="lg"

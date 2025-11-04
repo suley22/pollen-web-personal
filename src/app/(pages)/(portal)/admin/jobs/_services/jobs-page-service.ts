@@ -428,6 +428,7 @@ export const useCreateJob = () => {
     onSuccess: () => {
       // Invalidate all jobs lists and statistics
       queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
+      queryClient.invalidateQueries({ queryKey: ["home"] });
     },
   });
 };
@@ -653,6 +654,7 @@ export function useUpdateJob() {
       });
       // Invalidate all jobs lists and statistics
       queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
+      queryClient.invalidateQueries({ queryKey: ["home"] });
     },
   });
 }
@@ -684,6 +686,7 @@ export function useUpdateJobStatus() {
       });
       // Invalidate all jobs lists and statistics
       queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
+      queryClient.invalidateQueries({ queryKey: ["home"] });
     },
     onError: (error) => {
       console.error("Error updating job status:", error);
@@ -714,6 +717,7 @@ export function useDeleteJob() {
     onSuccess: () => {
       // Invalidate all jobs queries to refresh the lists and statistics
       queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
+      queryClient.invalidateQueries({ queryKey: ["home"] });
     },
   });
 }

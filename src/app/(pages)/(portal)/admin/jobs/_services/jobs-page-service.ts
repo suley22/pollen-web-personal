@@ -434,6 +434,26 @@ export const useCreateJob = () => {
 const transformFormDataToDatabase = (formData: FormData) => {
   const formJobData = Object.fromEntries(formData.entries());
 
+  console.log("🔍 transformFormDataToDatabase - Raw FormData keys:", [
+    ...formData.keys(),
+  ]);
+  console.log(
+    "🔍 transformFormDataToDatabase - company_id:",
+    formJobData.company_id,
+  );
+  console.log(
+    "🔍 transformFormDataToDatabase - responsibilities raw:",
+    formJobData.responsibilities,
+  );
+  console.log(
+    "🔍 transformFormDataToDatabase - who_would_love raw:",
+    formJobData.who_would_love,
+  );
+  console.log(
+    "🔍 transformFormDataToDatabase - pollen_approved_requirements raw:",
+    formJobData.pollen_approved_requirements,
+  );
+
   // Parse array fields
   const responsibilities = parseArrayField(formJobData.responsibilities);
   const who_would_love = parseArrayField(formJobData.who_would_love);
@@ -441,9 +461,18 @@ const transformFormDataToDatabase = (formData: FormData) => {
     formJobData.pollen_approved_requirements,
   );
 
+  console.log("🔍 transformFormDataToDatabase - Final parsed results:");
+  console.log("  - responsibilities:", responsibilities);
+  console.log("  - who_would_love:", who_would_love);
+  console.log(
+    "  - pollen_approved_requirements:",
+    pollen_approved_requirements,
+  );
+
   return {
     job_title: formJobData.job_title,
     company_name: formJobData.company_name,
+    company_id: formJobData.company_id || null,
     location: formJobData.location,
     working_hours: formJobData.working_hours,
     salary_range: formJobData.salary_range,
@@ -524,29 +553,46 @@ const transformAssessmentDataToDatabase = (
 };
 
 const parseArrayField = (fieldData: any): string[] => {
-  if (!fieldData) return [];
+  console.log("🔍 parseArrayField - Raw input:", fieldData);
+
+  if (!fieldData) {
+    console.log("🔍 parseArrayField - No data, returning empty array");
+    return [];
+  }
+
   try {
     const parsed = JSON.parse(fieldData);
+    console.log("🔍 parseArrayField - Parsed JSON:", parsed);
+
     // If it's an array of objects with 'value', extract the values
     if (
       Array.isArray(parsed) &&
       parsed.length > 0 &&
       parsed[0].value !== undefined
     ) {
-      return parsed.map((item) => item.value).filter((v) => v && v.trim());
+      const result = parsed
+        .map((item) => item.value)
+        .filter((v) => v && v.trim());
+      console.log("🔍 parseArrayField - Extracted values:", result);
+      return result;
     }
     // If it's already a simple array, return it
     if (Array.isArray(parsed)) {
-      return parsed.filter((v) => v && v.trim());
+      const result = parsed.filter((v) => v && v.trim());
+      console.log("🔍 parseArrayField - Filtered simple array:", result);
+      return result;
     }
+    console.log("🔍 parseArrayField - Not a recognized array format");
     return [];
   } catch (e) {
     // If it's not JSON, try parsing as CSV (backward compatibility)
-    console.log("Parsing field as CSV for backward compatibility:", e);
-    return fieldData
+    console.log("🔍 parseArrayField - JSON parse failed, trying CSV:", e);
+    const result = fieldData
       .split(",")
       .map((item: string) => item.trim())
       .filter((item: string) => item);
+    console.log("🔍 parseArrayField - CSV result:", result);
+    return result;
   }
 };
 

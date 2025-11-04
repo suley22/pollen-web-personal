@@ -4,14 +4,16 @@ import { useState } from "react";
 import { PageHeader } from "@/components/design-system/page-header";
 import { PageContainer, Filters } from "@/components/design-system";
 import { Button } from "@/components/ui/buttons/button";
-import { CalendarPlus } from "lucide-react";
+import { CalendarPlus, Link } from "lucide-react";
 import { useCalendlyEventsPage } from "./_hooks/calendly-events-hook";
 import { EventsList } from "./_components/events-list";
 import { ScheduleEventDialog } from "./_components/schedule-event-dialog";
+import { CreateSingleUseLinkDialog } from "./_components/create-single-use-link-dialog";
 
 export default function CalendlyEventsPage() {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
+  const [isCreateLinkDialogOpen, setIsCreateLinkDialogOpen] = useState(false);
 
   const {
     events,
@@ -32,14 +34,25 @@ export default function CalendlyEventsPage() {
           title="Calendly Events"
           subtitle="View and manage your scheduled Calendly events"
         />
-        <Button
-          onClick={() => setIsScheduleDialogOpen(true)}
-          size="default"
-          className="flex items-center gap-2"
-        >
-          <CalendarPlus className="h-5 w-5" />
-          Agendar Evento
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => setIsCreateLinkDialogOpen(true)}
+            variant="outline"
+            size="default"
+            className="flex items-center gap-2"
+          >
+            <Link className="h-5 w-5" />
+            Create Single-Use Link
+          </Button>
+          <Button
+            onClick={() => setIsScheduleDialogOpen(true)}
+            size="default"
+            className="flex items-center gap-2"
+          >
+            <CalendarPlus className="h-5 w-5" />
+            Agendar Evento
+          </Button>
+        </div>
       </div>
 
       <Filters
@@ -75,6 +88,11 @@ export default function CalendlyEventsPage() {
       <ScheduleEventDialog
         isOpen={isScheduleDialogOpen}
         onClose={() => setIsScheduleDialogOpen(false)}
+      />
+
+      <CreateSingleUseLinkDialog
+        isOpen={isCreateLinkDialogOpen}
+        onClose={() => setIsCreateLinkDialogOpen(false)}
       />
     </PageContainer>
   );

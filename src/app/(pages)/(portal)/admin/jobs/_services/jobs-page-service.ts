@@ -364,7 +364,6 @@ export const useCreateJob = () => {
 
       const transformedData = transformFormDataToDatabase(formData);
 
-      // Validate required fields
       if (
         !transformedData.job_title ||
         !transformedData.job_title.toString().trim()
@@ -446,6 +445,7 @@ const transformFormDataToDatabase = (formData: FormData) => {
   return {
     job_title: formJobData.job_title,
     company_name: formJobData.company_name,
+    company_id: formJobData.company_id || null,
     location: formJobData.location,
     working_hours: formJobData.working_hours,
     salary_range: formJobData.salary_range,
@@ -544,7 +544,6 @@ const parseArrayField = (fieldData: any): string[] => {
     return [];
   } catch (e) {
     // If it's not JSON, try parsing as CSV (backward compatibility)
-    console.log("Parsing field as CSV for backward compatibility:", e);
     return fieldData
       .split(",")
       .map((item: string) => item.trim())

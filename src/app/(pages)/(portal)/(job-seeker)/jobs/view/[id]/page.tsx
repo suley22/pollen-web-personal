@@ -34,6 +34,13 @@ export default function ApplyJobPage() {
     handleHideAssessment,
     handleCompanyDetails,
     isApplying,
+    // Estados y funciones para respuestas del assessment
+    multipleChoiceAnswers,
+    freeInputAnswers,
+    fileUploadAnswers,
+    handleMultipleChoiceChange,
+    handleFreeInputChange,
+    handleFileUploadChange,
   } = useApply();
 
   // Convertir preguntas para preview (mismo patrón que otros componentes)
@@ -64,7 +71,6 @@ export default function ApplyJobPage() {
     });
   };
 
-  // Vista de aplicación al trabajo con assessment inline
   return (
     <PageContainer>
       <ApplyJobHeader
@@ -78,7 +84,7 @@ export default function ApplyJobPage() {
       <ProgressSteps currentStep={currentStep} />
       <JobDetails job={job} />
       <WhatHappensNext />
-      {/* Assessment Section - aparece debajo de los detalles si showAssessment es true */}
+      {/* Assessment Section */}
       {showAssessment && (
         <div className="space-y-6 mt-8">
           <div className="border-t pt-6">
@@ -131,6 +137,12 @@ export default function ApplyJobPage() {
                     }
                     questions={convertQuestionsForPreview(assessment)}
                     categories={assessment.categories || []}
+                    multipleChoiceAnswers={multipleChoiceAnswers}
+                    freeInputAnswers={freeInputAnswers}
+                    fileUploadAnswers={fileUploadAnswers}
+                    onMultipleChoiceChange={handleMultipleChoiceChange}
+                    onFreeInputChange={handleFreeInputChange}
+                    onFileUploadChange={handleFileUploadChange}
                   />
                 </div>
 

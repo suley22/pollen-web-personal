@@ -3,6 +3,7 @@
 import { X, Save, Send } from "lucide-react";
 import { useState, useEffect } from "react";
 import { AssessmentScoresCard } from "./job-applicants-assessment-scores-card";
+import { useAssessmentResponse } from "../../../(job-seeker)/jobs/_services/assessment-response-service";
 
 interface TaskDrawerProps {
   isOpen: boolean;
@@ -52,6 +53,13 @@ export function TaskDrawer({
     score3: 0,
     score4: 0,
   });
+
+  // Fetch assessment response data
+  const {
+    data: assessmentResponse,
+    isLoading: isLoadingAssessment,
+    error: assessmentError,
+  } = useAssessmentResponse(jobSeeker?.assessment_response_id);
 
   // Actualizar substatus y scores cuando cambie el jobSeeker
   useEffect(() => {
@@ -170,6 +178,7 @@ export function TaskDrawer({
       ? "px-4 py-3 bg-white text-red-600 border border-red-200 font-medium rounded-lg hover:bg-red-50 hover:border-red-300 transition-colors"
       : "px-4 py-3 bg-white text-gray-700 border border-gray-200 font-medium rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-colors";
   };
+
   if (!isOpen) return null;
 
   return (
@@ -208,8 +217,6 @@ export function TaskDrawer({
           <div className="flex-1 overflow-y-auto p-6">
             {jobSeeker && (
               <div className="flex flex-col gap-6">
-                {/* Status and Sub Status - Side by side */}
-
                 {/* Sub Status */}
                 <div className="flex-1">
                   <label className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
@@ -225,6 +232,197 @@ export function TaskDrawer({
                       </div>
                     </div>
                   </div>
+                </div>
+
+                {/* Assessment Responses Section */}
+                <div className="pt-4 border-t border-gray-200">
+                  {isLoadingAssessment ? (
+                    <div className="bg-white border border-gray-200 rounded-lg p-6">
+                      <div className="animate-pulse">
+                        <div className="h-4 bg-gray-200 rounded w-1/3 mb-4"></div>
+                        <div className="space-y-3">
+                          <div className="h-3 bg-gray-200 rounded w-full"></div>
+                          <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : assessmentError ? (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                      <p className="text-red-700 text-sm">
+                        Error loading assessment responses:{" "}
+                        {assessmentError.message}
+                      </p>
+                    </div>
+                  ) : !assessmentResponse ? (
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                      <p className="text-gray-600 text-center">
+                        No assessment responses available for this candidate.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="bg-white border border-gray-200 rounded-lg p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Assessment Responses
+                        </h3>
+                        <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                          Skills Assessment
+                        </span>
+                      </div>
+
+                      {/* Assessment Info */}
+                      <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+                        <div className="font-medium text-blue-900 mb-2">
+                          {assessmentResponse.title || "Assessment"}
+                        </div>
+                        <p className="text-sm text-blue-700">
+                          {assessmentResponse.subtitle ||
+                            "Assessment completed by the candidate"}
+                        </p>
+                      </div>
+
+                      {/* Questions and Responses */}
+                      <div className="space-y-8">
+                        {assessmentResponse.questions?.map(
+                          (question, index) => {
+                            const userAnswer = question.user_answer;
+
+                            return (
+                              <div
+                                key={question.id || index}
+                                className="border-b border-gray-100 pb-6 last:border-b-0"
+                              >
+                                {/* Question */}
+                                <div className="mb-4">
+                                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                                    {question.title}
+                                  </h3>
+                                  {question.description && (
+                                    <p className="text-sm text-gray-600">
+                                      {question.description}
+                                    </p>
+                                  )}
+                                </div>
+
+                                {/* Answer */}
+                                <div className="ml-4">
+                                  {question.type === "multiple_choice" ? (
+                                    <div>
+                                      {/* Multiple Choice Options */}
+                                      <div className="space-y-2 mb-4">
+                                        {question.multiple_choice?.options?.map(
+                                          (option) => {
+                                            const isSelected =
+                                              userAnswer?.selected_value ===
+                                                option.value ||
+                                              userAnswer?.text_response ===
+                                                option.value;
+
+                                            return (
+                                              <div
+                                                key={option.value}
+                                                className={`flex items-center space-x-3 p-3 rounded-lg border ${
+                                                  isSelected
+                                                    ? "bg-blue-50 border-blue-200 text-blue-900"
+                                                    : "bg-gray-50 border-gray-200 text-gray-700"
+                                                }`}
+                                              >
+                                                <div
+                                                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                                                    isSelected
+                                                      ? "border-blue-500 bg-blue-500"
+                                                      : "border-gray-300"
+                                                  }`}
+                                                >
+                                                  {isSelected && (
+                                                    <div className="w-2 h-2 bg-white rounded-full"></div>
+                                                  )}
+                                                </div>
+                                                <span
+                                                  className={
+                                                    isSelected
+                                                      ? "font-medium"
+                                                      : ""
+                                                  }
+                                                >
+                                                  {option.label || option.value}
+                                                </span>
+                                              </div>
+                                            );
+                                          },
+                                        )}
+                                      </div>
+
+                                      {/* No answer provided */}
+                                      {!userAnswer?.selected_value &&
+                                        !userAnswer?.text_response && (
+                                          <div className="text-gray-500 italic p-3">
+                                            No se proporcionó respuesta
+                                          </div>
+                                        )}
+                                    </div>
+                                  ) : question.type === "free_input" ? (
+                                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                                      {userAnswer?.text_response ? (
+                                        <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
+                                          {userAnswer.text_response}
+                                        </p>
+                                      ) : (
+                                        <p className="text-gray-500 italic">
+                                          No se proporcionó respuesta
+                                        </p>
+                                      )}
+                                    </div>
+                                  ) : question.type === "file_upload" ? (
+                                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                                      {userAnswer?.uploaded_file ? (
+                                        <div className="flex items-center space-x-3">
+                                          <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <svg
+                                              className="w-5 h-5 text-blue-600"
+                                              fill="none"
+                                              stroke="currentColor"
+                                              viewBox="0 0 24 24"
+                                            >
+                                              <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth="2"
+                                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                              />
+                                            </svg>
+                                          </div>
+                                          <div>
+                                            <p className="font-medium text-gray-900">
+                                              {userAnswer.uploaded_file.name ||
+                                                "Archivo subido"}
+                                            </p>
+                                            <p className="text-sm text-gray-600">
+                                              {userAnswer.uploaded_file.size
+                                                ? `${(userAnswer.uploaded_file.size / (1024 * 1024)).toFixed(1)} MB`
+                                                : "Tamaño desconocido"}
+                                            </p>
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <p className="text-gray-500 italic">
+                                          No se subió archivo
+                                        </p>
+                                      )}
+                                    </div>
+                                  ) : (
+                                    <div className="text-gray-500 italic">
+                                      Tipo de pregunta no reconocido
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          },
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Assessment Scores Card */}

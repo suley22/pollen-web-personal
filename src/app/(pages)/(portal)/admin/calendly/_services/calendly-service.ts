@@ -154,6 +154,8 @@ export function useCalendlyEventDetails(eventUri: string) {
         throw new Error("Calendly API token not configured");
       }
 
+      console.log(eventUri)
+
       const response = await fetch(eventUri, {
         method: "GET",
         headers: {
@@ -265,4 +267,77 @@ export function useCalendlyEventTypes() {
     staleTime: 1000 * 60 * 10, // 10 minutos
     retry: 2,
   });
+}
+
+// Interface para Single-Use Scheduling Link
+export interface SingleUseSchedulingLinkPayload {
+  max_event_count: 1; // Siempre 1 para links de un solo uso
+  owner: string; // URI del usuario (CALENDLY_USER_URI)
+  owner_type: "EventType" | "User";
+}
+
+export interface SingleUseSchedulingLink {
+  booking_url: string;
+  created_at: string;
+  owner: string;
+  owner_type: string;
+}
+
+// Función para crear un link de un solo uso
+export async function createSingleUseSchedulingLink(
+  eventTypeUri: string,
+  additionalParams?: Record<string, string>
+): Promise<SingleUseSchedulingLink> {
+  const CALENDLY_API_TOKEN = process.env.NEXT_PUBLIC_CALENDLY_API_TOKEN;
+  const CALENDLY_USER_URI = process.env.NEXT_PUBLIC_CALENDLY_USER_URI;
+
+  if (!CALENDLY_API_TOKEN || !CALENDLY_USER_URI) {
+    throw new Error("Calendly API token or User URI not configured");
+  }
+
+  const payload: SingleUseSchedulingLinkPayload = {
+    max_event_count: 1,
+    owner: eventTypeUri,
+    owner_type: "EventType",
+  };
+
+  const response = await fetch(
+    "https://api.calendly.com/scheduling_links",
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${CALENDLY_API_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(
+      errorData.message || "Failed to create single-use scheduling link"
+    );
+  }
+
+  const data = await response.json();
+  
+  // Agregar parámetros UTM o información adicional al link
+  const bookingUrl = new URL(data.resource.booking_url);
+  
+  // Parámetros por defecto
+  bookingUrl.searchParams.append("utm_source", "JOB_APPLICATION");
+  bookingUrl.searchParams.append("utm_content", "14");
+  
+  // Agregar parámetros adicionales si se proporcionan
+  if (additionalParams) {
+    Object.entries(additionalParams).forEach(([key, value]) => {
+      bookingUrl.searchParams.append(key, value);
+    });
+  }
+  
+  return {
+    ...data.resource,
+    booking_url: bookingUrl.toString(),
+  };
 }

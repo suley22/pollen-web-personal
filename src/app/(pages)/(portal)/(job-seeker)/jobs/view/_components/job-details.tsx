@@ -45,7 +45,7 @@ export default function JobDetails({ job }) {
               </div>
               <div className="flex items-center gap-1 text-gray-500 text-sm font-light">
                 <Clock className="w-4 h-4" />
-                {job?.job_type ? job.job_type : "Not specified"}
+                {job?.working_hours ? job.working_hours : "Not specified"}
               </div>
             </div>
             <div className="flex items-center gap-1 text-gray-500 text-sm font-light">

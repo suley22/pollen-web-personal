@@ -104,10 +104,22 @@ export function useAssessmentCreateUnified({
   // Question management
   const handleAddQuestion = useCallback(
     (question: Omit<AssessmentQuestion, "id">) => {
-      const newQuestion: AssessmentQuestion = {
+      // Convert from nested structure (dialog format) to flat structure (preview format)
+      const newQuestion: any = {
         ...question,
         id: `temp_${Date.now()}`,
       };
+
+      // Map subtitle to description for preview compatibility
+      if ((question as any).subtitle) {
+        newQuestion.description = (question as any).subtitle;
+      }
+
+      // Flatten type-specific fields for preview compatibility
+      if (question.type === "free_input" && (question as any).free_input) {
+        newQuestion.max_characters =
+          (question as any).free_input.placeholder || "";
+      }
 
       if (editingQuestionIndex !== null) {
         // Edit existing question
@@ -222,6 +234,40 @@ export function useAssessmentCreateUnified({
       const assessmentType =
         questions.length > 0 ? questions[0].type : ("multiple_choice" as const);
 
+      // Transform questions from flat structure to nested structure for consistency
+      const transformedQuestions = questions.map((q: any) => {
+        if (q.type === "multiple_choice") {
+          return {
+            type: q.type,
+            title: q.title,
+            subtitle: q.description, // description → subtitle
+            multiple_choice: {
+              options: q.options || [],
+              options_title: q.options_title || "",
+            },
+          };
+        } else if (q.type === "free_input") {
+          return {
+            type: q.type,
+            title: q.title,
+            subtitle: q.description,
+            free_input: {
+              placeholder: String(q.max_characters || ""),
+            },
+          };
+        } else if (q.type === "file_upload") {
+          return {
+            type: q.type,
+            title: q.title,
+            subtitle: q.description,
+            file_upload: {
+              referenceFiles: q.file_upload?.referenceFiles || [],
+            },
+          };
+        }
+        return q;
+      }) as any[];
+
       const assessmentData = {
         internal_pollen_title: internalPollenTitle,
         title: assessmentTitle,
@@ -230,7 +276,7 @@ export function useAssessmentCreateUnified({
         instructions_title: instructionsTitle,
         instructions_description: instructionsDescription,
         type: assessmentType,
-        questions,
+        questions: transformedQuestions,
         categories,
       };
 

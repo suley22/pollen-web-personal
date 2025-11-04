@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select/select";
-import { Copy, Check, Link as LinkIcon, Loader2 } from "lucide-react";
+import { Link as LinkIcon, Loader2 } from "lucide-react";
 import {
   useCalendlyEventTypes,
   createSingleUseSchedulingLink,
@@ -29,7 +29,7 @@ export function CreateSingleUseLinkDialog({ isOpen, onClose }) {
   const [selectedEventType, setSelectedEventType] = useState("");
   const [generatedLink, setGeneratedLink] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   const { data: eventTypes, isLoading: isLoadingEventTypes } =
     useCalendlyEventTypes();
@@ -45,6 +45,7 @@ export function CreateSingleUseLinkDialog({ isOpen, onClose }) {
     try {
       const link = await createSingleUseSchedulingLink(selectedEventType);
       setGeneratedLink(link.booking_url);
+      setShowPreview(true); // Abrir preview automáticamente
     } catch (error) {
       console.error("Error generating link:", error);
     } finally {
@@ -52,29 +53,18 @@ export function CreateSingleUseLinkDialog({ isOpen, onClose }) {
     }
   };
 
-  const handleCopyLink = async () => {
-    if (!generatedLink) return;
 
-    try {
-      await navigator.clipboard.writeText(generatedLink);
-      setIsCopied(true);
-      //showToast("Link copied to clipboard!", "success");
-      setTimeout(() => setIsCopied(false), 2000);
-    } catch {
-      // showToast("Failed to copy link", "error");
-    }
-  };
 
   const handleClose = () => {
     setSelectedEventType("");
     setGeneratedLink("");
-    setIsCopied(false);
+    setShowPreview(false);
     onClose();
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className={showPreview ? "sm:max-w-[95vw] h-[95vh]" : "sm:max-w-[600px]"}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <LinkIcon className="h-5 w-5" />
@@ -122,41 +112,32 @@ export function CreateSingleUseLinkDialog({ isOpen, onClose }) {
             </Select>
           </div>
 
-          {generatedLink && (
-            <div className="space-y-2">
-              <Label>Generated Link (Single-Use)</Label>
-              <div className="flex gap-2">
-                <div className="flex-1 p-3 bg-muted rounded-md border border-border text-sm break-all">
-                  {generatedLink}
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  onClick={handleCopyLink}
-                  className="shrink-0"
-                >
-                  {isCopied ? (
-                    <Check className="h-4 w-4 text-green-600" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </Button>
+          {generatedLink && showPreview && (
+            <div className="space-y-2 h-full">
+              <Label>Calendly Scheduling Widget (Single-Use Link)</Label>
+              <div className="relative w-full bg-white rounded-lg border border-border overflow-hidden" style={{ height: "calc(95vh - 200px)" }}>
+                <iframe
+                  src={generatedLink}
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  title="Calendly Scheduling Widget"
+                  className="rounded-lg"
+                />
               </div>
               <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded border border-amber-200">
-                ⚠️ This link will expire after being used once or if the event
-                is scheduled.
+                ⚠️ This link will expire after being used once or if the event is scheduled.
               </p>
             </div>
           )}
         </div>
 
         <DialogFooter>
-          {generatedLink ? (
+          {generatedLink && showPreview ? (
             <Button onClick={handleClose} className="w-full">
-              Done
+              Close
             </Button>
-          ) : (
+          ) : !generatedLink ? (
             <>
               <Button variant="outline" onClick={handleClose}>
                 Cancel
@@ -178,7 +159,7 @@ export function CreateSingleUseLinkDialog({ isOpen, onClose }) {
                 )}
               </Button>
             </>
-          )}
+          ) : null}
         </DialogFooter>
       </DialogContent>
     </Dialog>

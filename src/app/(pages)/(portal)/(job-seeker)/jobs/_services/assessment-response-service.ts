@@ -48,6 +48,30 @@ export function useCreateAssessmentResponse() {
         },
       );
 
+      // Calcular resultados por categorías para guardar con la respuesta
+      const multipleChoiceAnswers: Record<string, string> = {};
+      Object.entries(userAnswers).forEach(([questionId, answer]) => {
+        if (answer.type === "multiple_choice") {
+          multipleChoiceAnswers[questionId] = answer.selected_value;
+        }
+      });
+
+      const categoryResults = calculateCategoryResults(
+        multipleChoiceAnswers,
+        assessmentData.questions,
+        assessmentData.categories || [],
+      );
+
+      // Agregar los resultados al final del array de preguntas
+      const questionsWithResults = [
+        ...questionsWithAnswers,
+        {
+          type: "assessment_results",
+          category_results: categoryResults,
+          calculated_at: new Date().toISOString(),
+        },
+      ];
+
       // Crear el assessment response
       const { data, error } = await supabase
         .from("assessments_response")
@@ -60,9 +84,9 @@ export function useCreateAssessmentResponse() {
           estimated_duration: assessmentData.estimated_duration,
           instructions_title: assessmentData.instructions_title,
           instructions_description: assessmentData.instructions_description,
-          questions: questionsWithAnswers,
+          questions: questionsWithResults,
           categories: assessmentData.categories || [],
-          questions_count: questionsWithAnswers.length,
+          questions_count: questionsWithAnswers.length, // Sin contar los resultados
           total_submissions: 1, // Primera submission del candidato
           user_id: userId,
           updated_by: userId,
@@ -79,14 +103,66 @@ export function useCreateAssessmentResponse() {
 
       return data;
     },
-    onSuccess: () => {
-      // Invalidar queries relacionadas si es necesario
+    onSuccess: (data, variables) => {
+      // Invalidar queries relacionadas para actualizar UI inmediatamente
       queryClient.invalidateQueries({ queryKey: ["assessment-responses"] });
+      queryClient.invalidateQueries({ queryKey: ["assessment-response", data.id] });
+      
+      // También invalidar job applicants para que el admin drawer se actualice
+      queryClient.invalidateQueries({ queryKey: ["job-applicants"] });
+      
+      console.log("✅ Assessment response created successfully, cache invalidated");
     },
     onError: (error) => {
       console.error("Error in assessment response mutation:", error);
     },
   });
+}
+
+/**
+ * Función helper para calcular los resultados por categorías
+ */
+function calculateCategoryResults(
+  multipleChoiceAnswers: Record<string, string>,
+  questions: any[],
+  categories: any[],
+): any[] {
+  const categoryCounts = new Map<string, number>();
+  let totalAnswered = 0;
+
+  Object.entries(multipleChoiceAnswers).forEach(([questionId, optionValue]) => {
+    const questionIndex = parseInt(questionId.split("-")[1]);
+    const question = questions[questionIndex];
+
+    if (
+      question?.type === "multiple_choice" &&
+      question.multiple_choice?.options
+    ) {
+      const selectedOption = question.multiple_choice.options.find(
+        (opt: any) => opt.value === optionValue,
+      );
+      if (selectedOption?.categoryId) {
+        categoryCounts.set(
+          selectedOption.categoryId,
+          (categoryCounts.get(selectedOption.categoryId) || 0) + 1,
+        );
+        totalAnswered++;
+      }
+    }
+  });
+
+  return (categories || [])
+    .map((category) => {
+      const count = categoryCounts.get(category.id) || 0;
+      const percentage =
+        totalAnswered > 0 ? Math.round((count / totalAnswered) * 100) : 0;
+      return {
+        ...category,
+        count,
+        percentage,
+      };
+    })
+    .filter((cat) => cat.count > 0);
 }
 
 /**
@@ -166,5 +242,60 @@ export function useAssessmentResponse(assessmentResponseId: string | null) {
       return data;
     },
     enabled: !!assessmentResponseId,
+  });
+}
+
+/**
+ * Hook para actualizar un assessment response
+ * Útil si necesitamos modificar las respuestas desde el admin
+ */
+export function useUpdateAssessmentResponse() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      updates,
+    }: {
+      id: string;
+      updates: Partial<any>;
+    }) => {
+      const { data, error } = await supabase
+        .from("assessments_response")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("❌ Error updating assessment response:", error);
+        throw new Error(
+          `Failed to update assessment response: ${error.message}`,
+        );
+      }
+
+      return data;
+    },
+    onSuccess: (data, variables) => {
+      // Invalidar cache específico de este assessment response
+      queryClient.invalidateQueries({ 
+        queryKey: ["assessment-response", variables.id] 
+      });
+      
+      // Invalidar todas las assessment responses
+      queryClient.invalidateQueries({ 
+        queryKey: ["assessment-responses"] 
+      });
+      
+      // Invalidar job applicants para actualizar admin drawer
+      queryClient.invalidateQueries({ 
+        queryKey: ["job-applicants"] 
+      });
+      
+      console.log("✅ Assessment response updated successfully, cache invalidated");
+    },
+    onError: (error) => {
+      console.error("❌ Error updating assessment response:", error);
+    },
   });
 }

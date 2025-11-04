@@ -182,7 +182,7 @@ export function AssessmentPreview({
     return Math.round((getAnsweredCount() / total) * 100);
   };
 
-  // Calculate category breakdown (only for multiple choice questions)
+  // Calculate category breakdown for internal use (saved but not shown to job-seeker)
   const categoryBreakdown = useMemo(() => {
     const categoryCounts = new Map<string, number>();
     let totalAnswered = 0;
@@ -303,8 +303,7 @@ export function AssessmentPreview({
             percentage={getPercentage()}
           />
 
-          {/* Category Breakdown */}
-          <AssessmentCategoryProgress categories={categoryBreakdown} />
+          {/* Note: Category results hidden for job-seeker view */}
         </div>
       </div>
     </div>

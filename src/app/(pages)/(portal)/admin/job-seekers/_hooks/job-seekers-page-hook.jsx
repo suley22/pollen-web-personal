@@ -89,9 +89,9 @@ export function useJobSeeker() {
       });
 
       if (result.success) {
-  const data = result.data || [];
+        const data = result.data || [];
         setJobSeekers(data);
-  setPagination(result.pagination || null);
+        setPagination(result.pagination || null);
         // Persist facet options from last non-empty dataset
         if (Array.isArray(data) && data.length > 0) {
           const statuses = Array.from(
@@ -119,7 +119,14 @@ export function useJobSeeker() {
       setLoading(false);
       loadingRef.current = false;
     }
-  }, [statusFilter, profileFilter, roleFilter, debouncedSearchTerm, currentPage, pageSize]);
+  }, [
+    statusFilter,
+    profileFilter,
+    roleFilter,
+    debouncedSearchTerm,
+    currentPage,
+    pageSize,
+  ]);
 
   // Load job seekers when loadJobSeekers function changes
   useEffect(() => {

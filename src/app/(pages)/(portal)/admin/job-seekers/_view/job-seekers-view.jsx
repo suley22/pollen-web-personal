@@ -162,87 +162,92 @@ export default function JobSeekersView() {
                 </thead>
                 <tbody>
                   {form.jobSeekers.map((jobSeeker) => {
-                  const status = jobSeeker.status
-                    ? jobSeeker.status
-                    : "undefined";
-                  const name = jobSeeker.first_name + " " + jobSeeker.last_name;
-                  const role = jobSeeker.role
-                    ? toLabel(String(jobSeeker.role).trim())
-                    : "N/A";
+                    const status = jobSeeker.status
+                      ? jobSeeker.status
+                      : "undefined";
+                    const name =
+                      jobSeeker.first_name + " " + jobSeeker.last_name;
+                    const role = jobSeeker.role
+                      ? toLabel(String(jobSeeker.role).trim())
+                      : "N/A";
 
-                  return (
-                    <tr
-                      key={jobSeeker.id}
-                      className="border-b hover:bg-gray-50"
-                    >
-                      {/* Job Seeker Column */}
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-2 space-x-3">
-                          <div className="flex-shrink-0">
-                            <Avatar className="h-16 w-16">
-                              <AvatarImage
-                                src={jobSeeker.avatar_url}
-                                alt={name}
-                              />
-                              <AvatarFallback>
-                                <User className="h-8 w-8 text-gray-300" />
-                              </AvatarFallback>
-                            </Avatar>
-                          </div>
-                          <div>
-                            <div className="font-medium text-base">{name}</div>
-                            <div className="text-sm text-gray-500 flex items-center">
-                              <Mail className="h-3 w-3 mr-1" />
-                              {jobSeeker.email || "N/A"}
+                    return (
+                      <tr
+                        key={jobSeeker.id}
+                        className="border-b hover:bg-gray-50"
+                      >
+                        {/* Job Seeker Column */}
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-2 space-x-3">
+                            <div className="flex-shrink-0">
+                              <Avatar className="h-16 w-16">
+                                <AvatarImage
+                                  src={jobSeeker.avatar_url}
+                                  alt={name}
+                                />
+                                <AvatarFallback>
+                                  <User className="h-8 w-8 text-gray-300" />
+                                </AvatarFallback>
+                              </Avatar>
                             </div>
-                            <div className="text-sm text-gray-500 flex items-center">
-                              <MapPin className="h-3 w-3 mr-1" />
-                              {jobSeeker.location || "N/A"}
+                            <div>
+                              <div className="font-medium text-base">
+                                {name}
+                              </div>
+                              <div className="text-sm text-gray-500 flex items-center">
+                                <Mail className="h-3 w-3 mr-1" />
+                                {jobSeeker.email || "N/A"}
+                              </div>
+                              <div className="text-sm text-gray-500 flex items-center">
+                                <MapPin className="h-3 w-3 mr-1" />
+                                {jobSeeker.location || "N/A"}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Status Column */}
-                      <td className="py-2 px-4 w-[1%] whitespace-nowrap">
-                        <div className="w-fit inline-flex">
-                          {form.getStatusBadge(status)}
-                        </div>
-                      </td>
+                        {/* Status Column */}
+                        <td className="py-2 px-4 w-[1%] whitespace-nowrap">
+                          <div className="w-fit inline-flex">
+                            {form.getStatusBadge(status)}
+                          </div>
+                        </td>
 
-                      {/* Profile Column */}
-                      <td className="py-2 px-4 w-[1%] whitespace-nowrap">
-                        <div className="w-full inline-flex">
-                          {role == "Admin" ? (
-                            form.getProfileCompleteBadge("admin")
-                          ) : (
-                            <>
-                              {form.getProfileCompleteBadge(
-                                jobSeeker.profile_complete,
-                              )}
-                            </>
-                          )}
-                        </div>
-                      </td>
+                        {/* Profile Column */}
+                        <td className="py-2 px-4 w-[1%] whitespace-nowrap">
+                          <div className="w-full inline-flex">
+                            {role == "Admin" ? (
+                              form.getProfileCompleteBadge("admin")
+                            ) : (
+                              <>
+                                {form.getProfileCompleteBadge(
+                                  jobSeeker.profile_complete,
+                                )}
+                              </>
+                            )}
+                          </div>
+                        </td>
 
-                      {/* Actions Column */}
-                      <td className="py-2 px-4 w-[1%] whitespace-nowrap text-right">
-                        <div className="flex items-center w-fit inline-flex">
-                          <Button
-                            variant="ghost"
-                            size="lg"
-                            onClick={() =>
-                              router.push(`/admin/job-seekers/${jobSeeker.id}`)
-                            }
-                            className="!text-base !font-medium !font-sora text-blue-600 hover:text-blue-800"
-                          >
-                            <Eye className="h-4 w-4 mr-1" />
-                            View
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
+                        {/* Actions Column */}
+                        <td className="py-2 px-4 w-[1%] whitespace-nowrap text-right">
+                          <div className="flex items-center w-fit inline-flex">
+                            <Button
+                              variant="ghost"
+                              size="lg"
+                              onClick={() =>
+                                router.push(
+                                  `/admin/job-seekers/${jobSeeker.id}`,
+                                )
+                              }
+                              className="!text-base !font-medium !font-sora text-blue-600 hover:text-blue-800"
+                            >
+                              <Eye className="h-4 w-4 mr-1" />
+                              View
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
                   })}
                 </tbody>
               </table>

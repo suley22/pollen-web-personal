@@ -69,8 +69,6 @@ export function useJobApplicants(jobId: string | null) {
  */
 async function getJobApplicants(jobId: string): Promise<GroupedApplicants> {
   try {
-    console.log("🔍 getJobApplicants called with jobId:", jobId);
-
     const { data: applications, error: applicationsError } = await supabase
       .from("job_applications")
       .select("*")
@@ -161,6 +159,8 @@ async function getJobApplicants(jobId: string): Promise<GroupedApplicants> {
           score2: (app as any).score2 ?? 0,
           score3: (app as any).score3 ?? 0,
           score4: (app as any).score4 ?? 0,
+          // Assessment response ID - CAMPO FALTANTE AGREGADO
+          assessment_response_id: app.assessment_response_id || null,
           // Campos adicionales por si se necesitan
           email: jobSeeker?.email || "",
           status: app.status,

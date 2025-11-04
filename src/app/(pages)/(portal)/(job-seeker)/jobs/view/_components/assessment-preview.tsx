@@ -246,7 +246,7 @@ export function AssessmentPreview({
 
           {/* Questions */}
           {questions.map((question, index) => {
-            const questionId = `q-${index}`;
+            const questionId = question.id || `question-${index}`;
 
             return (
               <div key={index} className="relative">

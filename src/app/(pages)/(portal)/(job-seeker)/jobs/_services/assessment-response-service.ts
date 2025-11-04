@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { createClient } from "@/lib/utils/supabase/client";
 import { getLoggedInUserId } from "@/services/userService";
 
@@ -128,4 +128,35 @@ export function prepareUserAnswers(
   });
 
   return userAnswers;
+}
+
+/**
+ * Hook para obtener un assessment response por ID
+ * Útil para mostrar las respuestas de un candidato en el admin
+ */
+export function useAssessmentResponse(assessmentResponseId: string | null) {
+  return useQuery({
+    queryKey: ["assessment-response", assessmentResponseId],
+    queryFn: async () => {
+      if (!assessmentResponseId) {
+        throw new Error("Assessment response ID is required");
+      }
+
+      const { data, error } = await supabase
+        .from("assessments_response")
+        .select("*")
+        .eq("id", assessmentResponseId)
+        .single();
+
+      if (error) {
+        console.error("❌ Error fetching assessment response:", error);
+        throw new Error(
+          `Failed to fetch assessment response: ${error.message}`,
+        );
+      }
+
+      return data;
+    },
+    enabled: !!assessmentResponseId,
+  });
 }

@@ -37,7 +37,6 @@ export function JobViewHeader({
       title={
         <div className="flex items-center gap-3">
           <span>{`${jobTitle} at ${companyName}`}</span>
-          <JobStatusBadge status={jobStatus} />
         </div>
       }
       showBackButton={true}

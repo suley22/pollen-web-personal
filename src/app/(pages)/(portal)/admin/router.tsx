@@ -24,13 +24,13 @@ export const AdminRoutes = {
   employersEdit: (id) => `${basePath}/employers/edit/${id}`,
   allJobSeekers: `${basePath}/job-seekers`,
   roles: `${basePath}/roles`,
-  jobsApplicants: (jobId) => `${basePath}/jobs/job-applicants/${jobId}`,
+  jobsApplicants: (jobId) => `${basePath}/job-applicants/${jobId}`,
   jobPersonaResults: (jobId) => `${basePath}/jobs/persona-results/${jobId}`,
   assessments: `${basePath}/assessments`,
   assessmentCreate: `${basePath}/assessments/create`,
   assessmentEdit: (id) => `${basePath}/assessments/edit/${id}`,
   assessmentView: (id) => `${basePath}/assessments/view/${id}`,
-  playground: `${basePath}/playground`,
+  jobApplicants: `${basePath}/job-applicants`,
 };
 
 export const ADMIN_ROUTES = Object.values(AdminRoutes);
@@ -74,8 +74,8 @@ export const ADMIN_NAVIGATION = [
   },
   {
     icon: FlaskConical,
-    label: "Playground",
-    path: AdminRoutes.playground,
+    label: "Job Applicants",
+    path: AdminRoutes.jobApplicants,
     section: "Development",
   },
 ];

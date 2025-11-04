@@ -1,14 +1,14 @@
-import { PageHeader } from "@/components/design-system";
+import { PageHeader, PrimaryButton } from "@/components/design-system";
 import { Button } from "@/components/ui/buttons/button";
-import { Heart } from "lucide-react";
+import { Eye, Heart } from "lucide-react";
 
 export default function ApplyJobHeader({
   job,
   isSaved,
-  showCompanyProfile,
-  setShowCompanyProfile,
+
   onToggleSave,
   onBack,
+  handleCompanyDetails,
 }) {
   return (
     <PageHeader
@@ -27,23 +27,14 @@ export default function ApplyJobHeader({
           <Heart className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`} />
           {isSaved ? "Saved" : "Save Job"}
         </Button>
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <span>Job Details</span>
-          <button
-            onClick={() => setShowCompanyProfile(!showCompanyProfile)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colours ${
-              showCompanyProfile ? "bg-pink-600" : "bg-gray-200"
-            }`}
-            style={showCompanyProfile ? { backgroundColor: "#E2007A" } : {}}
-          >
-            <span
-              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                showCompanyProfile ? "translate-x-6" : "translate-x-1"
-              }`}
-            />
-          </button>
-          <span>Company Profile</span>
-        </div>
+        <PrimaryButton
+          text="Company Details"
+          icon={<Eye className="h-4 w-4" />}
+          onClick={handleCompanyDetails}
+          style="outline"
+          className="text-sm"
+        />
+        <div className="flex items-center gap-2 text-sm text-gray-600"></div>
       </div>
     </PageHeader>
   );

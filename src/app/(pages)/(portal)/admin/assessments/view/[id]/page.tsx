@@ -1,9 +1,10 @@
 import AssessmentView from "../_view/assessment-view-page";
 
-export default function AssessmentViewPage({
+export default async function AssessmentViewPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  return <AssessmentView id={params.id} />;
+  const { id } = await params;
+  return <AssessmentView id={id} />;
 }

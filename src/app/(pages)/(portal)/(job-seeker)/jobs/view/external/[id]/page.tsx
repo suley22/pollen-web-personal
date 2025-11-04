@@ -17,22 +17,39 @@ import {
   Info,
   ExternalLink as ExternalLinkIcon,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { PrimaryButton } from "@/components/design-system";
 import ExternalLinks from "../../_components/jobs-view-external-links";
+import { useExternalJobById } from "../../../_services/jobs-service";
 
-export default function ExternalJobPage({ job }) {
+export default function ExternalJobPage() {
   const router = useRouter();
+  const params = useParams();
+  const jobId = params.id as string;
+
+  // Fetch external job by ID
+  const { data: job, isLoading } = useExternalJobById(jobId);
 
   const handleBack = () => {
     router.back();
   };
 
   const handleApply = () => {
-    if (job?.external_link) {
-      window.open(job.external_link, "_blank", "noopener,noreferrer");
+    if (job?.external_links) {
+      window.open(job.external_links, "_blank", "noopener,noreferrer");
     }
   };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <PageContainer>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-muted-foreground">Loading job details...</div>
+        </div>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer>

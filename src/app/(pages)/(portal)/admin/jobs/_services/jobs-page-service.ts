@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/utils/supabase/client";
+import { JobHelper } from "@/types/jobs-types";
 import { getLoggedInUserId } from "@/services/userService";
 
 const supabase = createClient();
@@ -342,7 +343,10 @@ export function useJobById(id: string) {
             : "Unassigned",
       };
 
-      return job;
+      return {
+        ...job,
+        profile_completeness: JobHelper.calculateProfileCompleteness(job),
+      };
     },
   });
 }
@@ -457,6 +461,9 @@ const transformFormDataToDatabase = (formData: FormData) => {
     pollen_approved_requirements: pollen_approved_requirements,
     internal_notes: formJobData.internal_notes,
     user_id: formJobData.user_id || null,
+    persona_result_assessment_id:
+      formJobData.persona_result_assessment_id || null,
+    skills_assessment_id: formJobData.skills_assessment_id || null,
   };
 };
 

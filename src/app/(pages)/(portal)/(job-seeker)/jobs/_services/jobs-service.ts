@@ -169,6 +169,29 @@ export function useJobById(jobId: string | null) {
 }
 
 // ===============
+// Hook: fetch a single external job by id
+// ===============
+export function useExternalJobById(jobId: string | null) {
+  return useQuery({
+    enabled: !!jobId,
+    queryKey: [jobsQueryKey, "external", "detail", jobId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("external_jobs")
+        .select("*")
+        .eq("id", jobId)
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
+    },
+  });
+}
+
+// ===============
 // Hook: check if user has already applied to a job
 // ===============
 export function useCheckIfUserApplied(jobId: string | null) {

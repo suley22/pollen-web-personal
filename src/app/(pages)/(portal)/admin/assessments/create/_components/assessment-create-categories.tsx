@@ -40,9 +40,14 @@ export function AssessmentCreateCategories({
   getCategoryOptionsCount,
 }: AssessmentCreateCategoriesProps) {
   return (
-    <FormCard title="Categories" icon={<Palette className="h-5 w-5" />}>
+    <div title="Categories">
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-4">
+          <div className="flex gap-2 items-center text-lg font-medium">
+            <Palette className="h-5 w-5" />
+            Categories
+          </div>
+          <Divider />
           <div className="flex flex-row gap-4">
             <div className="w-48">
               <ColorSelector
@@ -140,6 +145,6 @@ export function AssessmentCreateCategories({
           </div>
         )}
       </div>
-    </FormCard>
+    </div>
   );
 }

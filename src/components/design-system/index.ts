@@ -60,3 +60,4 @@ export {
   ExternalBadge,
   ApprovalSourceBadge,
 } from "./badge";
+export { FileViewerDialog } from "./file-viewer-dialog";

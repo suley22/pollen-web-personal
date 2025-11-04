@@ -72,7 +72,7 @@ export function JobListSection({
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="flex flex-col gap-4">
         {jobs.map((job) => (
           <JobCardItem key={job.id} job={job} showAdminBadge={true} />
         ))}

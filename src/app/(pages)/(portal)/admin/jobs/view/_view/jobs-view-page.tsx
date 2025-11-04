@@ -78,11 +78,11 @@ export default function JobsViewComponent({ id = null }) {
         </TabsContent>
 
         <TabsContent value="persona" className="space-y-6">
-          <JobPersonaTab isLoading={isLoading} />
+          <JobPersonaTab job={job} isLoading={isLoading} />
         </TabsContent>
 
         <TabsContent value="assessment" className="space-y-6">
-          <JobAssessmentTab isLoading={isLoading} />
+          <JobAssessmentTab job={job} isLoading={isLoading} />
         </TabsContent>
       </Tabs>
     </div>

@@ -7,11 +7,15 @@ import {
   useCheckIfUserApplied,
 } from "../../_services/jobs-service";
 import { useToastNotifications } from "@/hooks/useToastNotifications";
+import { useAssessmentById } from "@/assessments/_services/assessments-page-service";
+
+import { JobSeekerRoutes } from "../../../router";
 
 export function useApply() {
   const [currentStep, setCurrentStep] = useState(1);
   const [showCompanyProfile, setShowCompanyProfile] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showAssessment, setShowAssessment] = useState(false);
   const router = useRouter();
   const params = useParams();
   const [savedJobs, setSavedJobs] = useState<Set<string>>(new Set());
@@ -19,25 +23,34 @@ export function useApply() {
 
   const jobId = params.id as string;
 
-  // React Query: Fetch job by ID
   const { data: job = null, isLoading: loading } = useJobById(jobId);
 
-  // React Query: Check if user has applied
+  const { data: assessment, isLoading: isLoadingAssessment } =
+    useAssessmentById(job?.skills_assessment_id);
+
   const { data: applicationStatus } = useCheckIfUserApplied(jobId);
   const hasApplied = applicationStatus?.hasApplied || false;
 
-  // React Query: Create job application mutation
   const createApplicationMutation = useCreateJobApplication();
 
-  // React Query: Save job mutation
   const saveJobMutation = useSaveJob();
 
   const handleBack = () => {
     router.back();
   };
 
-  // Create job application
-  const handleStart = useCallback(async () => {
+  const handleStart = useCallback(() => {
+    setIsDialogOpen(false);
+    setShowAssessment(true);
+    setCurrentStep(2);
+  }, []);
+
+  const handleHideAssessment = useCallback(() => {
+    setShowAssessment(false);
+    setCurrentStep(1);
+  }, []);
+
+  const handleSubmitApplication = useCallback(async () => {
     if (!job?.id) {
       console.error("❌ No job ID available");
       showError("Error", "Job information is not available");
@@ -46,19 +59,16 @@ export function useApply() {
 
     createApplicationMutation.mutate(job.id, {
       onSuccess: () => {
-        setIsDialogOpen(false);
         showSuccess(
           "Application submitted successfully!",
           "Your application has been submitted. We'll review it and get back to you soon.",
         );
 
-        // Redirect back to jobs list after a brief delay
         setTimeout(() => {
           router.push("/jobs");
         }, 1500);
       },
       onError: (error: any) => {
-        setIsDialogOpen(false);
         showError(
           "Application failed",
           error?.message ||
@@ -68,7 +78,6 @@ export function useApply() {
     });
   }, [job?.id, createApplicationMutation, router, showSuccess, showError]);
 
-  // Handle favorite job toggle
   const saveFavoriteJob = useCallback(
     (jobId: string) => {
       const alreadySaved = savedJobs.has(jobId);
@@ -87,10 +96,8 @@ export function useApply() {
         });
       }
 
-      // Call the mutation
       saveJobMutation.mutate(jobId, {
         onError: () => {
-          // Revert on error
           if (alreadySaved) {
             setSavedJobs((prev) => {
               const newSet = new Set(prev);
@@ -110,7 +117,6 @@ export function useApply() {
     [savedJobs, saveJobMutation],
   );
 
-  // Check if a job is saved
   const isSaved = useCallback(
     (jobId: string) => {
       return savedJobs.has(jobId);
@@ -118,17 +124,30 @@ export function useApply() {
     [savedJobs],
   );
 
+  const handleCompanyDetails = useCallback(() => {
+    if (job?.company_id) {
+      router.push(JobSeekerRoutes.companyView(job.company_id));
+    }
+  }, [job?.company_id, router]);
+
   return {
     currentStep,
     showCompanyProfile,
     setShowCompanyProfile,
     handleBack,
     handleStart,
+    handleSubmitApplication,
+    handleCompanyDetails,
     job,
+    assessment,
     loading,
+    isLoadingAssessment,
     hasApplied,
     isDialogOpen,
     setIsDialogOpen,
+    showAssessment,
+    setShowAssessment,
+    handleHideAssessment,
     isApplying: createApplicationMutation.isPending,
     saveFavoriteJob,
     isSaved,

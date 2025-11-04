@@ -1,9 +1,7 @@
 "use client";
 
 import { AssessmentQuestion } from "@/types/assessment-types";
-import { AssessmentCreateMultipleChoicePreview } from "@/app/(pages)/(portal)/admin/assessments/create/_components/assessment-create-multiple-choice-preview";
-import { AssessmentCreateFreeInputPreview } from "@/app/(pages)/(portal)/admin/assessments/create/_components/assessment-create-free-input-preview";
-import { AssessmentCreateFileUploadPreview } from "@/app/(pages)/(portal)/admin/assessments/create/_components/assessment-create-file-upload-preview";
+import { AssessmentCreateUnifiedPreview } from "@/assessments/create/_components/assessment-create-unified-preview";
 
 interface AssessmentQuestionsProps {
   questions: AssessmentQuestion[];
@@ -24,69 +22,42 @@ export function AssessmentQuestions({
   instructionsDescription = "",
   categories = [],
 }: AssessmentQuestionsProps) {
-  // Render the appropriate preview component based on type
-  if (type === "multiple_choice") {
-    const convertedQuestions = questions.map((q) => ({
+  // Convert new AssessmentQuestion format to old format expected by the unified preview
+  const convertedQuestions = questions.map((q, index) => {
+    // Base question structure with common fields
+    const baseQuestion: any = {
+      id: q.id || `question-${index}`,
+      type: q.type,
       title: q.title,
-      description: q.subtitle || "",
-      options_title: q.multiple_choice?.options_title || "",
-      options: q.multiple_choice?.options || [],
-      categoryId: q.multiple_choice?.categoryId,
-    }));
+      description: q.subtitle || "", // Map subtitle to description
+    };
 
-    return (
-      <AssessmentCreateMultipleChoicePreview
-        assessmentTitle={assessmentTitle}
-        assessmentDescription={assessmentDescription}
-        instructionsTitle={instructionsTitle}
-        instructionsDescription={instructionsDescription}
-        questions={convertedQuestions}
-        categories={categories}
-      />
-    );
-  }
+    // Add type-specific fields based on question type
+    if (q.type === "multiple_choice" && q.multiple_choice) {
+      baseQuestion.options_title = q.multiple_choice.options_title || "";
+      baseQuestion.options = q.multiple_choice.options || [];
+      baseQuestion.categoryId = q.multiple_choice.categoryId;
+    } else if (q.type === "free_input" && q.free_input) {
+      baseQuestion.max_characters = q.free_input.placeholder || "";
+    } else if (q.type === "file_upload" && q.file_upload) {
+      // For file_upload, we need to pass the file_upload object with referenceFiles
+      baseQuestion.file_upload = {
+        referenceFiles: q.file_upload.referenceFiles || [],
+      };
+    }
 
-  if (type === "free_input") {
-    const convertedQuestions = questions.map((q) => ({
-      title: q.title,
-      subtitle: q.subtitle || "",
-      placeholder: q.free_input?.placeholder || "",
-    }));
+    return baseQuestion;
+  });
 
-    return (
-      <AssessmentCreateFreeInputPreview
-        assessmentTitle={assessmentTitle}
-        assessmentDescription={assessmentDescription}
-        instructionsTitle={instructionsTitle}
-        instructionsDescription={instructionsDescription}
-        questions={convertedQuestions}
-      />
-    );
-  }
-
-  if (type === "file_upload") {
-    const convertedQuestions = questions.map((q) => ({
-      title: q.title,
-      subtitle: q.subtitle || "",
-      referenceFiles:
-        q.file_upload?.referenceFiles?.map((rf) => ({
-          id: rf.id,
-          name: rf.name,
-          fileName: rf.fileName,
-          file: rf.file || null,
-        })) || [],
-    }));
-
-    return (
-      <AssessmentCreateFileUploadPreview
-        assessmentTitle={assessmentTitle}
-        assessmentDescription={assessmentDescription}
-        instructionsTitle={instructionsTitle}
-        instructionsDescription={instructionsDescription}
-        questions={convertedQuestions}
-      />
-    );
-  }
-
-  return null;
+  return (
+    <AssessmentCreateUnifiedPreview
+      assessmentTitle={assessmentTitle}
+      assessmentDescription={assessmentDescription}
+      instructionsTitle={instructionsTitle}
+      instructionsDescription={instructionsDescription}
+      questions={convertedQuestions}
+      categories={categories}
+      isEditMode={false}
+    />
+  );
 }

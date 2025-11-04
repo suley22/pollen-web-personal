@@ -22,6 +22,7 @@ interface AssessmentViewHeaderProps {
   onDelete: () => void;
   isUpdating?: boolean;
   isDeleting?: boolean;
+  children?: React.ReactNode;
 }
 
 export function AssessmentViewHeader({
@@ -35,6 +36,7 @@ export function AssessmentViewHeader({
   onDelete,
   isUpdating = false,
   isDeleting = false,
+  children,
 }: AssessmentViewHeaderProps) {
   const isDraft = status === AssessmentStatusEnum.Draft;
   const isLive = status === AssessmentStatusEnum.Live;
@@ -86,6 +88,9 @@ export function AssessmentViewHeader({
         onConfirm={onDelete}
         confirmText="Delete Assessment"
       />
+
+      {/* Custom actions from parent */}
+      {children}
     </PageHeader>
   );
 }

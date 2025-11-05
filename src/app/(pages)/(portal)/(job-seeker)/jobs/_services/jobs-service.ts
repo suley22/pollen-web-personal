@@ -311,3 +311,50 @@ export function useCreateJobApplication() {
     },
   });
 }
+
+// ===============
+// Hook: fetch all user applications to check applied status and interview links
+// ===============
+export function useUserApplications() {
+  return useQuery<{
+    appliedJobIds: Set<string>;
+    jobsWithInterviewLink: Set<string>;
+  }>({
+    queryKey: [jobsQueryKey, "user-applications"],
+    queryFn: async () => {
+      const userAuthId = await getLoggedInUserId();
+
+      if (!userAuthId) {
+        return {
+          appliedJobIds: new Set<string>(),
+          jobsWithInterviewLink: new Set<string>(),
+        };
+      }
+
+      const { data, error } = await supabase
+        .from("job_applications")
+        .select("job_id, pollen_interview_invite_link")
+        .eq("user_id", userAuthId);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // Create sets for quick lookup
+      const appliedJobIds = new Set<string>(
+        data?.map((app) => app.job_id) || [],
+      );
+      const jobsWithInterviewLink = new Set<string>(
+        data
+          ?.filter((app) => app.pollen_interview_invite_link)
+          .map((app) => app.job_id) || [],
+      );
+
+      return {
+        appliedJobIds,
+        jobsWithInterviewLink,
+      };
+    },
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  });
+}

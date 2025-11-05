@@ -10,6 +10,7 @@ import {
   ExternalLink,
   Copy,
   Check,
+  Edit2,
 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { useAssessmentResponse } from "../../../(job-seeker)/jobs/_services/assessment-response-service";
@@ -40,6 +41,7 @@ interface TaskDrawerProps {
       score4: number;
     },
   ) => void;
+  onUpdateCalendlyLink: (applicationId: string, calendlyLink: string) => void;
   onInviteToInterview: (applicationId: string) => void;
   onUpdateStatusAndSubStatus: (
     applicationId: string,
@@ -54,6 +56,7 @@ export function TaskDrawer({
   jobSeeker,
   onClose,
   onUpdateScores,
+  onUpdateCalendlyLink,
   onInviteToInterview,
   onUpdateStatusAndSubStatus,
 }: TaskDrawerProps) {
@@ -62,12 +65,16 @@ export function TaskDrawer({
     status: string;
     subStatus: string;
   } | null>(null);
-  const [showAssessmentPreview, setShowAssessmentPreview] = useState(false);
+  const [previewMode, setPreviewMode] = useState<
+    "assessment" | "calendly" | null
+  >(null);
 
   // Calendly link states
   const [calendlyLink, setCalendlyLink] = useState<string | null>(
-    jobSeeker?.calendly_link || null,
+    jobSeeker?.pollen_interview_invite_link || null,
   );
+  const [isEditingLink, setIsEditingLink] = useState(false);
+  const [isSavingLink, setIsSavingLink] = useState(false);
   const [isGeneratingLink, setIsGeneratingLink] = useState(false);
   const [selectedEventType, setSelectedEventType] = useState("");
   const [showLinkDialog, setShowLinkDialog] = useState(false);
@@ -146,10 +153,12 @@ export function TaskDrawer({
     },
   });
 
-  // Actualizar substatus cuando cambie el jobSeeker
+  // Actualizar substatus y calendly link cuando cambie el jobSeeker
   useEffect(() => {
     if (jobSeeker) {
       setSubStatus(jobSeeker.sub_status || "");
+      setCalendlyLink(jobSeeker.pollen_interview_invite_link || null);
+      setIsEditingLink(false);
     }
   }, [jobSeeker]);
 
@@ -210,20 +219,32 @@ export function TaskDrawer({
     setIsGeneratingLink(true);
     try {
       const link = await createSingleUseSchedulingLink(selectedEventType, {
-        applicant_name: jobSeeker?.name || "",
-        applicant_email: jobSeeker?.email || "",
-        application_id: jobSeeker?.application_id || "",
+        utm_source: "JOB_APPLICATION",
+        utm_content: jobSeeker?.application_id || "",
       });
       setCalendlyLink(link.booking_url);
       setShowLinkDialog(false);
 
-      // TODO: Guardar el link en la base de datos asociado al applicant
-      // onUpdateCalendlyLink(jobSeeker.application_id, link.booking_url);
+      // Save to database
+      if (jobSeeker?.application_id) {
+        onUpdateCalendlyLink(jobSeeker.application_id, link.booking_url);
+      }
     } catch (error) {
       console.error("Error generating Calendly link:", error);
       alert("Failed to generate link. Please try again.");
     } finally {
       setIsGeneratingLink(false);
+    }
+  };
+
+  const handleSaveCalendlyLink = () => {
+    if (calendlyLink && jobSeeker?.application_id) {
+      setIsSavingLink(true);
+      onUpdateCalendlyLink(jobSeeker.application_id, calendlyLink);
+      setTimeout(() => {
+        setIsSavingLink(false);
+        setIsEditingLink(false);
+      }, 1000);
     }
   };
 
@@ -251,27 +272,57 @@ export function TaskDrawer({
 
       {/* Split Panel Layout - Fixed sizes, no animations */}
       <div className="fixed inset-0 z-50 flex justify-end">
-        {/* Left Panel - Assessment Preview (50%) - Conditional */}
-        {showAssessmentPreview && (
+        {/* Left Panel - Preview (50%) - Conditional */}
+        {previewMode && (
           <div className="w-1/2 bg-gray-50 shadow-xl overflow-hidden border-r border-gray-300">
             <div className="flex flex-col h-full">
               {/* Left Header */}
               <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-white">
                 <div className="flex items-center gap-4">
-                  <div className="text-xl font-bold">Assessment Preview</div>
+                  <div className="text-xl font-bold">
+                    {previewMode === "assessment"
+                      ? "Assessment Preview"
+                      : "Calendly Booking Preview"}
+                  </div>
                 </div>
+                {/* Close Preview Button */}
+                <button
+                  onClick={() => setPreviewMode(null)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  title="Close Preview"
+                >
+                  <X className="h-5 w-5 text-gray-500" />
+                </button>
               </div>
 
-              {/* Left Content - Assessment Responses */}
-              <div className="flex-1 overflow-y-auto p-6">
-                <AssessmentPreview
-                  title={assessmentResponse?.title}
-                  subtitle={assessmentResponse?.subtitle}
-                  questions={assessmentResponse?.questions || []}
-                  showCategorySummary={true}
-                  isLoading={isLoadingAssessment}
-                  error={assessmentError?.message}
-                />
+              {/* Left Content - Assessment or Calendly */}
+              <div className="flex-1 overflow-y-auto">
+                {previewMode === "assessment" ? (
+                  <div className="p-6">
+                    <AssessmentPreview
+                      title={assessmentResponse?.title}
+                      subtitle={assessmentResponse?.subtitle}
+                      questions={assessmentResponse?.questions || []}
+                      showCategorySummary={true}
+                      isLoading={isLoadingAssessment}
+                      error={assessmentError?.message}
+                    />
+                  </div>
+                ) : calendlyLink ? (
+                  <div className="h-full">
+                    <iframe
+                      src={calendlyLink}
+                      width="100%"
+                      height="100%"
+                      frameBorder="0"
+                      title="Calendly Booking Page"
+                    />
+                  </div>
+                ) : (
+                  <div className="h-full flex items-center justify-center p-6">
+                    <p className="text-gray-500">No Calendly link available</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -352,35 +403,104 @@ export function TaskDrawer({
                         <input
                           type="text"
                           value={calendlyLink}
-                          readOnly
-                          className="flex-1 text-sm bg-gray-50 border border-gray-200 rounded px-3 py-2 font-mono text-gray-600"
+                          onChange={(e) => setCalendlyLink(e.target.value)}
+                          readOnly={!isEditingLink}
+                          className={`flex-1 text-sm border border-gray-200 rounded px-3 py-2 font-mono ${
+                            isEditingLink
+                              ? "bg-white text-gray-900"
+                              : "bg-gray-50 text-gray-600"
+                          }`}
                         />
-                        <button
-                          onClick={handleCopyLink}
-                          className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1"
-                          title="Copy link"
-                        >
-                          {copied ? (
-                            <>
-                              <Check className="w-4 h-4" />
-                              <span className="text-xs">Copied!</span>
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="w-4 h-4" />
-                              <span className="text-xs">Copy</span>
-                            </>
-                          )}
-                        </button>
-                        <a
-                          href={calendlyLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-1"
-                          title="Open link"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
+                        {isEditingLink ? (
+                          <>
+                            <button
+                              onClick={handleSaveCalendlyLink}
+                              disabled={isSavingLink}
+                              className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1 disabled:opacity-50"
+                              title="Save link"
+                            >
+                              {isSavingLink ? (
+                                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                              ) : (
+                                <Save className="w-4 h-4" />
+                              )}
+                            </button>
+                            <button
+                              onClick={() => {
+                                setCalendlyLink(
+                                  jobSeeker?.pollen_interview_invite_link ||
+                                    null,
+                                );
+                                setIsEditingLink(false);
+                              }}
+                              className="px-3 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition-colors flex items-center gap-1"
+                              title="Cancel"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => setIsEditingLink(true)}
+                              className="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-1"
+                              title="Edit link"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() =>
+                                setPreviewMode(
+                                  previewMode === "calendly"
+                                    ? null
+                                    : "calendly",
+                                )
+                              }
+                              className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1 ${
+                                previewMode === "calendly"
+                                  ? "bg-blue-600 text-white hover:bg-blue-700"
+                                  : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                              }`}
+                              title={
+                                previewMode === "calendly"
+                                  ? "Hide preview"
+                                  : "Show preview"
+                              }
+                            >
+                              {previewMode === "calendly" ? (
+                                <EyeOff className="w-4 h-4" />
+                              ) : (
+                                <Eye className="w-4 h-4" />
+                              )}
+                            </button>
+                            <button
+                              onClick={handleCopyLink}
+                              className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1"
+                              title="Copy link"
+                            >
+                              {copied ? (
+                                <>
+                                  <Check className="w-4 h-4" />
+                                  <span className="text-xs">Copied!</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="w-4 h-4" />
+                                  <span className="text-xs">Copy</span>
+                                </>
+                              )}
+                            </button>
+                            <a
+                              href={calendlyLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-1"
+                              title="Open link"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                            </a>
+                          </>
+                        )}
                       </div>
                     </div>
                     <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded border border-amber-200">
@@ -454,19 +574,23 @@ export function TaskDrawer({
                             </div>
 
                             <PrimaryButton
-                              text={"Toggle Preview"}
+                              text={"Preview Assessment"}
                               icon={
-                                showAssessmentPreview ? (
+                                previewMode === "assessment" ? (
                                   <EyeOff className="w-4 h-4" />
                                 ) : (
                                   <Eye className="w-4 h-4" />
                                 )
                               }
                               onClick={() =>
-                                setShowAssessmentPreview(!showAssessmentPreview)
+                                setPreviewMode(
+                                  previewMode === "assessment"
+                                    ? null
+                                    : "assessment",
+                                )
                               }
                               style={
-                                showAssessmentPreview
+                                previewMode === "assessment"
                                   ? "destructive"
                                   : "outline"
                               }

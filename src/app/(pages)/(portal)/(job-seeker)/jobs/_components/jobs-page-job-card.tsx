@@ -14,7 +14,13 @@ import {
 import { useRouter } from "next/navigation";
 import { JobSeekerRoutes } from "../../router";
 
-export function JobCard({ job, isSaved, onToggleSave }) {
+export function JobCard({
+  job,
+  isSaved,
+  onToggleSave,
+  hasApplied = false,
+  hasInterviewLink = false,
+}) {
   const router = useRouter();
 
   return (
@@ -119,22 +125,46 @@ export function JobCard({ job, isSaved, onToggleSave }) {
                   )}
                 </div>
 
-                {/* View & Apply Button */}
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="h-8 px-4"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (job.source === "external") {
-                      router.push(JobSeekerRoutes.applyExternalJobs(job.id));
-                    } else {
-                      router.push(JobSeekerRoutes.applyJobs(job.id));
-                    }
-                  }}
-                >
-                  <span className="text-xs">View & Apply</span>
-                </Button>
+                {/* View & Apply Button or Applied Badges */}
+                {hasApplied ? (
+                  <div className="flex items-center gap-2">
+                    <Badge
+                      variant="default"
+                      className="bg-green-100 text-green-700 border-green-200 h-8 px-4"
+                    >
+                      <span className="text-xs font-medium">
+                        ✓ Application Submitted
+                      </span>
+                    </Badge>
+                    {hasInterviewLink && (
+                      <Badge
+                        variant="default"
+                        className="bg-purple-100 text-purple-700 border-purple-200 h-8 px-4 flex items-center gap-1"
+                      >
+                        <Calendar className="w-3 h-3" />
+                        <span className="text-xs font-medium">
+                          Schedule Interview
+                        </span>
+                      </Badge>
+                    )}
+                  </div>
+                ) : (
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="h-8 px-4"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (job.source === "external") {
+                        router.push(JobSeekerRoutes.applyExternalJobs(job.id));
+                      } else {
+                        router.push(JobSeekerRoutes.applyJobs(job.id));
+                      }
+                    }}
+                  >
+                    <span className="text-xs">View & Apply</span>
+                  </Button>
+                )}
               </div>
             </div>
           </div>

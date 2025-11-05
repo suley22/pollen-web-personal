@@ -6,6 +6,7 @@ import {
   useUpdateApplicantStatus,
   useUpdateAssessmentScores,
   useUpdateApplicantStatusAndSubStatus,
+  useUpdateCalendlyLink,
   transformJobSeekersToList,
   getColumnInfo,
   type GroupedApplicants,
@@ -39,6 +40,7 @@ export function useJobApplicantsHook(jobId: string | null) {
   const updateAssessmentScoresMutation = useUpdateAssessmentScores();
   const updateStatusAndSubStatusMutation =
     useUpdateApplicantStatusAndSubStatus();
+  const updateCalendlyLinkMutation = useUpdateCalendlyLink();
 
   // View state
   const [viewMode, setViewMode] = useState<"board" | "grid">("board");
@@ -150,6 +152,22 @@ export function useJobApplicantsHook(jobId: string | null) {
     updateAssessmentScoresMutation.mutate({
       applicationId,
       scores,
+      jobId,
+    });
+  };
+
+  /**
+   * Actualiza el link de Calendly de un aplicante
+   */
+  const handleUpdateCalendlyLink = (
+    applicationId: string,
+    calendlyLink: string,
+  ) => {
+    if (!jobId) return;
+
+    updateCalendlyLinkMutation.mutate({
+      applicationId,
+      calendlyLink,
       jobId,
     });
   };
@@ -316,6 +334,7 @@ export function useJobApplicantsHook(jobId: string | null) {
     handleJobSeekerClick: handleClick,
     closeDrawer,
     handleUpdateAssessmentScores,
+    handleUpdateCalendlyLink,
     handleInviteToPollenInterview,
     handleUpdateStatusAndSubStatus,
 

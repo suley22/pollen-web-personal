@@ -65,8 +65,10 @@ async function fetchCalendlyEvents(filters: EventsFilters) {
   const count = pageSize;
 
   // Validar que el USER_URI tenga el formato correcto
-  if (!CALENDLY_USER_URI.startsWith('https://api.calendly.com/users/')) {
-    throw new Error("Invalid Calendly User URI format. Should be: https://api.calendly.com/users/YOUR_UUID");
+  if (!CALENDLY_USER_URI.startsWith("https://api.calendly.com/users/")) {
+    throw new Error(
+      "Invalid Calendly User URI format. Should be: https://api.calendly.com/users/YOUR_UUID",
+    );
   }
 
   // Construir URL con parámetros manualmente para evitar doble codificación del user URI
@@ -83,7 +85,7 @@ async function fetchCalendlyEvents(filters: EventsFilters) {
     // Calendly no soporta búsqueda directa, tendremos que filtrar del lado del cliente
   }
 
-  const url = `https://api.calendly.com/scheduled_events?${queryParams.join('&')}`;
+  const url = `https://api.calendly.com/scheduled_events?${queryParams.join("&")}`;
 
   const response = await fetch(url, {
     method: "GET",
@@ -104,9 +106,10 @@ async function fetchCalendlyEvents(filters: EventsFilters) {
   // Filtrar por término de búsqueda del lado del cliente si existe
   if (filters.searchTerm) {
     const searchLower = filters.searchTerm.toLowerCase();
-    events = events.filter((event: CalendlyEvent) => 
-      event.name.toLowerCase().includes(searchLower) ||
-      event.event_type.toLowerCase().includes(searchLower)
+    events = events.filter(
+      (event: CalendlyEvent) =>
+        event.name.toLowerCase().includes(searchLower) ||
+        event.event_type.toLowerCase().includes(searchLower),
     );
   }
 
@@ -154,7 +157,7 @@ export function useCalendlyEventDetails(eventUri: string) {
         throw new Error("Calendly API token not configured");
       }
 
-      console.log(eventUri)
+      console.log(eventUri);
 
       const response = await fetch(eventUri, {
         method: "GET",
@@ -246,7 +249,7 @@ export function useCalendlyEventTypes() {
         `active=true`,
       ];
 
-      const url = `https://api.calendly.com/event_types?${queryParams.join('&')}`;
+      const url = `https://api.calendly.com/event_types?${queryParams.join("&")}`;
 
       const response = await fetch(url, {
         method: "GET",
@@ -286,7 +289,7 @@ export interface SingleUseSchedulingLink {
 // Función para crear un link de un solo uso
 export async function createSingleUseSchedulingLink(
   eventTypeUri: string,
-  additionalParams?: Record<string, string>
+  additionalParams?: Record<string, string>,
 ): Promise<SingleUseSchedulingLink> {
   const CALENDLY_API_TOKEN = process.env.NEXT_PUBLIC_CALENDLY_API_TOKEN;
   const CALENDLY_USER_URI = process.env.NEXT_PUBLIC_CALENDLY_USER_URI;
@@ -301,41 +304,33 @@ export async function createSingleUseSchedulingLink(
     owner_type: "EventType",
   };
 
-  const response = await fetch(
-    "https://api.calendly.com/scheduling_links",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${CALENDLY_API_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    }
-  );
+  const response = await fetch("https://api.calendly.com/scheduling_links", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${CALENDLY_API_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
 
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(
-      errorData.message || "Failed to create single-use scheduling link"
+      errorData.message || "Failed to create single-use scheduling link",
     );
   }
 
   const data = await response.json();
-  
-  // Agregar parámetros UTM o información adicional al link
+
+  // Agregar parámetros adicionales al link si se proporcionan
   const bookingUrl = new URL(data.resource.booking_url);
-  
-  // Parámetros por defecto
-  bookingUrl.searchParams.append("utm_source", "JOB_APPLICATION");
-  bookingUrl.searchParams.append("utm_content", "14");
-  
-  // Agregar parámetros adicionales si se proporcionan
+
   if (additionalParams) {
     Object.entries(additionalParams).forEach(([key, value]) => {
       bookingUrl.searchParams.append(key, value);
     });
   }
-  
+
   return {
     ...data.resource,
     booking_url: bookingUrl.toString(),

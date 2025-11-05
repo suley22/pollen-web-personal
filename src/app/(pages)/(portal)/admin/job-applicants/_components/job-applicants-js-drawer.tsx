@@ -2,7 +2,6 @@
 
 import {
   X,
-  Save,
   Send,
   Eye,
   EyeOff,
@@ -10,9 +9,14 @@ import {
   ExternalLink,
   Copy,
   Check,
-  Edit2,
+  Calendar,
+  CheckCircle,
+  Clock,
+  MapPin,
+  Video,
 } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useAssessmentResponse } from "../../../(job-seeker)/jobs/_services/assessment-response-service";
 import { useSkillRatings } from "@/hooks/useSkillRatings";
 import { AssessmentPreview } from "@/components/assessment/assessment-preview";
@@ -27,6 +31,31 @@ import {
   useCalendlyEventTypes,
   createSingleUseSchedulingLink,
 } from "../../events/_services/calendly-service";
+
+// Función para obtener detalles del evento de Calendly
+async function fetchCalendlyEventDetails(eventUri: string) {
+  const CALENDLY_API_TOKEN = process.env.NEXT_PUBLIC_CALENDLY_API_TOKEN;
+
+  if (!CALENDLY_API_TOKEN) {
+    throw new Error("Calendly API token not configured");
+  }
+
+  const response = await fetch(eventUri, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${CALENDLY_API_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to fetch event details");
+  }
+
+  const data = await response.json();
+  return data.resource;
+}
 
 interface TaskDrawerProps {
   isOpen: boolean;
@@ -73,8 +102,6 @@ export function TaskDrawer({
   const [calendlyLink, setCalendlyLink] = useState<string | null>(
     jobSeeker?.pollen_interview_invite_link || null,
   );
-  const [isEditingLink, setIsEditingLink] = useState(false);
-  const [isSavingLink, setIsSavingLink] = useState(false);
   const [isGeneratingLink, setIsGeneratingLink] = useState(false);
   const [selectedEventType, setSelectedEventType] = useState("");
   const [showLinkDialog, setShowLinkDialog] = useState(false);
@@ -90,6 +117,20 @@ export function TaskDrawer({
     isLoading: isLoadingAssessment,
     error: assessmentError,
   } = useAssessmentResponse(jobSeeker?.assessment_response_id);
+
+  // Extraer el URI del evento si es un URI de invitee
+  const calendlyEventUri = jobSeeker?.calendly_invite;
+  const eventUri = calendlyEventUri?.includes("/invitees/")
+    ? calendlyEventUri.split("/invitees/")[0]
+    : calendlyEventUri;
+
+  // Fetch Calendly event details if event is scheduled
+  const { data: eventDetails, isLoading: isLoadingEvent } = useQuery({
+    queryKey: ["calendly-event-admin", eventUri],
+    queryFn: () => fetchCalendlyEventDetails(eventUri!),
+    enabled: !!eventUri,
+    staleTime: 1000 * 60 * 5, // 5 minutos
+  });
 
   // Memoize initial ratings to prevent unnecessary re-renders (trabajo directo con 0-10)
   const initialRatings = useMemo(
@@ -158,7 +199,6 @@ export function TaskDrawer({
     if (jobSeeker) {
       setSubStatus(jobSeeker.sub_status || "");
       setCalendlyLink(jobSeeker.pollen_interview_invite_link || null);
-      setIsEditingLink(false);
     }
   }, [jobSeeker]);
 
@@ -234,17 +274,6 @@ export function TaskDrawer({
       alert("Failed to generate link. Please try again.");
     } finally {
       setIsGeneratingLink(false);
-    }
-  };
-
-  const handleSaveCalendlyLink = () => {
-    if (calendlyLink && jobSeeker?.application_id) {
-      setIsSavingLink(true);
-      onUpdateCalendlyLink(jobSeeker.application_id, calendlyLink);
-      setTimeout(() => {
-        setIsSavingLink(false);
-        setIsEditingLink(false);
-      }, 1000);
     }
   };
 
@@ -374,148 +403,281 @@ export function TaskDrawer({
               </div>
               <Divider />
 
-              {/* Calendly Interview Link Section */}
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-5">
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                      <LinkIcon className="w-5 h-5 text-green-600" />
-                      Interview Scheduling Link
-                    </h3>
-                    <p className="text-sm text-gray-600 mt-1">
-                      {calendlyLink
-                        ? "Single-use link generated"
-                        : "Generate a link to schedule an interview"}
-                    </p>
-                  </div>
-                </div>
-
-                {calendlyLink ? (
-                  <div className="space-y-3">
-                    <div className="bg-white border border-green-200 rounded-lg p-3">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span className="text-xs font-medium text-green-700">
-                          Active Link
-                        </span>
+              {/* Unified Interview Management Card */}
+              <div>
+                {eventUri && eventDetails ? (
+                  // ESTADO 3: Entrevista Confirmada - Card Verde
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-5">
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0 w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                        <CheckCircle className="w-6 h-6 text-green-600" />
                       </div>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="text"
-                          value={calendlyLink}
-                          onChange={(e) => setCalendlyLink(e.target.value)}
-                          readOnly={!isEditingLink}
-                          className={`flex-1 text-sm border border-gray-200 rounded px-3 py-2 font-mono ${
-                            isEditingLink
-                              ? "bg-white text-gray-900"
-                              : "bg-gray-50 text-gray-600"
-                          }`}
-                        />
-                        {isEditingLink ? (
-                          <>
-                            <button
-                              onClick={handleSaveCalendlyLink}
-                              disabled={isSavingLink}
-                              className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1 disabled:opacity-50"
-                              title="Save link"
-                            >
-                              {isSavingLink ? (
-                                <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-                              ) : (
-                                <Save className="w-4 h-4" />
-                              )}
-                            </button>
-                            <button
-                              onClick={() => {
-                                setCalendlyLink(
-                                  jobSeeker?.pollen_interview_invite_link ||
-                                    null,
-                                );
-                                setIsEditingLink(false);
-                              }}
-                              className="px-3 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition-colors flex items-center gap-1"
-                              title="Cancel"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              onClick={() => setIsEditingLink(true)}
-                              className="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-1"
-                              title="Edit link"
-                            >
-                              <Edit2 className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() =>
-                                setPreviewMode(
-                                  previewMode === "calendly"
-                                    ? null
-                                    : "calendly",
-                                )
-                              }
-                              className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1 ${
-                                previewMode === "calendly"
-                                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                                  : "bg-blue-100 text-blue-700 hover:bg-blue-200"
-                              }`}
-                              title={
-                                previewMode === "calendly"
-                                  ? "Hide preview"
-                                  : "Show preview"
-                              }
-                            >
-                              {previewMode === "calendly" ? (
-                                <EyeOff className="w-4 h-4" />
-                              ) : (
-                                <Eye className="w-4 h-4" />
-                              )}
-                            </button>
-                            <button
-                              onClick={handleCopyLink}
-                              className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1"
-                              title="Copy link"
-                            >
-                              {copied ? (
+
+                      <div className="flex-1 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <h3 className="text-lg font-semibold text-gray-900">
+                              Interview Scheduled
+                            </h3>
+                            <span className="bg-green-100 text-green-700 border border-green-300 text-xs px-2 py-1 rounded-full font-medium">
+                              Confirmed
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          {/* Date and Time */}
+                          {eventDetails.start_time && (
+                            <div className="flex items-start gap-2">
+                              <Calendar className="w-4 h-4 text-gray-600 mt-0.5" />
+                              <div>
+                                <p className="text-sm font-medium text-gray-900">
+                                  {new Date(
+                                    eventDetails.start_time,
+                                  ).toLocaleDateString("en-US", {
+                                    weekday: "long",
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                  })}
+                                </p>
+                                <p className="text-xs text-gray-600">
+                                  {new Date(
+                                    eventDetails.start_time,
+                                  ).toLocaleTimeString("en-US", {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    timeZoneName: "short",
+                                  })}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Duration */}
+                          {eventDetails.start_time && eventDetails.end_time && (
+                            <div className="flex items-center gap-2">
+                              <Clock className="w-4 h-4 text-gray-600" />
+                              <p className="text-xs text-gray-600">
+                                {Math.round(
+                                  (new Date(eventDetails.end_time).getTime() -
+                                    new Date(
+                                      eventDetails.start_time,
+                                    ).getTime()) /
+                                    (1000 * 60),
+                                )}{" "}
+                                minutes
+                              </p>
+                            </div>
+                          )}
+
+                          {/* Location */}
+                          {eventDetails.location && (
+                            <div className="flex items-start gap-2">
+                              {eventDetails.location.type === "physical" ? (
                                 <>
-                                  <Check className="w-4 h-4" />
-                                  <span className="text-xs">Copied!</span>
+                                  <MapPin className="w-4 h-4 text-gray-600 mt-0.5" />
+                                  <p className="text-xs text-gray-600">
+                                    {eventDetails.location.location ||
+                                      "Physical location"}
+                                  </p>
                                 </>
                               ) : (
                                 <>
-                                  <Copy className="w-4 h-4" />
-                                  <span className="text-xs">Copy</span>
+                                  <Video className="w-4 h-4 text-gray-600 mt-0.5" />
+                                  <div className="flex-1">
+                                    <p className="text-xs text-gray-600 mb-1">
+                                      Video conference
+                                    </p>
+                                    {eventDetails.location.join_url && (
+                                      <a
+                                        href={eventDetails.location.join_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1 text-xs text-green-600 hover:text-green-700 font-medium"
+                                      >
+                                        Join Meeting
+                                        <ExternalLink className="w-3 h-3" />
+                                      </a>
+                                    )}
+                                  </div>
                                 </>
                               )}
-                            </button>
-                            <a
-                              href={calendlyLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-1"
-                              title="Open link"
-                            >
-                              <ExternalLink className="w-4 h-4" />
-                            </a>
-                          </>
+                            </div>
+                          )}
+
+                          {/* Event Name */}
+                          {eventDetails.name && (
+                            <div className="pt-2 border-t border-green-200">
+                              <p className="text-xs text-gray-600">
+                                <strong>Event:</strong> {eventDetails.name}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Scheduling Link - Collapsed */}
+                        {calendlyLink && (
+                          <div className="pt-3 border-t border-green-200">
+                            <details className="group">
+                              <summary className="cursor-pointer text-xs font-medium text-green-700 hover:text-green-800 flex items-center gap-1">
+                                <LinkIcon className="w-3 h-3" />
+                                View Scheduling Link
+                              </summary>
+                              <div className="mt-2 bg-white border border-green-200 rounded-lg p-2">
+                                <input
+                                  type="text"
+                                  value={calendlyLink}
+                                  readOnly
+                                  className="w-full text-xs border border-gray-200 rounded px-2 py-1 font-mono bg-gray-50 text-gray-600"
+                                />
+                              </div>
+                            </details>
+                          </div>
                         )}
                       </div>
                     </div>
-                    <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded border border-amber-200">
-                      ⚠️ This link can only be used once and will expire after
-                      the event is scheduled.
-                    </p>
+                  </div>
+                ) : calendlyLink ? (
+                  // ESTADO 2: Link Generado - Esperando Respuesta del Candidato
+                  <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-lg p-5">
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                        <Clock className="w-6 h-6 text-purple-600" />
+                      </div>
+
+                      <div className="flex-1 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <h3 className="text-lg font-semibold text-gray-900">
+                              Awaiting Candidate Response
+                            </h3>
+                            <span className="bg-purple-100 text-purple-700 border border-purple-300 text-xs px-2 py-1 rounded-full font-medium">
+                              Pending
+                            </span>
+                          </div>
+                        </div>
+
+                        <p className="text-sm text-gray-600">
+                          Interview link has been sent to{" "}
+                          <strong>{jobSeeker?.name}</strong>. Waiting for them
+                          to schedule a time.
+                        </p>
+
+                        {/* Link Management */}
+                        <div className="space-y-3">
+                          <div className="bg-white border border-purple-200 rounded-lg p-3">
+                            <div className="flex items-center gap-2 mb-2">
+                              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                              <span className="text-xs font-medium text-purple-700">
+                                Active Scheduling Link
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="text"
+                                value={calendlyLink}
+                                readOnly
+                                className="flex-1 text-sm border border-gray-200 rounded px-3 py-2 font-mono bg-gray-50 text-gray-600"
+                              />
+                              <button
+                                onClick={() =>
+                                  setPreviewMode(
+                                    previewMode === "calendly"
+                                      ? null
+                                      : "calendly",
+                                  )
+                                }
+                                className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1 ${
+                                  previewMode === "calendly"
+                                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                                    : "bg-blue-100 text-blue-700 hover:bg-blue-200"
+                                }`}
+                                title={
+                                  previewMode === "calendly"
+                                    ? "Hide preview"
+                                    : "Show preview"
+                                }
+                              >
+                                {previewMode === "calendly" ? (
+                                  <EyeOff className="w-4 h-4" />
+                                ) : (
+                                  <Eye className="w-4 h-4" />
+                                )}
+                              </button>
+                              <button
+                                onClick={handleCopyLink}
+                                className="px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-1"
+                                title="Copy link"
+                              >
+                                {copied ? (
+                                  <>
+                                    <Check className="w-4 h-4" />
+                                    <span className="text-xs">Copied!</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Copy className="w-4 h-4" />
+                                    <span className="text-xs">Copy</span>
+                                  </>
+                                )}
+                              </button>
+                              <a
+                                href={calendlyLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-1"
+                                title="Open link"
+                              >
+                                <ExternalLink className="w-4 h-4" />
+                              </a>
+                            </div>
+                          </div>
+
+                          <div className="flex items-start gap-2 text-xs text-purple-600 bg-purple-50 p-2 rounded border border-purple-200">
+                            <span>⚠️</span>
+                            <p>
+                              This link can only be used once and will expire
+                              after the event is scheduled.
+                            </p>
+                          </div>
+
+                          {/* Option to generate new link */}
+                          <button
+                            onClick={() => setShowLinkDialog(true)}
+                            className="w-full px-3 py-2 bg-white border-2 border-purple-300 text-purple-700 font-medium rounded-lg hover:bg-purple-50 transition-colors flex items-center justify-center gap-2 text-sm"
+                          >
+                            <LinkIcon className="w-4 h-4" />
+                            Generate New Link
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ) : (
-                  <button
-                    onClick={() => setShowLinkDialog(true)}
-                    className="w-full px-4 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
-                  >
-                    <LinkIcon className="w-5 h-5" />
-                    Generate Interview Link
-                  </button>
+                  // ESTADO 1: Sin Link - Generar Invitación
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                          <LinkIcon className="w-5 h-5 text-green-600" />
+                          Interview Scheduling
+                        </h3>
+                        <p className="text-sm text-gray-600 mt-1">
+                          Generate a link to invite the candidate to schedule an
+                          interview
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => setShowLinkDialog(true)}
+                      className="w-full px-4 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <LinkIcon className="w-5 h-5" />
+                      Generate Interview Link
+                    </button>
+                  </div>
                 )}
               </div>
 

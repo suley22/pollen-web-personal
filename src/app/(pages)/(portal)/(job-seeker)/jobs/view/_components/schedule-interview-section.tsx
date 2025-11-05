@@ -75,27 +75,69 @@ export function ScheduleInterviewSection({
 }: ScheduleInterviewSectionProps) {
   const [showModal, setShowModal] = useState(false);
 
-  // Fetch event details if calendlyEventUri exists
-  const { data: eventDetails, isLoading: isLoadingEvent } = useQuery({
-    queryKey: ["calendly-event", calendlyEventUri],
-    queryFn: () => fetchCalendlyEventDetails(calendlyEventUri!),
-    enabled: !!calendlyEventUri,
+  // Extraer el URI del evento si es un URI de invitee
+  // De: https://api.calendly.com/scheduled_events/UUID/invitees/UUID
+  // A: https://api.calendly.com/scheduled_events/UUID
+  const eventUri = calendlyEventUri?.includes("/invitees/")
+    ? calendlyEventUri.split("/invitees/")[0]
+    : calendlyEventUri;
+
+  // 🔍 DEBUG: Ver qué datos recibe el componente
+  console.log("🔍 ScheduleInterviewSection Props:", {
+    interviewLink,
+    calendlyEventUriOriginal: calendlyEventUri,
+    extractedEventUri: eventUri,
+    hasInterviewLink: !!interviewLink,
+    hasCalendlyEventUri: !!eventUri,
+  });
+
+  // Fetch event details if eventUri exists
+  const {
+    data: eventDetails,
+    isLoading: isLoadingEvent,
+    error: eventError,
+  } = useQuery({
+    queryKey: ["calendly-event", eventUri],
+    queryFn: () => fetchCalendlyEventDetails(eventUri!),
+    enabled: !!eventUri,
     staleTime: 1000 * 60 * 5, // 5 minutos
   });
 
-  const { data: invitees, isLoading: isLoadingInvitees } = useQuery({
-    queryKey: ["calendly-invitees", calendlyEventUri],
-    queryFn: () => fetchCalendlyEventInvitees(calendlyEventUri!),
-    enabled: !!calendlyEventUri,
+  const {
+    data: invitees,
+    isLoading: isLoadingInvitees,
+    error: inviteesError,
+  } = useQuery({
+    queryKey: ["calendly-invitees", eventUri],
+    queryFn: () => fetchCalendlyEventInvitees(eventUri!),
+    enabled: !!eventUri,
     staleTime: 1000 * 60 * 5,
   });
 
+  // 🔍 DEBUG: Ver el estado de las queries
+  console.log("🔍 Calendly Queries State:", {
+    isLoadingEvent,
+    isLoadingInvitees,
+    hasEventDetails: !!eventDetails,
+    eventError: eventError?.message,
+    inviteesError: inviteesError?.message,
+    eventDetails: eventDetails
+      ? {
+          name: eventDetails.name,
+          start_time: eventDetails.start_time,
+          status: eventDetails.status,
+        }
+      : null,
+  });
+
   if (!interviewLink) {
+    console.log("❌ No interview link - returning null");
     return null;
   }
 
   // Si ya hay un evento agendado, mostrar los detalles
-  if (calendlyEventUri && eventDetails) {
+  if (eventUri && eventDetails) {
+    console.log("✅ Showing GREEN card (confirmed interview)");
     const startTime = new Date(eventDetails.start_time);
     const endTime = new Date(eventDetails.end_time);
     const duration = Math.round(
@@ -208,6 +250,7 @@ export function ScheduleInterviewSection({
   }
 
   // Si no hay evento agendado, mostrar invitación para agendar
+  console.log("🟣 Showing PURPLE card (pending interview)");
   return (
     <>
       {/* Interview Invitation Card */}
@@ -280,7 +323,6 @@ export function ScheduleInterviewSection({
                   src={interviewLink}
                   width="100%"
                   height="100%"
-                  frameBorder="0"
                   title="Schedule Interview"
                   className="w-full h-full"
                 />

@@ -6,6 +6,7 @@ import {
   Key,
   ClipboardList as Clipboard,
   FlaskConical,
+  Calendar,
 } from "lucide-react";
 
 const basePath = "/admin";
@@ -31,6 +32,7 @@ export const AdminRoutes = {
   assessmentEdit: (id) => `${basePath}/assessments/edit/${id}`,
   assessmentView: (id) => `${basePath}/assessments/view/${id}`,
   jobApplicants: `${basePath}/job-applicants`,
+  events: `${basePath}/events`,
 };
 
 export const ADMIN_ROUTES = Object.values(AdminRoutes);
@@ -54,6 +56,13 @@ export const ADMIN_NAVIGATION = [
     path: AdminRoutes.employers,
     section: "Admin",
   },
+  {
+    icon: Calendar,
+    label: "Events",
+    path: AdminRoutes.events,
+    section: "Admin",
+  },
+
   {
     icon: Clipboard,
     label: "Assessments",

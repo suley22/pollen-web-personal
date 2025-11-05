@@ -18,6 +18,14 @@ interface AssessmentPreviewProps {
   instructionsDescription: string;
   questions: AssessmentQuestion[];
   categories?: AssessmentCategory[];
+  // Respuestas controladas desde el hook padre
+  multipleChoiceAnswers?: Record<string, string>;
+  freeInputAnswers?: string[];
+  fileUploadAnswers?: Record<number, any>;
+  // Funciones para manejar cambios
+  onMultipleChoiceChange?: (questionId: string, optionValue: string) => void;
+  onFreeInputChange?: (index: number, value: string) => void;
+  onFileUploadChange?: (index: number, file: any) => void;
 }
 
 interface UploadedFile {
@@ -33,23 +41,26 @@ export function AssessmentPreview({
   instructionsDescription,
   questions,
   categories = [],
+  multipleChoiceAnswers: externalMultipleChoiceAnswers,
+  freeInputAnswers: externalFreeInputAnswers,
+  fileUploadAnswers: externalFileUploadAnswers,
+  onMultipleChoiceChange,
+  onFreeInputChange,
+  onFileUploadChange,
 }: AssessmentPreviewProps) {
   const { showError } = useToastNotifications();
 
-  // Estado para Multiple Choice questions
-  const [multipleChoiceAnswers, setMultipleChoiceAnswers] = useState<
-    Record<string, string>
-  >({});
-
-  // Estado para Free Input questions
-  const [freeInputAnswers, setFreeInputAnswers] = useState<
+  // Estados internos para cuando no se pasan externos
+  const [internalMultipleChoiceAnswers, setInternalMultipleChoiceAnswers] =
+    useState<Record<string, string>>({});
+  const [internalFreeInputAnswers, setInternalFreeInputAnswers] = useState<
     Record<number, string>
   >({});
+
+  // Estados locales para UI (siempre internos)
   const [freeInputSubmitted, setFreeInputSubmitted] = useState<Set<number>>(
     new Set(),
   );
-
-  // Estado para File Upload questions
   const [uploadedFiles, setUploadedFiles] = useState<
     Record<number, UploadedFile | null>
   >({});
@@ -57,23 +68,46 @@ export function AssessmentPreview({
     new Set(),
   );
 
+  // Usar estados externos si existen, sino usar internos
+  const multipleChoiceAnswers =
+    externalMultipleChoiceAnswers ?? internalMultipleChoiceAnswers;
+
+  // Convertir array externo a objeto para compatibilidad interna
+  const freeInputAnswers = externalFreeInputAnswers
+    ? externalFreeInputAnswers.reduce(
+        (acc, answer, index) => {
+          acc[index] = answer || "";
+          return acc;
+        },
+        {} as Record<number, string>,
+      )
+    : internalFreeInputAnswers;
+
   // Handlers para Multiple Choice
   const handleMultipleChoiceChange = (
     questionId: string,
     optionValue: string,
   ) => {
-    setMultipleChoiceAnswers((prev) => ({
-      ...prev,
-      [questionId]: optionValue,
-    }));
+    if (onMultipleChoiceChange) {
+      onMultipleChoiceChange(questionId, optionValue);
+    } else {
+      setInternalMultipleChoiceAnswers((prev) => ({
+        ...prev,
+        [questionId]: optionValue,
+      }));
+    }
   };
 
   // Handlers para Free Input
   const handleFreeInputChange = (index: number, value: string) => {
-    setFreeInputAnswers((prev) => ({
-      ...prev,
-      [index]: value,
-    }));
+    if (onFreeInputChange) {
+      onFreeInputChange(index, value);
+    } else {
+      setInternalFreeInputAnswers((prev) => ({
+        ...prev,
+        [index]: value,
+      }));
+    }
   };
 
   const handleFreeInputSubmit = (index: number) => {
@@ -98,10 +132,16 @@ export function AssessmentPreview({
       file,
     };
 
+    // Actualizar estado local
     setUploadedFiles((prev) => ({
       ...prev,
       [questionIndex]: newFile,
     }));
+
+    // Si hay función externa, también actualizarla
+    if (onFileUploadChange) {
+      onFileUploadChange(questionIndex, file);
+    }
   };
 
   const handleRemoveFile = (questionIndex: number) => {
@@ -142,7 +182,7 @@ export function AssessmentPreview({
     return Math.round((getAnsweredCount() / total) * 100);
   };
 
-  // Calculate category breakdown (only for multiple choice questions)
+  // Calculate category breakdown for internal use (saved but not shown to job-seeker)
   const categoryBreakdown = useMemo(() => {
     const categoryCounts = new Map<string, number>();
     let totalAnswered = 0;
@@ -206,7 +246,7 @@ export function AssessmentPreview({
 
           {/* Questions */}
           {questions.map((question, index) => {
-            const questionId = `q-${index}`;
+            const questionId = question.id || `question-${index}`;
 
             return (
               <div key={index} className="relative">
@@ -263,8 +303,7 @@ export function AssessmentPreview({
             percentage={getPercentage()}
           />
 
-          {/* Category Breakdown */}
-          <AssessmentCategoryProgress categories={categoryBreakdown} />
+          {/* Note: Category results hidden for job-seeker view */}
         </div>
       </div>
     </div>

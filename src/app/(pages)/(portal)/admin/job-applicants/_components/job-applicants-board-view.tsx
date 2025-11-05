@@ -65,10 +65,7 @@ export function BoardView({
     <div className="h-full w-full overflow-x-auto overflow-y-hidden">
       <div className="flex gap-4 w-full h-full pb-1 px-1">
         {JOB_SEEKER_COLUMNS.map((column) => (
-          <div
-            key={column.id}
-            className="flex-none shrink-0 w-[320px] flex flex-col gap-0"
-          >
+          <div key={column.id} className="flex-1 shrink-0 flex flex-col gap-0">
             {/* Column Header */}
             <div
               className={`flex items-center justify-between ${column.color} rounded-t-xl px-4 py-2 border border-gray-200`}

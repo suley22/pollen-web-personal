@@ -34,6 +34,7 @@ export default function JobApplicantsView({
     handleJobSeekerClick,
     closeDrawer,
     handleUpdateAssessmentScores,
+    handleUpdateCalendlyLink,
     handleInviteToPollenInterview,
     handleUpdateStatusAndSubStatus,
     handleDragStart,
@@ -156,6 +157,7 @@ export default function JobApplicantsView({
         jobSeeker={selectedJobSeeker}
         onClose={closeDrawer}
         onUpdateScores={handleUpdateAssessmentScores}
+        onUpdateCalendlyLink={handleUpdateCalendlyLink}
         onInviteToInterview={handleInviteToPollenInterview}
         onUpdateStatusAndSubStatus={handleUpdateStatusAndSubStatus}
       />

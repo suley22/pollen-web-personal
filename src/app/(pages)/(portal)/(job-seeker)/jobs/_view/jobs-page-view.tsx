@@ -23,6 +23,8 @@ export default function JobsPageView() {
     setJobContractTypesFilter,
     isSaved,
     saveFavoriteJob,
+    hasApplied,
+    hasInterviewLink,
   } = useJobs();
 
   return (
@@ -54,6 +56,8 @@ export default function JobsPageView() {
           jobs={jobs}
           isSaved={isSaved}
           saveFavoriteJob={saveFavoriteJob}
+          hasApplied={hasApplied}
+          hasInterviewLink={hasInterviewLink}
         />
       </div>
     </PageContainer>

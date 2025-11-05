@@ -69,8 +69,6 @@ export function useJobApplicants(jobId: string | null) {
  */
 async function getJobApplicants(jobId: string): Promise<GroupedApplicants> {
   try {
-    console.log("🔍 getJobApplicants called with jobId:", jobId);
-
     const { data: applications, error: applicationsError } = await supabase
       .from("job_applications")
       .select("*")
@@ -154,16 +152,22 @@ async function getJobApplicants(jobId: string): Promise<GroupedApplicants> {
             month: "2-digit",
             year: "numeric",
           }),
-          sub_status: app.sub_status || "Unopened",
+          sub_status: app.sub_status || "Review Not Started",
           is_fast_track: app.is_fast_track || false,
           // Assessment scores - usando optional chaining por si no existen
           score1: (app as any).score1 ?? 0,
           score2: (app as any).score2 ?? 0,
           score3: (app as any).score3 ?? 0,
           score4: (app as any).score4 ?? 0,
+          // Assessment response ID - CAMPO FALTANTE AGREGADO
+          assessment_response_id: app.assessment_response_id || null,
+          // Calendly interview link
+          pollen_interview_invite_link:
+            app.pollen_interview_invite_link || null,
           // Campos adicionales por si se necesitan
           email: jobSeeker?.email || "",
           status: app.status,
+          job_id: app.job_id || null,
         };
 
         // Agregar a la columna correspondiente
@@ -254,6 +258,11 @@ export function useUpdateApplicantStatus() {
       queryClient.invalidateQueries({
         queryKey: [jobApplicantsQueryKey, "applicants", variables.jobId],
       });
+
+      // Invalidate assessment responses to update the drawer immediately
+      queryClient.invalidateQueries({
+        queryKey: ["assessment-responses"],
+      });
     },
     onError: (error) => {
       console.error("Error updating applicant status:", error);
@@ -296,6 +305,11 @@ export function useUpdateApplicantSubStatus() {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
         queryKey: [jobApplicantsQueryKey, "applicants", variables.jobId],
+      });
+
+      // Invalidate assessment responses to update the drawer immediately
+      queryClient.invalidateQueries({
+        queryKey: ["assessment-responses"],
       });
     },
     onError: (error) => {
@@ -353,9 +367,59 @@ export function useUpdateApplicantStatusAndSubStatus() {
       queryClient.invalidateQueries({
         queryKey: [jobApplicantsQueryKey, "applicants", variables.jobId],
       });
+
+      // Invalidate assessment responses to update the drawer immediately
+      queryClient.invalidateQueries({
+        queryKey: ["assessment-responses"],
+      });
     },
     onError: (error) => {
       console.error("Error updating applicant status and sub-status:", error);
+    },
+  });
+}
+
+/**
+ * Hook: update Calendly interview link for an applicant
+ * Updates pollen_interview_invite_link in the job_applications table
+ */
+export function useUpdateCalendlyLink() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      calendlyLink,
+      jobId,
+    }: {
+      applicationId: string;
+      calendlyLink: string;
+      jobId: string;
+    }) => {
+      const { data, error } = await supabase
+        .from("job_applications")
+        .update({
+          pollen_interview_invite_link: calendlyLink,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", applicationId)
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data;
+    },
+    onSuccess: (_data, variables) => {
+      // Invalidate the applicants query to refresh the UI
+      queryClient.invalidateQueries({
+        queryKey: [jobApplicantsQueryKey, "applicants", variables.jobId],
+      });
+    },
+    onError: (error) => {
+      console.error("Error updating Calendly link:", error);
     },
   });
 }
@@ -426,6 +490,11 @@ export function useUpdateAssessmentScores() {
       // Invalidate the applicants query to refresh the UI
       queryClient.invalidateQueries({
         queryKey: [jobApplicantsQueryKey, "applicants", variables.jobId],
+      });
+
+      // Invalidate assessment responses to update the drawer immediately
+      queryClient.invalidateQueries({
+        queryKey: ["assessment-responses"],
       });
     },
     onError: (error) => {

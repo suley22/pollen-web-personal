@@ -5,6 +5,7 @@ import {
   useExternalJobs,
   usePollenJobs,
   useSaveJob,
+  useUserApplications,
 } from "../_services/jobs-service";
 
 export function useJobs() {
@@ -47,6 +48,15 @@ export function useJobs() {
     isLoading: loadingExternalJobs,
     error: externalError,
   } = useExternalJobs(fetchFilters);
+
+  // Fetch user applications to check applied status and interview links
+  const { data: applicationsData } = useUserApplications();
+  const appliedJobIds = useMemo(() => {
+    return applicationsData?.appliedJobIds || new Set<string>();
+  }, [applicationsData]);
+  const jobsWithInterviewLink = useMemo(() => {
+    return applicationsData?.jobsWithInterviewLink || new Set<string>();
+  }, [applicationsData]);
 
   // Combine both lists based on jobTypeFilter with unique identifiers
   const jobs = useMemo(() => {
@@ -132,6 +142,22 @@ export function useJobs() {
     [savedJobs],
   );
 
+  // Check if user has applied to a job
+  const hasApplied = useCallback(
+    (jobId: string) => {
+      return appliedJobIds.has(jobId);
+    },
+    [appliedJobIds],
+  );
+
+  // Check if job has interview link
+  const hasInterviewLink = useCallback(
+    (jobId: string) => {
+      return jobsWithInterviewLink.has(jobId);
+    },
+    [jobsWithInterviewLink],
+  );
+
   return {
     jobs,
     loading,
@@ -148,6 +174,8 @@ export function useJobs() {
     setJobContractTypesFilter,
     savedJobs,
     saveFavoriteJob,
+    hasApplied,
+    hasInterviewLink,
     isSaved,
   };
 }

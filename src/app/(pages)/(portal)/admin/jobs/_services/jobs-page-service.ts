@@ -364,7 +364,6 @@ export const useCreateJob = () => {
 
       const transformedData = transformFormDataToDatabase(formData);
 
-      // Validate required fields
       if (
         !transformedData.job_title ||
         !transformedData.job_title.toString().trim()
@@ -389,45 +388,12 @@ export const useCreateJob = () => {
 
       console.log("JobService: Created job:", jobData);
 
-      // 2. Create assessment if there's assessment data
-      const formJobData = Object.fromEntries(formData.entries());
-      const hasAssessmentData =
-        formJobData.assessment_title ||
-        formJobData.assessment_content ||
-        formJobData.assessment_scoring_criteria;
-
-      if (hasAssessmentData && jobData.id) {
-        const assessmentData = transformAssessmentDataToDatabase(
-          formData,
-          jobData.id,
-        );
-
-        const { data: assessmentResult, error: assessmentError } =
-          await supabase
-            .from("job_assessment")
-            .insert(assessmentData)
-            .select()
-            .single();
-
-        if (assessmentError) {
-          console.error(
-            "JobService: Error creating assessment:",
-            assessmentError,
-          );
-          console.warn(
-            "Job was created but assessment failed:",
-            assessmentError.message,
-          );
-        } else {
-          console.log("JobService: Created assessment:", assessmentResult);
-        }
-      }
-
       return jobData;
     },
     onSuccess: () => {
       // Invalidate all jobs lists and statistics
       queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
+      queryClient.invalidateQueries({ queryKey: ["home"] });
     },
   });
 };
@@ -445,6 +411,7 @@ const transformFormDataToDatabase = (formData: FormData) => {
   return {
     job_title: formJobData.job_title,
     company_name: formJobData.company_name,
+    company_id: formJobData.company_id || null,
     location: formJobData.location,
     working_hours: formJobData.working_hours,
     salary_range: formJobData.salary_range,
@@ -467,63 +434,6 @@ const transformFormDataToDatabase = (formData: FormData) => {
   };
 };
 
-const transformAssessmentDataToDatabase = (
-  formData: FormData,
-  jobId: string,
-) => {
-  const formJobData = Object.fromEntries(formData.entries());
-
-  // Prepare structured_questions as JSONB
-  const structuredQuestions = {
-    title: formJobData.assessment_title || "",
-    estimatedTime: formJobData.assessment_estimated_time
-      ? parseInt(formJobData.assessment_estimated_time as string)
-      : formJobData.estimated_time
-        ? parseInt(formJobData.estimated_time as string)
-        : null,
-    totalQuestions: formJobData.assessment_total_questions
-      ? parseInt(formJobData.assessment_total_questions as string)
-      : formJobData.total_questions
-        ? parseInt(formJobData.total_questions as string)
-        : null,
-    instructions: formJobData.assessment_instructions || "",
-    openingQuestion: {
-      title:
-        formJobData.assessment_opening_question_title ||
-        formJobData.opening_question_title ||
-        "",
-      content:
-        formJobData.assessment_opening_question_content ||
-        formJobData.opening_question_content ||
-        "",
-    },
-    guidelines: {
-      timeGuideline: formJobData.assessment_estimated_time
-        ? `${formJobData.assessment_estimated_time} minutes`
-        : formJobData.estimated_time
-          ? `${formJobData.estimated_time} minutes`
-          : null,
-    },
-  };
-
-  return {
-    job_id: jobId,
-    assessment_type: "skills_assessment",
-    estimated_duration: formJobData.assessment_estimated_time
-      ? `${formJobData.assessment_estimated_time} minutes`
-      : formJobData.estimated_time
-        ? `${formJobData.estimated_time} minutes`
-        : null,
-    generated_content:
-      formJobData.assessment_content || formJobData.generated_content || "",
-    structured_questions: structuredQuestions,
-    scoring_criteria:
-      formJobData.assessment_scoring_criteria ||
-      formJobData.scoring_criteria ||
-      "",
-  };
-};
-
 const parseArrayField = (fieldData: any): string[] => {
   if (!fieldData) return [];
   try {
@@ -543,7 +453,6 @@ const parseArrayField = (fieldData: any): string[] => {
     return [];
   } catch (e) {
     // If it's not JSON, try parsing as CSV (backward compatibility)
-    console.log("Parsing field as CSV for backward compatibility:", e);
     return fieldData
       .split(",")
       .map((item: string) => item.trim())
@@ -588,62 +497,6 @@ export function useUpdateJob() {
 
       console.log("JobService: Updated job:", data);
 
-      // Update assessment if there's assessment data
-      const formJobData = Object.fromEntries(formData.entries());
-      const hasAssessmentData =
-        formJobData.assessment_title ||
-        formJobData.assessment_content ||
-        formJobData.assessment_scoring_criteria;
-
-      if (hasAssessmentData) {
-        const assessmentData = transformAssessmentDataToDatabase(formData, id);
-
-        // Check if assessment already exists
-        const { data: existingAssessment } = await supabase
-          .from("job_assessment")
-          .select("id")
-          .eq("job_id", id)
-          .single();
-
-        if (existingAssessment) {
-          // Update existing assessment
-          const { error: assessmentError } = await supabase
-            .from("job_assessment")
-            .update({
-              ...assessmentData,
-              updated_at: new Date().toISOString(),
-            })
-            .eq("job_id", id);
-
-          if (assessmentError) {
-            console.error(
-              "JobService: Error updating assessment:",
-              assessmentError,
-            );
-            console.warn(
-              "Job was updated but assessment failed:",
-              assessmentError.message,
-            );
-          }
-        } else {
-          // Create new assessment
-          const { error: assessmentError } = await supabase
-            .from("job_assessment")
-            .insert(assessmentData);
-
-          if (assessmentError) {
-            console.error(
-              "JobService: Error creating assessment:",
-              assessmentError,
-            );
-            console.warn(
-              "Job was updated but assessment failed:",
-              assessmentError.message,
-            );
-          }
-        }
-      }
-
       return data;
     },
     onSuccess: (_data, variables) => {
@@ -653,6 +506,7 @@ export function useUpdateJob() {
       });
       // Invalidate all jobs lists and statistics
       queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
+      queryClient.invalidateQueries({ queryKey: ["home"] });
     },
   });
 }
@@ -684,6 +538,7 @@ export function useUpdateJobStatus() {
       });
       // Invalidate all jobs lists and statistics
       queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
+      queryClient.invalidateQueries({ queryKey: ["home"] });
     },
     onError: (error) => {
       console.error("Error updating job status:", error);
@@ -714,6 +569,7 @@ export function useDeleteJob() {
     onSuccess: () => {
       // Invalidate all jobs queries to refresh the lists and statistics
       queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
+      queryClient.invalidateQueries({ queryKey: ["home"] });
     },
   });
 }

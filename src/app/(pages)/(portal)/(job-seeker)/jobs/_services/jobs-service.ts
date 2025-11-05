@@ -209,7 +209,7 @@ export function useCheckIfUserApplied(jobId: string | null) {
       // Check if the user has already applied to this job
       const { data: existingApplication, error } = await supabase
         .from("job_applications")
-        .select("id")
+        .select("id, pollen_interview_invite_link, calendly_invite")
         .eq("job_id", jobId)
         .eq("user_id", userAuthId)
         .maybeSingle();
@@ -220,6 +220,9 @@ export function useCheckIfUserApplied(jobId: string | null) {
 
       return {
         hasApplied: !!existingApplication,
+        interviewLink:
+          existingApplication?.pollen_interview_invite_link || null,
+        calendlyEventUri: existingApplication?.calendly_invite || null,
       };
     },
   });
@@ -232,7 +235,13 @@ export function useCreateJobApplication() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (jobId: string) => {
+    mutationFn: async ({
+      jobId,
+      assessmentResponseId,
+    }: {
+      jobId: string;
+      assessmentResponseId?: string;
+    }) => {
       console.log("🔍 Raw jobId received:", jobId, "Type:", typeof jobId);
 
       // Get the current user's auth ID (UUID)
@@ -267,15 +276,22 @@ export function useCreateJobApplication() {
       console.log("📝 Creating new job application...");
 
       // Create the job application with default values matching the database schema
+      const insertData: any = {
+        job_id: jobId,
+        user_id: userAuthId,
+        status: "new_applicants",
+        sub_status: "Review Not Started",
+        application_stage: "application_received",
+      };
+
+      // Add assessment_response_id if provided
+      if (assessmentResponseId) {
+        insertData.assessment_response_id = assessmentResponseId;
+      }
+
       const { data, error } = await supabase
         .from("job_applications")
-        .insert({
-          job_id: jobId,
-          user_id: userAuthId,
-          status: "new_applicants",
-          sub_status: "Unopened",
-          application_stage: "application_received",
-        })
+        .insert(insertData)
         .select()
         .single();
 
@@ -288,13 +304,60 @@ export function useCreateJobApplication() {
       console.log("✅ Job application created successfully:", data);
       return data;
     },
-    onSuccess: (data, jobId) => {
+    onSuccess: (data, variables) => {
       // Invalidate the application status query for this job
       queryClient.invalidateQueries({
-        queryKey: [jobsQueryKey, "application-status", jobId],
+        queryKey: [jobsQueryKey, "application-status", variables.jobId],
       });
       // Optionally invalidate other related queries
       queryClient.invalidateQueries({ queryKey: [jobsQueryKey] });
     },
+  });
+}
+
+// ===============
+// Hook: fetch all user applications to check applied status and interview links
+// ===============
+export function useUserApplications() {
+  return useQuery<{
+    appliedJobIds: Set<string>;
+    jobsWithInterviewLink: Set<string>;
+  }>({
+    queryKey: [jobsQueryKey, "user-applications"],
+    queryFn: async () => {
+      const userAuthId = await getLoggedInUserId();
+
+      if (!userAuthId) {
+        return {
+          appliedJobIds: new Set<string>(),
+          jobsWithInterviewLink: new Set<string>(),
+        };
+      }
+
+      const { data, error } = await supabase
+        .from("job_applications")
+        .select("job_id, pollen_interview_invite_link")
+        .eq("user_id", userAuthId);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // Create sets for quick lookup
+      const appliedJobIds = new Set<string>(
+        data?.map((app) => app.job_id) || [],
+      );
+      const jobsWithInterviewLink = new Set<string>(
+        data
+          ?.filter((app) => app.pollen_interview_invite_link)
+          .map((app) => app.job_id) || [],
+      );
+
+      return {
+        appliedJobIds,
+        jobsWithInterviewLink,
+      };
+    },
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
 }

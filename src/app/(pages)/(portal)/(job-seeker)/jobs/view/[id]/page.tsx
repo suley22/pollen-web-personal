@@ -13,6 +13,7 @@ import ApplyJobHeader from "../_components/apply-job-header";
 import ProgressSteps from "../_components/progress-steps";
 import JobDetails from "../_components/job-details";
 import WhatHappensNext from "../_components/what-happens-next";
+import { ScheduleInterviewSection } from "../_components/schedule-interview-section";
 
 export default function ApplyJobPage() {
   const {
@@ -27,6 +28,8 @@ export default function ApplyJobPage() {
     handleStart,
     handleSubmitApplication,
     hasApplied,
+    interviewLink,
+    calendlyEventUri,
     isDialogOpen,
     setIsDialogOpen,
     showAssessment,
@@ -34,6 +37,13 @@ export default function ApplyJobPage() {
     handleHideAssessment,
     handleCompanyDetails,
     isApplying,
+    // Estados y funciones para respuestas del assessment
+    multipleChoiceAnswers,
+    freeInputAnswers,
+    fileUploadAnswers,
+    handleMultipleChoiceChange,
+    handleFreeInputChange,
+    handleFileUploadChange,
   } = useApply();
 
   // Convertir preguntas para preview (mismo patrón que otros componentes)
@@ -64,7 +74,6 @@ export default function ApplyJobPage() {
     });
   };
 
-  // Vista de aplicación al trabajo con assessment inline
   return (
     <PageContainer>
       <ApplyJobHeader
@@ -75,10 +84,18 @@ export default function ApplyJobPage() {
         onBack={handleBack}
       />
 
-      <ProgressSteps currentStep={currentStep} />
+      {/* Interview Scheduling Section */}
+      {interviewLink && (
+        <ScheduleInterviewSection
+          interviewLink={interviewLink}
+          calendlyEventUri={calendlyEventUri}
+        />
+      )}
+
       <JobDetails job={job} />
+
       <WhatHappensNext />
-      {/* Assessment Section - aparece debajo de los detalles si showAssessment es true */}
+      {/* Assessment Section */}
       {showAssessment && (
         <div className="space-y-6 mt-8">
           <div className="border-t pt-6">
@@ -120,7 +137,7 @@ export default function ApplyJobPage() {
                 </div>
               </div>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-6" data-assessment-container>
                 <div className="border rounded-lg p-6 bg-background">
                   <AssessmentPreview
                     assessmentTitle={assessment.title || ""}
@@ -131,6 +148,12 @@ export default function ApplyJobPage() {
                     }
                     questions={convertQuestionsForPreview(assessment)}
                     categories={assessment.categories || []}
+                    multipleChoiceAnswers={multipleChoiceAnswers}
+                    freeInputAnswers={freeInputAnswers}
+                    fileUploadAnswers={fileUploadAnswers}
+                    onMultipleChoiceChange={handleMultipleChoiceChange}
+                    onFreeInputChange={handleFreeInputChange}
+                    onFileUploadChange={handleFileUploadChange}
                   />
                 </div>
 

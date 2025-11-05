@@ -15,9 +15,7 @@ export function FeaturedJobs() {
   return (
     <>
       <div className="flex flex-rows items-center justify-between">
-        <div className="text-lg font-medium text-gray-900">
-          My Assigned Jobs
-        </div>
+        <div className="text-2xl font-medium text-gray-900">Featured Jobs</div>
         <SecondaryButton
           text="View All Jobs"
           onClick={() => router.push("/jobs")}

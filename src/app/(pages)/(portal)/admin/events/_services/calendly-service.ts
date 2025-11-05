@@ -53,6 +53,7 @@ const eventsQueryKey = "calendly-events";
 
 // Función para obtener eventos de Calendly
 async function fetchCalendlyEvents(filters: EventsFilters) {
+
   const CALENDLY_API_TOKEN = process.env.NEXT_PUBLIC_CALENDLY_API_TOKEN;
   const CALENDLY_USER_URI = process.env.NEXT_PUBLIC_CALENDLY_USER_URI;
 

@@ -1,12 +1,19 @@
 import { JobCard } from "./job-seeker-home-job-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRouter } from "next/navigation";
 
-export function FeatureJobCards({ jobs, loading, saveFavoriteJob }) {
+export function MyApplicationsCards({ jobs, loading }) {
+  const router = useRouter();
+
+  const handleApply = (jobId: string) => {
+    router.push(`/jobs/view?jobId=${jobId}`);
+  };
+
   return loading ? (
     <div className="grid grid-cols-3 gap-4">
       {Array.from({ length: 3 }).map((_, i) => (
         <div
-          key={`job-skeleton-${i}`}
+          key={`application-skeleton-${i}`}
           className="flex flex-col border rounded-lg p-3 gap-3"
         >
           <div className="flex flex-col gap-2">
@@ -37,9 +44,13 @@ export function FeatureJobCards({ jobs, loading, saveFavoriteJob }) {
         return (
           <JobCard
             key={job.id}
-            job={job}
+            job={{ ...job, hasApplied: true }}
             isSaved={job.isSaved}
-            onToggleSave={() => saveFavoriteJob(job.id)}
+            onToggleSave={() => {
+              // TODO: Implement save/unsave logic
+              console.log("Toggle save for job:", job.id);
+            }}
+            onApply={() => handleApply(job.id)}
           />
         );
       })}

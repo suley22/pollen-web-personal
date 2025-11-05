@@ -3,16 +3,17 @@ import {
   getFeaturedHiddenJobs,
   getFeaturedJobs,
   saveSavedJob,
+  getUserApplications,
 } from "../_services/feature-jobs-service";
 
 export function useFeaturedJobs() {
   const loadingRef = useRef(false);
   const [loading, setLoading] = useState(true);
   const [hiddenJobs, setHiddenJobs] = useState([]);
-
   const [jobs, setJobs] = useState([]);
   const [error, setError] = useState(null);
   const [savedJobs] = useState(new Set());
+  const [appliedJobIds, setAppliedJobIds] = useState(new Set());
 
   useEffect(() => {
     // Forzar re-render cuando savedJobs cambie
@@ -31,14 +32,24 @@ export function useFeaturedJobs() {
     try {
       const jobsResult = getFeaturedJobs();
       const hiddenResult = getFeaturedHiddenJobs();
+      const applicationsResult = getUserApplications();
 
-      const [jobsResponse, hiddenResponse] = await Promise.all([
-        jobsResult,
-        hiddenResult,
-      ]);
+      const [jobsResponse, hiddenResponse, applicationsResponse] =
+        await Promise.all([jobsResult, hiddenResult, applicationsResult]);
+
+      // Set applied job IDs
+      if (applicationsResponse.success) {
+        setAppliedJobIds(applicationsResponse.data);
+      }
 
       if (jobsResponse.success) {
-        setJobs(jobsResponse.data || []);
+        const jobsWithAppliedStatus = jobsResponse.data.map((job) => ({
+          ...job,
+          hasApplied: applicationsResponse.success
+            ? applicationsResponse.data.has(job.id)
+            : false,
+        }));
+        setJobs(jobsWithAppliedStatus || []);
         setError(null);
       } else {
         console.error("❌ Error from server:", jobsResponse.error);
@@ -46,7 +57,13 @@ export function useFeaturedJobs() {
       }
 
       if (hiddenResponse.success) {
-        setHiddenJobs(hiddenResponse.data || []);
+        const hiddenJobsWithAppliedStatus = hiddenResponse.data.map((job) => ({
+          ...job,
+          hasApplied: applicationsResponse.success
+            ? applicationsResponse.data.has(job.id)
+            : false,
+        }));
+        setHiddenJobs(hiddenJobsWithAppliedStatus || []);
       } else {
         console.error("❌ Error from server:", hiddenResponse.error);
         setError(hiddenResponse.error);

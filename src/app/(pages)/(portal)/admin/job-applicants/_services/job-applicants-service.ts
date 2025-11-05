@@ -168,6 +168,7 @@ async function getJobApplicants(jobId: string): Promise<GroupedApplicants> {
           email: jobSeeker?.email || "",
           status: app.status,
           job_id: app.job_id || null,
+          calendly_invite: app.calendly_invite || null,
         };
 
         // Agregar a la columna correspondiente
@@ -582,4 +583,46 @@ export async function updateJobApplicationStatus(
     console.error("Error in updateJobApplicationStatus:", error);
     throw error;
   }
+}
+
+export function useUpdateInternalNotes() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      internalNotes,
+    }: {
+      applicationId: string;
+      internalNotes: string;
+    }) => {
+      const { data, error } = await supabase
+        .from("job_applications")
+        .update({
+          internal_notes: internalNotes,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", applicationId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("❌ Error updating internal notes:", error);
+        throw error;
+      }
+
+      console.log("✅ Internal notes updated successfully:", data);
+      return data;
+    },
+    onSuccess: (data, variables) => {
+      console.log("🎯 Internal notes update success, invalidating queries");
+      // Invalidate the job applicants query to refresh the data
+      queryClient.invalidateQueries({
+        queryKey: [jobApplicantsQueryKey],
+      });
+    },
+    onError: (error) => {
+      console.error("❌ Error in useUpdateInternalNotes:", error);
+    },
+  });
 }

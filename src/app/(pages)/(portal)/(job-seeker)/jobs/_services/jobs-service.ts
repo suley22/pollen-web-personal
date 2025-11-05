@@ -218,6 +218,32 @@ export function useCheckIfUserApplied(jobId: string | null) {
         throw new Error(error.message);
       }
 
+      // 🔍 DEBUG: Ver qué datos se obtienen de la DB
+      console.log("🔍 useCheckIfUserApplied - DB Response:");
+      console.log("   jobId:", jobId);
+      console.log("   userAuthId:", userAuthId);
+      console.log("   existingApplication:", existingApplication);
+      console.log(
+        "   existingApplication.pollen_interview_invite_link:",
+        existingApplication?.pollen_interview_invite_link,
+      );
+      console.log(
+        "   existingApplication.calendly_invite:",
+        existingApplication?.calendly_invite,
+      );
+      console.log(
+        "   Type of calendly_invite:",
+        typeof existingApplication?.calendly_invite,
+      );
+      console.log(
+        "   calendly_invite is null?:",
+        existingApplication?.calendly_invite === null,
+      );
+      console.log(
+        "   calendly_invite is undefined?:",
+        existingApplication?.calendly_invite === undefined,
+      );
+
       return {
         hasApplied: !!existingApplication,
         interviewLink:

@@ -9,8 +9,17 @@ import {
   DangerButton,
   EditButton,
 } from "@/components/design-system/status-buttons";
+import { Button } from "@/components/ui/button";
 import { DeleteConfirmationDialog } from "@/components/design-system/delete-confirmation-dialog";
-import { Edit, CheckCircle, Pause, Play, Trash2, XCircle } from "lucide-react";
+import {
+  Edit,
+  CheckCircle,
+  Pause,
+  Play,
+  Trash2,
+  XCircle,
+  Users,
+} from "lucide-react";
 
 export function JobViewHeader({
   jobTitle,
@@ -23,6 +32,7 @@ export function JobViewHeader({
   onComplete,
   onCancel,
   onDelete,
+  onViewCandidates,
   isUpdating = false,
   isDeleting = false,
 }) {
@@ -77,6 +87,16 @@ export function JobViewHeader({
       {/* Live Status Actions: Edit, Pause, Mark Complete, Cancel */}
       {isLive && (
         <>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onViewCandidates}
+            disabled={isUpdating || isDeleting}
+            className="gap-2 font-sora"
+          >
+            <Users className="h-4 w-4" />
+            View Candidates
+          </Button>
           <EditButton
             text="Edit"
             icon={<Edit />}
@@ -115,6 +135,16 @@ export function JobViewHeader({
       {/* Paused Status Actions: Edit, Set Live, Cancel */}
       {isPaused && (
         <>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onViewCandidates}
+            disabled={isUpdating || isDeleting}
+            className="gap-2 font-sora"
+          >
+            <Users className="h-4 w-4" />
+            View Candidates
+          </Button>
           <EditButton
             text="Edit"
             icon={<Edit />}
@@ -147,6 +177,16 @@ export function JobViewHeader({
       {/* Complete or Cancelled Status: Set Live and Delete */}
       {(isComplete || isCancelled) && (
         <>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onViewCandidates}
+            disabled={isUpdating || isDeleting}
+            className="gap-2 font-sora"
+          >
+            <Users className="h-4 w-4" />
+            View Candidates
+          </Button>
           <SuccessButton
             text="Set Live"
             icon={<Play />}

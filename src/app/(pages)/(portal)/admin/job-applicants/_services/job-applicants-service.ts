@@ -584,3 +584,45 @@ export async function updateJobApplicationStatus(
     throw error;
   }
 }
+
+export function useUpdateInternalNotes() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      applicationId,
+      internalNotes,
+    }: {
+      applicationId: string;
+      internalNotes: string;
+    }) => {
+      const { data, error } = await supabase
+        .from("job_applications")
+        .update({
+          internal_notes: internalNotes,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", applicationId)
+        .select()
+        .single();
+
+      if (error) {
+        console.error("❌ Error updating internal notes:", error);
+        throw error;
+      }
+
+      console.log("✅ Internal notes updated successfully:", data);
+      return data;
+    },
+    onSuccess: (data, variables) => {
+      console.log("🎯 Internal notes update success, invalidating queries");
+      // Invalidate the job applicants query to refresh the data
+      queryClient.invalidateQueries({
+        queryKey: [jobApplicantsQueryKey],
+      });
+    },
+    onError: (error) => {
+      console.error("❌ Error in useUpdateInternalNotes:", error);
+    },
+  });
+}

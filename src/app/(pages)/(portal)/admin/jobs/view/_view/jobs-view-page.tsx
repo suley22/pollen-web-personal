@@ -35,6 +35,10 @@ export default function JobsViewComponent({ id = null }) {
     router.push(AdminRoutes.jobsEdit(id));
   };
 
+  const handleViewCandidates = () => {
+    router.push(AdminRoutes.jobsApplicants(id));
+  };
+
   return (
     <div className="flex flex-col w-full mx-auto py-6 gap-6">
       {/* Header */}
@@ -44,6 +48,7 @@ export default function JobsViewComponent({ id = null }) {
         jobStatus={job?.status || "draft"}
         onBack={() => router.back()}
         onEdit={handleEdit}
+        onViewCandidates={handleViewCandidates}
         onGoLive={handleGoLive}
         onPause={handlePause}
         onComplete={handleComplete}

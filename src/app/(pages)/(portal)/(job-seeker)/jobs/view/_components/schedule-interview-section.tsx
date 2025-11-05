@@ -82,15 +82,6 @@ export function ScheduleInterviewSection({
     ? calendlyEventUri.split("/invitees/")[0]
     : calendlyEventUri;
 
-  // 🔍 DEBUG: Ver qué datos recibe el componente
-  console.log("🔍 ScheduleInterviewSection Props:", {
-    interviewLink,
-    calendlyEventUriOriginal: calendlyEventUri,
-    extractedEventUri: eventUri,
-    hasInterviewLink: !!interviewLink,
-    hasCalendlyEventUri: !!eventUri,
-  });
-
   // Fetch event details if eventUri exists
   const {
     data: eventDetails,

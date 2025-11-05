@@ -44,7 +44,7 @@ export function MyApplicationsCards({ jobs, loading }) {
         return (
           <JobCard
             key={job.id}
-            job={job}
+            job={{ ...job, hasApplied: true }}
             isSaved={job.isSaved}
             onToggleSave={() => {
               // TODO: Implement save/unsave logic

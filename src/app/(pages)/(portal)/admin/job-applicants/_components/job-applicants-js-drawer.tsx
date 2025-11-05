@@ -1,6 +1,16 @@
 "use client";
 
-import { X, Save, Send, Eye, EyeOff } from "lucide-react";
+import {
+  X,
+  Save,
+  Send,
+  Eye,
+  EyeOff,
+  Link as LinkIcon,
+  ExternalLink,
+  Copy,
+  Check,
+} from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { useAssessmentResponse } from "../../../(job-seeker)/jobs/_services/assessment-response-service";
 import { useSkillRatings } from "@/hooks/useSkillRatings";
@@ -12,6 +22,10 @@ import {
   ApplicationSubStatus,
 } from "@/types/application-status";
 import { StatusButtonGroup } from "@/components/design-system/status-button-group";
+import {
+  useCalendlyEventTypes,
+  createSingleUseSchedulingLink,
+} from "../../events/_services/calendly-service";
 
 interface TaskDrawerProps {
   isOpen: boolean;
@@ -49,6 +63,19 @@ export function TaskDrawer({
     subStatus: string;
   } | null>(null);
   const [showAssessmentPreview, setShowAssessmentPreview] = useState(false);
+
+  // Calendly link states
+  const [calendlyLink, setCalendlyLink] = useState<string | null>(
+    jobSeeker?.calendly_link || null,
+  );
+  const [isGeneratingLink, setIsGeneratingLink] = useState(false);
+  const [selectedEventType, setSelectedEventType] = useState("");
+  const [showLinkDialog, setShowLinkDialog] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  // Fetch event types for Calendly
+  const { data: eventTypes, isLoading: isLoadingEventTypes } =
+    useCalendlyEventTypes();
 
   // Fetch assessment response data
   const {
@@ -173,6 +200,41 @@ export function TaskDrawer({
     setSubStatus(jobSeeker?.sub_status || "");
   };
 
+  // Calendly link functions
+  const handleGenerateCalendlyLink = async () => {
+    if (!selectedEventType) {
+      alert("Please select an event type");
+      return;
+    }
+
+    setIsGeneratingLink(true);
+    try {
+      const link = await createSingleUseSchedulingLink(selectedEventType, {
+        applicant_name: jobSeeker?.name || "",
+        applicant_email: jobSeeker?.email || "",
+        application_id: jobSeeker?.application_id || "",
+      });
+      setCalendlyLink(link.booking_url);
+      setShowLinkDialog(false);
+
+      // TODO: Guardar el link en la base de datos asociado al applicant
+      // onUpdateCalendlyLink(jobSeeker.application_id, link.booking_url);
+    } catch (error) {
+      console.error("Error generating Calendly link:", error);
+      alert("Failed to generate link. Please try again.");
+    } finally {
+      setIsGeneratingLink(false);
+    }
+  };
+
+  const handleCopyLink = () => {
+    if (calendlyLink) {
+      navigator.clipboard.writeText(calendlyLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
   // Determinar si los scores son editables (solo en new_applicants)
   const isScoresEditable =
     jobSeeker?.status === ApplicationStatus.NEW_APPLICANTS;
@@ -259,6 +321,84 @@ export function TaskDrawer({
                   onCancelStatusChange={handleCancelStatusChange}
                 />
               </div>
+              <Divider />
+
+              {/* Calendly Interview Link Section */}
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      <LinkIcon className="w-5 h-5 text-green-600" />
+                      Interview Scheduling Link
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {calendlyLink
+                        ? "Single-use link generated"
+                        : "Generate a link to schedule an interview"}
+                    </p>
+                  </div>
+                </div>
+
+                {calendlyLink ? (
+                  <div className="space-y-3">
+                    <div className="bg-white border border-green-200 rounded-lg p-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span className="text-xs font-medium text-green-700">
+                          Active Link
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={calendlyLink}
+                          readOnly
+                          className="flex-1 text-sm bg-gray-50 border border-gray-200 rounded px-3 py-2 font-mono text-gray-600"
+                        />
+                        <button
+                          onClick={handleCopyLink}
+                          className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-1"
+                          title="Copy link"
+                        >
+                          {copied ? (
+                            <>
+                              <Check className="w-4 h-4" />
+                              <span className="text-xs">Copied!</span>
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="w-4 h-4" />
+                              <span className="text-xs">Copy</span>
+                            </>
+                          )}
+                        </button>
+                        <a
+                          href={calendlyLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-3 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-1"
+                          title="Open link"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      </div>
+                    </div>
+                    <p className="text-xs text-amber-600 bg-amber-50 p-2 rounded border border-amber-200">
+                      ⚠️ This link can only be used once and will expire after
+                      the event is scheduled.
+                    </p>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setShowLinkDialog(true)}
+                    className="w-full px-4 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <LinkIcon className="w-5 h-5" />
+                    Generate Interview Link
+                  </button>
+                )}
+              </div>
+
               <Divider />
 
               {jobSeeker && (
@@ -367,6 +507,103 @@ export function TaskDrawer({
           </div>
         </div>
       </div>
+
+      {/* Dialog for selecting event type */}
+      {showLinkDialog && (
+        <>
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-[60]"
+            onClick={() => setShowLinkDialog(false)}
+          />
+          <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[70] bg-white rounded-lg shadow-xl p-6 w-[500px]">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <LinkIcon className="w-5 h-5" />
+                Select Event Type
+              </h3>
+              <button
+                onClick={() => setShowLinkDialog(false)}
+                className="p-1 hover:bg-gray-100 rounded"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <p className="text-sm text-gray-600 mb-4">
+              Choose the type of interview event to generate a scheduling link
+              for {jobSeeker?.name}.
+            </p>
+
+            <div className="space-y-3 mb-6">
+              {isLoadingEventTypes ? (
+                <div className="text-center py-4 text-sm text-gray-500">
+                  Loading event types...
+                </div>
+              ) : eventTypes && eventTypes.length > 0 ? (
+                <div className="space-y-2 max-h-[300px] overflow-y-auto">
+                  {eventTypes.map((eventType: any) => (
+                    <button
+                      key={eventType.uri}
+                      onClick={() => setSelectedEventType(eventType.uri)}
+                      className={`w-full text-left p-3 border rounded-lg transition-colors ${
+                        selectedEventType === eventType.uri
+                          ? "border-green-500 bg-green-50"
+                          : "border-gray-200 hover:border-green-300 hover:bg-gray-50"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium text-gray-900">
+                            {eventType.name}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {eventType.duration} minutes
+                          </div>
+                        </div>
+                        {selectedEventType === eventType.uri && (
+                          <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                            <Check className="w-3 h-3 text-white" />
+                          </div>
+                        )}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-4 text-sm text-gray-500">
+                  No event types available
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowLinkDialog(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleGenerateCalendlyLink}
+                disabled={!selectedEventType || isGeneratingLink}
+                className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {isGeneratingLink ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <LinkIcon className="w-4 h-4" />
+                    Generate Link
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }

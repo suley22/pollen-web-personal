@@ -22,6 +22,7 @@ import { useSkillRatings } from "@/hooks/useSkillRatings";
 import { AssessmentPreview } from "@/components/assessment/assessment-preview";
 import { SkillSliderRating } from "@/components/design-system/skill-slider-rating";
 import { Divider, PrimaryButton } from "@/components/design-system";
+import { InternalNotes } from "./internal-notes";
 import {
   ApplicationStatus,
   ApplicationSubStatus,
@@ -402,6 +403,18 @@ export function TaskDrawer({
                 />
               </div>
               <Divider />
+
+              {/* Internal Notes Section */}
+              {jobSeeker?.application_id && (
+                <>
+                  <InternalNotes
+                    applicationId={jobSeeker.application_id}
+                    initialNotes={jobSeeker.internal_notes || ""}
+                    candidateName={jobSeeker.name}
+                  />
+                  <Divider />
+                </>
+              )}
 
               {/* Unified Interview Management Card */}
               <div>

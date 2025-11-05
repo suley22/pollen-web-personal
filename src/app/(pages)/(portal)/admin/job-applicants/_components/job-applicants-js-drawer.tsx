@@ -1,16 +1,25 @@
 "use client";
 
-import { X } from "lucide-react";
-import { Divider } from "@/components/design-system";
+import {
+  X,
+  Eye,
+  EyeOff,
+  Link as LinkIcon,
+  ExternalLink,
+  Copy,
+  Check,
+  Calendar,
+  CheckCircle,
+  Clock,
+  MapPin,
+  Video,
+} from "lucide-react";
+import { AssessmentPreview } from "@/components/assessment/assessment-preview";
+import { SkillSliderRating } from "@/components/design-system/skill-slider-rating";
+import { Divider, PrimaryButton } from "@/components/design-system";
 import { InternalNotes } from "./internal-notes";
 import { StatusButtonGroup } from "@/components/design-system/status-button-group";
 import { useJobApplicantDrawer } from "../_hooks/use-job-applicant-drawer";
-import { DrawerPreviewPanel } from "./drawer-preview-panel";
-import { InterviewScheduledCard } from "./interview-scheduled-card";
-import { InterviewPendingCard } from "./interview-pending-card";
-import { InterviewGenerateLinkCard } from "./interview-generate-link-card";
-import { AssessmentSection } from "./assessment-section";
-import { CalendlyEventTypeDialog } from "./calendly-event-type-dialog";
 
 interface TaskDrawerProps {
   isOpen: boolean;

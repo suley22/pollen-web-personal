@@ -1,10 +1,14 @@
 "use client";
 
+import * as React from "react";
 import * as ProgressPrimitive from "@radix-ui/react-progress";
 
 import { cn } from "@/lib/utils";
 
-function Progress(props, ref) {
+const Progress = React.forwardRef<
+  React.ElementRef<typeof ProgressPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
+>((props, ref) => {
   return (
     <ProgressPrimitive.Root
       ref={ref}
@@ -20,7 +24,7 @@ function Progress(props, ref) {
       />
     </ProgressPrimitive.Root>
   );
-}
+});
 
 Progress.displayName = ProgressPrimitive.Root.displayName;
 

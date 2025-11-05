@@ -155,6 +155,7 @@ export function AssessmentCreateMultipleChoicePreview({
             // Convert question to AssessmentQuestion format
             const assessmentQuestion = {
               id: `q-${index}`,
+              type: "multiple_choice" as const,
               title: question.title,
               description: question.description,
               options_title: question.options_title,

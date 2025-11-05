@@ -209,7 +209,7 @@ export function useCheckIfUserApplied(jobId: string | null) {
       // Check if the user has already applied to this job
       const { data: existingApplication, error } = await supabase
         .from("job_applications")
-        .select("id")
+        .select("id, pollen_interview_invite_link, calendly_invite")
         .eq("job_id", jobId)
         .eq("user_id", userAuthId)
         .maybeSingle();
@@ -220,6 +220,9 @@ export function useCheckIfUserApplied(jobId: string | null) {
 
       return {
         hasApplied: !!existingApplication,
+        interviewLink:
+          existingApplication?.pollen_interview_invite_link || null,
+        calendlyEventUri: existingApplication?.calendly_invite || null,
       };
     },
   });

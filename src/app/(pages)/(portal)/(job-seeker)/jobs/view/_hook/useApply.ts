@@ -44,6 +44,8 @@ export function useApply() {
 
   const { data: applicationStatus } = useCheckIfUserApplied(jobId);
   const hasApplied = applicationStatus?.hasApplied || false;
+  const interviewLink = applicationStatus?.interviewLink || null;
+  const calendlyEventUri = applicationStatus?.calendlyEventUri || null;
 
   const createApplicationMutation = useCreateJobApplication();
   const createAssessmentResponseMutation = useCreateAssessmentResponse();
@@ -242,6 +244,8 @@ export function useApply() {
     loading,
     isLoadingAssessment,
     hasApplied,
+    interviewLink,
+    calendlyEventUri,
     isDialogOpen,
     setIsDialogOpen,
     showAssessment,

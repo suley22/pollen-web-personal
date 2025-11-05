@@ -13,6 +13,7 @@ import ApplyJobHeader from "../_components/apply-job-header";
 import ProgressSteps from "../_components/progress-steps";
 import JobDetails from "../_components/job-details";
 import WhatHappensNext from "../_components/what-happens-next";
+import { ScheduleInterviewSection } from "../_components/schedule-interview-section";
 
 export default function ApplyJobPage() {
   const {
@@ -27,6 +28,8 @@ export default function ApplyJobPage() {
     handleStart,
     handleSubmitApplication,
     hasApplied,
+    interviewLink,
+    calendlyEventUri,
     isDialogOpen,
     setIsDialogOpen,
     showAssessment,
@@ -81,8 +84,16 @@ export default function ApplyJobPage() {
         onBack={handleBack}
       />
 
-      <ProgressSteps currentStep={currentStep} />
+      {/* Interview Scheduling Section */}
+      {interviewLink && (
+        <ScheduleInterviewSection
+          interviewLink={interviewLink}
+          calendlyEventUri={calendlyEventUri}
+        />
+      )}
+
       <JobDetails job={job} />
+
       <WhatHappensNext />
       {/* Assessment Section */}
       {showAssessment && (

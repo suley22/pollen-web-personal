@@ -168,6 +168,7 @@ async function getJobApplicants(jobId: string): Promise<GroupedApplicants> {
           email: jobSeeker?.email || "",
           status: app.status,
           job_id: app.job_id || null,
+          calendly_invite: app.calendly_invite || null,
         };
 
         // Agregar a la columna correspondiente

@@ -68,11 +68,12 @@ export default function Page() {
                   <option value="Other">Other</option>
                 </select>
               </div>
-              <div className="flex flex-row justify-end mt-4">
+              <div className="flex flex-row justify-end">
                 <PrimaryButton
                   text="Save Changes"
-                  className=""
+                  className="p-2"
                   disabled={isLoading}
+                  size="md"
                 />
               </div>
               <p className="text-red-500">{state?.message}</p>

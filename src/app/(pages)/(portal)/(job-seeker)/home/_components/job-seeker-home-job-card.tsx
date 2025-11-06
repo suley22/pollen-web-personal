@@ -42,8 +42,8 @@ export function JobCard({ job, isSaved, onToggleSave, onApply }) {
   };
 
   return (
-    <div onClick={handleCardClick} className="cursor-pointer">
-      <Card className="flex items-start justify-between border rounded-lg !p-3 hover:bg-gray-50">
+    <div onClick={handleCardClick} className="cursor-pointer h-full">
+      <Card className="flex flex-col h-full border rounded-lg !p-3 hover:bg-gray-50">
         <CardHeader className="w-full flex-col">
           <div className="flex items-start">
             <div className="flex-1 min-w-0">
@@ -78,7 +78,7 @@ export function JobCard({ job, isSaved, onToggleSave, onApply }) {
           </div>
         </CardHeader>
 
-        <CardContent className="flex flex-col !gap-3 pt-4 justify-between w-full h-full">
+        <CardContent className="flex flex-col !gap-3 pt-4 flex-1 w-full">
           <div className="flex flex-col text-sm text-gray-500">
             <span className="flex items-center gap-1">
               <MapPin className="w-4 h-4" />
@@ -89,7 +89,7 @@ export function JobCard({ job, isSaved, onToggleSave, onApply }) {
               {job.salary ? job.salary : "Not disclosed"}
             </span>
           </div>
-          <div className="flex h-full items-start">
+          <div className="flex flex-1 items-start">
             <p className="text-sm text-gray-600">
               {job.description
                 ? clampText(job.description, 190)

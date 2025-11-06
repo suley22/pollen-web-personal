@@ -10,15 +10,13 @@ import { ArrowLeft, X } from "lucide-react";
 import { AssessmentPreview } from "../_components/assessment-preview";
 
 import ApplyJobHeader from "../_components/apply-job-header";
-import ProgressSteps from "../_components/progress-steps";
+
 import JobDetails from "../_components/job-details";
 import WhatHappensNext from "../_components/what-happens-next";
 import { ScheduleInterviewSection } from "../_components/schedule-interview-section";
 
 export default function ApplyJobPage() {
   const {
-    currentStep,
-
     handleBack,
     job,
     assessment,
@@ -78,7 +76,7 @@ export default function ApplyJobPage() {
     <PageContainer>
       <ApplyJobHeader
         job={job}
-        isSaved={isSaved}
+        isSaved={isSaved(job?.id)}
         handleCompanyDetails={handleCompanyDetails}
         onToggleSave={() => saveFavoriteJob(job.id)}
         onBack={handleBack}

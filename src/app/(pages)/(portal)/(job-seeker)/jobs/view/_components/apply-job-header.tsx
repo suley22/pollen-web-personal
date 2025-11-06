@@ -5,7 +5,6 @@ import { Eye, Heart } from "lucide-react";
 export default function ApplyJobHeader({
   job,
   isSaved,
-
   onToggleSave,
   onBack,
   handleCompanyDetails,
@@ -22,9 +21,15 @@ export default function ApplyJobHeader({
           variant="outline"
           size="sm"
           onClick={onToggleSave}
-          className={isSaved ? "text-pink-600 border-pink-600" : ""}
+          className={`transition-all duration-200 ${
+            isSaved
+              ? "text-pink-600 border-pink-600 bg-pink-50 hover:bg-pink-100"
+              : "text-gray-600 border-gray-300 hover:text-pink-600 hover:border-pink-300"
+          }`}
         >
-          <Heart className={`w-4 h-4 ${isSaved ? "fill-current" : ""}`} />
+          <Heart
+            className={`w-4 h-4 transition-all duration-200 ${isSaved ? "fill-current" : ""}`}
+          />
           {isSaved ? "Saved" : "Save Job"}
         </Button>
         <PrimaryButton

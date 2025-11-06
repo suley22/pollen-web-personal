@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function FeatureJobCards({ jobs, loading, saveFavoriteJob }) {
   return loading ? (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-3 gap-4 items-stretch">
       {Array.from({ length: 3 }).map((_, i) => (
         <div
           key={`job-skeleton-${i}`}
@@ -32,7 +32,7 @@ export function FeatureJobCards({ jobs, loading, saveFavoriteJob }) {
       ))}
     </div>
   ) : (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-3 gap-4 items-stretch">
       {jobs.map((job) => {
         return (
           <JobCard

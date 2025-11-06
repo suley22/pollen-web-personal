@@ -29,7 +29,7 @@ export default function CalendlyEventsPage() {
 
   return (
     <PageContainer>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between ">
         <PageHeader
           title="Calendly Events"
           subtitle="View and manage your scheduled Calendly events"

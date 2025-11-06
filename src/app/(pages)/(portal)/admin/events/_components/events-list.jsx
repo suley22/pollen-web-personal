@@ -40,6 +40,7 @@ export function EventsList({
     setIsDetailsDialogOpen(false);
     setSelectedEventUri(null);
   };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -59,10 +60,12 @@ export function EventsList({
             No hay eventos programados
           </p>
           <p className="text-gray-500 text-sm mb-1">
-            Los eventos aparecerán aquí cuando alguien agende una reunión contigo.
+            Los eventos aparecerán aquí cuando alguien agende una reunión
+            contigo.
           </p>
           <p className="text-gray-400 text-xs mb-6">
-            Usa el botón &quot;Agendar Evento&quot; arriba para crear una nueva reunión o comparte tu enlace de Calendly para que otros agenden.
+            Usa el botón &quot;Agendar Evento&quot; arriba para crear una nueva
+            reunión o comparte tu enlace de Calendly para que otros agenden.
           </p>
           <div className="flex items-center justify-center gap-3">
             <Button onClick={handleRefresh} variant="outline" size="sm">
@@ -82,10 +85,7 @@ export function EventsList({
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-gray-700">Status:</span>
-            <Select
-              value={statusFilter}
-              onValueChange={handleStatusChange}
-            >
+            <Select value={statusFilter} onValueChange={handleStatusChange}>
               <SelectTrigger className="w-[150px]">
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
@@ -100,9 +100,7 @@ export function EventsList({
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-700">
-              Per page:
-            </span>
+            <span className="text-sm font-medium text-gray-700">Per page:</span>
             <Select
               value={pagination?.pageSize?.toString() || "10"}
               onValueChange={(value) => handlePageSizeChange(Number(value))}
@@ -129,16 +127,17 @@ export function EventsList({
       {/* Información de paginación */}
       {pagination && (
         <div className="text-sm text-gray-600">
-          Showing {pagination.from} to {pagination.to} of {pagination.totalItems} events
+          Showing {pagination.from} to {pagination.to} of{" "}
+          {pagination.totalItems} events
         </div>
       )}
 
       {/* Grid de eventos */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {events.map((event) => (
-          <EventCard 
-            key={event.uri} 
-            event={event} 
+          <EventCard
+            key={event.uri}
+            event={event}
             onClick={() => handleEventClick(event.uri)}
           />
         ))}

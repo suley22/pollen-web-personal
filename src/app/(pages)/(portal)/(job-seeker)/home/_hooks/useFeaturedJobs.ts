@@ -96,7 +96,9 @@ export function useFeaturedJobs() {
       const result = saveSavedJob(jobId);
 
       if (!result.success) {
-        console.error("❌ Error saving favorite job:", result.error);
+        console.error("❌ Error removing favorite job:", result.error);
+        // Revert: add back to savedJobs and update UI to show as saved
+        savedJobs.add(jobId);
         updateSavedJobList(jobId, true);
       }
     } else {
@@ -107,7 +109,9 @@ export function useFeaturedJobs() {
 
       if (!result.success) {
         console.error("❌ Error saving favorite job:", result.error);
-        updateSavedJobList(jobId, true);
+        // Revert: remove from savedJobs and update UI to show as not saved
+        savedJobs.delete(jobId);
+        updateSavedJobList(jobId, false);
       }
     }
   };
